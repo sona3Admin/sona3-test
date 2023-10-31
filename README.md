@@ -1,6 +1,13 @@
-# Sona3: Multi-Vendor Handmade Products and Services App
+<h1 align="center">Sona3: Multi-Vendor Handmade Products and Services App</h1>
+<h3 align="center">Crafting a Platform for Handmade Product Vendors</h3>
 
-Sona3 is a Node.js, Express, and MongoDB-based multi-vendor application designed for the sale of handmade products and services by different vendors. This README provides a comprehensive guide to the project structure, installation, configuration, and usage.
+<p align="center">
+  <a href="https://github.com/yourusername/Sona3">
+    <img src="https://img.shields.io/github/stars/yourusername/Sona3?style=social" alt="GitHub Stars">
+  </a>
+</p>
+
+---
 
 ## Table of Contents
 
@@ -12,16 +19,24 @@ Sona3 is a Node.js, Express, and MongoDB-based multi-vendor application designed
 6. [Contributing](#contributing)
 7. [License](#license)
 
-## Prerequisites
+---
 
-Before starting with Sona3, ensure that you have the following prerequisites installed on your system:
+<h2 align="center">Prerequisites</h2>
 
-- [Node.js](https://nodejs.org/) (version 14 or higher)
-- [MongoDB](https://www.mongodb.com/) (either running locally or accessible via a connection string)
+<p align="center">Before you begin, ensure you have the following installed:</p>
 
-## Project Structure
+<p align="center">
+  <a href="https://nodejs.org/">Node.js (v14 or higher)</a><br>
+  <a href="https://www.mongodb.com/">MongoDB (local or accessible via connection string)</a>
+</p>
 
-The Sona3 project is organized as follows:
+---
+
+<h2 align="center">Project Structure</h2>
+
+<p align="center">The project structure is organized as follows:</p>
+
+
 
 Sona3/
 │
