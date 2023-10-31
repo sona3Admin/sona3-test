@@ -124,14 +124,18 @@ Sona3/
 csharp
 Copy code
 
-## Installation
 
-Follow these steps to get started with the Sona3 project:
+---
+
+<h2 align="center">Installation</h2>
+
+<p align="center">Follow these steps to get started with the Sona3 project:</p>
 
 1. Clone this repository:
 
    ```bash
    git clone https://github.com/yourusername/Sona3.git
+
 Navigate to the project directory:
 
 bash
