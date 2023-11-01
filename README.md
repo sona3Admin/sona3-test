@@ -1,7 +1,7 @@
-<h1 align="center">Sona3: Multi-Vendor Handmade Products and Services App</h1>
-<h3 align="center">Crafting a Platform for Handmade Product Vendors</h3>
+<h1  >Sona3: Multi-Vendor Handmade Products and Services App</h1>
+<h3  >Crafting a Platform for Handmade Product Vendors</h3>
 
-<p align="center">
+<p  >
   <a href="https://github.com/yourusername/Sona3">
     <img src="https://img.shields.io/github/stars/yourusername/Sona3?style=social" alt="GitHub Stars">
   </a>
@@ -21,20 +21,20 @@
 
 ---
 
-<h2 align="center">Prerequisites</h2>
+<h2  >Prerequisites</h2>
 
-<p align="center">Before you begin, ensure you have the following installed:</p>
+<p  >Before you begin, ensure you have the following installed:</p>
 
-<p align="center">
+<p  >
   <a href="https://nodejs.org/">Node.js (v14 or higher)</a><br>
   <a href="https://www.mongodb.com/">MongoDB (local or accessible via connection string)</a>
 </p>
 
 ---
 
-<h2 align="center">Project Structure</h2>
+<h2  >Project Structure</h2>
 
-<p align="center">The project structure is organized as follows:</p>
+<p  >The project structure is organized as follows:</p>
 
 
 ```
@@ -123,39 +123,51 @@ Sona3/
 ```
 ---
 
-<h2 align="center">Installation</h2>
+<h2>Installation</h2>
 
-<p align="center">Follow these steps to get started with the Sona3 project:</p>
+<p>Follow these steps to get started with the Sona3 project:</p>
 
-Clone this repository:
-git clone https://github.com/yourusername/Sona3.git
+Follow these steps to get started with the Sona3 project:
 
-Navigate to the project directory:
-cd Sona3
+1. Clone this repository:
 
-Install the required dependencies:
-npm install
+   ```bash
+   git clone https://github.com/Sona3App/APIs.git
+
+2. Navigate to the project directory:
+  ```bash
+    cd Sona3
+  ```
+
+3. Install the required dependencies:
+  ```bash
+  npm install
+  ```
 
 
-Configuration
-Customize your application's configuration by making changes to the following files:
-configs/database.js: Configure your MongoDB connection settings.
-configs/app.js: Customize your Express application settings.
-Set environment variables in the .env file to store sensitive information like API keys and secrets.
+<h2>Configuration</h2>
 
-Usage
-To run the Sona3 application, execute the following command:
+<p>Customize your application's configuration by making changes to the following files:</p>
+- configs/database.js: Configure your MongoDB connection settings.
+- configs/app.js: Customize your Express application settings.
+- Set environment variables in the .env file to store sensitive information like API keys and secrets.
+
+<h2>Usage</h2>
+<p>To run the Sona3 application, execute the following command:</p>
+
+```bash
 npm start
+```
 
-The application will be accessible at http://localhost:your-port. You can access the API endpoints and the frontend (if applicable) from this URL.
+<p>The application will be accessible at http://localhost:your-port. You can access the API endpoints and the frontend (if applicable) from this URL.</p>
 
-Contributing
+<h2>Contributing</h2>
 We welcome contributions to the Sona3 project. To contribute, please follow these steps:
 
-Fork the repository.
+<p>Fork the repository.</p>
 Create a new branch for your feature or bug fix.
 Implement your changes and thoroughly test them.
 Submit a pull request with a detailed description of your changes.
 
-License
-This project is licensed under the MIT License. For more details, see the LICENSE file.
+<h2>License</h2>
+<p>This project is licensed under the MIT License. For more details, see the LICENSE file.</p>
