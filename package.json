@@ -7,7 +7,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "test": "jest ./tests/branch.test.js",
+    "test": "jest",
     "dev": "nodemon configs/server.js",
     "prod": "nodemon configs/server.js",
     "start": "nodemon configs/server.js"
