@@ -1,11 +1,6 @@
 <h1  >Sona3: Multi-Vendor Handmade Products and Services App</h1>
 <h3  >Crafting a Platform for Handmade Product Vendors</h3>
 
-<p  >
-  <a href="https://github.com/Sona3App/APIs.git">
-    <img src="https://img.shields.io/github/stars/yourusername/Sona3?style=social" alt="GitHub Stars">
-  </a>
-</p>
 
 ---
 
