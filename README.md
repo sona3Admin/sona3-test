@@ -78,8 +78,20 @@ Sona3/
 │ │ # ... Models and repos for wishlists, if applicable
 │ # ... Add more models and repos as needed
 │
-├── tests/
-│ # ... Unit tests for various APIs
+├── tests/ # Unit Tests for all APIs exposed for all apps using jest and supertest
+│ ├── admin/
+│ │ ├── index.jest.js # Aggregates all admin app tests
+│ │ ├── auth.jest.js # Authentication endpoints
+│ │ ├── admin.jest.js # Endpoints for admins
+│ │ ├── customer.jest.js # Endpoints for customers
+│ │ ├── seller.jest.js # Endpoints for sellers
+│ │ ├── product.jest.js # Endpoints for products
+│ │ # ... Add more test files for other features
+│ ├── customer/
+│ │ # ... Test files for the customer app
+│ ├── seller/
+│ │ # ... Test files for the Seller app
+│ ├── index.jest.js # Aggregates all index.test.js files from all 3 folders
 │
 ├── routes/
 │ ├── admin/
