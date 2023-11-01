@@ -148,9 +148,9 @@ Follow these steps to get started with the Sona3 project:
 <h2>Configuration</h2>
 
 <p>Customize your application's configuration by making changes to the following files:</p>
-- configs/database.js: Configure your MongoDB connection settings.
-- configs/app.js: Customize your Express application settings.
-- Set environment variables in the .env file to store sensitive information like API keys and secrets.
+1. configs/database.js: Configure your MongoDB connection settings.
+2. configs/app.js: Customize your Express application settings.
+3. Set environment variables in the .env file to store sensitive information like API keys and secrets.
 
 <h2>Usage</h2>
 <p>To run the Sona3 application, execute the following command:</p>
