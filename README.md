@@ -37,7 +37,7 @@
 <p align="center">The project structure is organized as follows:</p>
 
 
-
+```
 Sona3/
 │
 ├── configs/
@@ -120,44 +120,33 @@ Sona3/
 ├── Procfile # Heroku deployment configuration
 ├── README.md # This documentation
 ├── settings.js # File for storing application settings
-
-csharp
-Copy code
-
-
+```
 ---
 
 <h2 align="center">Installation</h2>
 
 <p align="center">Follow these steps to get started with the Sona3 project:</p>
 
-1. Clone this repository:
-
-   ```bash
-   git clone https://github.com/yourusername/Sona3.git
+Clone this repository:
+git clone https://github.com/yourusername/Sona3.git
 
 Navigate to the project directory:
-
-bash
-Copy code
 cd Sona3
-Install the required dependencies:
 
-bash
-Copy code
+Install the required dependencies:
 npm install
+
+
 Configuration
 Customize your application's configuration by making changes to the following files:
-
 configs/database.js: Configure your MongoDB connection settings.
 configs/app.js: Customize your Express application settings.
 Set environment variables in the .env file to store sensitive information like API keys and secrets.
+
 Usage
 To run the Sona3 application, execute the following command:
-
-bash
-Copy code
 npm start
+
 The application will be accessible at http://localhost:your-port. You can access the API endpoints and the frontend (if applicable) from this URL.
 
 Contributing
@@ -167,10 +156,6 @@ Fork the repository.
 Create a new branch for your feature or bug fix.
 Implement your changes and thoroughly test them.
 Submit a pull request with a detailed description of your changes.
+
 License
 This project is licensed under the MIT License. For more details, see the LICENSE file.
-
-
-You can copy and paste this Markdown into your project's README.md file and make any further modifications or additions as needed.
-
-
