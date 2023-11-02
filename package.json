@@ -7,7 +7,11 @@
     "node": "16.x"
   },
   "scripts": {
-    "test": "jest",
+    "testAll": "jest",
+    "testAdminApp": "jest tests/admin/*.jest.js",
+    "testCustomerApp": "jest tests/customer/*.jest.js",
+    "testSellerApp": "jest tests/seller/*.jest.js",
+    "testFile": "jest tests/admin/auth.jest.js",
     "dev": "nodemon configs/server.js",
     "prod": "nodemon configs/server.js",
     "start": "nodemon configs/server.js"
@@ -46,6 +50,7 @@
   },
   "devDependencies": {
     "aws-sdk-mock": "^5.8.0",
+    "faker": "^6.6.6",
     "jest": "^29.5.0",
     "superagent": "^8.0.0",
     "supertest": "^6.2.4"

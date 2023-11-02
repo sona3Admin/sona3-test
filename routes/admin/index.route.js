@@ -10,7 +10,6 @@ const adminRoutes = require("./admin.route");
 
 app.use(authRoutes)
 app.use(checkToken(allowedUsers), adminRoutes);
-// app.use(checkToken(allowedUsers), isAuthorized, adminRoutes);
 
 
 module.exports = app
