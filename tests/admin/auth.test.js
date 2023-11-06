@@ -9,17 +9,17 @@ let requestHeaders = {
 };
 
 
-describe('Testing Admin Auth Module Endpoint => /api/v1/admin/login', () => {
+describe('=====>Testing Admin Auth Module Endpoints <=====', () => {
 
     beforeEach(() => {
         mongoDB.connect();
     });
 
     
-    it('should return an error for missing headers', async () => {
+    it('should return an error for missing headers endpoint => /api/v1/admin/login', async () => {
         const adminCredentials = {
             email: 'admin@admin.com',
-            password: 'Admin@admin50',
+            password: '123',
         };
 
         const response = await request(app)
@@ -30,10 +30,10 @@ describe('Testing Admin Auth Module Endpoint => /api/v1/admin/login', () => {
     });
 
 
-    it('should authenticate an admin and return a token', async () => {
+    it('should authenticate an admin and return a token endpoint => /api/v1/admin/login', async () => {
         const adminCredentials = {
             email: 'admin@admin.com',
-            password: 'Admin@admin50',
+            password: '123',
         };
 
         const response = await request(app)
@@ -46,7 +46,7 @@ describe('Testing Admin Auth Module Endpoint => /api/v1/admin/login', () => {
     });
 
 
-    it('should return an error for non-existent email', async () => {
+    it('should return an error for non-existent email endpoint => /api/v1/admin/login', async () => {
         const adminCredentials = {
             email: 'notfound@email.com',
             password: 'anypassword',
@@ -62,7 +62,7 @@ describe('Testing Admin Auth Module Endpoint => /api/v1/admin/login', () => {
     });
 
 
-    it('should return an error for incorrect password', async () => {
+    it('should return an error for incorrect password endpoint => /api/v1/admin/login', async () => {
         const adminCredentials = {
             email: 'admin@admin.com',
             password: 'invalidPassword',
@@ -78,25 +78,22 @@ describe('Testing Admin Auth Module Endpoint => /api/v1/admin/login', () => {
     });
 
 
-    it('should return an error for missing email or password', async () => {
-        const adminCredentials = {
-            // Missing email or password
-        };
-
+    it('should return an error for missing email or password endpoint => /api/v1/admin/login', async () => {
+        
         const response = await request(app)
             .post(`${baseUrl}/login`)
             .set(requestHeaders)
-            .send(adminCredentials);
+            .send({});
 
         expect(response.status).toBe(400);
         expect(response.body).toHaveProperty('success', false);
     });
 
 
-    it('should return a valid token in the response', async () => {
+    it('should return a valid token in the response endpoint => /api/v1/admin/login', async () => {
         const adminCredentials = {
             email: 'admin@admin.com',
-            password: 'Admin@admin50',
+            password: '123',
         };
 
         const response = await request(app)

@@ -196,7 +196,7 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
-        const resultObject = await adminModel.findByIdAndDeconste({ _id })
+        const resultObject = await adminModel.findByIdAndDelete({ _id })
 
         if (!resultObject) return {
             success: false,
