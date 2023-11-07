@@ -1,10 +1,10 @@
 const i18n = require('i18n');
-const bannerModel = require("./banner.model")
+const roleModel = require("./role.model")
 
 
 exports.find = async (filterObject) => {
     try {
-        const resultObject = await bannerModel.findOne(filterObject).lean();
+        const resultObject = await roleModel.findOne(filterObject).lean();
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -31,7 +31,7 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        const resultObject = await bannerModel.findOne(filterObject).lean().select(selectionObject)
+        const resultObject = await roleModel.findOne(filterObject).lean().select(selectionObject)
 
         if (!resultObject) return {
             success: false,
@@ -43,7 +43,6 @@ exports.get = async (filterObject, selectionObject) => {
             success: true,
             code: 200,
             result: resultObject,
-            count
         };
 
     } catch (err) {
@@ -60,7 +59,7 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
-        const resultArray = await bannerModel.find(filterObject).lean()
+        const resultArray = await roleModel.find(filterObject).lean()
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -72,7 +71,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             error: i18n.__("notFound")
         }
 
-        const count = await bannerModel.count(filterObject);
+        const count = await roleModel.count(filterObject);
         return {
             success: true,
             code: 200,
@@ -94,7 +93,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
-        const resultObject = new bannerModel(formObject);
+        const resultObject = new roleModel(formObject);
         await resultObject.save();
 
         if (!resultObject) return {
@@ -130,7 +129,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("notFound")
         }
 
-        const resultObject = await bannerModel.findByIdAndUpdate({ _id }, formObject, { new: true })
+        const resultObject = await roleModel.findByIdAndUpdate({ _id }, formObject, { new: true })
 
         if (!resultObject) return {
             success: false,
@@ -156,9 +155,36 @@ exports.update = async (_id, formObject) => {
 }
 
 
+exports.updateDirectly = async (_id, formObject) => {
+    try {
+        const resultObject = await roleModel.findByIdAndUpdate({ _id }, formObject, { new: true })
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.remove = async (_id) => {
     try {
-        const resultObject = await bannerModel.findByIdAndDelete({ _id })
+        const resultObject = await roleModel.findByIdAndDelete({ _id })
 
         if (!resultObject) return {
             success: false,

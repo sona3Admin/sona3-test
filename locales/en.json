@@ -104,5 +104,8 @@
 	"validLatLocation": "Valid latitude location is required.",
 	"requiredLatLocation": "Latitude location is required.",
 	"validTag": "Valid tag is required.",
-	"requiredTag": "Tag is required."
+	"requiredTag": "Tag is required.",
+	"validPermissionsObject": "Valid permissions are required",
+	"requiredPermissionsObject": "Permissions are required.",
+	"\"permissions\" is not allowed to be empty": "\"permissions\" is not allowed to be empty"
 }

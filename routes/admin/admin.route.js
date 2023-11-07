@@ -8,6 +8,7 @@ const uploadedFiles = uploadImagesToMemory()
 
 app.post("/create", validator(createAdminValidation), adminController.createAdmin);
 app.put("/update", validator(updateAdminValidation), adminController.updateAdmin);
+app.put("/role", validator(updateAdminValidation), adminController.updateAdminRole);
 app.put("/password", validator(resetPasswordValidation), adminController.resetPassword);
 app.delete("/remove", adminController.removeAdmin);
 

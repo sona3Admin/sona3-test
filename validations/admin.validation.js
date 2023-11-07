@@ -30,11 +30,11 @@ module.exports = {
                 "object.base": "validImage",
             }),
 
-            permissions: joi.object().optional().messages({
-                "object.base": "validPermissions",
+            role: joi.string().optional().messages({
+                "string.base": "validPermissions",
             }),
 
-            role: joi.string().optional().messages({
+            type: joi.string().optional().messages({
                 "string.base": "validRole",
             })
         })
@@ -56,13 +56,13 @@ module.exports = {
                     "string.empty": "emptyEmail",
                 }),
 
-            permissions: joi.object().optional().messages({
-                "object.base": "validPermissions",
-            }),
-            
             role: joi.string().optional().messages({
-                "string.base": "validRole",
+                "string.base": "validPermissions",
             }),
+
+            type: joi.string().optional().messages({
+                "string.base": "validRole",
+            })
         }),
     },
 
@@ -71,12 +71,12 @@ module.exports = {
         body: joi.object().required().keys({
 
             email: joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'eg', 'io'] } })
-            .empty().required()
-            .messages({
-                "string.email": "validEmail",
-                "any.required": "requiredEmail",
-                "string.empty": "emptyEmail"
-            }),
+                .empty().required()
+                .messages({
+                    "string.email": "validEmail",
+                    "any.required": "requiredEmail",
+                    "string.empty": "emptyEmail"
+                }),
 
             password: joi.string().empty().required().messages({
                 "string.base": "validPassword",
@@ -92,10 +92,10 @@ module.exports = {
         body: joi.object().required().keys({
 
             email: joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'eg', 'io'] } })
-            .empty().optional().messages({
-                "string.email": "validEmail",
-                "string.empty": "emptyEmail"
-            }),
+                .empty().optional().messages({
+                    "string.email": "validEmail",
+                    "string.empty": "emptyEmail"
+                }),
 
             newPassword: joi.string().empty().required().messages({
                 "string.base": "validPassword",

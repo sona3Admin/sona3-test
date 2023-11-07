@@ -104,5 +104,7 @@
 	"validLatLocation": ".يجب إدخال خط عرض صحيح",
 	"requiredLatLocation": ".يجب إدخال خط عرض",
 	"validTag": ".يجب إدخال علامة صحيحة",
-	"requiredTag": ".يجب إدخال علامة"
+	"requiredTag": ".يجب إدخال علامة",
+	"validPermissionsObject": ".يجب إدخال الصلاحيات بشكل صحيح",
+	"requiredPermissionsObject": ".يجب إدخال الصلاحيات"
 }

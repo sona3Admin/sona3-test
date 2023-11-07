@@ -1,4 +1,5 @@
 let jwt = require("jsonwebtoken")
+let adminRepo = require("../modules/Admin/admin.repo")
 
 exports.generateToken = (payloadObject, expiryTimeString) => {
     try {
@@ -19,16 +20,21 @@ exports.verifyToken = (roleString) => {
             let authHeader = req.headers['authorization']
             const token = authHeader && authHeader.split(" ")[1]
             if (token) {
-                jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, tokenData) => {
+                jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
                     if (err) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
-                    if (!roleString.includes(tokenData.role)) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
+                    if (tokenData?.type && !roleString.includes(tokenData.type)) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
+                    if (!tokenData?.type && tokenData?.role && !roleString.includes(tokenData.role)) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
+                    if (tokenData?.type == "admin") {
+                        const operationResultObject = await adminRepo.find({ _id: tokenData._id });
+                        if (!operationResultObject.success || operationResultObject.result.token != token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
+                    }
                     req.tokenData = tokenData;
                     return next();
                 })
             }
 
             else return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
-        
+
         } catch (err) {
             console.log(`err.message`, err.message);
             return res.status(500).json({ success: false, error: res.__("internalServerError"), code: 401 })

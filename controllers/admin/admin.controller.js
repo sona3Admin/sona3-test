@@ -3,6 +3,7 @@ const adminRepo = require("../../modules/Admin/admin.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
 
+
 exports.createAdmin = async (req, res) => {
     try {
         const operationResultObject = await adminRepo.create(req.body);
@@ -25,7 +26,7 @@ exports.listAdmins = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
-        const operationResultObject = await adminRepo.list(filterObject, { password: 0 }, {}, pageNumber, limitNumber);
+        const operationResultObject = await adminRepo.list(filterObject, { password: 0, token: 0 }, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -42,7 +43,7 @@ exports.listAdmins = async (req, res) => {
 exports.getAdmin = async (req, res) => {
     try {
         const filterObject = req.query;
-        const operationResultObject = await adminRepo.get(filterObject, { password: 0 });
+        const operationResultObject = await adminRepo.get(filterObject, { password: 0, token: 0 });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -59,6 +60,22 @@ exports.getAdmin = async (req, res) => {
 exports.updateAdmin = async (req, res) => {
     try {
         const operationResultObject = await adminRepo.update(req.query._id, req.body);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.updateAdminRole = async (req, res) => {
+    try {
+        const operationResultObject = await adminRepo.update(req.query._id, { role: req.body.role, $unset: { token: 1 } });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

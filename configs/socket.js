@@ -23,6 +23,16 @@ let websocketServer = (io) => {
         io.to(socketId).emit("connection", { success: true, code: 201, message: localeMessages.welcomeMessage })
 
 
+        socket.on("joinAdminRoom", (dataObject) => {
+            socket.join(dataObject.roleId);
+            // socket.join(dataObject._id);
+        })
+
+
+        socket.on("revokeAccess", (dataObject) => {
+            io.to(dataObject.roleId).emit("revokeAccess", {});
+        })
+
 
         socket.on('disconnect', () => {
             console.log('A client disconnected.');

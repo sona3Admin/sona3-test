@@ -15,6 +15,7 @@ const connection = async () => {
 module.exports = {
     connection,
     mongoose,
+    uri,
     connect: () => {
         mongoose.Promise = Promise;
         mongoose.connect(uri);

@@ -14,11 +14,11 @@ exports.login = async (req, res) => {
             _id: operationResultObject.result._id,
             name: operationResultObject.result.name,
             email: operationResultObject.result.email,
-            permissions: operationResultObject.result.permissions,
-            role: operationResultObject.result.role,
+            role: operationResultObject.result?.role?.permissions,
+            type: operationResultObject.result.type,
         }
-
-        const token = jwtHelper.generateToken(payloadObject, "30d")
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        if(operationResultObject.result.type == "admin") await adminRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 

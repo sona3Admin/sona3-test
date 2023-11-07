@@ -14,7 +14,6 @@ const handleCorsPlicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
 
 
-
 databaseConnection();
 // executeBatchJobs();
 i18n.configure({

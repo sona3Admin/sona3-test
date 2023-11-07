@@ -150,7 +150,7 @@ exports.update = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
   try {
-    const resultObject = await batchModel.findByIdAndDeconste({ _id })
+    const resultObject = await batchModel.findByIdAndDelete({ _id })
 
     if (!resultObject) return {
       success: false,

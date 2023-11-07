@@ -33,7 +33,9 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        const resultObject = await adminModel.findOne(filterObject).lean().select(selectionObject)
+        const resultObject = await adminModel.findOne(filterObject).lean()
+            .populate({ path: "role", select: "name permissions" })
+            .select(selectionObject)
 
         if (!resultObject) return {
             success: false,
@@ -62,6 +64,7 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         const resultArray = await adminModel.find(filterObject).lean()
+            .populate({ path: "role", select: "name permissions" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -194,6 +197,33 @@ exports.updateDirectly = async (_id, formObject) => {
 }
 
 
+exports.updateMany = async (filterObject, formObject) => {
+    try {
+        const resultObject = await adminModel.updateMany(filterObject, formObject)
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.remove = async (_id) => {
     try {
         const resultObject = await adminModel.findByIdAndDelete({ _id })
@@ -225,7 +255,7 @@ exports.remove = async (_id) => {
 exports.comparePassword = async (emailString, passwordString) => {
     try {
         emailString = emailString.toLowerCase()
-        const existingObject = await this.find({ email: emailString })
+        const existingObject = await this.get({ email: emailString }, {})
 
         if (!existingObject.success) return {
             success: false,
