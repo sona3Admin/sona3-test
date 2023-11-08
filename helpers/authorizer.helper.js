@@ -55,10 +55,14 @@ exports.validatePermissions = (listOfPermissions) => {
 exports.isAuthorized = (req, res, next) => {
     try {
         if (req.tokenData) {
+            let requesterId = req.query._id || req.body._id
+            let allowedEndPoints = ["/admin/get", "/admin/password", "/admin/image"]
+
             if (req.tokenData?.type == "superAdmin") return next()
             const adminPermissions = req.tokenData.role || {}
             const endPoint = req.originalUrl.split("?").shift().slice(7);
             let isFound = false
+            if (allowedEndPoints.includes(endPoint) && req.tokenData._id == requesterId) return next()
             for (key in adminPermissions) {
                 if (adminPermissions[key].includes(endPoint)) { isFound = true; return next(); }
             }
@@ -72,4 +76,11 @@ exports.isAuthorized = (req, res, next) => {
 
     }
 
+}
+
+
+exports.checkIdentity = (req, res, next) => {
+    let requesterId = req.query._id || req.body._id
+    if (requesterId != req.tokenData._id) return res.status(403).json({ success: false, error: i18n.__("unauthorized"), code: 403 })
+    return next()
 }

@@ -3,9 +3,11 @@ const app = require('../../configs/app');
 const mongoDB = require("../../configs/database")
 let baseUrl = '/api/v1/admin';
 
+let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRhMmQ1NDViZjExOTA0NzI2MmUyNmIiLCJuYW1lIjoiU29uYTMgU3VwZXIgQWRtaW4iLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInR5cGUiOiJzdXBlckFkbWluIiwiaWF0IjoxNjk5Mzg3ODAyLCJleHAiOjE2OTk0NzQyMDJ9.ZJjp9SApSkZDNVI2pDOZnymt7_4Ih4Dn98LFfNzmFsM`
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
     'accept-language': 'en',
+    "Authorization": `Bearer ${token}`
 };
 
 

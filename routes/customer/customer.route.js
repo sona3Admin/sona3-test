@@ -2,7 +2,6 @@ const app = require("express").Router();
 const customerController = require("../../controllers/customer/customer.controller")
 const { updateCustomerValidation, resetPasswordValidation } = require("../../validations/customer.validation")
 const validator = require("../../helpers/validation.helper")
-
 const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
 const uploadedFiles = uploadImagesToMemory()
 

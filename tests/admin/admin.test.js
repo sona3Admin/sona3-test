@@ -75,6 +75,16 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
+    it('should return an error for unauthorized access | endpoint => /api/v1/admin/create', async () => {
+        const response = await request(app)
+            .post(`${baseUrl}/create`)
+            .set(requestHeaders)
+            .send({ name: "admin", email: createdRecordObject.email, password: "123" });
+
+        expect(response.status).toBe(409);
+    });
+
+
     it('should get a specific admin | endpoint => /api/v1/admin/get', async () => {
 
         const response = await request(app)
