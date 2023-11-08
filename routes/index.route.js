@@ -2,10 +2,11 @@ let app = require("express").Router();
 let adminRoutes = require("./admin/index.route")
 let customerRoutes = require("./customer/index.route")
 let sellerRoutes = require("./seller/index.route")
+const i18n = require('i18n');
 
 
 app.get("/", (req, res) => {
-    return res.status(200).json({ success: true, message: res.__('welcomeMessage'), code: 200 })
+    return res.status(200).json({ success: true, message: i18n.__('welcomeMessage'), code: 200 })
 })
 
 
