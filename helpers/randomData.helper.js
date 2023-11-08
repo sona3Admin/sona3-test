@@ -1,46 +1,52 @@
 
 exports.generateDummyDataFromSchema = (schema) => {
-    const data = {};
+    try {
+        const data = {};
 
-    for (const key in schema) {
-        if (schema.hasOwnProperty(key)) {
-            const fieldType = schema[key];
+        for (const key in schema) {
+            if (schema.hasOwnProperty(key)) {
+                const fieldType = schema[key];
 
-            switch (fieldType) {
-                case 'string':
-                    data[key] = generateRandomString(5);
-                    break;
-                case 'id':
-                    data[key] = generateRandomUUID();
-                    break;
-                case 'email':
-                    data[key] = generateRandomEmail();
-                    break;
-                case 'password':
-                    data[key] = '123';
-                case 'phone':
-                    data[key] = generateRandomPhoneNumber("+20")
-                    break;
-                case 'number':
-                    data[key] = generateRandomNumber(1, 80);
-                    break;
-                case 'boolean':
-                    data[key] = (Math.random() < 0.5);
-                    break;
-                case 'date':
-                    data[key] = generateRandomDate();
-                    break;
-                case 'array':
-                    data[key] = generateRandomArray(5);
-                    break;
+                switch (fieldType) {
+                    case 'string':
+                        data[key] = generateRandomString(5);
+                        break;
+                    case 'id':
+                        data[key] = generateRandomUUID();
+                        break;
+                    case 'email':
+                        data[key] = generateRandomEmail();
+                        break;
+                    case 'password':
+                        data[key] = '123';
+                    case 'phone':
+                        data[key] = generateRandomPhoneNumber("+20")
+                        break;
+                    case 'number':
+                        data[key] = generateRandomNumber(1, 80);
+                        break;
+                    case 'boolean':
+                        data[key] = (Math.random() < 0.5);
+                        break;
+                    case 'date':
+                        data[key] = generateRandomDate();
+                        break;
+                    case 'array':
+                        data[key] = generateRandomArray(5);
+                        break;
 
-                default:
-                    break;
+                    default:
+                        data[key] = fieldType;
+                        break;
+                }
             }
         }
-    }
 
-    return data;
+        return data;
+    } catch (err){
+        console.log("err.message", err.message)
+        return err.message
+    }
 }
 
 

@@ -16,7 +16,6 @@ const customerSchema = mongoose.Schema({
 })
 
 customerSchema.pre("save", async function (next) {
-    console.log(this.password);
     this.password = await bcrypt.hash(this.password, saltrounds);
     next();
 })

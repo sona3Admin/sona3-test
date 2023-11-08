@@ -4,7 +4,7 @@ module.exports = {
 
     createSellerValidation: {
         body: joi.object().required().keys({
-            
+
             userName: joi.string().required().messages({
                 "string.base": "validNameEn",
                 "any.required": "requiredNameEn",
@@ -12,7 +12,7 @@ module.exports = {
 
 
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "org", "io"] } })
+                .email({ minDomainSegments: 2 })
                 .required().messages({
                     "string.email": "validEmail",
                     "any.required": "requiredEmail",
@@ -46,7 +46,7 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.object().optional().messages({
+            address: joi.string().optional().messages({
                 "object.base": "validAddress",
             }),
 
@@ -55,7 +55,7 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
-    
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
@@ -65,13 +65,13 @@ module.exports = {
 
     updateSellerValidation: {
         body: joi.object().optional().keys({
-           
+
             userName: joi.string().optional().messages({
                 "string.base": "validNameEn",
             }),
 
             email: joi
-                .string().email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "org", "io"] } })
+                .string().email({ minDomainSegments: 2 })
                 .optional().messages({
                     "string.email": "validEmail",
                 }),
@@ -103,27 +103,27 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.object().optional().messages({
+            address: joi.string().optional().messages({
                 "object.base": "validAddress",
             }),
 
-        
+
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
             }),
 
-        
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             })
         }),
     },
-    
+
 
     loginValidation: {
         body: joi.object().required().keys({
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: ["com", "net", "org", "eg", "io"] })
+                .email({ minDomainSegments: 2 })
                 .empty().required()
                 .messages({
                     "string.email": "validEmail",
@@ -141,11 +141,13 @@ module.exports = {
 
     sendEmailValidation: {
         body: joi.object().required().keys({
-            email: joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'eg', 'io'] } }).empty().required().messages({
-                "string.email": "validEmail",
-                "any.required": "requiredEmail",
-                "string.empty": "emptyEmail"
-            }),
+            email: joi.string()
+                .email({ minDomainSegments: 2 })
+                .empty().required().messages({
+                    "string.email": "validEmail",
+                    "any.required": "requiredEmail",
+                    "string.empty": "emptyEmail"
+                }),
         })
     },
 
@@ -153,7 +155,7 @@ module.exports = {
     resetPasswordValidation: {
         body: joi.object().required().keys({
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: ["com", "net", "org", "eg", "io"] })
+                .email({ minDomainSegments: 2 })
                 .empty().optional()
                 .messages({
                     "string.email": "validEmail",

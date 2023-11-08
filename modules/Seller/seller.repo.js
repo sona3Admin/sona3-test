@@ -34,7 +34,6 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await sellerModel.findOne(filterObject).lean()
-            .populate({ path: "category", select: "nameEn nameAr image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -64,7 +63,6 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         let resultArray = await sellerModel.find(filterObject).lean()
-            .populate({ path: "category", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

@@ -2,62 +2,62 @@ const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
-let baseUrl = '/api/v1/admin';
-let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRhMmQ1NDViZjExOTA0NzI2MmUyNmIiLCJuYW1lIjoiU29uYTMgU3VwZXIgQWRtaW4iLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInR5cGUiOiJzdXBlckFkbWluIiwiaWF0IjoxNjk5Mzg3ODAyLCJleHAiOjE2OTk0NzQyMDJ9.ZJjp9SApSkZDNVI2pDOZnymt7_4Ih4Dn98LFfNzmFsM`
+let baseUrl = '/api/v1/seller';
+let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRiNGM0MjdhZTJlYjI1ODFkMzJiZjMiLCJlbWFpbCI6InNlbGxlckBzZWxsZXIuY29tIiwicGhvbmUiOiIrMjAtMzg4LTg5MC02MzAwIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTY5OTQzNDUyOCwiZXhwIjoxNzAyMDI2NTI4fQ.i23B42H8mlDmEyk2vBykP4dez40AGDtMv9PZmMdiUqo`
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
     'accept-language': 'en',
     "Authorization": `Bearer ${token}`
 };
 let createdRecordObject;
-
-
 let schema = {
-    name: 'string',
+    userName: 'string',
     email: 'email',
-    password: 'password',
+    password: '123',
+    phone: 'phone',
+    address: 'string',
 };
 
 
-describe('=====>Testing Admin Module Endpoints <=====', () => {
+describe('=====>Testing Seller Module Endpoints <=====', () => {
 
     beforeEach(() => {
         mongoDB.connect();
     });
 
 
-    it('should return unauthorized for missing token | endpoint => /api/v1/admin/*', async () => {
-        const adminData = generateDummyDataFromSchema(schema)
+    it('should return unauthorized for missing token | endpoint => /api/v1/seller/*', async () => {
+        const sellerData = generateDummyDataFromSchema(schema)
 
         const response = await request(app)
-            .post(`${baseUrl}/create`)
+            .post(`${baseUrl}/update`)
             .set({ 'x-app-token': 'Sona3-Team' })
-            .send(adminData)
+            .send(sellerData)
 
         expect(response.status).toBe(401);
     });
 
 
-    it('should return unauthorized for invalid token | endpoint => /api/v1/admin/* ', async () => {
-        const adminData = generateDummyDataFromSchema(schema)
+    it('should return unauthorized for invalid token | endpoint => /api/v1/seller/* ', async () => {
+        const sellerData = generateDummyDataFromSchema(schema)
 
         const invalidToken = `Bearer invalidToken`;
         const response = await request(app)
-            .post(`${baseUrl}/create`)
+            .post(`${baseUrl}/update`)
             .set({ 'x-app-token': 'Sona3-Team', "Authorization": `${invalidToken}` })
-            .send(adminData)
+            .send(sellerData)
 
         expect(response.status).toBe(403);
     });
 
 
-    it('should create a new admin | endpoint => /api/v1/admin/create', async () => {
-        const adminData = generateDummyDataFromSchema(schema)
+    it('should register a new seller | endpoint => /api/v1/seller/register', async () => {
+        const sellerData = generateDummyDataFromSchema(schema)
 
         const response = await request(app)
-            .post(`${baseUrl}/create`)
+            .post(`${baseUrl}/register`)
             .set(requestHeaders)
-            .send(adminData);
+            .send(sellerData);
 
         expect(response.status).toBe(201);
         createdRecordObject = response.body.result
@@ -65,17 +65,17 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for duplicate emails | endpoint => /api/v1/admin/create', async () => {
+    it('should return an error for duplicate emails | endpoint => /api/v1/seller/register', async () => {
         const response = await request(app)
-            .post(`${baseUrl}/create`)
+            .post(`${baseUrl}/register`)
             .set(requestHeaders)
-            .send({ name: "admin", email: createdRecordObject.email, password: "123" });
+            .send({ userName: "seller", email: createdRecordObject.email, password: "123" });
 
         expect(response.status).toBe(409);
     });
 
 
-    it('should get a specific admin | endpoint => /api/v1/admin/get', async () => {
+    it('should get a specific seller | endpoint => /api/v1/seller/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/get?_id=${createdRecordObject._id}`)
@@ -85,7 +85,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/admin/get', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/seller/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/get?_id=650b327f77e8313f6966482d`)
@@ -95,46 +95,37 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should list admins | endpoint => /api/v1/admin/list', async () => {
-        const response = await request(app)
-            .get(`${baseUrl}/list`)
-            .set(requestHeaders);
-
-        expect(response.status).toBe(200);
-    });
-
-
-    it('should update an admin | endpoint => /api/v1/admin/update', async () => {
-        const adminData = generateDummyDataFromSchema({ name: 'string' })
+    it('should update an seller | endpoint => /api/v1/seller/update', async () => {
+        const sellerData = generateDummyDataFromSchema({ userName: 'string' })
 
         const response = await request(app)
             .put(`${baseUrl}/update?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
-            .send(adminData);
+            .send(sellerData);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/admin/update', async () => {
-        const adminData = generateDummyDataFromSchema({ name: 'string' })
+    it('should return an error for not found record | endpoint => /api/v1/seller/update', async () => {
+        const sellerData = generateDummyDataFromSchema({ userName: 'string' })
         const response = await request(app)
             .put(`${baseUrl}/update?_id=650b327f77e8313f6966482d`)
             .set(requestHeaders)
-            .send(adminData);
+            .send(sellerData);
 
         expect(response.status).toBe(404);
 
     });
 
 
-    it('should return an error for duplicate email | endpoint => /api/v1/admin/update', async () => {
-        let adminData = generateDummyDataFromSchema(schema)
+    it('should return an error for duplicate email | endpoint => /api/v1/seller/update', async () => {
+        let sellerData = generateDummyDataFromSchema(schema)
 
         let response = await request(app)
-            .post(`${baseUrl}/create`)
+            .post(`${baseUrl}/register`)
             .set(requestHeaders)
-            .send(adminData);
+            .send(sellerData);
 
 
         response = await request(app)
@@ -147,23 +138,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should update admin role | endpoint => /api/v1/admin/role', async () => {
-
-        const role = await request(app)
-            .get(`${baseUrl}/roles/list`)
-            .set(requestHeaders)
-            .send();
-
-        const response = await request(app)
-            .put(`${baseUrl}/role?_id=${createdRecordObject._id}`)
-            .set(requestHeaders)
-            .send({ role: role.body.result[0]._id });
-
-        expect(response.status).toBe(200);
-    });
-
-
-    it('should reset an admin password | endpoint => /api/v1/admin/password', async () => {
+    it('should reset an seller password | endpoint => /api/v1/seller/password', async () => {
         const newPassword = '123';
 
         const response = await request(app)
@@ -175,7 +150,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/admin/password', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/seller/password', async () => {
         const newPassword = '123';
 
         const response = await request(app)
@@ -187,7 +162,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should delete an admin | endpoint => /api/v1/admin/remove', async () => {
+    it('should delete an seller | endpoint => /api/v1/seller/remove', async () => {
 
         const response = await request(app)
             .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
@@ -197,7 +172,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/admin/remove', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/seller/remove', async () => {
 
         const response = await request(app)
             .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)

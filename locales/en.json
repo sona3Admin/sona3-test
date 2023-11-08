@@ -107,5 +107,7 @@
 	"requiredTag": "Tag is required.",
 	"validPermissionsObject": "Valid permissions are required",
 	"requiredPermissionsObject": "Permissions are required.",
-	"\"permissions\" is not allowed to be empty": "\"permissions\" is not allowed to be empty"
+	"\"permissions\" is not allowed to be empty": "\"permissions\" is not allowed to be empty",
+	"\"__v\" is not allowed": "\"__v\" is not allowed",
+	"\"name\" is not allowed": "\"name\" is not allowed"
 }

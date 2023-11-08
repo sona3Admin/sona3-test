@@ -9,7 +9,7 @@ module.exports = {
             }),
 
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: ["com", "net", "org", "eg", "io"] })
+                .email({ minDomainSegments: 2 })
                 .empty().required()
                 .messages({
                     "string.email": "validEmail",
@@ -32,7 +32,7 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.object().optional().messages({
+            address: joi.string().optional().messages({
                 "object.base": "validAddress",
             }),
 
@@ -58,7 +58,7 @@ module.exports = {
             }),
 
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: ["com", "net", "org", "eg", "io"] })
+                .email({ minDomainSegments: 2 })
                 .empty().optional()
                 .messages({
                     "string.email": "validEmail",
@@ -80,7 +80,7 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.object().optional().messages({
+            address: joi.string().optional().messages({
                 "object.base": "validAddress",
             }),
 
@@ -102,7 +102,7 @@ module.exports = {
     loginValidation: {
         body: joi.object().required().keys({
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: ["com", "net", "org", "eg", "io"] })
+                .email({ minDomainSegments: 2 })
                 .empty().required()
                 .messages({
                     "string.email": "validEmail",
@@ -120,7 +120,7 @@ module.exports = {
 
     sendEmailValidation: {
         body: joi.object().required().keys({
-            email: joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'org', 'eg', 'io'] } }).empty().required().messages({
+            email: joi.string().email({ minDomainSegments: 2 }).empty().required().messages({
                 "string.email": "validEmail",
                 "any.required": "requiredEmail",
                 "string.empty": "emptyEmail"
@@ -132,7 +132,7 @@ module.exports = {
     resetPasswordValidation: {
         body: joi.object().required().keys({
             email: joi.string()
-                .email({ minDomainSegments: 2, tlds: ["com", "net", "org", "eg", "io"] })
+                .email({ minDomainSegments: 2 })
                 .empty().optional()
                 .messages({
                     "string.email": "validEmail",
