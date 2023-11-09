@@ -24,9 +24,9 @@ const cors = async (req, res, next) => {
         }
 
         if (req.url.includes("api") && req.headers["x-app-token"] === "Sona3-Team") return next()
-
+        
         return res.status(500).json({ success: false, error: res.__('internalServerError'), code: 500 });
-    
+
     } catch (err) {
         console.log(`err.message`, err.message);
         return res.status(500).json({ success: false, error: res.__('internalServerError'), code: 500 });

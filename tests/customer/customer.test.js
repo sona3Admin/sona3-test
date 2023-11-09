@@ -3,7 +3,7 @@ const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
 let baseUrl = '/api/v1/customer';
-let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRiMzg4OGFlOTRjYjBhNGE3MmJjZTMiLCJuYW1lIjoiTmV3IEN1c3RvbWVyIiwiZW1haWwiOiJjdXN0b21lckBjdXN0b21lci5jb20iLCJwaG9uZSI6IjAxMjc2MjU2MDI4Iiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNjk5NDI5OTM5LCJleHAiOjE3MDIwMjE5Mzl9.w1h8neR8BKcVl76wcYawxJlvYPWTYC1pRC5WLR19g2g`
+let token
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
     'accept-language': 'en',
@@ -20,13 +20,14 @@ let schema = {
     address: 'string',
 };
 
+beforeEach(() => {
+    mongoDB.connect();
+});
+
 
 describe('=====>Testing Customer Module Endpoints <=====', () => {
 
-    beforeEach(() => {
-        mongoDB.connect();
-    });
-
+ 
 
     it('should return unauthorized for missing token | endpoint => /api/v1/customer/*', async () => {
         const customerData = generateDummyDataFromSchema(schema)
@@ -77,7 +78,21 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
     });
 
 
-    it('should get a specific customer | endpoint => /api/v1/customer/get', async () => {
+    it('should authenticate a customer and return a token endpoint => /api/v1/customer/login', async () => {
+        const customerCredentials = { email: createdRecordObject.email, password: "123" }
+        const response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send(customerCredentials);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('token');
+        token = response.body.token
+        requestHeaders["Authorization"] = `Bearer ${token}`
+    });
+
+
+    it('should get customer profile | endpoint => /api/v1/customer/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/get?_id=${createdRecordObject._id}`)
@@ -87,17 +102,17 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/customer/get', async () => {
+    it('should return an error for unauthorized access | endpoint => /api/v1/customer/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/get?_id=650b327f77e8313f6966482d`)
             .set(requestHeaders);
 
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(403);
     });
 
 
-    it('should update an customer | endpoint => /api/v1/customer/update', async () => {
+    it('should update a customer | endpoint => /api/v1/customer/update', async () => {
         const customerData = generateDummyDataFromSchema({ name: 'string' })
 
         const response = await request(app)
@@ -109,18 +124,6 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/customer/update', async () => {
-        const customerData = generateDummyDataFromSchema({ name: 'string' })
-        const response = await request(app)
-            .put(`${baseUrl}/update?_id=650b327f77e8313f6966482d`)
-            .set(requestHeaders)
-            .send(customerData);
-
-        expect(response.status).toBe(404);
-
-    });
-
-
     it('should return an error for duplicate email | endpoint => /api/v1/customer/update', async () => {
         let customerData = generateDummyDataFromSchema(schema)
 
@@ -129,10 +132,17 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
             .set(requestHeaders)
             .send(customerData);
 
+        let newCustomerEmail = response.body.result.email
+        response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send({ email: newCustomerEmail, password: "123" });
+
+        let newToken = response.body.token
 
         response = await request(app)
             .put(`${baseUrl}/update?_id=${response.body.result._id}`)
-            .set(requestHeaders)
+            .set({ 'x-app-token': 'Sona3-Team', "Authorization": `Bearer ${newToken}` })
             .send({ email: createdRecordObject.email });
 
         expect(response.status).toBe(409);
@@ -140,11 +150,11 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
     });
 
 
-    it('should reset an customer password | endpoint => /api/v1/customer/password', async () => {
+    it('should reset a customer password | endpoint => /api/v1/customer/password', async () => {
         const newPassword = '123';
 
         const response = await request(app)
-            .put(`${baseUrl}/password`)
+            .put(`${baseUrl}/password?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
             .send({ email: createdRecordObject.email, newPassword });
 
@@ -152,19 +162,7 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/customer/password', async () => {
-        const newPassword = '123';
-
-        const response = await request(app)
-            .put(`${baseUrl}/password`)
-            .set(requestHeaders)
-            .send({ email: "incorrect@email.com", newPassword });
-
-        expect(response.status).toBe(404);
-    });
-
-
-    it('should delete an customer | endpoint => /api/v1/customer/remove', async () => {
+    it('should delete a customer | endpoint => /api/v1/customer/remove', async () => {
 
         const response = await request(app)
             .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
@@ -174,17 +172,9 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/customer/remove', async () => {
-
-        const response = await request(app)
-            .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
-            .set(requestHeaders);
-
-        expect(response.status).toBe(404);
-    });
+});
 
 
-    afterAll((done) => {
-        mongoDB.disconnect(done);
-    });
+afterAll((done) => {
+    mongoDB.disconnect(done);
 });

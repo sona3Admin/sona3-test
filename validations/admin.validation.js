@@ -36,7 +36,11 @@ module.exports = {
 
             type: joi.string().optional().messages({
                 "string.base": "validRole",
-            })
+            }),
+
+            isActive: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
         })
     },
 
@@ -62,7 +66,11 @@ module.exports = {
 
             type: joi.string().optional().messages({
                 "string.base": "validRole",
-            })
+            }),
+
+            isActive: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
         }),
     },
 

@@ -20,11 +20,13 @@ let schema = {
     address: 'string',
 };
 
-describe('=====>Testing Seller Auth Module Endpoints <=====', () => {
 
-    beforeEach(() => {
-        mongoDB.connect();
-    });
+beforeEach(() => {
+    mongoDB.connect();
+});
+
+
+describe('=====>Testing Seller Auth Module Endpoints <=====', () => {
 
 
     it('should register a new seller | endpoint => /api/v1/seller/register', async () => {
@@ -160,10 +162,9 @@ describe('=====>Testing Seller Auth Module Endpoints <=====', () => {
     // });
 
 
-   
+});
 
-    afterAll((done) => {
-        mongoDB.disconnect(done);
-    });
 
+afterAll((done) => {
+    mongoDB.disconnect(done);
 });

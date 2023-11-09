@@ -3,7 +3,7 @@ const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
 let baseUrl = '/api/v1/admin';
-let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRhMmQ1NDViZjExOTA0NzI2MmUyNmIiLCJuYW1lIjoiU29uYTMgU3VwZXIgQWRtaW4iLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInR5cGUiOiJzdXBlckFkbWluIiwiaWF0IjoxNjk5Mzg3ODAyLCJleHAiOjE2OTk0NzQyMDJ9.ZJjp9SApSkZDNVI2pDOZnymt7_4Ih4Dn98LFfNzmFsM`
+let token
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
     'accept-language': 'en',
@@ -15,14 +15,32 @@ let createdRecordObject;
 let schema = {
     name: 'string',
     email: 'email',
-    password: 'password',
+    password: '123',
 };
+
+beforeEach(() => {
+    mongoDB.connect();
+});
 
 
 describe('=====>Testing Admin Module Endpoints <=====', () => {
 
-    beforeEach(() => {
-        mongoDB.connect();
+
+    it('should authenticate a super admin and return a token endpoint => /api/v1/admin/login', async () => {
+        const adminCredentials = {
+            email: 'admin@admin.com',
+            password: '123',
+        };
+
+        const response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send(adminCredentials);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('token');
+        token = response.body.token
+        requestHeaders["Authorization"] = `Bearer ${token}`
     });
 
 
@@ -76,12 +94,41 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
 
 
     it('should return an error for unauthorized access | endpoint => /api/v1/admin/create', async () => {
-        const response = await request(app)
-            .post(`${baseUrl}/create`)
-            .set(requestHeaders)
-            .send({ name: "admin", email: createdRecordObject.email, password: "123" });
+        const adminCredentials = { email: createdRecordObject.email, password: '123' };
+        const adminData = generateDummyDataFromSchema(schema)
 
-        expect(response.status).toBe(409);
+        let response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send(adminCredentials);
+
+        let newToken = response.body.token
+
+        response = await request(app)
+            .post(`${baseUrl}/create`)
+            .set({ 'x-app-token': 'Sona3-Team', "Authorization": `Bearer ${newToken}` })
+            .send(adminData);
+
+        expect(response.status).toBe(403);
+    });
+
+
+    it('should give access to personal profile | endpoint => /api/v1/admin/get', async () => {
+        const adminCredentials = { email: createdRecordObject.email, password: '123' };
+        
+        let response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send(adminCredentials);
+
+        let newToken = response.body.token
+
+        response = await request(app)
+            .get(`${baseUrl}/get?_id=${createdRecordObject._id}`)
+            .set({ 'x-app-token': 'Sona3-Team', "Authorization": `Bearer ${newToken}` })
+            .send();
+
+        expect(response.status).toBe(200);
     });
 
 
@@ -216,8 +263,9 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
         expect(response.status).toBe(404);
     });
 
+});
 
-    afterAll((done) => {
-        mongoDB.disconnect(done);
-    });
+
+afterAll((done) => {
+    mongoDB.disconnect(done);
 });

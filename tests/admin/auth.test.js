@@ -3,19 +3,18 @@ const app = require('../../configs/app');
 const mongoDB = require("../../configs/database")
 let baseUrl = '/api/v1/admin';
 
-let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRhMmQ1NDViZjExOTA0NzI2MmUyNmIiLCJuYW1lIjoiU29uYTMgU3VwZXIgQWRtaW4iLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInR5cGUiOiJzdXBlckFkbWluIiwiaWF0IjoxNjk5Mzg3ODAyLCJleHAiOjE2OTk0NzQyMDJ9.ZJjp9SApSkZDNVI2pDOZnymt7_4Ih4Dn98LFfNzmFsM`
+
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
     'accept-language': 'en',
-    "Authorization": `Bearer ${token}`
 };
+
+beforeEach(() => {
+    mongoDB.connect();
+});
 
 
 describe('=====>Testing Admin Auth Module Endpoints <=====', () => {
-
-    beforeEach(() => {
-        mongoDB.connect();
-    });
 
     
     it('should return an error for missing headers endpoint => /api/v1/admin/login', async () => {
@@ -109,8 +108,23 @@ describe('=====>Testing Admin Auth Module Endpoints <=====', () => {
     });
 
 
-    afterAll((done) => {
-        mongoDB.disconnect(done);
-    });
+    // it('should return an error if admin is not active => /api/v1/admin/login', async () => {
+    // const adminCredentials = { email: createdRecordObject.email, password: "123" }
 
+    //     const response = await request(app)
+    //         .post(`${baseUrl}/login`)
+    //         .set(requestHeaders)
+    //         .send(adminCredentials);
+
+    //     expect(response.status).toBe(200);
+    //     expect(response.body).toHaveProperty('token');
+    // });
+
+    
+
+
+});
+
+afterAll((done) => {
+    mongoDB.disconnect(done);
 });

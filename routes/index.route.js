@@ -5,7 +5,7 @@ let sellerRoutes = require("./seller/index.route")
 const i18n = require('i18n');
 
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     return res.status(200).json({ success: true, message: i18n.__('welcomeMessage'), code: 200 })
 })
 

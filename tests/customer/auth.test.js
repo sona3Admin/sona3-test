@@ -19,12 +19,13 @@ let schema = {
     address: 'string',
 };
 
+
+beforeEach(() => {
+    mongoDB.connect();
+});
+
+
 describe('=====>Testing Customer Auth Module Endpoints <=====', () => {
-
-    beforeEach(() => {
-        mongoDB.connect();
-    });
-
 
     it('should register a new customer | endpoint => /api/v1/customer/register', async () => {
         const customerData = generateDummyDataFromSchema(schema)
@@ -60,7 +61,7 @@ describe('=====>Testing Customer Auth Module Endpoints <=====', () => {
     });
 
 
-    it('should authenticate an customer and return a token endpoint => /api/v1/customer/login', async () => {
+    it('should authenticate a customer and return a token endpoint => /api/v1/customer/login', async () => {
         const customerCredentials = { email: createdRecordObject.email, password: "123" }
         const response = await request(app)
             .post(`${baseUrl}/login`)
@@ -148,8 +149,10 @@ describe('=====>Testing Customer Auth Module Endpoints <=====', () => {
     //     expect(response.body).toHaveProperty('token');
     // });
 
-    afterAll((done) => {
-        mongoDB.disconnect(done);
-    });
+    
+});
 
+
+afterAll((done) => {
+    mongoDB.disconnect(done);
 });

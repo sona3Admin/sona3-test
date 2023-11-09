@@ -3,13 +3,14 @@ const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
 let baseUrl = '/api/v1/seller';
-let token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTRiNGM0MjdhZTJlYjI1ODFkMzJiZjMiLCJlbWFpbCI6InNlbGxlckBzZWxsZXIuY29tIiwicGhvbmUiOiIrMjAtMzg4LTg5MC02MzAwIiwicm9sZSI6InNlbGxlciIsImlhdCI6MTY5OTQzNDUyOCwiZXhwIjoxNzAyMDI2NTI4fQ.i23B42H8mlDmEyk2vBykP4dez40AGDtMv9PZmMdiUqo`
+let token
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
     'accept-language': 'en',
     "Authorization": `Bearer ${token}`
 };
 let createdRecordObject;
+
 let schema = {
     userName: 'string',
     email: 'email',
@@ -18,14 +19,15 @@ let schema = {
     address: 'string',
 };
 
+beforeEach(() => {
+    mongoDB.connect();
+});
+
+
 
 describe('=====>Testing Seller Module Endpoints <=====', () => {
 
-    beforeEach(() => {
-        mongoDB.connect();
-    });
-
-
+    
     it('should return unauthorized for missing token | endpoint => /api/v1/seller/*', async () => {
         const sellerData = generateDummyDataFromSchema(schema)
 
@@ -75,7 +77,21 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
     });
 
 
-    it('should get a specific seller | endpoint => /api/v1/seller/get', async () => {
+    it('should authenticate an seller and return a token endpoint => /api/v1/seller/login', async () => {
+        const sellerCredentials = { email: createdRecordObject.email, password: "123" }
+        const response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send(sellerCredentials);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('token');
+        token = response.body.token
+        requestHeaders["Authorization"] = `Bearer ${token}`
+    });
+
+
+    it('should get seller profile | endpoint => /api/v1/seller/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/get?_id=${createdRecordObject._id}`)
@@ -85,13 +101,13 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/seller/get', async () => {
+    it('should return an error for unauthorized access | endpoint => /api/v1/seller/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/get?_id=650b327f77e8313f6966482d`)
             .set(requestHeaders);
 
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(403);
     });
 
 
@@ -107,18 +123,6 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/seller/update', async () => {
-        const sellerData = generateDummyDataFromSchema({ userName: 'string' })
-        const response = await request(app)
-            .put(`${baseUrl}/update?_id=650b327f77e8313f6966482d`)
-            .set(requestHeaders)
-            .send(sellerData);
-
-        expect(response.status).toBe(404);
-
-    });
-
-
     it('should return an error for duplicate email | endpoint => /api/v1/seller/update', async () => {
         let sellerData = generateDummyDataFromSchema(schema)
 
@@ -127,10 +131,17 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
             .set(requestHeaders)
             .send(sellerData);
 
+        let newSellerEmail = response.body.result.email
+        response = await request(app)
+            .post(`${baseUrl}/login`)
+            .set(requestHeaders)
+            .send({ email: newSellerEmail, password: "123" });
+
+        let newToken = response.body.token
 
         response = await request(app)
             .put(`${baseUrl}/update?_id=${response.body.result._id}`)
-            .set(requestHeaders)
+            .set({ 'x-app-token': 'Sona3-Team', "Authorization": `Bearer ${newToken}` })
             .send({ email: createdRecordObject.email });
 
         expect(response.status).toBe(409);
@@ -138,11 +149,11 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
     });
 
 
-    it('should reset an seller password | endpoint => /api/v1/seller/password', async () => {
+    it('should reset a seller password | endpoint => /api/v1/seller/password', async () => {
         const newPassword = '123';
 
         const response = await request(app)
-            .put(`${baseUrl}/password`)
+            .put(`${baseUrl}/password?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
             .send({ email: createdRecordObject.email, newPassword });
 
@@ -150,19 +161,7 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/seller/password', async () => {
-        const newPassword = '123';
-
-        const response = await request(app)
-            .put(`${baseUrl}/password`)
-            .set(requestHeaders)
-            .send({ email: "incorrect@email.com", newPassword });
-
-        expect(response.status).toBe(404);
-    });
-
-
-    it('should delete an seller | endpoint => /api/v1/seller/remove', async () => {
+    it('should delete a seller | endpoint => /api/v1/seller/remove', async () => {
 
         const response = await request(app)
             .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
@@ -172,17 +171,9 @@ describe('=====>Testing Seller Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/seller/remove', async () => {
-
-        const response = await request(app)
-            .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
-            .set(requestHeaders);
-
-        expect(response.status).toBe(404);
-    });
+});
 
 
-    afterAll((done) => {
-        mongoDB.disconnect(done);
-    });
+afterAll((done) => {
+    mongoDB.disconnect(done);
 });
