@@ -6,7 +6,7 @@ module.exports = {
     createAdValidation: {
         body: joi.object().required().keys({
 
-            seller: joi.string().required().messages({
+            shop: joi.string().required().messages({
                 "string.base": "validSeller",
                 "any.required": "requiredSeller",
             }),
@@ -31,7 +31,7 @@ module.exports = {
     updateAdValidation: {
         body: joi.object().optional().keys({
 
-            seller: joi.string().optional().messages({
+            shop: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
 

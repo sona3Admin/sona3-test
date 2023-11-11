@@ -32,12 +32,7 @@ module.exports = {
             }),
 
             location: joi.object().keys({
-                long: joi.number().required().messages({
-                    "number.base": "validLongLocation",
-                    "any.required": "requiredLongLocation"
-                }),
-
-                lat: joi.number().required().messages({
+                coordinates: joi.array().required().messages({
                     "number.base": "validLatLocation",
                     "any.required": "requiredLatLocation"
                 })
@@ -89,12 +84,7 @@ module.exports = {
             }),
 
             location: joi.object().keys({
-                long: joi.number().required().messages({
-                    "number.base": "validLongLocation",
-                    "any.required": "requiredLongLocation"
-                }),
-
-                lat: joi.number().required().messages({
+                coordinates: joi.array().required().messages({
                     "number.base": "validLatLocation",
                     "any.required": "requiredLatLocation"
                 })

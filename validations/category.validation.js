@@ -24,7 +24,7 @@ module.exports = {
                 "any.required": "requiredDescriptionAr",
             }),
 
-            type: joi.string().required().valid("seller", "product")
+            type: joi.string().required().valid("shop", "product", "service")
                 .messages({
                     "string.base": "validType",
                     "any.required": "requiredType",
@@ -44,6 +44,20 @@ module.exports = {
             isSubCategory: joi.boolean().optional().default(false).messages({
                 "boolean.base": "validIsSubCategory",
             }),
+
+            isRequested: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
+
+            requestedBy: joi.string().required().messages({
+                "string.base": "validSeller",
+                "any.required": "requiredSeller",
+            }),
+
+            requestDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
+            })
+
         }),
     },
 
@@ -70,7 +84,7 @@ module.exports = {
                 "string.empty": "emptyDescriptionAr",
             }),
 
-            type: joi.string().valid("seller", "product").optional().messages({
+            type: joi.string().valid("shop", "product", "service").optional().messages({
                 "string.base": "validType",
                 "any.only": "invalidType",
             }),
@@ -86,6 +100,20 @@ module.exports = {
             isSubCategory: joi.boolean().optional().messages({
                 "boolean.base": "validIsSubCategory",
             }),
+
+            isRequested: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
+
+            requestedBy: joi.string().required().messages({
+                "string.base": "validSeller",
+                "any.required": "requiredSeller",
+            }),
+
+            requestDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
+            })
+
         }),
     }
 

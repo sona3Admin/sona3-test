@@ -9,17 +9,21 @@ module.exports = {
                 "any.required": "requiredCustomer",
             }),
 
-            reviewOn: joi.string().valid("seller", "product").required().messages({
+            reviewOn: joi.string().valid("shop", "product", "service").required().messages({
                 "string.base": "validReviewOn",
                 "any.required": "requiredReviewOn",
             }),
 
-            seller: joi.string().optional().messages({
+            shop: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
 
             product: joi.string().optional().messages({
                 "string.base": "validProduct",
+            }),
+
+            service: joi.string().optional().messages({
+                "string.base": "validService",
             }),
 
             reviewText: joi.string().optional().messages({
@@ -46,16 +50,20 @@ module.exports = {
                 "string.base": "validCustomer",
             }),
 
-            reviewOn: joi.string().valid("seller", "product").optional().messages({
+            reviewOn: joi.string().valid("shop", "product", "service").optional().messages({
                 "string.base": "validReviewOn",
             }),
 
-            seller: joi.string().optional().messages({
+            shop: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
 
             product: joi.string().optional().messages({
                 "string.base": "validProduct",
+            }),
+
+            service: joi.string().optional().messages({
+                "string.base": "validService",
             }),
 
             reviewText: joi.string().optional().messages({

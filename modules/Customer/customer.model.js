@@ -8,7 +8,10 @@ const customerSchema = mongoose.Schema({
     password: { type: String },
     phone: { type: String },
     image: { type: Object },
-    location: Object,
+    location: {
+        type: { type: String, default: "Point" },
+        coordinates: { type: Array, default: [0, 0] }
+    },
     address: { type: Object },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },

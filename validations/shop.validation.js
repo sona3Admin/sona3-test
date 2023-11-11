@@ -4,9 +4,20 @@ module.exports = {
 
     createSellerValidation: {
         body: joi.object().required().keys({
-            category: joi.string().required().messages({
+
+            seller: joi.string().required().messages({
+                "string.base": "validSeller",
+                "any.required": "requiredSeller",
+            }),
+
+            categories: joi.array().required().messages({
                 "string.base": "validCategory",
                 "any.required": "requiredCategory",
+            }),
+
+            tags: joi.array().required().messages({
+                "string.base": "validTag",
+                "any.required": "requiredTag",
             }),
 
             nameEn: joi.string().required().messages({
@@ -29,18 +40,6 @@ module.exports = {
                 "any.required": "requiredDescriptionAr",
             }),
 
-            email: joi.string()
-                .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "org", "io"] } })
-                .required().messages({
-                    "string.email": "validEmail",
-                    "any.required": "requiredEmail",
-                }),
-
-            passwrd: joi.string().required().messages({
-                "string.base": "validPassword",
-                "any.required": "requiredPassword",
-            }),
-
             phone: joi.string().optional().messages({
                 "string.base": "validPhone",
             }),
@@ -50,12 +49,7 @@ module.exports = {
             }),
 
             location: joi.object().keys({
-                long: joi.number().required().messages({
-                    "number.base": "validLongLocation",
-                    "any.required": "requiredLongLocation"
-                }),
-
-                lat: joi.number().required().messages({
+                coordinates: joi.array().required().messages({
                     "number.base": "validLatLocation",
                     "any.required": "requiredLatLocation"
                 })
@@ -95,10 +89,22 @@ module.exports = {
 
     updateSellerValidation: {
         body: joi.object().optional().keys({
-            category: joi.string().optional().messages({
-                "string.base": "validCategory",
+
+            seller: joi.string().required().messages({
+                "string.base": "validSeller",
+                "any.required": "requiredSeller",
             }),
 
+            categories: joi.array().required().messages({
+                "string.base": "validCategory",
+                "any.required": "requiredCategory",
+            }),
+
+            tags: joi.array().required().messages({
+                "string.base": "validTag",
+                "any.required": "requiredTag",
+            }),
+            
             nameEn: joi.string().optional().messages({
                 "string.base": "validNameEn",
             }),
@@ -115,16 +121,6 @@ module.exports = {
                 "string.base": "validDescriptionAr",
             }),
 
-            email: joi
-                .string().email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "org", "io"] } })
-                .optional().messages({
-                    "string.email": "validEmail",
-                }),
-
-            passwrd: joi.string().optional().messages({
-                "string.base": "validPassword",
-            }),
-
             phone: joi.string().optional().messages({
                 "string.base": "validPhone",
             }),
@@ -134,12 +130,7 @@ module.exports = {
             }),
 
             location: joi.object().keys({
-                long: joi.number().required().messages({
-                    "number.base": "validLongLocation",
-                    "any.required": "requiredLongLocation"
-                }),
-
-                lat: joi.number().required().messages({
+                coordinates: joi.array().required().messages({
                     "number.base": "validLatLocation",
                     "any.required": "requiredLatLocation"
                 })

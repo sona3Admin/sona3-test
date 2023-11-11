@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const couponSchema = mongoose.Schema({
-    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
+    shop: { type: mongoose.Types.ObjectId, ref: "shops" },
     nameEn: { type: String },
     nameAr: { type: String },
     descriptionEn: { type: String },

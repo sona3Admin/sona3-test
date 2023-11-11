@@ -28,7 +28,13 @@ module.exports = {
                 "object.base": "validImage",
             }),
 
-            location: joi.object().optional().messages({
+            location: joi.object().keys({
+                coordinates: joi.array().required().messages({
+                    "number.base": "validLatLocation",
+                    "any.required": "requiredLatLocation"
+                })
+
+            }).optional().messages({
                 "object.base": "validLocation",
             }),
 
@@ -76,7 +82,13 @@ module.exports = {
                 "object.base": "validImage",
             }),
 
-            location: joi.object().optional().messages({
+            location: joi.object().keys({
+                coordinates: joi.array().required().messages({
+                    "number.base": "validLatLocation",
+                    "any.required": "requiredLatLocation"
+                })
+
+            }).optional().messages({
                 "object.base": "validLocation",
             }),
 

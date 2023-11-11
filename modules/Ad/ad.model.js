@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const adSchema = mongoose.Schema({
-    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
+    shop: { type: mongoose.Types.ObjectId, ref: "shops" },
     description: { type: String },
     image: { type: Object },
     requestDate: { type: Date, default: Date.now() }
