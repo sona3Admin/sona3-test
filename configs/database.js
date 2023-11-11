@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
-const uri = process.env.LOCAL_DB_CONNECTION_STRING
-// const uri = process.env.DEV_DB_CONNECTION_STRING
+// const uri = process.env.LOCAL_DB_CONNECTION_STRING
+const uri = process.env.DEV_DB_CONNECTION_STRING
 
 
 const connection = async () => {
