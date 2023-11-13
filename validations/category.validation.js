@@ -45,18 +45,25 @@ module.exports = {
                 "boolean.base": "validIsSubCategory",
             }),
 
+            parentCategory: joi.boolean().optional().messages({
+                "boolean.base": "validCategory",
+            }),
+
             isRequested: joi.boolean().optional().default(false).messages({
                 "boolean.base": "validStatus",
             }),
 
-            requestedBy: joi.string().required().messages({
+            requestedBy: joi.string().optional().messages({
                 "string.base": "validSeller",
-                "any.required": "requiredSeller",
             }),
 
             requestDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
-            })
+            }),
+
+            isActive: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
 
         }),
     },
@@ -96,23 +103,30 @@ module.exports = {
             subCategories: joi.array().items(joi.string()).optional().messages({
                 "array.base": "validSubCategoriesArray",
             }),
-            
+
             isSubCategory: joi.boolean().optional().messages({
                 "boolean.base": "validIsSubCategory",
+            }),
+
+            parentCategory: joi.boolean().optional().messages({
+                "boolean.base": "validCategory",
             }),
 
             isRequested: joi.boolean().optional().default(false).messages({
                 "boolean.base": "validStatus",
             }),
 
-            requestedBy: joi.string().required().messages({
+            requestedBy: joi.string().optional().messages({
                 "string.base": "validSeller",
-                "any.required": "requiredSeller",
             }),
 
             requestDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
-            })
+            }),
+
+            isActive: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
 
         }),
     }

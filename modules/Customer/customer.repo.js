@@ -195,6 +195,20 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
+        const existingObject = await this.find({ _id })
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        const resultObject = await customerModel.findByIdAndUpdate({ _id }, { isActive: false })
+
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
 
         return {
             success: true,

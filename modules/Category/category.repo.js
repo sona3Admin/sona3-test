@@ -32,7 +32,9 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await categoryModel.findOne(filterObject).lean()
-            .populate({ path: "subCategories", select: "nameEn nameAr images" })
+            .populate({ path: "subCategories", select: "nameEn nameAr image" })
+            .populate({ path: "parentCategory", select: "nameEn nameAr image" })
+            .populate({ path: "requestedBy", select: "nameEn nameAr image" })
             .select(selectionObject)
 
 
@@ -63,7 +65,9 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         const resultArray = await categoryModel.find(filterObject).lean()
-            .populate({ path: "subCategories", select: "nameEn nameAr images" })
+            .populate({ path: "subCategories", select: "nameEn nameAr image" })
+            .populate({ path: "parentCategory", select: "nameEn nameAr image" })
+            .populate({ path: "requestedBy", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -144,7 +148,7 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
-        const resultObject = await categoryModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" });
+        const resultObject = await categoryModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
         if (!resultObject) return {
             success: false,
@@ -172,7 +176,7 @@ exports.update = async (_id, formObject) => {
 
 exports.updateDirectly = async (_id, formObject) => {
     try {
-        const resultObject = await categoryModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" })
+        const resultObject = await categoryModel.findByIdAndUpdate({ _id }, formObject, { new: true })
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -199,6 +203,21 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
+        const existingObject = await this.find({ _id });
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        };
+
+        const resultObject = await categoryModel.findByIdAndUpdate({ _id }, { isActive: false });
+        // update shops | products | services
+
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
 
         return {
             success: true,

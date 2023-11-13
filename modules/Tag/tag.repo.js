@@ -31,7 +31,9 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        const resultObject = await tagModel.findOne(filterObject).lean().select(selectionObject)
+        const resultObject = await tagModel.findOne(filterObject).lean()
+            .populate({ path: "requestedBy", select: "nameEn nameAr image" })
+            .select(selectionObject)
 
         if (!resultObject) return {
             success: false,
@@ -60,6 +62,7 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         const resultArray = await tagModel.find(filterObject).lean()
+            .populate({ path: "requestedBy", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -195,6 +198,13 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
+        const resultObject = await tagModel.findByIdAndDelete({ _id })
+
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
 
         return {
             success: true,
