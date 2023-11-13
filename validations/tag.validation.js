@@ -15,7 +15,7 @@ module.exports = {
                 "any.required": "requiredNameAr",
             }),
 
-            isRequested: joi.boolean().optional().default(false).messages({
+            isRequested: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
 
@@ -27,7 +27,7 @@ module.exports = {
                 "date.base": "validRequestDate",
             }),
 
-            isActive: joi.boolean().optional().default(false).messages({
+            isActive: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
         })
@@ -45,7 +45,7 @@ module.exports = {
                 "string.base": "validNameAr",
             }),
 
-            isRequested: joi.boolean().optional().default(false).messages({
+            isRequested: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
 
@@ -57,7 +57,7 @@ module.exports = {
                 "date.base": "validRequestDate",
             }),
 
-            isActive: joi.boolean().optional().default(false).messages({
+            isActive: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
         })

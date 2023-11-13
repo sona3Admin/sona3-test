@@ -37,6 +37,18 @@ let tagEndPoints = [
 ]
 
 
+let fieldEndPoints = [
+    "/admin/fields/create", "/admin/fields/update", "/admin/fields/remove",
+    "/admin/fields/list", "/admin/fields/get"
+]
+
+
+let formEndPoints = [
+    "/admin/forms/create", "/admin/forms/update", "/admin/forms/remove",
+    "/admin/forms/list", "/admin/forms/get"
+]
+
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -44,6 +56,8 @@ customerEndPoints = new Set(customerEndPoints);
 sellerEndPoints = new Set(sellerEndPoints);
 categoryEndPoints = new Set(categoryEndPoints);
 tagEndPoints = new Set(tagEndPoints);
+fieldEndPoints = new Set(fieldEndPoints);
+formEndPoints = new Set(formEndPoints);
 
 
 let permissions = new Map();
@@ -55,6 +69,8 @@ permissions.set("customers", customerEndPoints)
 permissions.set("sellers", sellerEndPoints)
 permissions.set("categories", categoryEndPoints)
 permissions.set("tags", tagEndPoints)
+permissions.set("fields", fieldEndPoints)
+permissions.set("forms", formEndPoints)
 
 
 module.exports = { permissions }

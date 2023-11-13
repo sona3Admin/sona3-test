@@ -106,5 +106,8 @@
 	"validTag": ".يجب إدخال علامة صحيحة",
 	"requiredTag": ".يجب إدخال علامة",
 	"validPermissionsObject": ".يجب إدخال الصلاحيات بشكل صحيح",
-	"requiredPermissionsObject": ".يجب إدخال الصلاحيات"
+	"requiredPermissionsObject": ".يجب إدخال الصلاحيات",
+	"validArray": ".يجب إدخال قائمة صحيحة",
+	"invalidValue": ".يجب إدخال قيمة صحيحة"
+
 }

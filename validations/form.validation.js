@@ -1,8 +1,7 @@
 const joi = require("joi");
 
 module.exports = {
-
-    createCategoryValidation: {
+    createFormValidation: {
         body: joi.object().required().keys({
             nameEn: joi.string().required().messages({
                 "string.base": "validNameEn",
@@ -14,42 +13,28 @@ module.exports = {
                 "any.required": "requiredNameAr",
             }),
 
-            descriptionEn: joi.string().required().messages({
+            descriptionEn: joi.string().optional().messages({
                 "string.base": "validDescriptionEn",
-                "any.required": "requiredDescriptionEn",
             }),
 
-            descriptionAr: joi.string().required().messages({
+            descriptionAr: joi.string().optional().messages({
                 "string.base": "validDescriptionAr",
-                "any.required": "requiredDescriptionAr",
             }),
 
-            type: joi.string().required().valid("shop", "product", "service")
-                .messages({
-                    "string.base": "validType",
-                    "any.required": "requiredType",
-                    "any.only": "invalidType",
-                }),
-
-            image: joi.object().optional().messages({
-                "object.base": "validImage",
+            type: joi.string().valid("product", "service").messages({
+                "string.base": "validType",
+                "any.only": "invalidType",
             }),
 
-            subCategories: joi.array()
-                .items(joi.string()).optional()
-                .messages({
-                    "array.base": "validSubCategoriesArray",
-                }),
-
-            isSubCategory: joi.boolean().optional().messages({
-                "boolean.base": "validIsSubCategory",
+            fields: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validArray",
             }),
 
-            parentCategory: joi.boolean().optional().messages({
-                "boolean.base": "validCategory",
+            categories: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validArray",
             }),
 
-            isRequested: joi.boolean().optional().messages({
+            isRequested: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
 
@@ -57,19 +42,18 @@ module.exports = {
                 "string.base": "validSeller",
             }),
 
-            requestDate: joi.date().optional().messages({
+            requestDate: joi.date().messages({
                 "date.base": "validRequestDate",
             }),
 
-            isActive: joi.boolean().optional().messages({
+            isActive: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
-
         }),
     },
 
-
-    updateCategoryValidation: {
+    
+    updateFormValidation: {
         body: joi.object().optional().keys({
             nameEn: joi.string().optional().empty().messages({
                 "string.base": "validNameEn",
@@ -91,28 +75,20 @@ module.exports = {
                 "string.empty": "emptyDescriptionAr",
             }),
 
-            type: joi.string().valid("shop", "product", "service").optional().messages({
+            type: joi.string().valid("product", "service").optional().messages({
                 "string.base": "validType",
                 "any.only": "invalidType",
             }),
 
-            image: joi.object().optional().messages({
-                "object.base": "validImage",
+            fields: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validArray",
             }),
 
-            subCategories: joi.array().items(joi.string()).optional().messages({
-                "array.base": "validSubCategoriesArray",
+            categories: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validArray",
             }),
 
-            isSubCategory: joi.boolean().optional().messages({
-                "boolean.base": "validIsSubCategory",
-            }),
-
-            parentCategory: joi.boolean().optional().messages({
-                "boolean.base": "validCategory",
-            }),
-
-            isRequested: joi.boolean().optional().messages({
+            isRequested: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
 
@@ -123,12 +99,10 @@ module.exports = {
             requestDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
             }),
-
-            isActive: joi.boolean().optional().messages({
+            
+            isActive: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
-
         }),
-    }
-
+    },
 };

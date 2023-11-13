@@ -45,14 +45,12 @@ module.exports = {
 
             status: joi.string()
                 .valid("pending", "accepted", "rejected", "in progress", "delivered", "canceled")
-                .default("pending")
                 .messages({
                     "string.base": "validStatus",
                 }),
 
             paymentMethod: joi.string()
                 .valid("cashOnDelivery", "visa", "others")
-                .default("cashOnDelivery")
                 .messages({
                     "string.base": "validPaymentMethod",
                 }),
