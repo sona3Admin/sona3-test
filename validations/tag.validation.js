@@ -3,58 +3,63 @@ const joi = require("joi")
 module.exports = {
 
     createTagValidation: {
-        nameEn: joi.string().required().messages({
-            "string.base": "validNameEn",
-            "any.required": "requiredNameEn",
-        }),
 
-        nameAr: joi.string().required().messages({
-            "string.base": "validNameAr",
-            "any.required": "requiredNameAr",
-        }),
+        body: joi.object().required().keys({
+            nameEn: joi.string().required().messages({
+                "string.base": "validNameEn",
+                "any.required": "requiredNameEn",
+            }),
 
-        isRequested: joi.boolean().optional().default(false).messages({
-            "boolean.base": "validStatus",
-        }),
+            nameAr: joi.string().required().messages({
+                "string.base": "validNameAr",
+                "any.required": "requiredNameAr",
+            }),
 
-        requestedBy: joi.string().optional().messages({
-            "string.base": "validSeller",
-        }),
+            isRequested: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
 
-        requestDate: joi.date().optional().messages({
-            "date.base": "validRequestDate",
-        }),
+            requestedBy: joi.string().optional().messages({
+                "string.base": "validSeller",
+            }),
 
-        isActive: joi.boolean().optional().default(false).messages({
-            "boolean.base": "validStatus",
-        }),
+            requestDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
+            }),
+
+            isActive: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
+        })
     },
 
+
     updateTagValidation: {
-        nameEn: joi.string().optional().empty().messages({
-            "string.base": "validNameEn",
-            "any.empty": "emptyNameEn",
-        }),
+        body: joi.object().required().keys({
 
-        nameAr: joi.string().optional().empty().messages({
-            "string.base": "validNameAr",
-            "any.empty": "emptyNameAr",
-        }),
+            nameEn: joi.string().optional().messages({
+                "string.base": "validNameEn",
+            }),
 
-        isRequested: joi.boolean().optional().default(false).messages({
-            "boolean.base": "validStatus",
-        }),
+            nameAr: joi.string().optional().messages({
+                "string.base": "validNameAr",
+            }),
 
-        requestedBy: joi.string().optional().messages({
-            "string.base": "validSeller",
-        }),
+            isRequested: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
 
-        requestDate: joi.date().optional().messages({
-            "date.base": "validRequestDate",
-        }),
+            requestedBy: joi.string().optional().messages({
+                "string.base": "validSeller",
+            }),
 
-        isActive: joi.boolean().optional().default(false).messages({
-            "boolean.base": "validStatus",
-        }),
+            requestDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
+            }),
+
+            isActive: joi.boolean().optional().default(false).messages({
+                "boolean.base": "validStatus",
+            }),
+        })
     }
 }

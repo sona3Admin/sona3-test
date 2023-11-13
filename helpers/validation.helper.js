@@ -14,7 +14,7 @@ module.exports = (schema) => {
             return next();
         }
         catch (err) {
-            console.log(`err.message`, err.message);
+            console.log(`err.message`, err);
             return res.status(400).json({ success: false, error: req.__("badRequest"), code: 400 });
         }
 
