@@ -68,7 +68,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             .limit(limitNumber)
             .skip((pageNumber - 1) * limitNumber);
 
-        if (!resultArray || resultArray.length == 0) return {
+        if (!resultArray) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")

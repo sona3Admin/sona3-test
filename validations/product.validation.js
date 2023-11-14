@@ -9,12 +9,14 @@ module.exports = {
                 "any.required": "requiredSeller",
             }),
 
-            categories: joi.array().items(joi.string()).optional().messages({
-                "array.base": "validCategoriesArray",
+            shop: joi.string().required().messages({
+                "string.base": "validSeller",
+                "any.required": "requiredSeller",
             }),
 
-            tags: joi.array().items(joi.string()).optional().messages({
-                "array.base": "validTagsArray",
+            form: joi.string().required().messages({
+                "string.base": "validForm",
+                "any.required": "requiredForm",
             }),
 
             nameEn: joi.string().required().messages({
@@ -37,23 +39,25 @@ module.exports = {
                 "any.required": "requiredDescriptionAr",
             }),
 
-            images: joi.array().items(joi.object()).optional().messages({
-                "array.base": "validImagesArray",
+            categories: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validCategoriesArray",
             }),
 
-            salePrice: joi.number().min(0).optional().messages({
-                "number.base": "validSalePrice",
-                "number.min": "minSalePrice",
+            tags: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validTagsArray",
             }),
 
-            originalPrice: joi.number().min(0).optional().messages({
-                "number.base": "validOriginalPrice",
-                "number.min": "minOriginalPrice",
-            }),
-
-            quantity: joi.number().min(0).optional().messages({
+            stock: joi.number().min(0).optional().messages({
                 "number.base": "validQuantity",
                 "number.min": "minQuantity",
+            }),
+
+            variations: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validArray",
+            }),
+
+            defaultVariation: joi.string().optional().messages({
+                "string.base": "validProduct",
             }),
 
             rating: joi.number().min(1).optional().messages({
@@ -67,19 +71,23 @@ module.exports = {
             }),
 
             isTopDeal: joi.boolean().optional().messages({
-                "boolean.base": "validIsTopDeal",
+                "boolean.base": "validStatus",
             }),
 
             isInStock: joi.boolean().optional().messages({
-                "boolean.base": "validIsInStock",
+                "boolean.base": "validStatus",
             }),
 
             isTrending: joi.boolean().optional().messages({
-                "boolean.base": "validIsTrending",
+                "boolean.base": "validStatus",
             }),
 
             isVerified: joi.boolean().optional().messages({
-                "boolean.base": "validIsVerified",
+                "boolean.base": "validStatus",
+            }),
+
+            isActive: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
             }),
 
             creationDate: joi.date().optional().messages({
@@ -90,17 +98,17 @@ module.exports = {
 
 
     updateProductValidation: {
-        body: joi.object().optional().keys({
+        body: joi.object().required().keys({
             seller: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
 
-            categories: joi.array().items(joi.string()).optional().messages({
-                "array.base": "validCategoriesArray",
+            shop: joi.string().optional().messages({
+                "string.base": "validSeller",
             }),
 
-            tags: joi.array().items(joi.string()).optional().messages({
-                "array.base": "validTagsArray",
+            form: joi.string().optional().messages({
+                "string.base": "validForm",
             }),
 
             nameEn: joi.string().optional().messages({
@@ -119,23 +127,25 @@ module.exports = {
                 "string.base": "validDescriptionAr",
             }),
 
-            images: joi.array().items(joi.object()).optional().messages({
-                "array.base": "validImagesArray",
+            categories: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validCategoriesArray",
             }),
 
-            salePrice: joi.number().min(0).optional().messages({
-                "number.base": "validSalePrice",
-                "number.min": "minSalePrice",
+            tags: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validTagsArray",
             }),
 
-            originalPrice: joi.number().min(0).optional().messages({
-                "number.base": "validOriginalPrice",
-                "number.min": "minOriginalPrice",
-            }),
-
-            quantity: joi.number().min(0).optional().messages({
+            stock: joi.number().min(0).optional().messages({
                 "number.base": "validQuantity",
                 "number.min": "minQuantity",
+            }),
+
+            variations: joi.array().items(joi.string()).optional().messages({
+                "array.base": "validArray",
+            }),
+
+            defaultVariation: joi.string().optional().messages({
+                "string.base": "validProduct",
             }),
 
             rating: joi.number().min(1).optional().messages({
@@ -149,26 +159,28 @@ module.exports = {
             }),
 
             isTopDeal: joi.boolean().optional().messages({
-                "boolean.base": "validIsTopDeal",
+                "boolean.base": "validStatus",
             }),
 
             isInStock: joi.boolean().optional().messages({
-                "boolean.base": "validIsInStock",
+                "boolean.base": "validStatus",
             }),
 
             isTrending: joi.boolean().optional().messages({
-                "boolean.base": "validIsTrending",
+                "boolean.base": "validStatus",
             }),
 
             isVerified: joi.boolean().optional().messages({
-                "boolean.base": "validIsVerified",
+                "boolean.base": "validStatus",
+            }),
+
+            isActive: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
             }),
 
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
-
-        }),
+        })
     }
-
 };

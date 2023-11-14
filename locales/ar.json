@@ -13,6 +13,8 @@
 	"incorrectPassword": ".كلمة المرور غير صحيحة",
 	"validSeller": ".يجب إدخال البائع بشكل صحيح",
 	"requiredSeller": ".يجب إدخال البائع",
+	"validForm": ".يجب إدخال الاستمارة بشكل صحيح",
+	"requiredForm": ".يجب إدخال الاستمارة",
 	"validDescription": ".يجب إدخال الوصف بشكل صحيح",
 	"requiredDescription": ".يجب إدخال الوصف",
 	"validImage": ".يجب إدخال صورة صحيحة",

@@ -13,6 +13,8 @@
 	"incorrectPassword": "Incorrect Password.",
 	"validSeller": "Valid seller is required.",
 	"requiredSeller": "Seller is required.",
+	"validForm": "Valid form is required.",
+	"requiredForm": "Form is required.",
 	"validDescription": "Valid description is required.",
 	"requiredDescription": "Description is required.",
 	"validImage": "Valid image is required.",

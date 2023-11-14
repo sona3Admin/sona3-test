@@ -32,9 +32,13 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await productModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "nameEn nameAr images" })
+            .populate({ path: "form" })
+            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
             .populate({ path: "tags", select: "nameEn nameAr" })
+            .populate({ path: "variations" })
+            .populate({ path: "defaultVariation" })
             .select(selectionObject)
 
 
@@ -65,15 +69,19 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         const resultArray = await productModel.find(filterObject).lean()
-            .populate({ path: "seller", select: "nameEn nameAr images" })
+            .populate({ path: "form" })
+            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
             .populate({ path: "tags", select: "nameEn nameAr" })
+            .populate({ path: "variations" })
+            .populate({ path: "defaultVariation" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
             .skip((pageNumber - 1) * limitNumber);
 
-        if (!resultArray || resultArray.length == 0) return {
+        if (!resultArray) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
@@ -203,7 +211,20 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
+        const existingObject = await this.find({ _id });
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        };
 
+        const resultObject = await productModel.findByIdAndUpdate({ _id }, { isActive: false });
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+        
         return {
             success: true,
             code: 200,
