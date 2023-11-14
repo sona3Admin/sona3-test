@@ -25,6 +25,12 @@ let sellerEndPoints = [
 ]
 
 
+let shopEndPoints = [
+    "/admin/shops/list", "/admin/shops/get", "/admin/shops/update", "/admin/shops/remove",
+    "/admin/shops/image", "/admin/shops/cover"
+]
+
+
 let categoryEndPoints = [
     "/admin/categories/create", "/admin/categories/update", "/admin/categories/remove",
     "/admin/categories/list", "/admin/categories/get", "/admin/categories/image"
@@ -60,6 +66,7 @@ roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
 customerEndPoints = new Set(customerEndPoints);
 sellerEndPoints = new Set(sellerEndPoints);
+shopEndPoints = new Set(shopEndPoints);
 categoryEndPoints = new Set(categoryEndPoints);
 tagEndPoints = new Set(tagEndPoints);
 fieldEndPoints = new Set(fieldEndPoints);
@@ -74,6 +81,7 @@ permissions.set("roles", roleEndPoints)
 permissions.set("permissions", permissionEndPoints)
 permissions.set("customers", customerEndPoints)
 permissions.set("sellers", sellerEndPoints)
+permissions.set("shops", shopEndPoints)
 permissions.set("categories", categoryEndPoints)
 permissions.set("tags", tagEndPoints)
 permissions.set("fields", fieldEndPoints)

@@ -2,7 +2,7 @@ const joi = require("joi");
 
 module.exports = {
 
-    createSellerValidation: {
+    createShopValidation: {
         body: joi.object().required().keys({
 
             seller: joi.string().required().messages({
@@ -13,11 +13,6 @@ module.exports = {
             categories: joi.array().required().messages({
                 "string.base": "validCategory",
                 "any.required": "requiredCategory",
-            }),
-
-            tags: joi.array().required().messages({
-                "string.base": "validTag",
-                "any.required": "requiredTag",
             }),
 
             nameEn: joi.string().required().messages({
@@ -87,7 +82,7 @@ module.exports = {
     },
 
 
-    updateSellerValidation: {
+    updateShopValidation: {
         body: joi.object().optional().keys({
 
             seller: joi.string().required().messages({
@@ -100,10 +95,6 @@ module.exports = {
                 "any.required": "requiredCategory",
             }),
 
-            tags: joi.array().required().messages({
-                "string.base": "validTag",
-                "any.required": "requiredTag",
-            }),
             
             nameEn: joi.string().optional().messages({
                 "string.base": "validNameEn",

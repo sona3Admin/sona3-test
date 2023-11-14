@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const shopSchema = mongoose.Schema({
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
-    tags: [{ type: mongoose.Types.ObjectId, ref: "tags" }],
     nameEn: { type: String, required: true },
     nameAr: { type: String, required: true },
     descriptionEn: { type: String, required: true },
@@ -13,7 +12,7 @@ const shopSchema = mongoose.Schema({
     image: { type: Object },
     covers: [{ type: Object }],
     location: {
-        type: "Point",
+        type: { type: String, default: "Point" },
         coordinates: { type: Array, default: [0, 0] }
     },
     address: { type: Object },
@@ -21,7 +20,7 @@ const shopSchema = mongoose.Schema({
     isActive: { type: Boolean, default: true },
     rating: { type: Number, min: 1 },
     reviewCount: { type: Number, min: 0 },
-    joinDate: Date
+    joinDate: { type: Date }
 })
 
 

@@ -12,6 +12,7 @@ const permissionRoutes = require("./permission.route");
 
 const customerRoutes = require("./customer.route");
 const sellerRoutes = require("./seller.route");
+const shopRoutes = require("./shop.route");
 const categoryRoutes = require("./category.route");
 const tagRoutes = require("./tag.route");
 const fieldRoutes = require("./field.route");
@@ -25,6 +26,7 @@ app.use("/permissions", checkToken(allowedUsers), isAuthorized, permissionRoutes
 
 app.use("/customers", checkToken(allowedUsers), isAuthorized, customerRoutes);
 app.use("/sellers", checkToken(allowedUsers), isAuthorized, sellerRoutes);
+app.use("/shops", checkToken(allowedUsers), shopRoutes);
 app.use("/categories", checkToken(allowedUsers), isAuthorized, categoryRoutes);
 app.use("/tags", checkToken(allowedUsers), isAuthorized, tagRoutes);
 app.use("/fields", checkToken(allowedUsers), isAuthorized, fieldRoutes);

@@ -1,12 +1,11 @@
-let bcrypt = require("bcrypt");
 const i18n = require('i18n');
-let sellerModel = require("./customer.model")
-let saltrounds = 5;
+let shopModel = require("./shop.model")
+
 
 
 exports.find = async (filterObject) => {
     try {
-        const resultObject = await sellerModel.findOne(filterObject).lean();
+        const resultObject = await shopModel.findOne(filterObject).lean();
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -33,8 +32,9 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        let resultObject = await sellerModel.findOne(filterObject).lean()
-            .populate({ path: "category", select: "nameEn nameAr image" })
+        let resultObject = await shopModel.findOne(filterObject).lean()
+            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "categories", select: "nameEn nameAr image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -63,8 +63,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
-        let resultArray = await sellerModel.find(filterObject).lean()
-            .populate({ path: "category", select: "nameEn nameAr image" })
+        let resultArray = await shopModel.find(filterObject).lean()
+            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "categories", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -76,7 +77,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             error: i18n.__("notFound")
         }
 
-        let count = await sellerModel.count(filterObject);
+        let count = await shopModel.count(filterObject);
         return {
             success: true,
             code: 200,
@@ -102,7 +103,7 @@ exports.create = async (formObject) => {
         const uniqueObjectResult = await this.isObjectUninque(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
 
-        const resultObject = new sellerModel(formObject);
+        const resultObject = new shopModel(formObject);
         await resultObject.save();
 
         if (!resultObject) return {
@@ -151,7 +152,7 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
-        let resultObject = await sellerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" })
+        let resultObject = await shopModel.findByIdAndUpdate({ _id }, formObject, { new: true })
 
         if (!resultObject) return {
             success: false,
@@ -179,7 +180,7 @@ exports.update = async (_id, formObject) => {
 
 exports.updateDirectly = async (_id, formObject) => {
     try {
-        let resultObject = await sellerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" })
+        let resultObject = await shopModel.findByIdAndUpdate({ _id }, formObject, { new: true })
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -206,6 +207,20 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
+        let existingObject = await this.find({ _id })
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        let resultObject = await shopModel.findByIdAndUpdate({ _id }, { isActive: false })
+
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
 
         return {
             success: true,
@@ -225,95 +240,16 @@ exports.remove = async (_id) => {
 }
 
 
-exports.comparePassword = async (emailString, passwordString) => {
-    try {
-        emailString = emailString.toLowerCase()
-        let existingObject = await this.find({ email: emailString })
-
-        if (!existingObject.success) return {
-            success: false,
-            code: 404,
-            error: i18n.__("notFound")
-        }
-
-        let matchingPasswords = await bcrypt.compare(passwordString, existingObject.result.password)
-        if (!matchingPasswords) return {
-            success: false,
-            code: 409,
-            error: i18n.__("incorrectPassword")
-        };
-
-        return {
-            success: true,
-            result: existingObject.result,
-            code: 200
-        };
-
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-}
-
-
-exports.resetPassword = async (emailString, newPasswordString) => {
-    try {
-        emailString = emailString.toLowerCase()
-        let existingObject = await this.find({ email: emailString })
-
-        if (!existingObject.success) return {
-            success: false,
-            code: 404,
-            error: i18n.__("notFound")
-        }
-
-        let hashedPassword = await bcrypt.hash(newPasswordString, saltrounds)
-        let resultObject = await sellerModel.findOneAndUpdate({ email: emailString }, { password: hashedPassword })
-
-        if (!resultObject) return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        }
-
-        return {
-            success: true,
-            code: 200,
-            result: { message: i18n.__("successfulOperation") }
-        };
-
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-}
-
-
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
+        seller: formObject.seller,
         $or: [
-            { email: formObject.email },
             { nameEn: formObject.nameEn },
             { nameAr: formObject.nameAr },
         ]
     })
 
     if (duplicateObject.success) {
-        if (duplicateObject.result.email == formObject.email) return {
-            success: false,
-            code: 409,
-            error: i18n.__("emailUsed")
-        }
 
         if (duplicateObject.result.nameEn == formObject.nameEn || duplicateObject.result.nameAr == formObject.nameAr) return {
             success: false,
@@ -329,28 +265,10 @@ exports.isObjectUninque = async (formObject) => {
 }
 
 
-exports.isEmailUnique = async (formObject, existingObject) => {
-
-    if (formObject.email !== existingObject.result.email) {
-        const duplicateObject = await this.find({ email: formObject.email })
-        if (duplicateObject.success &&
-            duplicateObject.result._id.toString() !== existingObject.result._id.toString()) return {
-                success: false,
-                code: 409,
-                error: i18n.__("emailUsed")
-            }
-    }
-    return {
-        success: true,
-        code: 200
-    }
-
-}
-
-
 exports.isNameUnique = async (formObject, existingObject) => {
 
     const duplicateObject = await this.find({
+        seller: formObject.seller,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     });
 
@@ -359,7 +277,7 @@ exports.isNameUnique = async (formObject, existingObject) => {
         return {
             success: false,
             code: 409,
-            error: i18n.__("emailUsed")
+            error: i18n.__("nameUsed")
         }
     }
 
@@ -371,7 +289,6 @@ exports.isNameUnique = async (formObject, existingObject) => {
 
 
 exports.convertToLowerCase = (formObject) => {
-    if (formObject.email) formObject.email = formObject.email.toLowerCase()
     if (formObject.nameEn) formObject.nameEn = formObject.nameEn.toLowerCase()
     return formObject
 }

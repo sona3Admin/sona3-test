@@ -91,7 +91,14 @@ exports.updateAdminRole = async (req, res) => {
 
 exports.removeAdmin = async (req, res) => {
     try {
-        const operationResultObject = await adminRepo.remove(req.query._id);
+        let existingObject = await adminRepo.get({ _id: req.query._id }, { password: 0 })
+        if (req.tokenData.type == "admin" && existingObject.result.type == "superAdmin") return res.status(403).json({
+            success: false,
+            code: 403,
+            error: i18n.__("unauthorized")
+        });
+
+        const operationResultObject = await adminRepo.remove(existingObject.result._id);
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);

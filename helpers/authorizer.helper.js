@@ -79,8 +79,14 @@ exports.isAuthorized = (req, res, next) => {
 }
 
 
-exports.checkIdentity = (req, res, next) => {
-    let requesterId = req.query._id || req.body._id
-    if (requesterId != req.tokenData._id) return res.status(403).json({ success: false, error: i18n.__("unauthorized"), code: 403 })
-    return next()
-}
+exports.checkIdentity = (idKey) => {
+    return (req, res, next) => {
+        let keyToCheck = idKey || "_id";
+        let requesterId = req.query[keyToCheck] || req.body[keyToCheck];
+
+        if (!req.tokenData || !req.tokenData._id || requesterId !== req.tokenData._id) return res.status(403).json({ success: false, error: i18n.__("unauthorized"), code: 403 });
+        return next();
+    };
+};
+
+
