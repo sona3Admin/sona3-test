@@ -22,7 +22,8 @@ exports.createForm = async (req, res) => {
 exports.listForms = async (req, res) => {
     try {
         const filterObject = req.query;
-        filterObject["isActive"] = true
+        // filterObject["isActive"] = true
+        // filterObject["isVerified"] = true
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
         const operationResultObject = await formRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
@@ -41,7 +42,8 @@ exports.listForms = async (req, res) => {
 exports.getForm = async (req, res) => {
     try {
         const filterObject = req.query;
-        filterObject["isActive"] = true
+        // filterObject["isActive"] = true
+        // filterObject["isVerified"] = true
         const operationResultObject = await formRepo.get(filterObject, {});
         return res.status(operationResultObject.code).json(operationResultObject);
 

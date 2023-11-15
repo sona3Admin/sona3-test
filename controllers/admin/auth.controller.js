@@ -9,6 +9,8 @@ exports.login = async (req, res) => {
         const operationResultObject = await adminRepo.comparePassword(email, password);
 
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+        if (!operationResultObject.result.isActive)
+            return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized") })
 
         payloadObject = {
             _id: operationResultObject.result._id,
@@ -18,7 +20,7 @@ exports.login = async (req, res) => {
             type: operationResultObject.result.type,
         }
         const token = jwtHelper.generateToken(payloadObject, "1d")
-        if(operationResultObject.result.type == "admin") await adminRepo.updateDirectly(operationResultObject.result._id, { token })
+        if (operationResultObject.result.type == "admin") await adminRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 
