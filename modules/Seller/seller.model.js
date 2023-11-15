@@ -13,8 +13,9 @@ const sellerSchema = mongoose.Schema({
         coordinates: { type: Array, default: [0, 0] }
     },
     address: { type: Object },
+    isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    joinDate: Date
+    joinDate: { type: Date }
 })
 
 sellerSchema.pre("save", async function (next) {

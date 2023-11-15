@@ -9,6 +9,7 @@
 	"recordDeleted": ".تم الحذف بنجاح",
 	"emailUsed": ".هذا البريد الالكتروني مستخدم بالفعل",
 	"nameUsed": ".هذا الاسم مستخدم بالفعل",
+	"variationExists": "هذه التشكيلة موجودة بالفعل",
 	"successfulOperation": ".تمت العملية بنجاح",
 	"incorrectPassword": ".كلمة المرور غير صحيحة",
 	"validSeller": ".يجب إدخال البائع بشكل صحيح",

@@ -32,7 +32,6 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await productModel.findOne(filterObject).lean()
-            .populate({ path: "form" })
             .populate({ path: "seller", select: "nameEn nameAr image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
@@ -69,7 +68,6 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         const resultArray = await productModel.find(filterObject).lean()
-            .populate({ path: "form" })
             .populate({ path: "seller", select: "nameEn nameAr image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })

@@ -9,6 +9,7 @@
 	"recordDeleted": "Deleted Successfully.",
 	"emailUsed": "This Email is Already Used.",
 	"nameUsed": "This Name is Already Used.",
+	"variationExists": "This variation already exists",
 	"successfulOperation": "Operation Finshed Successfully.",
 	"incorrectPassword": "Incorrect Password.",
 	"validSeller": "Valid seller is required.",

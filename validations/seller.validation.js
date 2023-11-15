@@ -45,6 +45,9 @@ module.exports = {
                 "object.base": "validAddress",
             }),
 
+            isVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
@@ -97,6 +100,9 @@ module.exports = {
                 "object.base": "validAddress",
             }),
 
+            isVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",

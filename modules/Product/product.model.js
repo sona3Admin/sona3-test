@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const productSchema = mongoose.Schema({
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     shop: { type: mongoose.Types.ObjectId, ref: "shops" },
-    form: { type: mongoose.Types.ObjectId, ref: "forms" },
     nameEn: { type: String, required: true },
     nameAr: { type: String, required: true },
     descriptionEn: { type: String, required: true },

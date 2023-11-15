@@ -14,10 +14,6 @@ module.exports = {
                 "any.required": "requiredSeller",
             }),
 
-            form: joi.string().required().messages({
-                "string.base": "validForm",
-                "any.required": "requiredForm",
-            }),
 
             nameEn: joi.string().required().messages({
                 "string.base": "validNameEn",
@@ -105,10 +101,6 @@ module.exports = {
 
             shop: joi.string().optional().messages({
                 "string.base": "validSeller",
-            }),
-
-            form: joi.string().optional().messages({
-                "string.base": "validForm",
             }),
 
             nameEn: joi.string().optional().messages({
