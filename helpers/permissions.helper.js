@@ -61,6 +61,18 @@ let productEndPoints = [
 ]
 
 
+let variationEndPoints = [
+    "/admin/variations/create", "/admin/variations/update", "/admin/variations/remove",
+    "/admin/variations/list", "/admin/variations/get", "/admin/variations/image"
+]
+
+
+let serviceEndPoints = [
+    "/admin/services/create", "/admin/services/update", "/admin/services/remove",
+    "/admin/services/list", "/admin/services/get", "/admin/services/image"
+]
+
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -72,6 +84,8 @@ tagEndPoints = new Set(tagEndPoints);
 fieldEndPoints = new Set(fieldEndPoints);
 formEndPoints = new Set(formEndPoints);
 productEndPoints = new Set(productEndPoints);
+variationEndPoints = new Set(variationEndPoints);
+serviceEndPoints = new Set(serviceEndPoints);
 
 
 let permissions = new Map();
@@ -87,6 +101,8 @@ permissions.set("tags", tagEndPoints)
 permissions.set("fields", fieldEndPoints)
 permissions.set("forms", formEndPoints)
 permissions.set("products", productEndPoints)
+permissions.set("variations", variationEndPoints)
+permissions.set("services", serviceEndPoints)
 
 
 module.exports = { permissions }

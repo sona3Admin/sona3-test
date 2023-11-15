@@ -6,6 +6,7 @@ const tagSchema = mongoose.Schema({
     isRequested: { type: Boolean, default: false },
     requestedBy: { type: mongoose.Types.ObjectId, ref: "shops" },
     requestDate: { type: Date },
+    isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }
 })
 

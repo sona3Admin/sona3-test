@@ -15,7 +15,8 @@ const variationSchema = mongoose.Schema({
     quantity: { type: Number, min: 0 },
     price: { type: Number, min: 0 },
     originalPrice: { type: Number, min: 0 },
-    isDefault: { type: Boolean, default: false }
+    isDefault: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true }
 })
 
 

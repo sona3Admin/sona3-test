@@ -93,6 +93,11 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
+
+        formObject = this.convertToLowerCase(formObject)
+        const uniqueObjectResult = await this.isObjectUninque(formObject);
+        if (!uniqueObjectResult.success) return uniqueObjectResult
+
         const resultObject = new roleModel(formObject);
         await resultObject.save();
 
@@ -127,6 +132,12 @@ exports.update = async (_id, formObject) => {
             success: false,
             code: 404,
             error: i18n.__("notFound")
+        }
+
+        if (formObject.name) {
+            formObject.name = formObject.name ? formObject.name : existingObject.result.name;
+            const uniqueObjectResult = await this.isNameUnique(formObject, existingObject)
+            if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
         const resultObject = await roleModel.findByIdAndUpdate({ _id }, formObject, { new: true })
@@ -207,4 +218,47 @@ exports.remove = async (_id) => {
         };
     }
 
+}
+
+
+
+exports.isObjectUninque = async (formObject) => {
+    const duplicateObject = await this.find({ name: formObject.name, })
+
+    if (duplicateObject.success) return {
+        success: false,
+        code: 409,
+        error: i18n.__("nameUsed")
+    }
+
+    return {
+        success: true,
+        code: 200
+    }
+}
+
+
+exports.isNameUnique = async (formObject, existingObject) => {
+
+    const duplicateObject = await this.find({ name: formObject.name });
+
+    if (duplicateObject.success &&
+        duplicateObject.result._id.toString() !== existingObject.result._id.toString()) {
+        return {
+            success: false,
+            code: 409,
+            error: i18n.__("nameUsed")
+        }
+    }
+
+    return {
+        success: true,
+        code: 200,
+    }
+}
+
+
+exports.convertToLowerCase = (formObject) => {
+    if (formObject.nameEn) formObject.nameEn = formObject.nameEn.toLowerCase()
+    return formObject
 }

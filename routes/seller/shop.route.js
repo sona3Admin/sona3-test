@@ -17,7 +17,7 @@ app.delete("/remove", checkIdentity("seller"), shopController.removeShop);
 app.post("/image", checkIdentity("seller"), uploadedFiles.array('image', 1), shopController.uploadImage)
 app.delete("/image", checkIdentity("seller"), shopController.deleteImage)
 
-app.post("/cover", checkIdentity("seller"), uploadedFiles.array('cover', 10), shopController.uploadCovers)
+app.post("/cover", checkIdentity("seller"), uploadedFiles.array('covers', 10), shopController.uploadCovers)
 app.delete("/cover", checkIdentity("seller"), shopController.deleteCovers)
 
 

@@ -46,6 +46,10 @@ module.exports = {
                 "date.base": "validRequestDate",
             }),
 
+            isVerified: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+            
             isActive: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
@@ -98,6 +102,10 @@ module.exports = {
 
             requestDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
+            }),
+            
+            isVerified: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
             }),
             
             isActive: joi.boolean().messages({

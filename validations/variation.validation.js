@@ -62,6 +62,10 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+            isActive: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            })
+
         }),
     },
 
@@ -121,6 +125,10 @@ module.exports = {
             isDefault: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
+
+            isActive: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            })
 
         }),
     }

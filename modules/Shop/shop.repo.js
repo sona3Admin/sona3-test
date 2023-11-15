@@ -33,7 +33,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await shopModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "seller", select: "userName image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
             .select(selectionObject)
 

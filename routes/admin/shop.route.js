@@ -16,7 +16,7 @@ app.get("/list", shopController.listShops);
 app.post("/image", uploadedFiles.array('image', 1), shopController.uploadImage)
 app.delete("/image", shopController.deleteImage)
 
-app.post("/cover", uploadedFiles.array('cover', 10), shopController.uploadCovers)
+app.post("/cover", uploadedFiles.array('covers', 10), shopController.uploadCovers)
 app.delete("/cover", shopController.deleteCovers)
 
 

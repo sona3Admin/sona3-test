@@ -32,7 +32,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await productModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
             .populate({ path: "tags", select: "nameEn nameAr" })
@@ -68,7 +68,7 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
         const resultArray = await productModel.find(filterObject).lean()
-            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
             .populate({ path: "tags", select: "nameEn nameAr" })
@@ -154,7 +154,7 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
-        const resultObject = await productModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" });
+        const resultObject = await productModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
         if (!resultObject) return {
             success: false,
@@ -182,7 +182,7 @@ exports.update = async (_id, formObject) => {
 
 exports.updateDirectly = async (_id, formObject) => {
     try {
-        const resultObject = await productModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" })
+        const resultObject = await productModel.findByIdAndUpdate({ _id }, formObject, { new: true })
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -244,7 +244,7 @@ exports.remove = async (_id) => {
 
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
-        seller: formObject.seller,
+        shop: formObject.shop,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     })
 
@@ -267,7 +267,7 @@ exports.isObjectUninque = async (formObject) => {
 exports.isNameUnique = async (formObject, existingObject) => {
 
     const duplicateObject = await this.find({
-        seller: formObject.seller,
+        shop: formObject.shop,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     });
 

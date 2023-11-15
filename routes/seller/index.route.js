@@ -11,6 +11,9 @@ const categoryRoutes = require("./category.route");
 const tagRoutes = require("./tag.route");
 const fieldRoutes = require("./field.route");
 const formRoutes = require("./form.route");
+const productRoutes = require("./product.route");
+const variationRoutes = require("./variation.route");
+const serviceRoutes = require("./service.route");
 
 
 app.use(authRoutes)
@@ -20,6 +23,9 @@ app.use("/categories", checkToken(allowedUsers), categoryRoutes);
 app.use("/tags", checkToken(allowedUsers), tagRoutes);
 app.use("/fields", checkToken(allowedUsers), fieldRoutes);
 app.use("/forms", checkToken(allowedUsers), formRoutes);
+app.use("/products", checkToken(allowedUsers), productRoutes);
+app.use("/variations", checkToken(allowedUsers), variationRoutes);
+app.use("/services", checkToken(allowedUsers), serviceRoutes);
 
 
 
