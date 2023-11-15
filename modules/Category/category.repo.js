@@ -34,7 +34,7 @@ exports.get = async (filterObject, selectionObject) => {
         const resultObject = await categoryModel.findOne(filterObject).lean()
             .populate({ path: "subCategories", select: "nameEn nameAr image" })
             .populate({ path: "parentCategory", select: "nameEn nameAr image" })
-            .populate({ path: "requestedBy", select: "nameEn nameAr image" })
+            .populate({ path: "requestedBy", select: "userName image" })
             .select(selectionObject)
 
 
@@ -67,7 +67,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await categoryModel.find(filterObject).lean()
             .populate({ path: "subCategories", select: "nameEn nameAr image" })
             .populate({ path: "parentCategory", select: "nameEn nameAr image" })
-            .populate({ path: "requestedBy", select: "nameEn nameAr image" })
+            .populate({ path: "requestedBy", select: "userName image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

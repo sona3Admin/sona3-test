@@ -9,7 +9,7 @@ const formSchema = mongoose.Schema({
     fields: [{ type: mongoose.Types.ObjectId, ref: "fields" }],
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     isRequested: { type: Boolean, default: false },
-    requestedBy: { type: mongoose.Types.ObjectId, ref: "shops" },
+    requestedBy: { type: mongoose.Types.ObjectId, ref: "sellers" },
     requestDate: { type: Date, default: Date.now() },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }

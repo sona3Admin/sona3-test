@@ -5,6 +5,11 @@ module.exports = {
     createVariationValidation: {
         body: joi.object().required().keys({
             
+            seller: joi.string().required().messages({
+                "string.base": "validSeller",
+                "any.required": "requiredSeller",
+            }),
+
             shop: joi.string().required().messages({
                 "string.base": "validSeller",
                 "any.required": "requiredSeller",
@@ -73,6 +78,10 @@ module.exports = {
     updateVariationValidation: {
         body: joi.object().required().keys({
             
+            seller: joi.string().required().messages({
+                "string.base": "validSeller",
+            }),
+
             shop: joi.string().messages({
                 "string.base": "validSeller",
             }),

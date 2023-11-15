@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const variationSchema = mongoose.Schema({
+    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     shop: { type: mongoose.Types.ObjectId, ref: "shops" },
     product: { type: mongoose.Types.ObjectId, ref: "products" },
     descriptionEn: { type: String },

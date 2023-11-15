@@ -11,7 +11,7 @@ const productSchema = mongoose.Schema({
     tags: [{ type: mongoose.Types.ObjectId, ref: "tags" }],
     stock: { type: Number, min: 0 },
     variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
-    defaultVariation: {type: mongoose.Types.ObjectId, ref: "variations"},
+    defaultVariation: { type: mongoose.Types.ObjectId, ref: "variations" },
     rating: { type: Number, min: 1 },
     reviewCount: { type: Number, min: 0 },
     isTopDeal: { type: Boolean, default: false },

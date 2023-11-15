@@ -4,16 +4,17 @@ const { updateCustomerValidation, resetPasswordValidation } = require("../../val
 const validator = require("../../helpers/validation.helper")
 const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
 const uploadedFiles = uploadImagesToMemory()
+const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
-app.put("/update", validator(updateCustomerValidation), customerController.updateCustomer);
-app.put("/password", validator(resetPasswordValidation), customerController.resetPassword);
-app.delete("/remove", customerController.removeCustomer);
+app.put("/update", checkIdentity("customer"), validator(updateCustomerValidation), customerController.updateCustomer);
+app.put("/password", checkIdentity("customer"), validator(resetPasswordValidation), customerController.resetPassword);
+app.delete("/remove", checkIdentity("customer"), customerController.removeCustomer);
 
-app.get("/get", customerController.getCustomer);
+app.get("/get", checkIdentity("customer"), customerController.getCustomer);
 
-app.post("/image", uploadedFiles.array('image', 1), customerController.uploadImage)
-app.delete("/image", customerController.deleteImage)
+app.post("/image", checkIdentity("customer"), uploadedFiles.array('image', 1), customerController.uploadImage)
+app.delete("/image", checkIdentity("customer"), customerController.deleteImage)
 
 
 module.exports = app
