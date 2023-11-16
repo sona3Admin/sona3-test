@@ -3,7 +3,7 @@ const uuid = require("uuid").v4
 const s3 = new AWS.S3();
 process.env.AWS_ACCESS_KEY_ID = process.env.BUCKETEER_AWS_ACCESS_KEY_ID;
 process.env.AWS_SECRET_ACCESS_KEY = process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY;
-process.env.AWS_REGION = 'us-east-1';
+process.env.AWS_REGION = process.env.BUCKETEER_AWS_REGION;
 
 
 exports.uploadFilesToS3 = async (folderName, files) => {
