@@ -1,6 +1,8 @@
 const i18n = require('i18n');
 const socketLocales = {};
 const { adminSocketHandler } = require("../sockets/admin/admin.socket")
+const { customerSocketHandler } = require("../sockets/customer/customer.socket")
+const { sellerSocketHandler } = require("../sockets/seller/seller.socket")
 
 
 exports.serverSocketHandler = (socket, io) => {
@@ -20,6 +22,8 @@ exports.serverSocketHandler = (socket, io) => {
 
 
         adminSocketHandler(socket, io, socketId, localeMessages);
+        customerSocketHandler(socket, io, socketId, localeMessages);
+        sellerSocketHandler(socket, io, socketId, localeMessages);
 
 
         socket.on('disconnect', () => {
