@@ -111,6 +111,7 @@
 	"validPermissionsObject": ".يجب إدخال الصلاحيات بشكل صحيح",
 	"requiredPermissionsObject": ".يجب إدخال الصلاحيات",
 	"validArray": ".يجب إدخال قائمة صحيحة",
+	"validSession": "يجب إدخال سيشن بشكل صحيح",
 	"invalidValue": ".يجب إدخال قيمة صحيحة",
 	"limitExceeded": ".تم تجاوز الحد الأقصى لعدد الملفات"
 

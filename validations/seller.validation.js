@@ -53,6 +53,10 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+            session: joi.object().optional().messages({
+                "object.base": "validSession",
+            }),
+
 
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
@@ -106,6 +110,10 @@ module.exports = {
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
+            }),
+
+            session: joi.object().optional().messages({
+                "object.base": "validSession",
             }),
 
 

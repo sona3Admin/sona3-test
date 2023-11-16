@@ -15,7 +15,10 @@ const sellerSchema = mongoose.Schema({
     address: { type: Object },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    joinDate: { type: Date }
+    joinDate: { type: Date },
+    token: { type: String },
+    session: { type: Object }
+
 })
 
 sellerSchema.pre("save", async function (next) {

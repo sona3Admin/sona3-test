@@ -14,6 +14,7 @@ const adminSchema = mongoose.Schema({
         default: "admin"
     },
     token: { type: String },
+    session: { type: Object },
     isActive: { type: Boolean, default: true }
 })
 

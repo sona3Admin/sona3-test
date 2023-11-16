@@ -15,7 +15,9 @@ const customerSchema = mongoose.Schema({
     address: { type: Object },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    joinDate: { type: Date }
+    joinDate: { type: Date },
+    token: { type: String },
+    session: { type: Object }
 })
 
 customerSchema.pre("save", async function (next) {

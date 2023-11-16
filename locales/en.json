@@ -111,6 +111,7 @@
 	"validPermissionsObject": "Valid permissions are required",
 	"requiredPermissionsObject": "Permissions are required.",
 	"validArray": "Valid array is required.",
+	"validSession": "Valid Session is required.",
 	"invalidValue": "Valid value is required.",
 	"limitExceeded": "Number of files exceeded the limit"
 }

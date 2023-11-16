@@ -41,6 +41,7 @@ exports.listSellers = async (req, res) => {
 
 exports.updateSeller = async (req, res) => {
     try {
+        req.body["$unset"] = { token: 1 }
         const operationResultObject = await sellerRepo.update(req.query._id, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 

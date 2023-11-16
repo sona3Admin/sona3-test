@@ -40,6 +40,7 @@ exports.listCustomers = async (req, res) => {
 
 exports.updateCustomer = async (req, res) => {
     try {
+        req.body["$unset"] = { token: 1 }
         const operationResultObject = await customerRepo.update(req.query._id, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 

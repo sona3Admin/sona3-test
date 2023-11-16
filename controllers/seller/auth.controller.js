@@ -39,7 +39,8 @@ exports.login = async (req, res) => {
             role: "seller"
         }
 
-        const token = jwtHelper.generateToken(payloadObject, "30d")
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        await sellerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 
