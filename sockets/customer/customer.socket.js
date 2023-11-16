@@ -4,11 +4,11 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages) => {
 
     socket.on("joinCustomerRoom", (dataObject, sendAck) => {
         try {
-            socket.join(dataObject.roleId);
+            socket.join(dataObject.customerId);
             return sendAck({
                 success: true,
                 code: 200,
-                result: { roomId: dataObject.roleId }
+                result: { roomId: dataObject.customerId }
             })
 
         } catch (err) {
@@ -26,7 +26,7 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages) => {
 
     socket.on("revokeCustomerAccess", (dataObject, sendAck) => {
         try {
-            let targetRoom = dataObject.roleId
+            let targetRoom = dataObject.customerId
             io.to(targetRoom).emit("forceLogout");
             return sendAck({
                 success: true,
