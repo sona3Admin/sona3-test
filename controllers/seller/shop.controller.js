@@ -89,7 +89,7 @@ exports.removeShop = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
-        const existingObject = await shopRepo.get({ _id: req.query._id }, { image: 1 })
+        const existingObject = await shopRepo.find({ _id: req.query._id })
         let oldImageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
 
         if (oldImageObject) await batchRepo.create({ filesToDelete: [oldImageObject.key] })
@@ -111,7 +111,7 @@ exports.uploadImage = async (req, res) => {
 
 exports.deleteImage = async (req, res) => {
     try {
-        const existingObject = await shopRepo.get({ _id: req.query._id }, { image: 1 })
+        const existingObject = await shopRepo.find({ _id: req.query._id })
         let imageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
         if (imageObject) await batchRepo.create({ filesToDelete: [imageObject.key] })
         const operationResultObject = await shopRepo.updateDirectly(req.query._id, { $unset: { image: 1 } });
@@ -130,10 +130,9 @@ exports.deleteImage = async (req, res) => {
 
 exports.uploadCovers = async (req, res) => {
     try {
-        const existingObject = await shopRepo.get({ _id: req.query._id }, { covers: 1 })
+        const existingObject = await shopRepo.find({ _id: req.query._id })
         let coversArray = (existingObject.success && existingObject.result.covers) ? (existingObject.result.covers) : 0
         let numberOfCovers = coversArray.length + req.files.length
-
         if (numberOfCovers > 10) return res.status(409).json({
             success: false,
             code: 409,
@@ -141,10 +140,10 @@ exports.uploadCovers = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("shopCovers", req.files)
-        operationResultArray.map((cover) => {
-            coversArray.push(cover)
+        coversArray = Array.from(coversArray)
+        coversArray.map((cover) => {
+            operationResultArray.push(cover)
         });
-
         let operationResultObject = await shopRepo.updateDirectly(req.query._id, { covers: operationResultArray });
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -163,14 +162,13 @@ exports.deleteCovers = async (req, res) => {
     try {
         let coversToDelete = req.body.keys
         let operationResultObject
-        const existingObject = await shopRepo.get({ _id: req.query._id }, { covers: 1 })
-        if (!existingObject.success) return res.status(result.code).json({ success: result.success, code: result.code });
+        const existingObject = await shopRepo.find({ _id: req.query._id })
+        if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
 
-        await coversToDelete.map((pathToFile) => {
-            operationResultObject = shopRepo.updateDirectly(req.query._id, { $pull: { covers: { key: pathToFile } } });
+        await coversToDelete.map(async (pathToFile) => {
+            operationResultObject = await shopRepo.updateDirectly(req.query._id, { $pull: { covers: { key: pathToFile } } });
         });
-
         await batchRepo.create({ filesToDelete: coversToDelete })
         return res.status(operationResultObject.code).json(operationResultObject);
 

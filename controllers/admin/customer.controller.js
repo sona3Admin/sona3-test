@@ -71,7 +71,7 @@ exports.removeCustomer = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
-        const existingObject = await customerRepo.get({ _id: req.query._id }, { image: 1 })
+        const existingObject = await customerRepo.find({ _id: req.query._id })
         let oldImageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
 
         if (oldImageObject) await batchRepo.create({ filesToDelete: [oldImageObject.key] })
@@ -93,7 +93,7 @@ exports.uploadImage = async (req, res) => {
 
 exports.deleteImage = async (req, res) => {
     try {
-        const existingObject = await customerRepo.get({ _id: req.query._id }, { image: 1 })
+        const existingObject = await customerRepo.find({ _id: req.query._id })
         let imageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
         if (imageObject) await batchRepo.create({ filesToDelete: [imageObject.key] })
         const operationResultObject = await customerRepo.updateDirectly(req.query._id, { $unset: { image: 1 } });

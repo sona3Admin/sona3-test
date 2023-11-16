@@ -89,10 +89,9 @@ exports.removeVariation = async (req, res) => {
 
 exports.uploadImages = async (req, res) => {
     try {
-        const existingObject = await variationRepo.get({ _id: req.query._id }, { images: 1 })
+        const existingObject = await variationRepo.find({ _id: req.query._id })
         let imagesArray = (existingObject.success && existingObject.result.images) ? (existingObject.result.images) : 0
         let numberOfImages = imagesArray.length + req.files.length
-
         if (numberOfImages > 10) return res.status(409).json({
             success: false,
             code: 409,
@@ -100,10 +99,10 @@ exports.uploadImages = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("variations", req.files)
-        operationResultArray.map((image) => {
-            imagesArray.push(image)
+        imagesArray = Array.from(imagesArray)
+        imagesArray.map((cover) => {
+            operationResultArray.push(cover)
         });
-
         let operationResultObject = await variationRepo.updateDirectly(req.query._id, { images: operationResultArray });
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -122,14 +121,13 @@ exports.deleteImages = async (req, res) => {
     try {
         let imagesToDelete = req.body.keys
         let operationResultObject
-        const existingObject = await variationRepo.get({ _id: req.query._id }, { images: 1 })
-        if (!existingObject.success) return res.status(result.code).json({ success: result.success, code: result.code });
+        const existingObject = await variationRepo.find({ _id: req.query._id })
+        if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
 
-        await imagesToDelete.map((pathToFile) => {
-            operationResultObject = variationRepo.updateDirectly(req.query._id, { $pull: { images: { key: pathToFile } } });
+        await imagesToDelete.map(async (pathToFile) => {
+            operationResultObject = await variationRepo.updateDirectly(req.query._id, { $pull: { images: { key: pathToFile } } });
         });
-
         await batchRepo.create({ filesToDelete: imagesToDelete })
         return res.status(operationResultObject.code).json(operationResultObject);
 
