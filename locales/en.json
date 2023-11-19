@@ -113,5 +113,9 @@
 	"validArray": "Valid array is required.",
 	"validSession": "Valid Session is required.",
 	"invalidValue": "Valid value is required.",
-	"limitExceeded": "Number of files exceeded the limit"
+	"limitExceeded": "Number of files exceeded the limit",
+	"\"isVerfied\" is not allowed": "\"isVerfied\" is not allowed",
+	"\"__v\" is not allowed": "\"__v\" is not allowed",
+	"\"isVerified\" is not allowed": "\"isVerified\" is not allowed",
+	"\"seller\" is required": "\"seller\" is required"
 }

@@ -78,7 +78,7 @@ module.exports = {
     updateVariationValidation: {
         body: joi.object().required().keys({
             
-            seller: joi.string().required().messages({
+            seller: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
 

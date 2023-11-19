@@ -18,6 +18,7 @@ let schema = {
     password: '123',
     phone: 'phone',
     address: 'string',
+    isActive: true, isVerified: true
 };
 
 beforeEach(() => {
@@ -97,7 +98,7 @@ describe('=====>Testing Customer Module Endpoints <=====', () => {
         const response = await request(app)
             .get(`${baseUrl}/get?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
-
+        console.log(`response.body`, response.body);
         expect(response.status).toBe(200);
     });
 

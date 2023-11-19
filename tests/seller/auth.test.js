@@ -18,6 +18,7 @@ let schema = {
     password: '123',
     phone: 'phone',
     address: 'string',
+    isActive: true, isVerified: true
 };
 
 

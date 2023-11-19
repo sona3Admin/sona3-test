@@ -7,6 +7,7 @@ const saltrounds = 5;
 exports.find = async (filterObject) => {
     try {
         const resultObject = await adminModel.findOne(filterObject).lean();
+
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -227,7 +228,6 @@ exports.updateMany = async (filterObject, formObject) => {
 exports.remove = async (_id) => {
     try {
         const resultObject = await adminModel.findByIdAndDelete({ _id })
-
         if (!resultObject) return {
             success: false,
             code: 404,

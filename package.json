@@ -7,7 +7,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "testAll": "jest",
+    "test": "jest",
     "testAdminApp": "jest tests/admin/*.jest.js",
     "testCustomerApp": "jest tests/customer/*.jest.js",
     "testSellerApp": "jest tests/seller/*.jest.js",

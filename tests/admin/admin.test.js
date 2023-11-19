@@ -260,6 +260,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
             .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
+            console.log(response.body);
         expect(response.status).toBe(404);
     });
 

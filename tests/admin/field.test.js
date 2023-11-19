@@ -18,18 +18,18 @@ let schema = {
     nameAr: 'string',
     descriptionEn: "string",
     descriptionAr: "string",
-    type: chooseRandomEnumValue(["shop", "product", "service"]),
-    isSubCategory: "boolean",
+    isRequired: "boolean",
     isVerified: true,
     isActive: true
 };
+
 
 beforeEach(() => {
     mongoDB.connect();
 });
 
 
-describe('=====>Testing Category Module Endpoints <=====', () => {
+describe('=====>Testing Field Module Endpoints <=====', () => {
 
 
     it('should authenticate a super admin and return a token endpoint => /api/v1/admin/login', async () => {
@@ -50,13 +50,13 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
     });
 
 
-    it('should create a new category | endpoint => /api/v1/admin/categories/create', async () => {
-        const categoryData = generateDummyDataFromSchema(schema)
-
+    it('should create a new field | endpoint => /api/v1/admin/fields/create', async () => {
+        let fieldData = generateDummyDataFromSchema(schema)
+        fieldData.type = chooseRandomEnumValue(["enum", "string", "number"])
         const response = await request(app)
-            .post(`${baseUrl}/categories/create`)
+            .post(`${baseUrl}/fields/create`)
             .set(requestHeaders)
-            .send(categoryData);
+            .send(fieldData);
 
         expect(response.status).toBe(201);
         createdRecordObject = response.body.result
@@ -64,52 +64,56 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for duplicate names | endpoint => /api/v1/admin/categories/create', async () => {
-        let categoryData = generateDummyDataFromSchema(schema)
-        categoryData.nameEn = createdRecordObject.nameEn;
-        categoryData.nameAr = createdRecordObject.nameAr
+    it('should return an error for duplicate names | endpoint => /api/v1/admin/fields/create', async () => {
+        let fieldData = generateDummyDataFromSchema(schema)
+        fieldData.nameEn = createdRecordObject.nameEn;
+        fieldData.nameAr = createdRecordObject.nameAr
+        fieldData.type = chooseRandomEnumValue(["enum", "string", "number"])
+
         const response = await request(app)
-            .post(`${baseUrl}/categories/create`)
+            .post(`${baseUrl}/fields/create`)
             .set(requestHeaders)
-            .send(categoryData);
+            .send(fieldData);
 
         expect(response.status).toBe(409);
     });
 
 
-    it('should get a specific category | endpoint => /api/v1/admin/categories/get', async () => {
+    it('should get a specific field | endpoint => /api/v1/admin/fields/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/categories/get?_id=${createdRecordObject._id}`)
+            .get(`${baseUrl}/fields/get?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/admin/categories/get', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/admin/fields/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/categories/get?_id=650b327f77e8313f6966482d`)
+            .get(`${baseUrl}/fields/get?_id=650b327f77e8313f6966482d`)
             .set(requestHeaders);
 
         expect(response.status).toBe(404);
     });
 
 
-    it('should list categories | endpoint => /api/v1/admin/categories/list', async () => {
+    it('should list fields | endpoint => /api/v1/admin/fields/list', async () => {
         const response = await request(app)
-            .get(`${baseUrl}/categories/list`)
+            .get(`${baseUrl}/fields/list`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should update a category | endpoint => /api/v1/admin/categories/update', async () => {
-
+    it('should update a field | endpoint => /api/v1/admin/fields/update', async () => {
+        let fieldData = generateDummyDataFromSchema(schema)
+        fieldData.type = "enum"
+        fieldData.values = [{ en: fieldData.nameEn, ar: fieldData.nameEn }, { en: fieldData.nameEn, ar: fieldData.nameEn }]
         const response = await request(app)
-            .put(`${baseUrl}/categories/update?_id=${createdRecordObject._id}`)
+            .put(`${baseUrl}/fields/update?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
             .send({ isActive: true });
 
@@ -117,10 +121,10 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
     });
 
 
-    it('should delete a category | endpoint => /api/v1/admin/categories/remove', async () => {
+    it('should delete a field | endpoint => /api/v1/admin/fields/remove', async () => {
 
         const response = await request(app)
-            .delete(`${baseUrl}/categories/remove?_id=${createdRecordObject._id}`)
+            .delete(`${baseUrl}/fields/remove?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);

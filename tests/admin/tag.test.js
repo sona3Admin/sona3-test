@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
-const { generateDummyDataFromSchema, chooseRandomEnumValue } = require("../../helpers/randomData.helper")
+const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
 let baseUrl = '/api/v1/admin';
 let token
 let requestHeaders = {
@@ -16,10 +16,6 @@ let createdRecordObject;
 let schema = {
     nameEn: 'string',
     nameAr: 'string',
-    descriptionEn: "string",
-    descriptionAr: "string",
-    type: chooseRandomEnumValue(["shop", "product", "service"]),
-    isSubCategory: "boolean",
     isVerified: true,
     isActive: true
 };
@@ -29,7 +25,7 @@ beforeEach(() => {
 });
 
 
-describe('=====>Testing Category Module Endpoints <=====', () => {
+describe('=====>Testing Tag Module Endpoints <=====', () => {
 
 
     it('should authenticate a super admin and return a token endpoint => /api/v1/admin/login', async () => {
@@ -50,13 +46,13 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
     });
 
 
-    it('should create a new category | endpoint => /api/v1/admin/categories/create', async () => {
-        const categoryData = generateDummyDataFromSchema(schema)
+    it('should create a new tag | endpoint => /api/v1/admin/tags/create', async () => {
+        const tagData = generateDummyDataFromSchema(schema)
 
         const response = await request(app)
-            .post(`${baseUrl}/categories/create`)
+            .post(`${baseUrl}/tags/create`)
             .set(requestHeaders)
-            .send(categoryData);
+            .send(tagData);
 
         expect(response.status).toBe(201);
         createdRecordObject = response.body.result
@@ -64,52 +60,52 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for duplicate names | endpoint => /api/v1/admin/categories/create', async () => {
-        let categoryData = generateDummyDataFromSchema(schema)
-        categoryData.nameEn = createdRecordObject.nameEn;
-        categoryData.nameAr = createdRecordObject.nameAr
+    it('should return an error for duplicate names | endpoint => /api/v1/admin/tags/create', async () => {
+        let tagData = generateDummyDataFromSchema(schema)
+        tagData.nameEn = createdRecordObject.nameEn;
+        tagData.nameAr = createdRecordObject.nameAr
         const response = await request(app)
-            .post(`${baseUrl}/categories/create`)
+            .post(`${baseUrl}/tags/create`)
             .set(requestHeaders)
-            .send(categoryData);
+            .send(tagData);
 
         expect(response.status).toBe(409);
     });
 
 
-    it('should get a specific category | endpoint => /api/v1/admin/categories/get', async () => {
+    it('should get a specific tag | endpoint => /api/v1/admin/tags/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/categories/get?_id=${createdRecordObject._id}`)
+            .get(`${baseUrl}/tags/get?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/admin/categories/get', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/admin/tags/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/categories/get?_id=650b327f77e8313f6966482d`)
+            .get(`${baseUrl}/tags/get?_id=650b327f77e8313f6966482d`)
             .set(requestHeaders);
 
         expect(response.status).toBe(404);
     });
 
 
-    it('should list categories | endpoint => /api/v1/admin/categories/list', async () => {
+    it('should list tags | endpoint => /api/v1/admin/tags/list', async () => {
         const response = await request(app)
-            .get(`${baseUrl}/categories/list`)
+            .get(`${baseUrl}/tags/list`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should update a category | endpoint => /api/v1/admin/categories/update', async () => {
+    it('should update a tag | endpoint => /api/v1/admin/tags/update', async () => {
 
         const response = await request(app)
-            .put(`${baseUrl}/categories/update?_id=${createdRecordObject._id}`)
+            .put(`${baseUrl}/tags/update?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
             .send({ isActive: true });
 
@@ -117,10 +113,10 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
     });
 
 
-    it('should delete a category | endpoint => /api/v1/admin/categories/remove', async () => {
+    it('should delete a tag | endpoint => /api/v1/admin/tags/remove', async () => {
 
         const response = await request(app)
-            .delete(`${baseUrl}/categories/remove?_id=${createdRecordObject._id}`)
+            .delete(`${baseUrl}/tags/remove?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);

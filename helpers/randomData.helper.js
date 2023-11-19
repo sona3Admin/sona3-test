@@ -143,7 +143,7 @@ function generateRandomUUID() {
 }
 
 
-function chooseRandomEnumValue(values) {
+exports.chooseRandomEnumValue = (values) => {
     if (Array.isArray(values) && values.length > 0) {
         const randomIndex = Math.floor(Math.random() * values.length);
         return values[randomIndex];
