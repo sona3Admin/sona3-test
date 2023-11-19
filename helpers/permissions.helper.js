@@ -73,6 +73,12 @@ let serviceEndPoints = [
 ]
 
 
+let bannerEndPoints = [
+    "/admin/banners/create", "/admin/banners/update", "/admin/banners/remove",
+    "/admin/banners/list", "/admin/banners/get", "/admin/banners/image"
+]
+
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -86,6 +92,7 @@ formEndPoints = new Set(formEndPoints);
 productEndPoints = new Set(productEndPoints);
 variationEndPoints = new Set(variationEndPoints);
 serviceEndPoints = new Set(serviceEndPoints);
+bannerEndPoints = new Set(bannerEndPoints);
 
 
 let permissions = new Map();
@@ -103,6 +110,7 @@ permissions.set("forms", formEndPoints)
 permissions.set("products", productEndPoints)
 permissions.set("variations", variationEndPoints)
 permissions.set("services", serviceEndPoints)
+permissions.set("banners", bannerEndPoints)
 
 
 module.exports = { permissions }

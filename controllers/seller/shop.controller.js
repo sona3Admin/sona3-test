@@ -182,3 +182,59 @@ exports.deleteCovers = async (req, res) => {
         });
     }
 }
+
+
+exports.uploadBanners = async (req, res) => {
+    try {
+        const existingObject = await shopRepo.find({ _id: req.query._id })
+        let bannersArray = (existingObject.success && existingObject.result.banners) ? (existingObject.result.banners) : 0
+        let numberOfbanners = bannersArray.length + req.files.length
+        if (numberOfbanners > 10) return res.status(409).json({
+            success: false,
+            code: 409,
+            error: i18n.__("limitExceeded")
+        });
+
+        let operationResultArray = await s3StorageHelper.uploadFilesToS3("banners", req.files)
+        bannersArray = Array.from(bannersArray)
+        bannersArray.map((banner) => {
+            operationResultArray.push(banner)
+        });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { banners: operationResultArray });
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.deleteBanners = async (req, res) => {
+    try {
+        let bannersToDelete = req.body.keys
+        let operationResultObject
+        const existingObject = await shopRepo.find({ _id: req.query._id })
+        if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
+
+
+        await bannersToDelete.map(async (pathToFile) => {
+            operationResultObject = await shopRepo.updateDirectly(req.query._id, { $pull: { banners: { key: pathToFile } } });
+        });
+        await batchRepo.create({ filesToDelete: bannersToDelete })
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}

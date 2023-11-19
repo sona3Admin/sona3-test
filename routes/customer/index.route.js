@@ -12,6 +12,7 @@ const tagRoutes = require("./tag.route");
 const productRoutes = require("./product.route");
 const variationRoutes = require("./variation.route");
 const serviceRoutes = require("./service.route");
+const bannerRoutes = require("./banner.route");
 
 
 app.use(authRoutes)
@@ -22,6 +23,7 @@ app.use("/tags", checkToken(allowedUsers), tagRoutes);
 app.use("/products", checkToken(allowedUsers), productRoutes);
 app.use("/variations", checkToken(allowedUsers), variationRoutes);
 app.use("/services", checkToken(allowedUsers), serviceRoutes);
+app.use("/banners", checkToken(allowedUsers), bannerRoutes);
 
 
 module.exports = app

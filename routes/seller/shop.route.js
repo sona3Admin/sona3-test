@@ -20,6 +20,9 @@ app.delete("/image", checkIdentity("seller"), shopController.deleteImage)
 app.post("/cover", checkIdentity("seller"), uploadedFiles.array('covers', 10), shopController.uploadCovers)
 app.delete("/cover", checkIdentity("seller"), shopController.deleteCovers)
 
+app.post("/banner", checkIdentity("seller"), uploadedFiles.array('banners', 10), shopController.uploadBanners)
+app.delete("/banner", checkIdentity("seller"), shopController.deleteBanners)
+
 
 
 module.exports = app

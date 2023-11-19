@@ -11,6 +11,7 @@ const shopSchema = mongoose.Schema({
     phone: { type: String },
     image: { type: Object },
     covers: [{ type: Object }],
+    banners: [{ type: Object }],
     location: {
         type: { type: String, default: "Point" },
         coordinates: { type: Array, default: [0, 0] }
