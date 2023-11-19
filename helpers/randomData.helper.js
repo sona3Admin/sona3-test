@@ -43,7 +43,7 @@ exports.generateDummyDataFromSchema = (schema) => {
         }
 
         return data;
-    } catch (err){
+    } catch (err) {
         console.log("err.message", err.message)
         return err.message
     }
@@ -142,3 +142,10 @@ function generateRandomUUID() {
     return uuid;
 }
 
+
+function chooseRandomEnumValue(values) {
+    if (Array.isArray(values) && values.length > 0) {
+        const randomIndex = Math.floor(Math.random() * values.length);
+        return values[randomIndex];
+    }
+}

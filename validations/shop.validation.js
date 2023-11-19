@@ -85,12 +85,12 @@ module.exports = {
     updateShopValidation: {
         body: joi.object().optional().keys({
 
-            seller: joi.string().required().messages({
+            seller: joi.string().optional().messages({
                 "string.base": "validSeller",
                 "any.required": "requiredSeller",
             }),
 
-            categories: joi.array().required().messages({
+            categories: joi.array().optional().messages({
                 "string.base": "validCategory",
                 "any.required": "requiredCategory",
             }),
