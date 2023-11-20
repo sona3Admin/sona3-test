@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
-let baseUrl = '/api/v1/seller';
+let baseUrl = '/api/v1/admin';
 let token
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
@@ -10,10 +10,7 @@ let requestHeaders = {
     "Authorization": `Bearer ${token}`
 };
 
-
 let createdRecordObject;
-let createdSellerObject;
-let createdShopObject;
 
 
 let schema = {
@@ -22,18 +19,9 @@ let schema = {
     descriptionEn: "string",
     descriptionAr: "string",
     isVerified: true,
-    isActive: true
+    isActive: true,
+    creationDate: "date"
 };
-
-let sellerSchema = {
-    userName: 'string',
-    email: 'email',
-    password: '123',
-    phone: 'phone',
-    address: 'string',
-    isActive: true, isVerified: true
-};
-
 
 beforeEach(() => {
     mongoDB.connect();
@@ -43,26 +31,16 @@ beforeEach(() => {
 describe('=====>Testing Service Module Endpoints <=====', () => {
 
 
-    it('should register a new seller | endpoint => /api/v1/seller/register', async () => {
-        const sellerData = generateDummyDataFromSchema(sellerSchema)
+    it('should authenticate a super admin and return a token endpoint => /api/v1/admin/login', async () => {
+        const adminCredentials = {
+            email: 'admin@admin.com',
+            password: '123',
+        };
 
-        const response = await request(app)
-            .post(`${baseUrl}/register`)
-            .set(requestHeaders)
-            .send(sellerData);
-
-        expect(response.status).toBe(201);
-        createdSellerObject = response.body.result
-
-    });
-
-
-    it('should authenticate a seller and return a token endpoint => /api/v1/seller/login', async () => {
-        const sellerCredentials = { email: createdSellerObject.email, password: "123" }
         const response = await request(app)
             .post(`${baseUrl}/login`)
             .set(requestHeaders)
-            .send(sellerCredentials);
+            .send(adminCredentials);
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('token');
@@ -71,30 +49,12 @@ describe('=====>Testing Service Module Endpoints <=====', () => {
     });
 
 
-    it('should create a new shop | endpoint => /api/v1/seller/shops/create', async () => {
-        let shopData = generateDummyDataFromSchema(schema)
-
-        let categories = await request(app)
-            .get(`${baseUrl}/categories/list?type=product`)
-            .set(requestHeaders);
-
-        seller = createdSellerObject._id
-        categories = categories.body.result.map(categoryObject => categoryObject._id)
-        shopData.seller = seller
-        shopData.categories = categories
-        const response = await request(app)
-            .post(`${baseUrl}/shops/create`)
-            .set(requestHeaders)
-            .send(shopData);
-
-        expect(response.status).toBe(201);
-        createdShopObject = response.body.result
-
-    });
-
-
-    it('should create a new service | endpoint => /api/v1/seller/services/create', async () => {
+    it('should create a new service | endpoint => /api/v1/admin/services/create', async () => {
         let serviceData = generateDummyDataFromSchema(schema)
+
+        let shops = await request(app)
+            .get(`${baseUrl}/shops/list`)
+            .set(requestHeaders);
 
         let tags = await request(app)
             .get(`${baseUrl}/tags/list`)
@@ -113,9 +73,8 @@ describe('=====>Testing Service Module Endpoints <=====', () => {
 
         tags = tags.body.result.map(fieldObject => fieldObject._id)
         categories = categories.body.result.map(categoryObject => categoryObject._id)
-
-        serviceData.seller = createdSellerObject._id;
-        serviceData.shop = createdShopObject._id;
+        serviceData.seller = shops.body.result[0].seller._id;
+        serviceData.shop = shops.body.result[0]._id;
         serviceData.tags = tags;
         serviceData.categories = categories;
         serviceData.fields = formFields
@@ -131,7 +90,7 @@ describe('=====>Testing Service Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for duplicate names | endpoint => /api/v1/seller/services/create', async () => {
+    it('should return an error for duplicate names | endpoint => /api/v1/admin/services/create', async () => {
         let serviceData = generateDummyDataFromSchema(schema)
         serviceData.nameEn = createdRecordObject.nameEn;
         serviceData.nameAr = createdRecordObject.nameAr
@@ -149,17 +108,17 @@ describe('=====>Testing Service Module Endpoints <=====', () => {
     });
 
 
-    it('should get a specific service | endpoint => /api/v1/seller/services/get', async () => {
+    it('should get a specific service | endpoint => /api/v1/admin/services/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/services/get?_id=${createdRecordObject._id}&seller=${createdSellerObject._id}`)
+            .get(`${baseUrl}/services/get?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/seller/services/get', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/admin/services/get', async () => {
 
         const response = await request(app)
             .get(`${baseUrl}/services/get?_id=650b327f77e8313f6966482d`)
@@ -169,19 +128,19 @@ describe('=====>Testing Service Module Endpoints <=====', () => {
     });
 
 
-    it('should list services | endpoint => /api/v1/seller/services/list', async () => {
+    it('should list services | endpoint => /api/v1/admin/services/list', async () => {
         const response = await request(app)
-            .get(`${baseUrl}/services/list?seller=${createdSellerObject._id}`)
+            .get(`${baseUrl}/services/list`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should update a service | endpoint => /api/v1/seller/services/update', async () => {
+    it('should update a service | endpoint => /api/v1/admin/services/update', async () => {
 
         const response = await request(app)
-            .put(`${baseUrl}/services/update?_id=${createdRecordObject._id}&seller=${createdSellerObject._id}`)
+            .put(`${baseUrl}/services/update?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
             .send({ isActive: true });
 
@@ -189,10 +148,10 @@ describe('=====>Testing Service Module Endpoints <=====', () => {
     });
 
 
-    it('should delete a service | endpoint => /api/v1/seller/services/remove', async () => {
+    it('should delete a service | endpoint => /api/v1/admin/services/remove', async () => {
 
         const response = await request(app)
-            .delete(`${baseUrl}/services/remove?_id=${createdRecordObject._id}&seller=${createdSellerObject._id}`)
+            .delete(`${baseUrl}/services/remove?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);

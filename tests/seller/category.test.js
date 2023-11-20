@@ -72,8 +72,7 @@ describe('=====>Testing Category Module Endpoints <=====', () => {
             .post(`${baseUrl}/categories/create`)
             .set(requestHeaders)
             .send(categoryData);
-        console.log(`response`, response.body);
-        console.log(`requestHeaders`, requestHeaders.Authorization);
+        
         expect(response.status).toBe(201);
         createdRecordObject = response.body.result
 

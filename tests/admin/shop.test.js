@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
-let baseUrl = '/api/v1/seller';
+let baseUrl = '/api/v1/admin';
 let token
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
@@ -11,7 +11,6 @@ let requestHeaders = {
 };
 
 let createdRecordObject;
-let createdSellerObject;
 
 
 let schema = {
@@ -24,17 +23,6 @@ let schema = {
     isActive: true
 };
 
-let sellerSchema = {
-    userName: 'string',
-    email: 'email',
-    password: '123',
-    phone: 'phone',
-    address: 'string',
-    isActive: true, isVerified: true
-};
-
-
-
 beforeEach(() => {
     mongoDB.connect();
 });
@@ -43,26 +31,16 @@ beforeEach(() => {
 describe('=====>Testing Shop Module Endpoints <=====', () => {
 
 
-    it('should register a new seller | endpoint => /api/v1/seller/register', async () => {
-        const sellerData = generateDummyDataFromSchema(sellerSchema)
+    it('should authenticate a super admin and return a token endpoint => /api/v1/admin/login', async () => {
+        const adminCredentials = {
+            email: 'admin@admin.com',
+            password: '123',
+        };
 
-        const response = await request(app)
-            .post(`${baseUrl}/register`)
-            .set(requestHeaders)
-            .send(sellerData);
-
-        expect(response.status).toBe(201);
-        createdSellerObject = response.body.result
-
-    });
-
-
-    it('should authenticate a seller and return a token endpoint => /api/v1/seller/login', async () => {
-        const sellerCredentials = { email: createdSellerObject.email, password: "123" }
         const response = await request(app)
             .post(`${baseUrl}/login`)
             .set(requestHeaders)
-            .send(sellerCredentials);
+            .send(adminCredentials);
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('token');
@@ -71,14 +49,18 @@ describe('=====>Testing Shop Module Endpoints <=====', () => {
     });
 
 
-    it('should create a new shop | endpoint => /api/v1/seller/shops/create', async () => {
+    it('should create a new shop | endpoint => /api/v1/admin/shops/create', async () => {
         let shopData = generateDummyDataFromSchema(schema)
+
+        let sellers = await request(app)
+            .get(`${baseUrl}/sellers/list`)
+            .set(requestHeaders);
 
         let categories = await request(app)
             .get(`${baseUrl}/categories/list?type=product`)
             .set(requestHeaders);
 
-        seller = createdSellerObject._id
+        seller = sellers.body.result[0]._id
         categories = categories.body.result.map(categoryObject => categoryObject._id)
         shopData.seller = seller
         shopData.categories = categories
@@ -93,7 +75,7 @@ describe('=====>Testing Shop Module Endpoints <=====', () => {
     });
 
 
-    it('should return an error for duplicate names | endpoint => /api/v1/seller/shops/create', async () => {
+    it('should return an error for duplicate names | endpoint => /api/v1/admin/shops/create', async () => {
         let shopData = generateDummyDataFromSchema(schema)
         shopData.seller = createdRecordObject.seller
         shopData.categories = createdRecordObject.categories
@@ -108,27 +90,27 @@ describe('=====>Testing Shop Module Endpoints <=====', () => {
     });
 
 
-    it('should get a specific shop | endpoint => /api/v1/seller/shops/get', async () => {
+    it('should get a specific shop | endpoint => /api/v1/admin/shops/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/shops/get?_id=${createdRecordObject._id}&seller=${createdSellerObject._id}`)
+            .get(`${baseUrl}/shops/get?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
     });
 
 
-    it('should return an error for not found record | endpoint => /api/v1/seller/shops/get', async () => {
+    it('should return an error for not found record | endpoint => /api/v1/admin/shops/get', async () => {
 
         const response = await request(app)
-            .get(`${baseUrl}/shops/get?_id=650b327f77e8313f6966482d&seller=${createdSellerObject._id}`)
+            .get(`${baseUrl}/shops/get?_id=650b327f77e8313f6966482d`)
             .set(requestHeaders);
 
         expect(response.status).toBe(404);
     });
 
 
-    it('should list shops | endpoint => /api/v1/seller/shops/list?seller=${createdSellerObject._id}', async () => {
+    it('should list shops | endpoint => /api/v1/admin/shops/list', async () => {
         const response = await request(app)
             .get(`${baseUrl}/shops/list`)
             .set(requestHeaders);
@@ -137,10 +119,10 @@ describe('=====>Testing Shop Module Endpoints <=====', () => {
     });
 
 
-    it('should update a shop | endpoint => /api/v1/seller/shops/update', async () => {
+    it('should update a shop | endpoint => /api/v1/admin/shops/update', async () => {
 
         const response = await request(app)
-            .put(`${baseUrl}/shops/update?_id=${createdRecordObject._id}&seller=${createdSellerObject._id}`)
+            .put(`${baseUrl}/shops/update?_id=${createdRecordObject._id}`)
             .set(requestHeaders)
             .send({ isActive: true });
 
@@ -148,10 +130,10 @@ describe('=====>Testing Shop Module Endpoints <=====', () => {
     });
 
 
-    it('should delete a shop | endpoint => /api/v1/seller/shops/remove', async () => {
+    it('should delete a shop | endpoint => /api/v1/admin/shops/remove', async () => {
 
         const response = await request(app)
-            .delete(`${baseUrl}/shops/remove?_id=${createdRecordObject._id}&seller=${createdSellerObject._id}`)
+            .delete(`${baseUrl}/shops/remove?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
         expect(response.status).toBe(200);

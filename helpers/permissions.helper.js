@@ -26,7 +26,7 @@ let sellerEndPoints = [
 
 
 let shopEndPoints = [
-    "/admin/shops/list", "/admin/shops/get", "/admin/shops/update", "/admin/shops/remove",
+    "/admin/shops/create", "/admin/shops/list", "/admin/shops/get", "/admin/shops/update", "/admin/shops/remove",
     "/admin/shops/image", "/admin/shops/cover"
 ]
 

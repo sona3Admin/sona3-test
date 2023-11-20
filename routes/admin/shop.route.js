@@ -1,12 +1,13 @@
 const app = require("express").Router();
 const shopController = require("../../controllers/admin/shop.controller")
-const { updateShopValidation } = require("../../validations/shop.validation")
+const { createShopValidation, updateShopValidation } = require("../../validations/shop.validation")
 const validator = require("../../helpers/validation.helper")
 
 const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
 const uploadedFiles = uploadImagesToMemory()
 
 
+app.post("/create", validator(createShopValidation), shopController.createShop);
 app.put("/update", validator(updateShopValidation), shopController.updateShop);
 app.delete("/remove", shopController.removeShop);
 
