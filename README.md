@@ -107,6 +107,18 @@ Sona3/
 │ ├── seller/
 │ │ # ... Route files for the Seller app
 │ ├── index.route.js # Aggregates all endpoints
+|
+├── sockets/
+│ ├── admin/
+│ │ ├── admin.socket.js # socket.io events for admins
+│ │ # ... Add more socket files for other features
+│ ├── customer/
+│ │ ├── customer.socket.js # socket.io events for customers
+│ │ # ... Add more socket files for other features
+│ ├── seller/
+│ │ ├── seller.socket.js # socket.io events for sellers
+│ │ # ... Add more socket files for other features
+│ ├── index.socket.js # Aggregates all sockets
 │
 ├── utils/
 │ ├── batchSchedule.util.js # Methods for handling cron jobs and batch processing
