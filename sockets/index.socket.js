@@ -26,9 +26,9 @@ exports.serverSocketHandler = (socket, io) => {
         sellerSocketHandler(socket, io, socketId, localeMessages);
 
 
-        socket.on('disconnect', () => {
-            console.log('A client disconnected.');
-        });
+        // socket.on('disconnect', () => {
+        //     console.log('A client disconnected.');
+        // });
 
 
     } catch (err) {
