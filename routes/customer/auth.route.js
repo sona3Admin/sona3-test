@@ -6,7 +6,7 @@ const validator = require("../../helpers/validation.helper")
 
 app.post("/register", validator(createCustomerValidation), authController.register);
 app.post("/login", validator(loginValidation), authController.login);
-
+app.post("/guest", authController.loginAsGuest);
 
 
 

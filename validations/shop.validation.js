@@ -79,6 +79,14 @@ module.exports = {
                 "number.min": "minReviewCount",
             }),
 
+            covers: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
+            banners: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
@@ -99,7 +107,7 @@ module.exports = {
                 "any.required": "requiredCategory",
             }),
 
-            
+
             nameEn: joi.string().optional().messages({
                 "string.base": "validNameEn",
             }),
@@ -160,10 +168,18 @@ module.exports = {
                 "number.min": "minReviewCount",
             }),
 
+            covers: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
+            banners: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             })
         }),
     },
-    
+
 };

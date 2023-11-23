@@ -13,6 +13,13 @@ const customerSchema = mongoose.Schema({
         coordinates: { type: Array, default: [0, 0] }
     },
     address: { type: Object },
+    savedLocations: [{
+        location: {
+            type: { type: String, default: "Point" },
+            coordinates: { type: Array, default: [0, 0] }
+        },
+        address: { type: Object }
+    }],
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     joinDate: { type: Date },

@@ -36,7 +36,7 @@ module.exports = {
             }),
 
 
-            images: joi.array().items(joi.string()).optional().messages({
+            images: joi.array().items(joi.object()).optional().messages({
                 "array.base": "validArray",
             }),
 

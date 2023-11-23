@@ -54,3 +54,20 @@ exports.login = async (req, res) => {
         });
     }
 }
+
+
+exports.loginAsGuest = async (req, res) => {
+    try {
+        let payload = { _id: "guest", nameEn: "Guest", nameAr: "زائر", role: "customer" }
+        const token = jwtHelper.generateToken(payload);
+        return res.status(200).json({ token, success: true, code: 200, result: { ...payload } })
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}

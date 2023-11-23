@@ -46,6 +46,10 @@ module.exports = {
                 "object.base": "validAddress",
             }),
 
+            savedLocations: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
             isVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
@@ -106,6 +110,10 @@ module.exports = {
 
             address: joi.string().optional().messages({
                 "object.base": "validAddress",
+            }),
+
+            savedLocations: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
             }),
 
             isVerified: joi.boolean().optional().messages({
