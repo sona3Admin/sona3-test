@@ -42,6 +42,7 @@ exports.login = async (req, res) => {
         const token = jwtHelper.generateToken(payloadObject, "30d")
         await customerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
+        delete operationResultObject.result["token"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 
     } catch (err) {

@@ -140,7 +140,7 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
-        const resultObject = await customerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" })
+        const resultObject = await customerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password -token" })
 
         if (!resultObject) return {
             success: false,
@@ -168,7 +168,7 @@ exports.update = async (_id, formObject) => {
 
 exports.updateDirectly = async (_id, formObject) => {
     try {
-        const resultObject = await customerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password" })
+        const resultObject = await customerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password -token" })
         if (!resultObject) return {
             success: false,
             code: 404,

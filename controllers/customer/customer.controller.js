@@ -6,7 +6,7 @@ const batchRepo = require("../../modules/Batch/batch.repo");
 
 exports.getCustomer = async (req, res) => {
     try {
-        const operationResultObject = await customerRepo.get({ _id: req.query._id }, { password: 0 });
+        const operationResultObject = await customerRepo.get({ _id: req.query._id }, { password: 0, token: 0 });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
