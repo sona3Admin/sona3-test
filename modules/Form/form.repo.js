@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const formModel = require("./form.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -63,6 +64,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await formModel.find(filterObject).lean()
             .populate({ path: "fields" })
             .populate({ path: "categories", select: "nameEn nameAr image" })

@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const serviceModel = require("./service.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -65,6 +66,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await serviceModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
@@ -234,7 +238,6 @@ exports.remove = async (_id) => {
     }
 
 }
-
 
 
 exports.isObjectUninque = async (formObject) => {

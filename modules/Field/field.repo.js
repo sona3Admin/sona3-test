@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const fieldModel = require("./field.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -61,6 +62,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await fieldModel.find(filterObject).lean()
             .populate({ path: "requestedBy", select: "userName image" })
             .sort(sortObject)

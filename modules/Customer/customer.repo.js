@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const i18n = require('i18n');
 const customerModel = require("./customer.model")
 const saltrounds = 5;
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -61,6 +62,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await customerModel.find(filterObject).lean()
             .sort(sortObject)
             .select(selectionObject)

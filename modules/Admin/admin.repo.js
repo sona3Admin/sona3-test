@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const i18n = require('i18n');
 const adminModel = require("./admin.model")
 const saltrounds = 5;
-
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 exports.find = async (filterObject) => {
     try {
@@ -64,6 +64,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await adminModel.find(filterObject).lean()
             .populate({ path: "role", select: "name permissions" })
             .sort(sortObject)

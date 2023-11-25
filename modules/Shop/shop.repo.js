@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 let shopModel = require("./shop.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 
@@ -63,6 +64,10 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         let resultArray = await shopModel.find(filterObject).lean()
             .populate({ path: "seller", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })

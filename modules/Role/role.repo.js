@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const roleModel = require("./role.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -59,6 +60,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await roleModel.find(filterObject).lean()
             .sort(sortObject)
             .select(selectionObject)
@@ -219,7 +223,6 @@ exports.remove = async (_id) => {
     }
 
 }
-
 
 
 exports.isObjectUninque = async (formObject) => {

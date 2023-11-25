@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const variationModel = require("./variation.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -64,6 +65,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await variationModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
@@ -173,7 +177,6 @@ exports.update = async (_id, formObject) => {
         };
     }
 };
-
 
 
 exports.updateDirectly = async (_id, formObject) => {

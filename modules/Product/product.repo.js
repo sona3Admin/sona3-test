@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const productModel = require("./product.model")
+const { prepareQueryObjects } =require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -67,6 +68,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await productModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
@@ -179,7 +183,6 @@ exports.update = async (_id, formObject) => {
 };
 
 
-
 exports.updateDirectly = async (_id, formObject) => {
     try {
         const resultObject = await productModel.findByIdAndUpdate({ _id }, formObject, { new: true })
@@ -222,7 +225,7 @@ exports.remove = async (_id) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
-        
+
         return {
             success: true,
             code: 200,
@@ -239,7 +242,6 @@ exports.remove = async (_id) => {
     }
 
 }
-
 
 
 exports.isObjectUninque = async (formObject) => {
