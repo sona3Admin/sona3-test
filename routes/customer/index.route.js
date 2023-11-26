@@ -13,6 +13,7 @@ const productRoutes = require("./product.route");
 const variationRoutes = require("./variation.route");
 const serviceRoutes = require("./service.route");
 const bannerRoutes = require("./banner.route");
+const wishlistRoutes = require("./wishlist.route");
 
 
 app.use(authRoutes)
@@ -24,6 +25,7 @@ app.use("/products", checkToken(allowedUsers), productRoutes);
 app.use("/variations", checkToken(allowedUsers), variationRoutes);
 app.use("/services", checkToken(allowedUsers), serviceRoutes);
 app.use("/banners", checkToken(allowedUsers), bannerRoutes);
+app.use("/wishlists", checkToken(allowedUsers), wishlistRoutes);
 
 
 module.exports = app

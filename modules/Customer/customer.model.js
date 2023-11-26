@@ -14,6 +14,7 @@ const customerSchema = mongoose.Schema({
     },
     address: { type: Object },
     savedLocations: [{
+        name: { type: String },
         location: {
             type: { type: String, default: "Point" },
             coordinates: { type: Array, default: [0, 0] }

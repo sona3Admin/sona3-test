@@ -68,30 +68,6 @@ exports.prepareQueryObjects = (filterObject, sortObject) => {
             ];
             delete filterObject["descriptionAr"]
         }
-        
-
-        if (filterObject?.sortByRating) {
-            finalSortObject.rating = filterObject?.sortByRating
-            delete filterObject["sortByRating"]
-        }
-
-
-        if (filterObject?.sortByStock) {
-            finalSortObject.stock = filterObject?.sortByStock
-            delete filterObject["sortByStock"]
-        }
-
-
-        if (filterObject?.sortByQuantity) {
-            finalSortObject[`quantity`] = filterObject?.sortByQuantity
-            delete filterObject["sortByQuantity"]
-        }
-
-
-        if (filterObject?.sortByPrice) {
-            finalSortObject[`price`] = filterObject?.sortByPrice
-            delete filterObject["sortByPrice"]
-        }
 
 
         if (filterObject?.sortByAlpha) {
@@ -99,12 +75,50 @@ exports.prepareQueryObjects = (filterObject, sortObject) => {
             finalSortObject[`${sortLanguage}`] = 1
             delete filterObject["sortByAlpha"]
         }
+        
+
+        if (filterObject?.sortByRating) {
+            finalSortObject.rating = filterObject?.sortByRating === 1 ? 1 : -1;
+            delete filterObject["sortByRating"]
+        }
+
+
+        if (filterObject?.sortByStock) {
+            finalSortObject.stock = filterObject?.sortByStock === 1 ? 1 : -1;
+            delete filterObject["sortByStock"]
+        }
+
+
+
+        if (filterObject?.sortByPrice) {
+            finalSortObject['minPackage.price'] = filterObject?.sortByPrice === 1 ? 1 : -1;
+            delete filterObject["sortByPrice"]
+        }
+
+
+        if (filterObject?.priceFrom || filterObject?.priceTo) {
+            let priceFilter = {};
+
+            if (filterObject.priceFrom) {
+                priceFilter.$gte = filterObject.priceFrom;
+                delete filterObject["priceFrom"];
+            }
+
+            if (filterObject.priceTo) {
+                priceFilter.$lte = filterObject.priceTo;
+                delete filterObject["priceTo"];
+            }
+
+            finalFilterObject['minPackage.price'] = priceFilter;
+        }
 
 
         if (filterObject?.sortByDate) {
             let dateField = filterObject?.sortByDate
-            finalSortObject[`${dateField}`] = -1
+            let sortOrder = filterObject?.sortOrder
+            finalSortObject[`${dateField}`] = sortOrder || -1
             delete filterObject["sortByDate"]
+            delete filterObject["sortOrder"]
         }
 
 
