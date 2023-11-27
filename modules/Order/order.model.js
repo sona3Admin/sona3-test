@@ -39,7 +39,7 @@ const orderSchema = mongoose.Schema({
         stageDeliveryDate: { type: Date },
         stageStatus: {
             type: String,
-            enum: ["in progress", "delivered", "canceled"],
+            enum: ["in progress", "delivered"],
             default: "in progress"
         }
     }],

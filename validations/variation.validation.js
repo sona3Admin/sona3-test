@@ -97,12 +97,7 @@ module.exports = {
                 }),
             }).optional().messages(),
 
-            originalPrice: joi.number().min(0).optional().messages({
-                "number.base": "validOriginalPrice",
-                "number.min": "minOriginalPrice",
-            }),
-
-
+        
             isDefault: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
