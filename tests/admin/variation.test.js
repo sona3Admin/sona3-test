@@ -18,9 +18,33 @@ let schema = {
     descriptionEn: "string",
     descriptionAr: "string",
     stock: "number",
-    quantity: "number",
-    price: "number",
-    originalPrice: "number",
+    packages: [
+        {
+            quantity: 5,
+            price: 59.99,
+            originalPrice: 69.99
+        },
+        {
+            quantity: 8,
+            price: 99.99,
+            originalPrice: 120.99
+        },
+        {
+            quantity: 10,
+            price: 199.99,
+            originalPrice: 300.99
+        }
+    ],
+    minPackage: {
+        quantity: 5,
+        price: 59.99,
+        originalPrice: 69.99
+    },
+    defaultPackage: {
+        quantity: 10,
+        price: 199.99,
+        originalPrice: 300.99
+    },
     isActive: true
 };
 

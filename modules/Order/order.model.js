@@ -1,27 +1,48 @@
 const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({
-    customer: { type: mongoose.Types.ObjectId, ref: "customers", required: true },
-    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
+    customer: { type: mongoose.Types.ObjectId, ref: "customers" },
+    shops: [{ type: mongoose.Types.ObjectId, ref: "shops" }],
     items: [{
-        product: { type: mongoose.Types.Object, ref: "products" },
-        quantity: Number, min: 1,
-        itemTotal: Number, min: 0
+        shop: { type: mongoose.Types.ObjectId, ref: "shops" },
+        product: { type: mongoose.Types.ObjectId, ref: "products" },
+        variation: { type: mongoose.Types.ObjectId, ref: "variations" },
+        quantity: { type: Number, min: 1 },
+        itemTotal: { type: Number, min: 0 }
     }],
-    coupon: { type: mongoose.Types.Object, ref: "coupons" },
+    coupon: { type: mongoose.Types.ObjectId, ref: "coupons" },
     status: {
         type: String,
-        enum: ["pending", "accepted", "rejected", "in progress", "delivered", "canceled"],
+        enum: ["pending", "in progress", "delivered", "canceled"],
         default: "pending"
     },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
     shippingAddress: { type: Object },
-    itemsTotal: { type: Number, min: 0, required: true },
-    originalItemsTotal: { type: Number, min: 0, required: true },
-    shippingFees: { type: Number, min: 0 },
-    taxes: { type: Number, min: 0 },
-    orderTotal: { type: Number, min: 0, required: true },
-    issueDate: { type: Date, default: Date.now() }
+    itemsTotal: { type: Number, min: 0 },
+    originalItemsTotal: { type: Number, min: 0 },
+    shippingFeesTotal: { type: Number, min: 0 },
+    taxesTotal: { type: Number, min: 0 },
+    orderTotal: { type: Number, min: 0 },
+    issueDate: { type: Date },
+    shippingStages: [{
+        shop: { type: mongoose.Types.ObjectId, ref: "shops" },
+        items: [{
+            shop: { type: mongoose.Types.ObjectId, ref: "shops" },
+            variation: { type: mongoose.Types.ObjectId, ref: "variations" },
+            quantity: { type: Number, min: 1 },
+            itemTotal: { type: Number, min: 0 }
+        }],
+        stageItemsTotal: { type: Number, min: 0 },
+        stageShippingFees: { type: Number, min: 0 },
+        stageTaxes: { type: Number, min: 0 },
+        stageTotal: { type: Number, min: 0 },
+        stageDeliveryDate: { type: Date },
+        stageStatus: {
+            type: String,
+            enum: ["in progress", "delivered", "canceled"],
+            default: "in progress"
+        }
+    }],
 })
 
 

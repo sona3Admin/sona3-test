@@ -16,13 +16,37 @@ let createdShopObject;
 let createdProductObject;
 
 
-let schema = {  
+let schema = {
     descriptionEn: "string",
     descriptionAr: "string",
     stock: "number",
-    quantity: "number",
-    price: "number",
-    originalPrice: "number",
+    packages: [
+        {
+            quantity: 5,
+            price: 59.99,
+            originalPrice: 69.99
+        },
+        {
+            quantity: 8,
+            price: 99.99,
+            originalPrice: 120.99
+        },
+        {
+            quantity: 10,
+            price: 199.99,
+            originalPrice: 300.99
+        }
+    ],
+    minPackage: {
+        quantity: 5,
+        price: 59.99,
+        originalPrice: 69.99
+    },
+    defaultPackage: {
+        quantity: 10,
+        price: 199.99,
+        originalPrice: 300.99
+    },
     isActive: true
 };
 
@@ -151,7 +175,7 @@ describe('=====>Testing Shop Module Endpoints <=====', () => {
 
         formFields = form.body.result[0].fields
         formFields = formFields.map((fieldObject) => { return { _id: fieldObject._id, field: fieldObject, value: { en: variationData.nameEn, ar: variationData.nameAr } } })
-        
+
         variationData.seller = createdProductObject.seller;
         variationData.shop = createdProductObject.shop;
         variationData.product = createdProductObject._id

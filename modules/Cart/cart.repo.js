@@ -1,4 +1,4 @@
-let wishlistModel = require("./wishlist.model");
+let cartModel = require("./cart.model");
 let variationRepo = require("../Variation/variation.repo")
 const i18n = require('i18n');
 const mongoose = require("mongoose");
@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 
 exports.find = async (filterObject) => {
     try {
-        const resultObject = await wishlistModel.findOne(filterObject).lean();
+        const resultObject = await cartModel.findOne(filterObject).lean();
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -33,20 +33,21 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        let resultObject = await wishlistModel.findOne(filterObject).lean()
+        let resultObject = await cartModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({
                 path: "items",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr" }
+                    { path: "product", select: "nameEn nameAr" },
+                    { path: "variation", select: "descriptionEn descriptionAr images fields" }
                 ]
             })
             .select(selectionObject)
 
 
         if (!resultObject)
-            resultObject = await wishlistModel.findOneAndUpdate(filterObject,
+            resultObject = await cartModel.findOneAndUpdate(filterObject,
                 { $setOnInsert: { customer: filterObject.customer } },
                 { upsert: true, new: true }
             ).lean();
@@ -72,13 +73,14 @@ exports.get = async (filterObject, selectionObject) => {
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
 
-        const resultArray = await wishlistModel.find(filterObject).lean()
+        const resultArray = await cartModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({
                 path: "items",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr" }
+                    { path: "product", select: "nameEn nameAr" },
+                    { path: "variation", select: "descriptionEn descriptionAr images fields" }
                 ]
             })
             .sort(sortObject)
@@ -92,7 +94,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             error: i18n.__("notFound")
         }
 
-        const count = await wishlistModel.count(filterObject);
+        const count = await cartModel.count(filterObject);
         return {
             success: true,
             code: 200,
@@ -112,7 +114,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
-exports.addItemToList = async (customerId, itemId) => {
+exports.addItemToList = async (customerId, itemId, quantity) => {
     try {
         let variationResultObject = await variationRepo.find({ _id: itemId });
         if (!variationResultObject.success) return {
@@ -121,16 +123,34 @@ exports.addItemToList = async (customerId, itemId) => {
             error: i18n.__("notFound")
         }
 
-        let wishlistResultObject = await this.get({ customer: customerId });
-        if (!wishlistResultObject.success) return wishlistResultObject
+        let cartResultObject = await this.get({ customer: customerId });
+        if (!cartResultObject.success) return cartResultObject
 
-        let isItemInWishlist = await this.isItemInWishlist(wishlistResultObject.result.items, itemId);
-        if (isItemInWishlist.success) return wishlistResultObject
+        let isItemInCart = await this.isItemInCart(cartResultObject.result.items, itemId);
+        if (isItemInCart.success) return cartResultObject
 
-        wishlistResultObject = await this.updateDirectly(wishlistResultObject.result._id, { $addToSet: { items: itemId } })
+        let newQuantity = variationResultObject.result.defaultPackage.quantity
+        let newItemTotal = variationResultObject.result.defaultPackage.price
+        let updatedCart = {
+            $addToSet: {
+                items: {
+                    shop: variationResultObject.result.shop,
+                    product: variationResultObject.result.product,
+                    variation: itemId,
+                    quantity: newQuantity,
+                    itemTotal: newItemTotal
+                }
+            },
+            $inc: {
+                itemsTotal: newItemTotal,
+                originalItemsTotal: newItemTotal
+            }
+        }
+        cartResultObject = await this.updateDirectly(cartResultObject.result._id, updatedCart)
+
         return {
             success: true,
-            result: wishlistResultObject,
+            result: cartResultObject,
             code: 201
         }
     }
@@ -147,35 +167,37 @@ exports.addItemToList = async (customerId, itemId) => {
 
 exports.removeItemFromList = async (customerId, itemId) => {
     try {
-        let wishlistResultObject = await this.find({ customer: customerId });
-        if (!wishlistResultObject.success) return wishlistResultObject
 
-        let isItemInWishlist = await this.isItemInWishlist(wishlistResultObject.result.items, itemId);
+        const cartResultObject = await this.get({ customer: customerId });
+        if (!cartResultObject.success) return cartResultObject;
 
-        if (!isItemInWishlist.success) return wishlistResultObject
 
-        wishlistResultObject = await this.updateDirectly(wishlistResultObject.result._id, { $pull: { items: itemId } })
+        const isItemInCart = await this.isItemInCart(cartResultObject.result.items, itemId);
+        if (!isItemInCart.success) return cartResultObject;
+
+        const updatedCart = await this.updateDirectly(cartResultObject.result._id, { $pull: { items: { variation: itemId } } });
+
         return {
             success: true,
-            result: wishlistResultObject,
-            code: 201
-        }
-
+            result: updatedCart.result,
+            code: 200 // Use 200 for a successful removal
+        };
     } catch (err) {
-        console.log(`err.message`, err.message);
+        console.error(`err.message`, err.message);
         return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         };
     }
-}
+};
 
 
-exports.isItemInWishlist = async (arrayOfItemIds, itemId) => {
+
+exports.isItemInCart = async (arrayOfItemsObjects, itemId) => {
     try {
         itemId = mongoose.Types.ObjectId(itemId);
-        const itemIndex = arrayOfItemIds.findIndex(id => id.equals(itemId))
+        const itemIndex = arrayOfItemsObjects.findIndex(itemObject => itemObject.variation.equals(itemId))
 
         if (itemIndex !== -1) return {
             success: true,
@@ -209,7 +231,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await wishlistModel.findByIdAndUpdate({ _id }, formObject, { new: true });
+        const resultObject = await cartModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
         if (!resultObject) return {
             success: false,
@@ -236,7 +258,7 @@ exports.update = async (_id, formObject) => {
 
 exports.updateDirectly = async (_id, formObject) => {
     try {
-        const resultObject = await wishlistModel.findByIdAndUpdate({ _id }, formObject, { new: true })
+        const resultObject = await cartModel.findByIdAndUpdate({ _id }, formObject, { new: true })
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -263,7 +285,7 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
-        const resultObject = await wishlistModel.findByIdAndDelete({ _id })
+        const resultObject = await cartModel.findByIdAndDelete({ _id })
 
         if (!resultObject) return {
             success: false,

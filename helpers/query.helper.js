@@ -1,169 +1,140 @@
 
 exports.prepareQueryObjects = (filterObject, sortObject) => {
     try {
-        let finalFilterObject = {}
-        let finalSortObject = {}
+        let { locationFinalFilter, locationFinalSort } = handleLocationParams(filterObject);
+        let finalFilterObject = handleSearchParams(filterObject);
+        let finalSortObject = handleSortParams(filterObject);
 
-        if (filterObject?.name) {
-            finalFilterObject.$or = [
-                { name: { $regex: filterObject.name, $options: 'i' } }
-            ];
-            delete filterObject["name"]
-        }
-
-
-        if (filterObject?.nameEn) {
-            finalFilterObject.$or = [
-                { nameEn: { $regex: filterObject.nameEn, $options: 'i' } }
-            ];
-            delete filterObject["nameEn"]
-        }
-
-
-
-        if (filterObject?.nameAr) {
-            finalFilterObject.$or = [
-                { nameAr: { $regex: filterObject.nameAr, $options: 'i' } }
-            ];
-            delete filterObject["nameAr"]
-        }
-
-
-        if (filterObject?.userName) {
-            finalFilterObject.$or = [
-                { userName: { $regex: filterObject.userName, $options: 'i' } }
-            ];
-            delete filterObject["userName"]
-        }
-
-
-        if (filterObject?.email) {
-            finalFilterObject.$or = [
-                { email: { $regex: filterObject.email, $options: 'i' } }
-            ];
-            delete filterObject["email"]
-        }
-
-
-        if (filterObject?.phone) {
-            finalFilterObject.$or = [
-                { phone: { $regex: filterObject.phone, $options: 'i' } }
-            ];
-            delete filterObject["phone"]
-        }
-
-
-        if (filterObject?.descriptionEn) {
-            finalFilterObject.$or = [
-                { descriptionEn: { $regex: filterObject.descriptionEn, $options: 'i' } }
-            ];
-            delete filterObject["descriptionEn"]
-        }
-
-
-
-        if (filterObject?.descriptionAr) {
-            finalFilterObject.$or = [
-                { descriptionAr: { $regex: filterObject.descriptionAr, $options: 'i' } }
-            ];
-            delete filterObject["descriptionAr"]
-        }
-
-
-        if (filterObject?.sortByAlpha) {
-            let sortLanguage = filterObject?.sortByAlpha
-            finalSortObject[`${sortLanguage}`] = 1
-            delete filterObject["sortByAlpha"]
-        }
-        
-
-        if (filterObject?.sortByRating) {
-            finalSortObject.rating = filterObject?.sortByRating === 1 ? 1 : -1;
-            delete filterObject["sortByRating"]
-        }
-
-
-        if (filterObject?.sortByStock) {
-            finalSortObject.stock = filterObject?.sortByStock === 1 ? 1 : -1;
-            delete filterObject["sortByStock"]
-        }
-
-
-
-        if (filterObject?.sortByPrice) {
-            finalSortObject['minPackage.price'] = filterObject?.sortByPrice === 1 ? 1 : -1;
-            delete filterObject["sortByPrice"]
-        }
-
-
-        if (filterObject?.priceFrom || filterObject?.priceTo) {
-            let priceFilter = {};
-
-            if (filterObject.priceFrom) {
-                priceFilter.$gte = filterObject.priceFrom;
-                delete filterObject["priceFrom"];
-            }
-
-            if (filterObject.priceTo) {
-                priceFilter.$lte = filterObject.priceTo;
-                delete filterObject["priceTo"];
-            }
-
-            finalFilterObject['minPackage.price'] = priceFilter;
-        }
-
-
-        if (filterObject?.sortByDate) {
-            let dateField = filterObject?.sortByDate
-            let sortOrder = filterObject?.sortOrder
-            finalSortObject[`${dateField}`] = sortOrder || -1
-            delete filterObject["sortByDate"]
-            delete filterObject["sortOrder"]
-        }
-
-
-        if (filterObject?.dateFrom || filterObject?.dateTo) {
-            let dateField = filterObject?.dateField
-            finalFilterObject[`${dateField}`] = {};
-
-            if (filterObject.dateFrom) {
-                finalFilterObject[`${dateField}`].$gte = new Date(filterObject.dateFrom);
-                delete filterObject["dateFrom"];
-            }
-
-            if (filterObject.dateTo) {
-                finalFilterObject[`${dateField}`].$lte = new Date(filterObject.dateTo);
-                delete filterObject["dateTo"];
-            }
-        }
-
-
-        if (filterObject?.long || filterObject?.lat) {
-            finalFilterObject.location = {
-                $near: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates: [long, lat]
-                    },
-                    $minDistance: 0,
-                }
-            }
-            finalSortObject.location = "asc"
-            delete filterObject["long"]
-            delete filterObject["lat"]
-        }
-
-
-        finalSortObject = { ...finalSortObject, ...sortObject }
-        finalFilterObject = { ...finalFilterObject, ...filterObject }
+        finalFilterObject = { ...filterObject, ...finalFilterObject, ...locationFinalFilter };
+        finalSortObject = { ...sortObject, ...finalSortObject, ...locationFinalSort };
 
         return {
             filterObject: finalFilterObject,
-            sortObject: finalSortObject
-        }
+            sortObject: finalSortObject,
+        };
 
     } catch (err) {
         console.log(`err.message`, err.message);
-        return {}
+        return {};
     }
+};
+
+
+function handleLocationParams(filterObject) {
+    let locationFinalFilter = {};
+    let locationFinalSort = {};
+
+    if (filterObject?.long || filterObject?.lat) {
+        const long = filterObject.long;
+        const lat = filterObject.lat;
+        locationFinalFilter.location = {
+            $near: {
+                $geometry: {
+                    type: 'Point',
+                    coordinates: [long, lat]
+                },
+                $minDistance: 0,
+            }
+        }
+        locationFinalSort.location = "asc"
+        delete filterObject["long"]
+        delete filterObject["lat"]
+    }
+
+    return { locationFinalFilter, locationFinalSort }
+
+}
+
+
+function handleSearchParams(filterObject) {
+    let finalFilterObject = {};
+    
+    finalFilterObject = handleRangeParams(filterObject, finalFilterObject)
+
+    finalFilterObject = handleSearchProperty('name', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('nameEn', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('nameAr', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('userName', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('email', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('phone', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('descriptionEn', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('descriptionAr', filterObject, finalFilterObject);
+
+    return finalFilterObject;
+}
+
+
+function handleRangeParams(filterObject, finalFilterObject) {
+
+    if (filterObject?.dateFrom || filterObject?.dateTo) {
+        let dateField = filterObject?.dateField;
+        finalFilterObject[`${dateField}`] = {};
+
+        if (filterObject.dateFrom) {
+            finalFilterObject[`${dateField}`].$gte = new Date(filterObject.dateFrom);
+            delete filterObject["dateFrom"];
+        }
+
+        if (filterObject.dateTo) {
+            finalFilterObject[`${dateField}`].$lte = new Date(filterObject.dateTo);
+            delete filterObject["dateTo"];
+        }
+    }
+
+
+    if (filterObject?.priceFrom || filterObject?.priceTo) {
+        let priceFilter = {};
+
+        if (filterObject.priceFrom) {
+            priceFilter.$gte = filterObject.priceFrom;
+            delete filterObject["priceFrom"];
+        }
+
+        if (filterObject.priceTo) {
+            priceFilter.$lte = filterObject.priceTo;
+            delete filterObject["priceTo"];
+        }
+
+        finalFilterObject['minPackage.price'] = priceFilter;
+    }
+
+    return finalFilterObject
+
+}
+
+
+function handleSortParams(filterObject) {
+    let finalSortObject = {};
+
+    finalSortObject = handleSortProperty('sortByAlpha', filterObject, finalSortObject, 1);
+    finalSortObject = handleSortProperty('sortByRating', filterObject, finalSortObject, filterObject?.sortByRating === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('sortByStock', filterObject, finalSortObject, filterObject?.sortByStock === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('sortByPrice', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('sortByDate', filterObject, finalSortObject, filterObject?.sortOrder || -1);
+
+    return finalSortObject;
+}
+
+
+function handleSearchProperty(property, filterObject, finalFilterObject) {
+    if (filterObject?.[property]) {
+        if (!finalFilterObject.$or) {
+            finalFilterObject.$or = [];
+        }
+        finalFilterObject.$or.push({ [property]: { $regex: filterObject[property], $options: 'i' } });
+        delete filterObject[property];
+    }
+
+    return finalFilterObject;
+}
+
+
+function handleSortProperty(property, filterObject, finalSortObject, sortOrder) {
+    if (filterObject?.[property]) {
+        finalSortObject[property] = sortOrder;
+        if (property == "sortByDate") delete filterObject["sortOrder"];
+        delete filterObject[property];
+    }
+
+    return finalSortObject;
 }
