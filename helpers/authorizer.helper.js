@@ -58,8 +58,8 @@ exports.isAuthorized = (req, res, next) => {
             let requesterId = req.query._id || req.body._id
             let allowedEndPoints = ["/admin/get", "/admin/password", "/admin/image"]
 
-            if (req.tokenData?.type == "superAdmin") return next()
-            const adminPermissions = req.tokenData.role || {}
+            if (req.tokenData?.role == "superAdmin") return next()
+            const adminPermissions = req.tokenData.permission || {}
             const endPoint = req.originalUrl.split("?").shift().slice(7);
             let isFound = false
             if (allowedEndPoints.includes(endPoint) && req.tokenData._id == requesterId) return next()
