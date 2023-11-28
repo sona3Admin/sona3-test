@@ -20,7 +20,7 @@ exports.login = async (req, res) => {
             role: operationResultObject.result.role,
         }
         const token = jwtHelper.generateToken(payloadObject, "1d")
-        if (operationResultObject.result.type == "admin") await adminRepo.updateDirectly(operationResultObject.result._id, { token })
+        if (operationResultObject.result.role == "admin") await adminRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })

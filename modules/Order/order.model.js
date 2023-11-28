@@ -4,9 +4,9 @@ const orderSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     shops: [{ type: mongoose.Types.ObjectId, ref: "shops" }],
     items: [{
-        shop: { type: mongoose.Types.ObjectId, ref: "shops" },
-        product: { type: mongoose.Types.ObjectId, ref: "products" },
-        variation: { type: mongoose.Types.ObjectId, ref: "variations" },
+        shop: { type: Object },
+        product: { type: Object },
+        variation: { type: Object },
         quantity: { type: Number, min: 1 },
         itemTotal: { type: Number, min: 0 }
     }],
@@ -27,8 +27,9 @@ const orderSchema = mongoose.Schema({
     shippingStages: [{
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{
-            shop: { type: mongoose.Types.ObjectId, ref: "shops" },
-            variation: { type: mongoose.Types.ObjectId, ref: "variations" },
+            shop: { type: Object },
+            product: { type: Object },
+            variation: { type: Object },
             quantity: { type: Number, min: 1 },
             itemTotal: { type: Number, min: 0 }
         }],
