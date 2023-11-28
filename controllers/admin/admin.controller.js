@@ -75,7 +75,7 @@ exports.updateAdmin = async (req, res) => {
 
 exports.updateAdminRole = async (req, res) => {
     try {
-        const operationResultObject = await adminRepo.update(req.query._id, { role: req.body.role, $unset: { token: 1 } });
+        const operationResultObject = await adminRepo.update(req.query._id, { permission: req.body.permission, $unset: { token: 1 } });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

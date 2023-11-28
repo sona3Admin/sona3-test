@@ -99,6 +99,13 @@ exports.uploadImages = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("variations", req.files)
+        console.log(operationResultArray);
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+
         imagesArray = Array.from(imagesArray)
         imagesArray.map((cover) => {
             operationResultArray.push(cover)
@@ -124,10 +131,13 @@ exports.deleteImages = async (req, res) => {
         const existingObject = await variationRepo.find({ _id: req.query._id })
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
+        console.log(`existingObject`, existingObject);
 
-        await imagesToDelete.map(async (pathToFile) => {
-            operationResultObject = await variationRepo.updateDirectly(req.query._id, { $pull: { images: { key: pathToFile } } });
-        });
+        await Promise.all(imagesToDelete.map(async (pathToFile) => {
+            const operationResultObject = await variationRepo.updateDirectly(req.query._id, { $pull: { images: { key: pathToFile } } });
+            operationResultObject.push(operationResultObject);
+        }));
+        console.log(`operationResultObject`, operationResultObject);
         await batchRepo.create({ filesToDelete: imagesToDelete })
         return res.status(operationResultObject.code).json(operationResultObject);
 

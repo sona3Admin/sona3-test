@@ -30,11 +30,11 @@ module.exports = {
                 "object.base": "validImage",
             }),
 
-            role: joi.string().optional().messages({
+            permission: joi.string().optional().messages({
                 "string.base": "validPermissions",
             }),
 
-            type: joi.string().optional().messages({
+            role: joi.string().optional().messages({
                 "string.base": "validRole",
             }),
 
@@ -64,11 +64,11 @@ module.exports = {
                     "string.empty": "emptyEmail",
                 }),
 
-            role: joi.string().optional().messages({
+            permission: joi.string().optional().messages({
                 "string.base": "validPermissions",
             }),
 
-            type: joi.string().optional().messages({
+            role: joi.string().optional().messages({
                 "string.base": "validRole",
             }),
 

@@ -35,7 +35,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await adminModel.findOne(filterObject).lean()
-            .populate({ path: "role", select: "name permissions" })
+            .populate({ path: "permission", select: "name permissions" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -68,7 +68,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         const resultArray = await adminModel.find(filterObject).lean()
-            .populate({ path: "role", select: "name permissions" })
+            .populate({ path: "permission", select: "name permissions" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

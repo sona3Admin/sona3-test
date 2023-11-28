@@ -7,8 +7,8 @@ const adminSchema = mongoose.Schema({
     email: { type: String, required: true, unique: true, dropDups: true },
     password: { type: String, required: true },
     image: { type: Object, default: {} },
-    role: { type: mongoose.Types.ObjectId, ref: "roles", index: true },
-    type: {
+    permission: { type: mongoose.Types.ObjectId, ref: "roles", index: true },
+    role: {
         type: String,
         enum: ["superAdmin", "admin", "chat"],
         default: "admin"

@@ -16,8 +16,8 @@ exports.login = async (req, res) => {
             _id: operationResultObject.result._id,
             name: operationResultObject.result.name,
             email: operationResultObject.result.email,
-            role: operationResultObject.result?.role?.permissions,
-            type: operationResultObject.result.type,
+            permission: operationResultObject.result?.permission?.permissions,
+            role: operationResultObject.result.role,
         }
         const token = jwtHelper.generateToken(payloadObject, "1d")
         if (operationResultObject.result.type == "admin") await adminRepo.updateDirectly(operationResultObject.result._id, { token })

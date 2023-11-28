@@ -40,7 +40,7 @@ exports.get = async (filterObject, selectionObject) => {
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
                     { path: "product", select: "nameEn nameAr" },
-                    { path: "variation", select: "descriptionEn descriptionAr images fields" }
+                    { path: "variation", select: "stock packages descriptionEn descriptionAr images fields" }
                 ]
             })
             .select(selectionObject)
@@ -80,7 +80,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
                     { path: "product", select: "nameEn nameAr" },
-                    { path: "variation", select: "descriptionEn descriptionAr images fields" }
+                    { path: "variation", select: "stock packages descriptionEn descriptionAr images fields" }
                 ]
             })
             .sort(sortObject)
@@ -117,19 +117,16 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.addItemToList = async (customerId, itemId, quantity) => {
     try {
         let variationResultObject = await variationRepo.find({ _id: itemId });
-        if (!variationResultObject.success) return {
-            success: false,
-            code: 404,
-            error: i18n.__("notFound")
-        }
+        if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
+        if (variationResultObject?.result?.stock <= 0) return { success: false, code: 409, error: i18n.__("outOfStock") }
 
         let cartResultObject = await this.get({ customer: customerId });
         if (!cartResultObject.success) return cartResultObject
 
         let isItemInCart = await this.isItemInCart(cartResultObject.result.items, itemId);
-        if (isItemInCart.success) return cartResultObject
+        if (isItemInCart?.success) return cartResultObject
 
-        let newQuantity = variationResultObject.result.defaultPackage.quantity
+        let newQuantity = variationResultObject.result.defaultPackage.quantity + quantity
         let newItemTotal = variationResultObject.result.defaultPackage.price
         let updatedCart = {
             $addToSet: {
