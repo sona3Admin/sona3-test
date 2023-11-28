@@ -32,17 +32,17 @@ exports.verifyToken = (roleString) => {
 
 
                 if (tokenData.role == "admin") {
-                    const operationResultObject = await adminRepo.find({ _id: tokenData._id, token });
+                    const operationResultObject = await adminRepo.find({ _id: tokenData._id });
                     if (!operationResultObject.success || operationResultObject.result.token != token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 });
                 }
 
                 if (tokenData.role == "seller") {
-                    const operationResultObject = await sellerRepo.find({ _id: tokenData._id, token });
+                    const operationResultObject = await sellerRepo.find({ _id: tokenData._id });
                     if (!operationResultObject.success || operationResultObject.result.token != token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 });
                 }
 
                 if (tokenData.role == "customer") {
-                    const operationResultObject = await customerRepo.find({ _id: tokenData._id, token });
+                    const operationResultObject = await customerRepo.find({ _id: tokenData._id });
                     if (!operationResultObject.success || operationResultObject.result.token != token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 });
                 }
 

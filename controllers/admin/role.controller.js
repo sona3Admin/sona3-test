@@ -63,7 +63,7 @@ exports.updateRole = async (req, res) => {
         const permissionValidationResultObject = validatePermissions(req.body.permissions)
         if (!permissionValidationResultObject.success) return res.status(409).json(permissionValidationResultObject);
         const operationResultObject = await roleRepo.update(req.query._id, req.body);
-        await adminRepo.updateMany({ role: req.query._id }, { $unset: { token: 1 } })
+        await adminRepo.updateMany({ permission: req.query._id }, { $unset: { token: 1 } })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
