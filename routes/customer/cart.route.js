@@ -6,6 +6,7 @@ app.get("/get", checkIdentity("customer"), cartController.getCart);
 
 app.post("/item", checkIdentity("customer"), cartController.addItemToCart);
 app.delete("/item", checkIdentity("customer"), cartController.removeItemFromCart);
+app.delete("/flush", checkIdentity("customer"), cartController.flushCart);
 
 
 
