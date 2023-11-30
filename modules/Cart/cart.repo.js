@@ -135,16 +135,17 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         let isItemInCart = await this.isItemInCart(cartObject.items, itemId);
 
         // Update quantity and item total if the item is in the cart.
-        if (isItemInCart.success) cartObject.items = updateItemInCart(cartObject.items, isItemInCart.result, quantityToAdd, itemObject);
+        if (isItemInCart.success) cartObject.items = increaseItemQuantity(cartObject.items, isItemInCart.result, quantityToAdd, itemObject);
 
         // Add the item to the cart if it's not already present.
-        if (!isItemInCart.success) cartObject.items = addItemToCart(cartObject.items, quantityToAdd, itemObject);
+        if (!isItemInCart.success) cartObject.items = addItemToItemsArray(cartObject.items, quantityToAdd, itemObject);
 
         // Update Cart Total
         cartObject = updateCartTotal(cartObject);
 
         // Update Variation Stock
-        updateVariationStock(itemId, itemObject.stock, quantityToAdd);
+        let updatedStock = currentStock - quantityToAdd;
+        await variationRepo.updateDirectly(itemId, { stock: updatedStock });
 
         // Update Cart and Return it to the customer
         let updatedCartResult = await cartRepo.updateDirectly(cartObject._id, cartObject);
@@ -165,86 +166,43 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
 };
 
 
-exports.removeItemFromList = async (customerId, itemId) => {
+exports.removeItemFromList = async (customerId, itemId, quantityToRemove) => {
     try {
-
-        const cartResultObject = await this.get({ customer: customerId });
+        // Get Customer Cart
+        let cartResultObject = await this.get({ customer: customerId });
         if (!cartResultObject.success) return cartResultObject;
 
+        let cartObject = cartResultObject.result;
 
-        const isItemInCart = await this.isItemInCart(cartResultObject.result.items, itemId);
-        if (!isItemInCart.success) return cartResultObject;
+        // Check if Item is in Cart
+        let isItemInCart = await cartRepo.isItemInCart(cartObject.items, itemId);
+        if (!isItemInCart || !isItemInCart.success) return { success: false, code: 404, error: i18n.__("notFound") };
 
-        const updatedCart = await this.updateDirectly(cartResultObject.result._id, { $pull: { items: { variation: itemId } } });
 
+        let itemIndex = isItemInCart.result;
+        let itemObject = cartObject.items[itemIndex];
+
+        // Update Quantity and Item Total
+        if (quantityToRemove >= itemObject.quantity) cartObject.items = removeItemFromItemsArray(cartObject.items, itemIndex);
+
+        if (quantityToRemove < itemObject.quantity) cartObject.items = decreaseItemQuantity(cartObject.items, itemIndex, quantityToRemove, itemObject.variation);
+
+
+        // Update Cart Total
+        cartObject = updateCartTotal(cartObject);
+
+        // Update Variation Stock
+        let updatedStock = itemObject.variation.stock + quantityToRemove;
+        await variationRepo.updateDirectly(itemId, { stock: updatedStock });
+
+        // Update Cart and Return
+        let updatedCartResult = await cartRepo.updateDirectly(cartObject._id, cartObject);
         return {
             success: true,
-            result: updatedCart.result,
-            code: 200 // Use 200 for a successful removal
-        };
-    } catch (err) {
-        console.error(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-};
-
-
-
-exports.isItemInCart = async (arrayOfItemsObjects, itemId) => {
-    try {
-        itemId = mongoose.Types.ObjectId(itemId);
-        const itemIndex = arrayOfItemsObjects.findIndex(itemObject => itemObject.variation.equals(itemId))
-
-        if (itemIndex !== -1) return {
-            success: true,
-            result: itemIndex,
-            code: 200
+            result: updatedCartResult.result,
+            code: 201
         };
 
-        return {
-            success: false,
-            error: i18n.__("notFound"),
-            code: 404
-        };
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-}
-
-
-exports.update = async (_id, formObject) => {
-    try {
-        const existingObject = await this.find({ _id });
-        if (!existingObject.success) return {
-            success: false,
-            code: 404,
-            error: i18n.__("notFound")
-        };
-
-        const resultObject = await cartModel.findByIdAndUpdate({ _id }, formObject, { new: true });
-
-        if (!resultObject) return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-
-
-        return {
-            success: true,
-            code: 200,
-            result: resultObject
-        };
     } catch (err) {
         console.log(`err.message`, err.message);
         return {
@@ -311,6 +269,34 @@ exports.remove = async (_id) => {
 }
 
 
+exports.isItemInCart = async (arrayOfItemsObjects, itemId) => {
+    try {
+        itemId = mongoose.Types.ObjectId(itemId);
+        const itemIndex = arrayOfItemsObjects.findIndex(itemObject => itemObject.variation.equals(itemId))
+
+        if (itemIndex !== -1) return {
+            success: true,
+            result: itemIndex,
+            code: 200
+        };
+
+        return {
+            success: false,
+            error: i18n.__("notFound"),
+            code: 404
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+
 function calculateItemTotal(packagesArray, quantityToPurchase, minPackageObject) {
     packagesArray.sort((firstPackageObject, secondPackageObject) => secondPackageObject.quantity - firstPackageObject.quantity);
 
@@ -330,82 +316,7 @@ function calculateItemTotal(packagesArray, quantityToPurchase, minPackageObject)
 }
 
 
-
-exports.removeFromCart = async (customerId, variationId, quantityToRemove) => {
-    try {
-        // Get Customer Cart
-        let cartResultObject = await cartRepo.get({ customer: customerId });
-        if (!cartResultObject.success) return cartResultObject;
-        let cart = cartResultObject.result;
-
-        // Check if Item is in Cart
-        let isItemInCart = await cartRepo.isItemInCart(cart.items, variationId);
-
-        if (!isItemInCart?.success) {
-            return { success: false, code: 404, error: i18n.__("notFound") };
-        }
-
-        let itemIndex = isItemInCart.result;
-        let item = cart.items[itemIndex];
-
-        // Update Quantity and Item Total
-        if (quantityToRemove >= item.quantity) {
-            // Remove item from the array if the quantity to remove is greater or equal to the item quantity.
-            cart.items.splice(itemIndex, 1);
-        } else {
-            // Update quantity and recalculate item total if the quantity to remove is less than the item quantity.
-            let newQuantity = item.quantity - quantityToRemove;
-            let itemTotal = calculateItemTotal(item.variation.packages, newQuantity, item.variation.minPackage);
-
-            // Update existing item in the cart
-            cart.items[itemIndex].quantity = newQuantity;
-            cart.items[itemIndex].itemTotal = itemTotal;
-        }
-
-        // Update Cart Total
-        let oldItemTotal = item.itemTotal || 0;
-        let newItemTotal = cart.items.reduce((total, item) => total + item.itemTotal, 0);
-        cart.itemsTotal = newItemTotal;
-        cart.originalItemsTotal -= oldItemTotal;
-
-        // Update Variation Stock
-        let updatedStock = item.variation.stock + quantityToRemove;
-        await variationRepo.updateDirectly(variationId, { stock: updatedStock });
-
-        // Update Cart and Return
-        let updatedCartResult = await cartRepo.updateDirectly(cart._id, cart);
-        return {
-            success: true,
-            result: updatedCartResult.result,
-            code: 200
-        };
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-};
-
-
-function isStockAvailable(currentStock, quantityToAdd) {
-    return currentStock > 0 && currentStock >= quantityToAdd;
-}
-
-
-function updateItemInCart(cartItemsArray, itemIndex, quantityToAdd, itemObject) {
-    let existingQuantity = cartItemsArray[itemIndex].quantity;
-    let newQuantity = existingQuantity + quantityToAdd;
-    let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
-    cartItemsArray[itemIndex].quantity = newQuantity;
-    cartItemsArray[itemIndex].itemTotal = itemTotal;
-    return cartItemsArray
-}
-
-
-function addItemToCart(cartItemsArray, quantityToAdd, itemObject) {
+function addItemToItemsArray(cartItemsArray, quantityToAdd, itemObject) {
     let newQuantity = quantityToAdd;
     let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
     cartItemsArray.push({
@@ -419,6 +330,34 @@ function addItemToCart(cartItemsArray, quantityToAdd, itemObject) {
 }
 
 
+function removeItemFromItemsArray(cartItems, itemIndex) {
+    cartItems.splice(itemIndex, 1);
+    return cartItems;
+}
+
+
+function increaseItemQuantity(cartItemsArray, itemIndex, quantityToAdd, itemObject) {
+    let existingQuantity = cartItemsArray[itemIndex].quantity;
+    let newQuantity = existingQuantity + quantityToAdd;
+    let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
+    cartItemsArray[itemIndex].quantity = newQuantity;
+    cartItemsArray[itemIndex].itemTotal = itemTotal;
+    return cartItemsArray
+}
+
+
+function decreaseItemQuantity(cartItems, itemIndex, quantityToRemove, variation) {
+    let newQuantity = cartItems[itemIndex].quantity - quantityToRemove;
+    let itemTotal = calculateItemTotal(variation.packages, newQuantity, variation.minPackage);
+
+    // Update existing item in the cart
+    cartItems[itemIndex].quantity = newQuantity;
+    cartItems[itemIndex].itemTotal = itemTotal;
+
+    return cartItems;
+}
+
+
 function updateCartTotal(cartObject) {
     let cartTotal = cartObject.items.reduce((total, item) => total + item.itemTotal, 0);
     cartObject.itemsTotal = cartTotal;
@@ -427,29 +366,6 @@ function updateCartTotal(cartObject) {
 }
 
 
-async function updateVariationStock(itemId, currentStock, quantityToAdd) {
-    try {
-        let updatedStock = currentStock - quantityToAdd;
-        const resultObject = await variationRepo.updateDirectly(itemId, { stock: updatedStock });
-        if (!resultObject) return {
-            success: false,
-            code: 404,
-            error: i18n.__("notFound")
-        }
-
-        return {
-            success: true,
-            code: 200,
-            result: resultObject
-        }
-
-    }
-    catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
+function isStockAvailable(currentStock, quantityToAdd) {
+    return currentStock > 0 && currentStock >= quantityToAdd;
 }
