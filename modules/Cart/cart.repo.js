@@ -123,7 +123,8 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         let itemObject = variationResultObject.result;
 
         // Check Stock Availability
-        if (!isStockAvailable(itemObject.stock, quantityToAdd)) return { success: false, code: 409, error: i18n.__("outOfStock") }
+        let currentStock = itemObject.stock
+        if (!isStockAvailable(currentStock, quantityToAdd)) return { success: false, code: 409, error: i18n.__("outOfStock") }
 
 
         // Get Customer Cart
@@ -145,10 +146,10 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
 
         // Update Variation Stock
         let updatedStock = currentStock - quantityToAdd;
-        await variationRepo.updateDirectly(itemId, { stock: updatedStock });
+        variationRepo.updateDirectly(itemId, { stock: updatedStock });
 
         // Update Cart and Return it to the customer
-        let updatedCartResult = await cartRepo.updateDirectly(cartObject._id, cartObject);
+        let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
         return {
             success: true,
             result: updatedCartResult.result,
@@ -193,7 +194,7 @@ exports.removeItemFromList = async (customerId, itemId, quantityToRemove) => {
 
         // Update Variation Stock
         let updatedStock = itemObject.variation.stock + quantityToRemove;
-        await variationRepo.updateDirectly(itemId, { stock: updatedStock });
+        variationRepo.updateDirectly(itemId, { stock: updatedStock });
 
         // Update Cart and Return
         let updatedCartResult = await cartRepo.updateDirectly(cartObject._id, cartObject);
