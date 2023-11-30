@@ -114,44 +114,47 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
-exports.addItemToList = async (customerId, itemId, quantity) => {
+exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
     try {
+        // Fetch Variation
         let variationResultObject = await variationRepo.find({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
-        if (variationResultObject?.result?.stock <= 0) return { success: false, code: 409, error: i18n.__("outOfStock") }
 
+        let itemObject = variationResultObject.result;
+
+        // Check Stock Availability
+        if (!isStockAvailable(itemObject.stock, quantityToAdd)) return { success: false, code: 409, error: i18n.__("outOfStock") }
+
+
+        // Get Customer Cart
         let cartResultObject = await this.get({ customer: customerId });
-        if (!cartResultObject.success) return cartResultObject
+        if (!cartResultObject.success) return cartResultObject;
+        let cartObject = cartResultObject.result;
 
-        let isItemInCart = await this.isItemInCart(cartResultObject.result.items, itemId);
-        if (isItemInCart?.success) return cartResultObject
+        // Check if Item is in Cart
+        let isItemInCart = await this.isItemInCart(cartObject.items, itemId);
 
-        let newQuantity = variationResultObject.result.defaultPackage.quantity + quantity
-        let newItemTotal = variationResultObject.result.defaultPackage.price
-        let updatedCart = {
-            $addToSet: {
-                items: {
-                    shop: variationResultObject.result.shop,
-                    product: variationResultObject.result.product,
-                    variation: itemId,
-                    quantity: newQuantity,
-                    itemTotal: newItemTotal
-                }
-            },
-            $inc: {
-                itemsTotal: newItemTotal,
-                originalItemsTotal: newItemTotal
-            }
-        }
-        cartResultObject = await this.updateDirectly(cartResultObject.result._id, updatedCart)
+        // Update quantity and item total if the item is in the cart.
+        if (isItemInCart.success) cartObject.items = updateItemInCart(cartObject.items, isItemInCart.result, quantityToAdd, itemObject);
 
+        // Add the item to the cart if it's not already present.
+        if (!isItemInCart.success) cartObject.items = addItemToCart(cartObject.items, quantityToAdd, itemObject);
+
+        // Update Cart Total
+        cartObject = updateCartTotal(cartObject);
+
+        // Update Variation Stock
+        updateVariationStock(itemId, itemObject.stock, quantityToAdd);
+
+        // Update Cart and Return it to the customer
+        let updatedCartResult = await cartRepo.updateDirectly(cartObject._id, cartObject);
         return {
             success: true,
-            result: cartResultObject,
+            result: updatedCartResult.result,
             code: 201
-        }
-    }
-    catch (err) {
+        };
+
+    } catch (err) {
         console.log(`err.message`, err.message);
         return {
             success: false,
@@ -159,7 +162,7 @@ exports.addItemToList = async (customerId, itemId, quantity) => {
             error: i18n.__("internalServerError")
         };
     }
-}
+};
 
 
 exports.removeItemFromList = async (customerId, itemId) => {
@@ -305,4 +308,148 @@ exports.remove = async (_id) => {
         };
     }
 
+}
+
+
+function calculateItemTotal(packagesArray, quantityToPurchase, minPackageObject) {
+    packagesArray.sort((firstPackageObject, secondPackageObject) => secondPackageObject.quantity - firstPackageObject.quantity);
+
+    let remainingQuantity = quantityToPurchase;
+    let itemTotal = 0;
+
+    for (const packageObject of packagesArray) {
+        const selectedQuantity = Math.min(packageObject.quantity, remainingQuantity);
+        itemTotal += packageObject.price;
+        remainingQuantity -= selectedQuantity;
+        if (remainingQuantity === 0) break;
+    }
+
+    if (remainingQuantity > 0) itemTotal += (remainingQuantity * minPackageObject.price);
+
+    return itemTotal;
+}
+
+
+
+exports.removeFromCart = async (customerId, variationId, quantityToRemove) => {
+    try {
+        // Get Customer Cart
+        let cartResultObject = await cartRepo.get({ customer: customerId });
+        if (!cartResultObject.success) return cartResultObject;
+        let cart = cartResultObject.result;
+
+        // Check if Item is in Cart
+        let isItemInCart = await cartRepo.isItemInCart(cart.items, variationId);
+
+        if (!isItemInCart?.success) {
+            return { success: false, code: 404, error: i18n.__("notFound") };
+        }
+
+        let itemIndex = isItemInCart.result;
+        let item = cart.items[itemIndex];
+
+        // Update Quantity and Item Total
+        if (quantityToRemove >= item.quantity) {
+            // Remove item from the array if the quantity to remove is greater or equal to the item quantity.
+            cart.items.splice(itemIndex, 1);
+        } else {
+            // Update quantity and recalculate item total if the quantity to remove is less than the item quantity.
+            let newQuantity = item.quantity - quantityToRemove;
+            let itemTotal = calculateItemTotal(item.variation.packages, newQuantity, item.variation.minPackage);
+
+            // Update existing item in the cart
+            cart.items[itemIndex].quantity = newQuantity;
+            cart.items[itemIndex].itemTotal = itemTotal;
+        }
+
+        // Update Cart Total
+        let oldItemTotal = item.itemTotal || 0;
+        let newItemTotal = cart.items.reduce((total, item) => total + item.itemTotal, 0);
+        cart.itemsTotal = newItemTotal;
+        cart.originalItemsTotal -= oldItemTotal;
+
+        // Update Variation Stock
+        let updatedStock = item.variation.stock + quantityToRemove;
+        await variationRepo.updateDirectly(variationId, { stock: updatedStock });
+
+        // Update Cart and Return
+        let updatedCartResult = await cartRepo.updateDirectly(cart._id, cart);
+        return {
+            success: true,
+            result: updatedCartResult.result,
+            code: 200
+        };
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+};
+
+
+function isStockAvailable(currentStock, quantityToAdd) {
+    return currentStock > 0 && currentStock >= quantityToAdd;
+}
+
+
+function updateItemInCart(cartItemsArray, itemIndex, quantityToAdd, itemObject) {
+    let existingQuantity = cartItemsArray[itemIndex].quantity;
+    let newQuantity = existingQuantity + quantityToAdd;
+    let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
+    cartItemsArray[itemIndex].quantity = newQuantity;
+    cartItemsArray[itemIndex].itemTotal = itemTotal;
+    return cartItemsArray
+}
+
+
+function addItemToCart(cartItemsArray, quantityToAdd, itemObject) {
+    let newQuantity = quantityToAdd;
+    let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
+    cartItemsArray.push({
+        shop: itemObject.shop,
+        product: itemObject.product,
+        variation: itemObject._id,
+        quantity: newQuantity,
+        itemTotal: itemTotal
+    });
+    return cartItemsArray
+}
+
+
+function updateCartTotal(cartObject) {
+    let cartTotal = cartObject.items.reduce((total, item) => total + item.itemTotal, 0);
+    cartObject.itemsTotal = cartTotal;
+    cartObject.originalItemsTotal = cartTotal;
+    return cartObject
+}
+
+
+async function updateVariationStock(itemId, currentStock, quantityToAdd) {
+    try {
+        let updatedStock = currentStock - quantityToAdd;
+        const resultObject = await variationRepo.updateDirectly(itemId, { stock: updatedStock });
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        }
+
+    }
+    catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
 }
