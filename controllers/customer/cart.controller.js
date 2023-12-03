@@ -36,7 +36,7 @@ exports.addItemToCart = async (req, res) => {
 
 exports.removeItemFromCart = async (req, res) => {
     try {
-        const operationResultObject = await cartRepo.removeItemFromList(req.query.customer, req.query.item, req.query.quantity);
+        const operationResultObject = await cartRepo.removeItemFromList(req.query.customer, req.query.shop, req.query.item, req.query.quantity);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

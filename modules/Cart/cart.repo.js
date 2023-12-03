@@ -1,7 +1,8 @@
 let cartModel = require("./cart.model");
 let variationRepo = require("../Variation/variation.repo")
 const i18n = require('i18n');
-const mongoose = require("mongoose");
+const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromSubCartsArray, decreaseItemQuantity,
+    addNewSubCart, updateExistingSubCart, calculateCartTotal } = require("../../helpers/cart.helper")
 
 
 exports.find = async (filterObject) => {
@@ -36,11 +37,11 @@ exports.get = async (filterObject, selectionObject) => {
         let resultObject = await cartModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({
-                path: "items",
+                path: "subCarts",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr" },
-                    { path: "variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
+                    { path: "items.product", select: "nameEn nameAr" },
+                    { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
                 ]
             })
             .select(selectionObject)
@@ -72,15 +73,14 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
-
         const resultArray = await cartModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({
-                path: "items",
+                path: "subCarts",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr" },
-                    { path: "variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
+                    { path: "items.product", select: "nameEn nameAr" },
+                    { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
                 ]
             })
             .sort(sortObject)
@@ -128,18 +128,18 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         if (!cartResultObject.success) return cartResultObject;
         let cartObject = cartResultObject.result;
 
-        let isItemInCart = await this.isItemInCart(cartObject.items, itemId);
+        let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", itemObject.shop)
 
-        if (isItemInCart.success) cartObject.items = increaseItemQuantity(cartObject.items, isItemInCart.result, parseInt(quantityToAdd), itemObject);
+        if (isShopInSubCarts.success) updateExistingSubCart(cartObject, isShopInSubCarts?.result, itemObject, itemId, parseInt(quantityToAdd))
 
-        if (!isItemInCart.success) cartObject.items = addItemToItemsArray(cartObject.items, parseInt(quantityToAdd), itemObject);
+        if (!isShopInSubCarts.success) addNewSubCart(cartObject, itemObject, parseInt(quantityToAdd))
 
-        cartObject = updateCartTotal(cartObject);
+        cartObject = calculateCartTotal(cartObject);
 
         let updatedStock = currentStock - parseInt(quantityToAdd);
         variationRepo.updateDirectly(itemId, { stock: updatedStock });
-
         let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
+
         return {
             success: true,
             result: updatedCartResult.result,
@@ -157,37 +157,48 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
 };
 
 
-exports.removeItemFromList = async (customerId, itemId, quantityToRemove) => {
+exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove) => {
     try {
-        // Get Customer Cart
         let cartResultObject = await this.get({ customer: customerId });
         if (!cartResultObject.success) return cartResultObject;
-
         let cartObject = cartResultObject.result;
+        console.log("Get Customer Cart");
 
-        // Check if Item is in Cart
-        let isItemInCart = await this.isItemInCart(cartObject.items, itemId);
-        if (!isItemInCart || !isItemInCart.success) return { success: false, code: 404, error: i18n.__("notFound") };
+        let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", shopId)
+        if (!isShopInSubCarts || !isShopInSubCarts.success) return { success: false, code: 404, error: i18n.__("notFound") };
+        console.log("Shop is in Cart");
 
+        let shopCartIndex = parseInt(isShopInSubCarts.result)
+        console.log("shopCartIndex", shopCartIndex);
 
-        let itemIndex = isItemInCart.result;
-        let itemObject = cartObject.items[itemIndex];
+        let shopCartObject = cartObject.subCarts[shopCartIndex]
+        let isItemInShopCart = isIdInArray(shopCartObject.items, "variation", itemId);
+        if (!isItemInShopCart || !isItemInShopCart.success) return { success: false, code: 404, error: i18n.__("notFound") };
+        console.log("Item is in Shop Cart");
+
+        let itemIndex = parseInt(isItemInShopCart.result);
+        
+        let itemObject = shopCartObject.items[itemIndex];
+        console.log("itemObject.quantity", itemObject.quantity);
+        console.log("quantityToRemove", quantityToRemove);
+        quantityToRemove = parseInt(quantityToRemove)
+        console.log("quantityToRemove", typeof(quantityToRemove));
 
         // Update Quantity and Item Total
-        if (quantityToRemove >= itemObject.quantity) cartObject.items = removeItemFromItemsArray(cartObject.items, itemIndex);
+        if (parseInt(quantityToRemove) >= itemObject.quantity) shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex);
+        if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
+        if (parseInt(quantityToRemove) < itemObject.quantity) shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, itemIndex, parseInt(quantityToRemove), itemObject.variation);
 
-        if (quantityToRemove < itemObject.quantity) cartObject.items = decreaseItemQuantity(cartObject.items, itemIndex, parseInt(quantityToRemove), itemObject.variation);
-
-
-        // Update Cart Total
-        cartObject = updateCartTotal(cartObject);
-
-        // Update Variation Stock
+        cartObject = calculateCartTotal(cartObject);
+        console.log("Update Cart Total");
+        
         let updatedStock = parseInt(itemObject.variation.stock) + parseInt(quantityToRemove);
         variationRepo.updateDirectly(itemId, { stock: updatedStock });
+        console.log("Update Variation Stock");
 
-        // Update Cart and Return
         let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
+        console.log("Update Cart and Return");
+
         return {
             success: true,
             result: updatedCartResult.result,
@@ -260,34 +271,6 @@ exports.remove = async (_id) => {
 }
 
 
-exports.isItemInCart = async (arrayOfItemsObjects, itemId) => {
-    try {
-        itemId = mongoose.Types.ObjectId(itemId);
-        const itemIndex = arrayOfItemsObjects.findIndex(itemObject => itemObject.variation.equals(itemId))
-
-        if (itemIndex !== -1) return {
-            success: true,
-            result: itemIndex,
-            code: 200
-        };
-
-        return {
-            success: false,
-            error: i18n.__("notFound"),
-            code: 404
-        };
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-}
-
-
 exports.flush = async (filterObject) => {
     try {
         let resultObject = await this.find(filterObject)
@@ -296,7 +279,7 @@ exports.flush = async (filterObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        let formObject = { items: [], itemsTotal: 0, originalItemsTotal: 0, $unset: { coupon: 1 } }
+        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, $unset: { coupon: 1 } }
         resultObject = await cartModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
 
         return {
@@ -315,78 +298,3 @@ exports.flush = async (filterObject) => {
     }
 }
 
-
-function calculateItemTotal(packagesArray, quantityToPurchase, minPackageObject) {
-
-    packagesArray.sort((firstPackageObject, secondPackageObject) => secondPackageObject.quantity - firstPackageObject.quantity);
-
-    let remainingQuantity = parseInt(quantityToPurchase);
-    let itemTotal = parseInt(0);
-
-    for (const packageObject of packagesArray) {
-        const selectedQuantity = Math.min(packageObject.quantity, remainingQuantity);
-        itemTotal += parseFloat(packageObject.price);
-
-        remainingQuantity -= parseInt(selectedQuantity);
-
-        if (remainingQuantity === 0) break;
-    }
-
-    if (remainingQuantity > 0) itemTotal += remainingQuantity * parseFloat(minPackageObject.price);
-    return itemTotal;
-}
-
-
-function addItemToItemsArray(cartItemsArray, quantityToAdd, itemObject) {
-    let newQuantity = quantityToAdd;
-    let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
-    cartItemsArray.push({
-        shop: itemObject.shop,
-        product: itemObject.product,
-        variation: itemObject._id,
-        quantity: newQuantity,
-        itemTotal: itemTotal
-    });
-    return cartItemsArray
-}
-
-
-function removeItemFromItemsArray(cartItems, itemIndex) {
-    cartItems.splice(itemIndex, 1);
-    return cartItems;
-}
-
-
-function increaseItemQuantity(cartItemsArray, itemIndex, quantityToAdd, itemObject) {
-    let existingQuantity = cartItemsArray[itemIndex].quantity;
-    let newQuantity = parseInt(existingQuantity) + quantityToAdd;
-    let itemTotal = calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
-    cartItemsArray[itemIndex].quantity = newQuantity;
-    cartItemsArray[itemIndex].itemTotal = itemTotal;
-    return cartItemsArray
-}
-
-
-function decreaseItemQuantity(cartItems, itemIndex, quantityToRemove, variation) {
-    let newQuantity = cartItems[itemIndex].quantity - quantityToRemove;
-    let itemTotal = calculateItemTotal(variation.packages, newQuantity, variation.minPackage);
-
-    // Update existing item in the cart
-    cartItems[itemIndex].quantity = newQuantity;
-    cartItems[itemIndex].itemTotal = itemTotal;
-
-    return cartItems;
-}
-
-
-function updateCartTotal(cartObject) {
-    let cartTotal = cartObject.items.reduce((total, item) => parseFloat(total) + parseFloat(item.itemTotal), 0);
-    cartObject.itemsTotal = cartTotal;
-    cartObject.originalItemsTotal = cartTotal;
-    return cartObject
-}
-
-
-function isStockAvailable(currentStock, quantityToAdd) {
-    return currentStock > 0 && currentStock >= quantityToAdd;
-}

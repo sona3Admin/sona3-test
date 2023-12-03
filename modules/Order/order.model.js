@@ -17,14 +17,21 @@ const orderSchema = mongoose.Schema({
         default: "pending"
     },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
-    shippingAddress: { type: Object },
+    shippingAddress: {
+        location: {
+            type: { type: String, default: "Point" },
+            coordinates: { type: Array, default: [0, 0] }
+        },
+        address: { type: Object }
+    },
     itemsTotal: { type: Number, min: 0 },
     originalItemsTotal: { type: Number, min: 0 },
     shippingFeesTotal: { type: Number, min: 0 },
     taxesTotal: { type: Number, min: 0 },
+    taxesRate: { type: Number, min: 0 },
     orderTotal: { type: Number, min: 0 },
     issueDate: { type: Date },
-    shippingStages: [{
+    subOrders: [{
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{
             shop: { type: Object },
