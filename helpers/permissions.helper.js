@@ -91,6 +91,11 @@ let cartEndPoints = [
 ]
 
 
+let orderEndPoints = [
+    "/admin/orders/get", "/admin/orders/list", "/admin/orders/update", 
+]
+
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -107,6 +112,7 @@ serviceEndPoints = new Set(serviceEndPoints);
 bannerEndPoints = new Set(bannerEndPoints);
 wishlistEndPoints = new Set(wishlistEndPoints);
 cartEndPoints = new Set(cartEndPoints);
+orderEndPoints = new Set(orderEndPoints);
 
 
 let permissions = new Map();
@@ -127,6 +133,7 @@ permissions.set("services", serviceEndPoints)
 permissions.set("banners", bannerEndPoints)
 permissions.set("wishlists", wishlistEndPoints)
 permissions.set("carts", cartEndPoints)
+permissions.set("orders", orderEndPoints)
 
 
 module.exports = { permissions }

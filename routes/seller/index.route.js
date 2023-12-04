@@ -15,6 +15,7 @@ const productRoutes = require("./product.route");
 const variationRoutes = require("./variation.route");
 const serviceRoutes = require("./service.route");
 const bannerRoutes = require("./banner.route");
+const orderRoutes = require("./order.route");
 
 
 
@@ -29,6 +30,7 @@ app.use("/products", checkToken(allowedUsers), productRoutes);
 app.use("/variations", checkToken(allowedUsers), variationRoutes);
 app.use("/services", checkToken(allowedUsers), serviceRoutes);
 app.use("/banners", checkToken(allowedUsers), bannerRoutes);
+app.use("/orders", checkToken(allowedUsers), orderRoutes);
 
 
 

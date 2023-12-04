@@ -102,10 +102,6 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
-        formObject = this.convertToLowerCase(formObject)
-        const uniqueObjectResult = await this.isObjectUninque(formObject);
-        if (!uniqueObjectResult.success) return uniqueObjectResult
-
         const resultObject = new orderModel(formObject);
         await resultObject.save();
 
@@ -141,13 +137,6 @@ exports.update = async (_id, formObject) => {
             code: 404,
             error: i18n.__("notFound")
         };
-
-        if (formObject.nameEn || formObject.nameAr) {
-            formObject.nameEn = formObject.nameEn ? formObject.nameEn : existingObject.result.nameEn;
-            formObject.nameAr = formObject.nameAr ? formObject.nameAr : existingObject.result.nameAr;
-            const uniqueObjectResult = await this.isNameUnique(formObject, existingObject)
-            if (!uniqueObjectResult.success) return uniqueObjectResult
-        }
 
         const resultObject = await orderModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
@@ -226,49 +215,6 @@ exports.remove = async (_id) => {
         };
     }
 
-}
-
-
-exports.isObjectUninque = async (formObject) => {
-    const duplicateObject = await this.find({
-        $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
-    })
-
-    if (duplicateObject.success) {
-
-        if (duplicateObject.result.nameEn == formObject.nameEn || duplicateObject.result.nameAr == formObject.nameAr) return {
-            success: false,
-            code: 409,
-            error: i18n.__("nameUsed")
-        }
-    }
-
-    return {
-        success: true,
-        code: 200
-    }
-}
-
-
-exports.isNameUnique = async (formObject, existingObject) => {
-
-    const duplicateObject = await this.find({
-        $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
-    });
-
-    if (duplicateObject.success &&
-        duplicateObject.result._id.toString() !== existingObject.result._id.toString()) {
-        return {
-            success: false,
-            code: 409,
-            error: i18n.__("nameUsed")
-        }
-    }
-
-    return {
-        success: true,
-        code: 200,
-    }
 }
 
 

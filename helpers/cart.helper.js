@@ -33,9 +33,6 @@ exports.increaseItemQuantity = (cartItemsArray, itemIndex, quantityToAdd, itemOb
 }
 
 
-
-
-
 exports.addShopToSubCartsArray = (subCartsArray, shopId) => {
     subCartsArray.push({
         shop: shopId,
@@ -66,7 +63,7 @@ exports.addItemToItemsArray = (cartItemsArray, quantityToAdd, itemObject) => {
 
 exports.removeItemFromItemsArray = (shopCartObject, itemIndex) => {
     console.log("itemIndex", itemIndex);
-    shopCartObject.shopCartItems.splice(itemIndex, 1);
+    shopCartObject.items.splice(itemIndex, 1);
     console.log("removeItemFromItemsArray");
     this.calculateShopTotal(shopCartObject)
     return shopCartObject.shopCartItems;
@@ -81,19 +78,15 @@ exports.removeShopFromSubCartsArray = (shopCarts, subCartIndex) => {
 
 
 exports.decreaseItemQuantity = (shopCartObject, shopCartItems, itemIndex, quantityToRemove, variation) => {
-
+    console.log("decrease item quantity");
     itemIndex = parseInt(itemIndex); quantityToRemove = parseInt(quantityToRemove)
-    console.log(typeof(itemIndex));
     let newQuantity = parseInt(shopCartItems[itemIndex].quantity) - quantityToRemove;
     let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage);
-
-    // Update existing item in the cart
     shopCartItems[itemIndex].quantity = newQuantity;
     shopCartItems[itemIndex].itemTotal = itemTotal;
-    console.log(`decreaseItemQuantity`);
-
+    shopCartObject.items = shopCartItems
     this.calculateShopTotal(shopCartObject)
-    return shopCartObject.shopCartItems;
+    return shopCartObject.items;
 }
 
 
@@ -113,7 +106,7 @@ exports.updateExistingSubCart = (cartObject, subCartIndex, itemObject, itemId, q
     let shopCartIndex = parseInt(subCartIndex)
     let shopCartObject = cartObject.subCarts[shopCartIndex]
     let isItemInShopCart = this.isIdInArray(shopCartObject.items, "variation", itemId);
-    console.log(`isItemInShopCart`, isItemInShopCart);
+    console.log(`isItemInShopCart`, isItemInShopCart.success);
 
     if (isItemInShopCart.success) shopCartObject.items = this.increaseItemQuantity(shopCartObject.items, shopCartIndex, parseInt(quantityToAdd), itemObject);
 
@@ -125,23 +118,20 @@ exports.updateExistingSubCart = (cartObject, subCartIndex, itemObject, itemId, q
 
 exports.calculateItemTotal = (packagesArray, quantityToPurchase, minPackageObject) => {
 
-    packagesArray.sort((firstPackageObject, secondPackageObject) => secondPackageObject.quantity - firstPackageObject.quantity);
+    let remainingQuantity = quantityToPurchase;
+    let itemTotal = 0;
+    let smallestPackage = findPackageWithSmallestQuantity(packagesArray)
+    while (remainingQuantity >= smallestPackage.quantity) {
+        const selectedPackage = selectPackage(packagesArray, remainingQuantity);
+        itemTotal += selectedPackage.price;
 
-    let remainingQuantity = parseInt(quantityToPurchase);
-    let itemTotal = parseInt(0);
-
-    for (const packageObject of packagesArray) {
-        const selectedQuantity = Math.min(packageObject.quantity, remainingQuantity);
-        itemTotal += parseFloat(packageObject.price);
-
-        remainingQuantity -= parseInt(selectedQuantity);
+        remainingQuantity -= selectedPackage.quantity;
 
         if (remainingQuantity === 0) break;
     }
 
-    if (remainingQuantity > 0) itemTotal += remainingQuantity * parseFloat(minPackageObject.price);
+    if (remainingQuantity > 0) itemTotal += (remainingQuantity * minPackageObject.price);
     console.log("calculated item total");
-
     return itemTotal;
 }
 
@@ -162,4 +152,32 @@ exports.calculateCartTotal = (cartObject) => {
     cartObject.cartOriginalTotal = cartTotal;
     console.log("calculated cart total");
     return cartObject
+}
+
+
+function selectPackage(arrayOfObjects, givenNumber) {
+    let selectedPackage = null;
+
+    for (const packageObject of arrayOfObjects) {
+        if (packageObject.quantity <= givenNumber && (!selectedPackage || packageObject.quantity > selectedPackage.quantity)) {
+            selectedPackage = packageObject;
+        }
+    }
+
+    return selectedPackage;
+}
+
+
+function findPackageWithSmallestQuantity(arrayOfObjects) {
+    if (arrayOfObjects.length === 0) return null; // Return null for an empty array
+
+    let smallestQuantityPackage = arrayOfObjects[0];
+
+    for (let i = 1; i < arrayOfObjects.length; i++) {
+        if (arrayOfObjects[i].quantity < smallestQuantityPackage.quantity)
+            smallestQuantityPackage = arrayOfObjects[i];
+
+    }
+
+    return smallestQuantityPackage;
 }
