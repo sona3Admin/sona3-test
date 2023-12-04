@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const shopSchema = mongoose.Schema({
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
+    productCategories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
+    serviceCategories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     nameEn: { type: String, required: true },
     nameAr: { type: String, required: true },
     descriptionEn: { type: String, required: true },

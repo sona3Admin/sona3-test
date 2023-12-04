@@ -36,6 +36,8 @@ exports.get = async (filterObject, selectionObject) => {
         let resultObject = await shopModel.findOne(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
+            .populate({ path: "productCategories", select: "nameEn nameAr image" })
+            .populate({ path: "serviceCategories", select: "nameEn nameAr image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -71,6 +73,8 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let resultArray = await shopModel.find(filterObject).lean()
             .populate({ path: "seller", select: "nameEn nameAr image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
+            .populate({ path: "productCategories", select: "nameEn nameAr image" })
+            .populate({ path: "serviceCategories", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

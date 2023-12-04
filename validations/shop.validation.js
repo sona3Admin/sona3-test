@@ -15,6 +15,16 @@ module.exports = {
                 "any.required": "requiredCategory",
             }),
 
+            productCategories: joi.array().required().messages({
+                "string.base": "validCategory",
+                "any.required": "requiredCategory",
+            }),
+
+            serviceCategories: joi.array().required().messages({
+                "string.base": "validCategory",
+                "any.required": "requiredCategory",
+            }),
+
             nameEn: joi.string().required().messages({
                 "string.base": "validNameEn",
                 "any.required": "requiredNameEn",
@@ -107,6 +117,13 @@ module.exports = {
                 "any.required": "requiredCategory",
             }),
 
+            productCategories: joi.array().optional().messages({
+                "string.base": "validCategory",
+            }),
+
+            serviceCategories: joi.array().optional().messages({
+                "string.base": "validCategory",
+            }),
 
             nameEn: joi.string().optional().messages({
                 "string.base": "validNameEn",
