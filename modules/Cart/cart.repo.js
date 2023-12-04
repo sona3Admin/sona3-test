@@ -177,21 +177,26 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         console.log("Item is in Shop Cart");
 
         let itemIndex = parseInt(isItemInShopCart.result);
-        
+        console.log("itemIndex", itemIndex);
+
         let itemObject = shopCartObject.items[itemIndex];
         console.log("itemObject.quantity", itemObject.quantity);
         console.log("quantityToRemove", quantityToRemove);
         quantityToRemove = parseInt(quantityToRemove)
-        console.log("quantityToRemove", typeof(quantityToRemove));
-
+        console.log("quantityToRemove", typeof (quantityToRemove));
         // Update Quantity and Item Total
         if (parseInt(quantityToRemove) >= itemObject.quantity) shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex);
+
         if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
-        if (parseInt(quantityToRemove) < itemObject.quantity) shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, itemIndex, parseInt(quantityToRemove), itemObject.variation);
+
+        if (parseInt(quantityToRemove) < parseInt(itemObject.quantity))
+            shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, parseInt(itemIndex), parseInt(quantityToRemove), itemObject.variation);
+
+
 
         cartObject = calculateCartTotal(cartObject);
         console.log("Update Cart Total");
-        
+
         let updatedStock = parseInt(itemObject.variation.stock) + parseInt(quantityToRemove);
         variationRepo.updateDirectly(itemId, { stock: updatedStock });
         console.log("Update Variation Stock");

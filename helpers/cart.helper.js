@@ -81,7 +81,10 @@ exports.removeShopFromSubCartsArray = (shopCarts, subCartIndex) => {
 
 
 exports.decreaseItemQuantity = (shopCartObject, shopCartItems, itemIndex, quantityToRemove, variation) => {
-    let newQuantity = shopCartObject.shopCartItems[itemIndex].quantity - quantityToRemove;
+
+    itemIndex = parseInt(itemIndex); quantityToRemove = parseInt(quantityToRemove)
+    console.log(typeof(itemIndex));
+    let newQuantity = parseInt(shopCartItems[itemIndex].quantity) - quantityToRemove;
     let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage);
 
     // Update existing item in the cart
