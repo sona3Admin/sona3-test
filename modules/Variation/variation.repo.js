@@ -1,7 +1,7 @@
 const i18n = require('i18n');
 const variationModel = require("./variation.model")
-const { prepareQueryObjects } =require("../../helpers/query.helper")
-
+const { prepareQueryObjects } = require("../../helpers/query.helper")
+const productRepo = require("../Product/product.repo")
 
 exports.find = async (filterObject) => {
     try {
@@ -110,12 +110,14 @@ exports.create = async (formObject) => {
 
         const resultObject = new variationModel(formObject);
         await resultObject.save();
-
         if (!resultObject) return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         }
+        let productFormObject = { $push: { variations: resultObject._id } }
+        if (resultObject.isDefault) productFormObject.defaultVariation = resultObject._id
+        productRepo.updateDirectly(resultObject.product, productFormObject)
 
         return {
             success: true,

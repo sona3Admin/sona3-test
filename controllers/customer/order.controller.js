@@ -1,10 +1,16 @@
 const i18n = require('i18n');
 const orderRepo = require("../../modules/Order/order.repo");
+const cartRepo = require("../../modules/Cart/cart.repo")
+const { handleOrderCreation } = require("../../helpers/order.helper")
 
 
 exports.createOrder = async (req, res) => {
     try {
-        const operationResultObject = await orderRepo.create(req.body);
+        let customerOrderObject = req.body
+        let customerCartObject = await cartRepo.get({ customer: req.body.customer })
+        customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject)
+        const operationResultObject = await orderRepo.create(customerOrderObject);
+        cartRepo.flush({ customer: req.body.customer })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

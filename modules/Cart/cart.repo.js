@@ -165,36 +165,26 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
 
         let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", shopId)
         if (!isShopInSubCarts || !isShopInSubCarts.success) return { success: false, code: 404, error: i18n.__("notFound") };
-
         let shopCartIndex = parseInt(isShopInSubCarts.result)
-
         let shopCartObject = cartObject.subCarts[shopCartIndex]
+        
         let isItemInShopCart = isIdInArray(shopCartObject.items, "variation", itemId);
         if (!isItemInShopCart || !isItemInShopCart.success) return { success: false, code: 404, error: i18n.__("notFound") };
-
         let itemIndex = parseInt(isItemInShopCart.result);
-
         let itemObject = shopCartObject.items[itemIndex];
         quantityToRemove = parseInt(quantityToRemove)
-        // Update Quantity and Item Total
-        if (parseInt(quantityToRemove) >= itemObject.quantity) shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex);
-        console.log("shopCartObject.items", shopCartObject.items);
-        if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
 
+        if (parseInt(quantityToRemove) >= itemObject.quantity) shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex);
+        if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
         if (parseInt(quantityToRemove) < parseInt(itemObject.quantity))
             shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, parseInt(itemIndex), parseInt(quantityToRemove), itemObject.variation);
 
-
-
         cartObject = calculateCartTotal(cartObject);
-        console.log("Update Cart Total");
 
         let updatedStock = parseInt(itemObject.variation.stock) + parseInt(quantityToRemove);
         variationRepo.updateDirectly(itemId, { stock: updatedStock });
-        console.log("Update Variation Stock");
 
         let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
-        console.log("Update Cart and Return");
 
         return {
             success: true,

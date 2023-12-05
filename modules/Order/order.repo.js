@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const orderModel = require("./order.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
+// const variationRepo = require("../Variation/variation.repo")
 
 
 exports.find = async (filterObject) => {
@@ -34,7 +35,6 @@ exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await orderModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
-            .populate({ path: "shops", select: "nameEn nameAr image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -68,7 +68,6 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         sortObject = normalizedQueryObjects.sortObject
         const resultArray = await orderModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
-            .populate({ path: "shops", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -102,6 +101,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
+
         const resultObject = new orderModel(formObject);
         await resultObject.save();
 

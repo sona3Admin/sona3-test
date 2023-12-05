@@ -62,11 +62,10 @@ exports.addItemToItemsArray = (cartItemsArray, quantityToAdd, itemObject) => {
 
 
 exports.removeItemFromItemsArray = (shopCartObject, itemIndex) => {
-    console.log("itemIndex", itemIndex);
     shopCartObject.items.splice(itemIndex, 1);
     console.log("removeItemFromItemsArray");
     this.calculateShopTotal(shopCartObject)
-    return shopCartObject.shopCartItems;
+    return shopCartObject.items;
 }
 
 
