@@ -71,7 +71,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         let resultArray = await shopModel.find(filterObject).lean()
-            .populate({ path: "seller", select: "nameEn nameAr image" })
+            .populate({ path: "seller", select: "userName image" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
             .populate({ path: "productCategories", select: "nameEn nameAr image" })
             .populate({ path: "serviceCategories", select: "nameEn nameAr image" })
