@@ -9,9 +9,7 @@ const uriMap = {
 
 console.log("process.env.CURRENT_ENV", process.env.CURRENT_ENV);
 const selectedEnv = process.env.CURRENT_ENV || 'development'; // Default to 'dev' if CURRENT_ENV is not set
-console.log(`selectedEnv`, selectedEnv);
 let uri = uriMap[selectedEnv];
-console.log(`uri`, uri);
 
 const connection = async () => {
     return mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
