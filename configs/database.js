@@ -9,7 +9,9 @@ const uriMap = {
 
 const selectedEnv = process.env.NODE_ENV || 'development'; // Default to 'dev' if NODE_ENV is not set
 console.log(`selectedEnv`, selectedEnv);
-const uri = uriMap[selectedEnv];
+let uri = uriMap[selectedEnv];
+console.log(`uri`, uri);
+uri = "mongodb+srv://sonna3dev:admin@sona3-test.yijn8zz.mongodb.net/?retryWrites=true&w=majority"
 console.log(`uri`, uri);
 
 const connection = async () => {
