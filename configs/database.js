@@ -7,18 +7,17 @@ const uriMap = {
     production: process.env.PROD_DB_CONNECTION_STRING,
 };
 
-const selectedEnv = process.env.NODE_ENV || 'development'; // Default to 'dev' if NODE_ENV is not set
+console.log("process.env.CURRENT_ENV", process.env.CURRENT_ENV);
+const selectedEnv = process.env.CURRENT_ENV || 'development'; // Default to 'dev' if CURRENT_ENV is not set
 console.log(`selectedEnv`, selectedEnv);
 let uri = uriMap[selectedEnv];
-console.log(`uri`, uri);
-uri = "mongodb+srv://sonna3dev:admin@sona3-test.yijn8zz.mongodb.net/?retryWrites=true&w=majority"
 console.log(`uri`, uri);
 
 const connection = async () => {
     return mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         .then(() => {
-            // if (process.env.NODE_ENV !== 'local')
-                console.log(`Connected to MongoDB database successfully on ${process.env.NODE_ENV} environment!`);
+            // if (process.env.CURRENT_ENV !== 'local')
+                console.log(`Connected to MongoDB database successfully on ${selectedEnv} environment!`);
 
         }).catch((err) => {
             console.log("MongoDB Error: ", err);
