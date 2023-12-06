@@ -1,4 +1,6 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, DeleteObjectCommand,
+  DeleteObjectsCommand } = require('@aws-sdk/client-s3');
+  
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
 const { v4: uuidv4 } = require('uuid');
 

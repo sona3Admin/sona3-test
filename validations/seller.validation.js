@@ -45,7 +45,7 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.string().optional().messages({
+            address: joi.object().optional().messages({
                 "object.base": "validAddress",
             }),
 
@@ -108,7 +108,7 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.string().optional().messages({
+            address: joi.object().optional().messages({
                 "object.base": "validAddress",
             }),
 

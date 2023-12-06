@@ -163,8 +163,8 @@ exports.update = async (_id, formObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
-
-
+        let productFormObject = { $addToSet: { variations: resultObject._id } }
+        if (resultObject.isDefault) productRepo.updateDirectly(resultObject.product, productFormObject)
         return {
             success: true,
             code: 200,

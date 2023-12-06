@@ -45,7 +45,7 @@ module.exports = {
                 "boolean.base": "validIsSubCategory",
             }),
 
-            parentCategory: joi.boolean().optional().messages({
+            parentCategory: joi.string().optional().messages({
                 "boolean.base": "validCategory",
             }),
 
@@ -58,6 +58,10 @@ module.exports = {
             }),
 
             requestDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
+            }),
+
+            creationDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
             }),
 
@@ -113,7 +117,7 @@ module.exports = {
                 "boolean.base": "validIsSubCategory",
             }),
 
-            parentCategory: joi.boolean().optional().messages({
+            parentCategory: joi.string().optional().messages({
                 "boolean.base": "validCategory",
             }),
 
@@ -126,6 +130,10 @@ module.exports = {
             }),
 
             requestDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
+            }),
+
+            creationDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
             }),
 

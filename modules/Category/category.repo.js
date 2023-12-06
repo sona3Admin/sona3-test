@@ -1,6 +1,6 @@
 const i18n = require('i18n');
 const categoryModel = require("./category.model")
-const { prepareQueryObjects } =require("../../helpers/query.helper")
+const { prepareQueryObjects } = require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -117,7 +117,7 @@ exports.create = async (formObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         }
-
+        if (resultObject.isSubCategory) this.updateDirectly(resultObject.parentCategory, { $push: { subCategories: resultObject._id } })
         return {
             success: true,
             code: 201,
@@ -160,6 +160,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("internalServerError")
         };
 
+        if (resultObject.isSubCategory) this.updateDirectly(resultObject.parentCategory, { $addToSet: { subCategories: resultObject._id } })
 
         return {
             success: true,
