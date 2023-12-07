@@ -3,10 +3,10 @@ const { getSettings } = require("./settings.helper")
 
 exports.setShopItems = (shopItemsArray) => {
     let itemsArray = []
-    for (let itemIndex = 0; itemIndex < shopItemsArray.length; itemIndex++){
+    for (let itemIndex = 0; itemIndex < shopItemsArray.length; itemIndex++) {
         itemsArray.push({
-            product: {...shopItemsArray[itemIndex].product},
-            variation: {...shopItemsArray[itemIndex].variation},
+            product: { ...shopItemsArray[itemIndex].product },
+            variation: { ...shopItemsArray[itemIndex].variation },
             quantity: shopItemsArray[itemIndex].quantity,
             itemTotal: shopItemsArray[itemIndex].itemTotal,
         })
@@ -19,7 +19,7 @@ exports.setShopItems = (shopItemsArray) => {
 
 exports.setSubOrders = (subCartsArray) => {
     let subOrdersArray = []
-    for (let shopCartIndex = 0; shopCartIndex < subCartsArray.length; shopCartIndex++){
+    for (let shopCartIndex = 0; shopCartIndex < subCartsArray.length; shopCartIndex++) {
         subOrdersArray.push({
             shop: subCartsArray[shopCartIndex].shop,
             items: this.setShopItems(subCartsArray[shopCartIndex].items),
@@ -76,4 +76,25 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
     } catch (err) {
         console.log("err.message", err.message);
     }
+}
+
+
+exports.listShopOrders = (arrayOfOrders, shopId) => {
+    shopOrdersArray = []
+    arrayOfOrders.forEach((orderObject) => {
+        orderObject.subOrders.forEach((subOrderObject) => {
+            if (subOrderObject.shop.toString() == shopId) shopOrdersArray.push(subOrderObject)
+        })
+    });
+
+    return shopOrdersArray
+}
+
+
+exports.getShopOrder = (orderObject) => {
+    let shopOrderObject
+    orderObject.subOrders.forEach((subOrderObject) => {
+        if (subOrderObject.shop.toString() == shopId) shopOrderObject = subOrderObject
+    })
+    return shopOrderObject
 }
