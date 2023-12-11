@@ -16,6 +16,7 @@ const bannerRoutes = require("./banner.route");
 const wishlistRoutes = require("./wishlist.route");
 const cartRoutes = require("./cart.route");
 const orderRoutes = require("./order.route");
+const requestRoutes = require("./request.route");
 
 
 app.use(authRoutes)
@@ -30,6 +31,7 @@ app.use("/banners", checkToken(allowedUsers), bannerRoutes);
 app.use("/wishlists", checkToken(allowedUsers), wishlistRoutes);
 app.use("/carts", checkToken(allowedUsers), cartRoutes);
 app.use("/orders", checkToken(allowedUsers), orderRoutes);
+app.use("/requests", checkToken(allowedUsers), requestRoutes);
 
 
 module.exports = app

@@ -80,19 +80,24 @@ let bannerEndPoints = [
 
 
 let wishlistEndPoints = [
-    "/admin/wishlists/get", "/admin/wishlists/list", "/admin/wishlists/update", 
+    "/admin/wishlists/get", "/admin/wishlists/list", "/admin/wishlists/update",
     "/admin/wishlists/remove"
 ]
 
 
 let cartEndPoints = [
-    "/admin/carts/get", "/admin/carts/list", "/admin/carts/update", 
+    "/admin/carts/get", "/admin/carts/list", "/admin/carts/update",
     "/admin/carts/remove"
 ]
 
 
 let orderEndPoints = [
-    "/admin/orders/get", "/admin/orders/list", "/admin/orders/update", 
+    "/admin/orders/get", "/admin/orders/list", "/admin/orders/update",
+]
+
+
+let requestEndPoints = [
+    "/admin/requests/get", "/admin/requests/list", "/admin/requests/update",
 ]
 
 
@@ -113,6 +118,7 @@ bannerEndPoints = new Set(bannerEndPoints);
 wishlistEndPoints = new Set(wishlistEndPoints);
 cartEndPoints = new Set(cartEndPoints);
 orderEndPoints = new Set(orderEndPoints);
+requestEndPoints = new Set(requestEndPoints);
 
 
 let permissions = new Map();
@@ -134,6 +140,7 @@ permissions.set("banners", bannerEndPoints)
 permissions.set("wishlists", wishlistEndPoints)
 permissions.set("carts", cartEndPoints)
 permissions.set("orders", orderEndPoints)
+permissions.set("requests", requestEndPoints)
 
 
 module.exports = { permissions }

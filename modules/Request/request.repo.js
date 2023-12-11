@@ -1,11 +1,11 @@
 const i18n = require('i18n');
-const orderModel = require("./order.model")
+const requestModel = require("./request.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
     try {
-        const resultObject = await orderModel.findOne(filterObject).lean();
+        const resultObject = await requestModel.findOne(filterObject).lean();
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -32,8 +32,10 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        const resultObject = await orderModel.findOne(filterObject).lean()
+        const resultObject = await requestModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
+            .populate({ path: "shop", select: "nameEn nameAr image" })
+            .populate({ path: "service", select: "nameEn nameAr descriptionEn descriptionAr images" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -65,8 +67,10 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
-        const resultArray = await orderModel.find(filterObject).lean()
+        const resultArray = await requestModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
+            .populate({ path: "shop", select: "nameEn nameAr image" })
+            .populate({ path: "service", select: "nameEn nameAr descriptionEn descriptionAr images" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -78,7 +82,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             error: i18n.__("notFound")
         }
 
-        const count = await orderModel.count(filterObject);
+        const count = await requestModel.count(filterObject);
         return {
             success: true,
             code: 200,
@@ -100,8 +104,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
-
-        const resultObject = new orderModel(formObject);
+        const resultObject = new requestModel(formObject);
         await resultObject.save();
 
         if (!resultObject) return {
@@ -137,7 +140,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await orderModel.findByIdAndUpdate({ _id }, formObject, { new: true });
+        const resultObject = await requestModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
         if (!resultObject) return {
             success: false,
@@ -164,7 +167,7 @@ exports.update = async (_id, formObject) => {
 
 exports.updateDirectly = async (_id, formObject) => {
     try {
-        const resultObject = await orderModel.findByIdAndUpdate({ _id }, formObject, { new: true })
+        const resultObject = await requestModel.findByIdAndUpdate({ _id }, formObject, { new: true })
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -191,7 +194,7 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
-        const resultObject = await orderModel.findByIdAndDelete({ _id })
+        const resultObject = await requestModel.findByIdAndDelete({ _id })
 
         if (!resultObject) return {
             success: false,
@@ -215,3 +218,4 @@ exports.remove = async (_id) => {
     }
 
 }
+

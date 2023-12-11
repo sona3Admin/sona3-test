@@ -7,7 +7,7 @@ const uriMap = {
     production: process.env.PROD_DB_CONNECTION_STRING,
 };
 
-console.log("process.env.CURRENT_ENV", process.env.CURRENT_ENV);
+console.log("CURRENT_ENV", process.env.CURRENT_ENV);
 const selectedEnv = process.env.CURRENT_ENV || 'development'; // Default to 'dev' if CURRENT_ENV is not set
 let uri = uriMap[selectedEnv];
 
