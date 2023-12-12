@@ -116,10 +116,12 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
     try {
+        console.log("itemId", itemId);
         let variationResultObject = await variationRepo.find({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
 
         let itemObject = variationResultObject.result;
+        console.log("itemObject", itemObject._id);
 
         let currentStock = parseInt(itemObject.stock)
         if (!isStockAvailable(currentStock, quantityToAdd)) return { success: false, code: 409, error: i18n.__("outOfStock") }

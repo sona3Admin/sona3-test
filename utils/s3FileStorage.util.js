@@ -1,6 +1,6 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand,
   DeleteObjectsCommand } = require('@aws-sdk/client-s3');
-  
+
 const { fromIni } = require('@aws-sdk/credential-provider-ini');
 const { v4: uuidv4 } = require('uuid');
 
@@ -15,17 +15,24 @@ const s3 = new S3Client({
 
 exports.uploadFilesToS3 = async (folderName, files) => {
   try {
-    const uploadPromises = files.map((file) => {
+    const uploadPromises = files.map(async (file) => {
       const params = {
         Bucket: process.env.BUCKETEER_BUCKET_NAME,
         Key: `public/${folderName}/${uuidv4()}-${file.originalname}`,
         Body: file.buffer,
       };
       const uploadCommand = new PutObjectCommand(params);
-      return s3.send(uploadCommand);
+      const result = await s3.send(uploadCommand);
+      const location = `https://${params.Bucket}.s3.${process.env.BUCKETEER_AWS_REGION}.amazonaws.com/${params.Key}`;
+      console.log(`Upload successful. Location: ${location}`);
+      return { ...result, Location: location };
     });
 
-    return await Promise.all(uploadPromises);
+    const uploadResults = await Promise.all(uploadPromises);
+    return {
+      success: true,
+      results: uploadResults,
+    };
 
   } catch (err) {
     console.error('Error uploading files:', err.message);
@@ -35,6 +42,8 @@ exports.uploadFilesToS3 = async (folderName, files) => {
     };
   }
 };
+
+
 
 
 exports.deleteFileFromS3 = async (fileName) => {

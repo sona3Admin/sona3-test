@@ -120,7 +120,9 @@ exports.uploadImage = async (req, res) => {
         if (oldImageObject) await batchRepo.create({ filesToDelete: [oldImageObject.key] })
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("admins", req.files)
+        console.log(`operationResultArray`, operationResultArray);
         let operationResultObject = await adminRepo.updateDirectly(req.query._id, { image: operationResultArray[0] });
+
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

@@ -114,5 +114,6 @@
 	"validSession": "Valid Session is required.",
 	"invalidValue": "Valid value is required.",
 	"limitExceeded": "Number of files exceeded the limit",
-	"outOfStock": "This product is out of stock."
+	"outOfStock": "This product is out of stock.",
+	"reviewExists": "You have already posted your review once."
 }

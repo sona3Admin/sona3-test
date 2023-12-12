@@ -28,7 +28,9 @@ exports.increaseItemQuantity = (cartItemsArray, itemIndex, quantityToAdd, itemOb
     let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
     cartItemsArray[itemIndex].quantity = newQuantity;
     cartItemsArray[itemIndex].itemTotal = itemTotal;
+    console.log("itemIndex", itemIndex);
     console.log(`increaseItemQuantity`);
+    console.log("itemId", itemObject._id);
     return cartItemsArray
 }
 
@@ -106,8 +108,10 @@ exports.updateExistingSubCart = (cartObject, subCartIndex, itemObject, itemId, q
     let shopCartObject = cartObject.subCarts[shopCartIndex]
     let isItemInShopCart = this.isIdInArray(shopCartObject.items, "variation", itemId);
     console.log(`isItemInShopCart`, isItemInShopCart.success);
-
-    if (isItemInShopCart.success) shopCartObject.items = this.increaseItemQuantity(shopCartObject.items, shopCartIndex, parseInt(quantityToAdd), itemObject);
+    console.log("itemId", itemId);
+    console.log(`itemIndex`, isItemInShopCart.result);
+    let itemIndex = isItemInShopCart.result
+    if (isItemInShopCart.success) shopCartObject.items = this.increaseItemQuantity(shopCartObject.items, itemIndex, parseInt(quantityToAdd), itemObject);
 
     if (!isItemInShopCart.success) shopCartObject.items = this.addItemToItemsArray(shopCartObject.items, parseInt(quantityToAdd), itemObject);
     this.calculateShopTotal(shopCartObject)
