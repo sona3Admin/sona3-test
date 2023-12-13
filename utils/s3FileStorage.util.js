@@ -42,21 +42,21 @@ exports.uploadFilesToS3 = async (folderName, files) => {
 };
 
 
-
-
 exports.deleteFileFromS3 = async (fileName) => {
   try {
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Key: fileName,
     };
+
     const deleteCommand = new DeleteObjectCommand(params);
-    const data = await s3.send(deleteCommand);
+    await s3.send(deleteCommand);
 
     console.log('File deleted successfully');
+
     return {
       success: true,
-      record: data,
+      message: 'File deleted successfully',
     };
 
   } catch (err) {
@@ -85,7 +85,8 @@ exports.deleteFilesFromS3 = async (arrayOfFiles) => {
     console.log('Files deleted successfully');
     return {
       success: true,
-      record: data.Deleted,
+      message: 'Files deleted successfully',
+      deletedObjects: data.Deleted,
     };
 
   } catch (err) {
