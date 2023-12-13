@@ -1,4 +1,3 @@
-const i18n = require('i18n')
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
 const shopRepo = require("../modules/Shop/shop.repo")
@@ -19,38 +18,65 @@ exports.defineReviewedItem = (reviewObject) => {
 
 exports.getPurchasedOrder = async (reviewObject, itemToReview) => {
     let existingItemObject
-    if (itemToReview.hasOwnProperty("shop")) existingItemObject = await orderRepo.find({ customer: reviewObject.customer, "subOrders.shop": itemToReview.shop })
-    if (itemToReview.hasOwnProperty("product")) existingItemObject = await orderRepo.find({ customer: reviewObject.customer, "subOrders.items.product": itemToReview.product })
-    if (itemToReview.hasOwnProperty("service")) existingItemObject = await requestRepo.find({ customer: reviewObject.customer, ...itemToReview })
+    console.log(`itemToReview`, itemToReview);
+    if (itemToReview?.shop) {
+        existingItemObject = await orderRepo.find({ customer: reviewObject.customer, "subOrders.shop": itemToReview.shop })
+        console.log(`existingItemObject in shop`, existingItemObject);
+    }
+
+    if (itemToReview?.product) {
+        existingItemObject = await orderRepo.find({ customer: reviewObject.customer, "subOrders.items.product": itemToReview.product })
+        console.log(`existingItemObject in product`, existingItemObject);
+
+    }
+    if (itemToReview?.service) {
+        existingItemObject = await requestRepo.find({ customer: reviewObject.customer, ...itemToReview })
+        console.log(`existingItemObject in service`, existingItemObject);
+
+    }
+    console.log(`existingItemObject found`, existingItemObject);
     return existingItemObject
 }
 
 
 exports.updateReviewedItemRating = async (reviewObject, itemToReview) => {
-    let allReviewsArray = [];
-    let numOfReviews = 0
+    let reviewCount = 0
+    let itemRating = parseFloat(reviewObject.rating)
     let reviewsArray = await reviewRepo.list({ ...itemToReview })
-
-    if (itemToReview.hasOwnProperty("shop")) {
-        let shopRating = 0
+    console.log(`customer rating`, itemRating);
+    console.log(`itemToReview`, itemToReview);
+    console.log(`reviewObject`, reviewObject);
+    if (itemToReview.shop) {
         reviewsArray.result.map((shopReview) => {
-            shopRating += parseFloat(shopReview.rating)
-            numOfReviews += 1
+            itemRating += parseFloat(shopReview.rating)
+            reviewCount += 1
         })
+        console.log(`itemToReview.shop`, itemToReview.shop);
+        itemRating = itemRating / reviewCount
+        shopRepo.updateDirectly(itemToReview.shop, { reviewCount, rating: itemRating })
     }
-    if (itemToReview.hasOwnProperty("product")) {
-        let productRating = 0
-        reviewsArray.result.map((productReview) => {
-            productRating += parseFloat(productReview.rating)
-            numOfReviews += 1
-        })
-    }
-    if (itemToReview.hasOwnProperty("service")) {
-        let serviceRating = 0
-        reviewsArray.result.map((serviceReview) => {
-            serviceRating += parseFloat(serviceReview.rating)
-            numOfReviews += 1
 
+    if (itemToReview.product) {
+        reviewsArray.result.map((productReview) => {
+            itemRating += parseFloat(productReview.rating)
+            reviewCount += 1
         })
+        console.log(`itemToReview.product`, itemToReview.product);
+
+        itemRating = itemRating / reviewCount
+        productRepo.updateDirectly(itemToReview.product, { reviewCount, rating: itemRating })
+
+    }
+
+    if (itemToReview.service) {
+        reviewsArray.result.map((serviceReview) => {
+            itemRating += parseFloat(serviceReview.rating)
+            reviewCount += 1
+        })
+        console.log(`itemToReview.service`, itemToReview.service);
+
+        itemRating = itemRating / reviewCount
+        serviceRepo.updateDirectly(itemToReview.service, { reviewCount, rating: itemRating })
+
     }
 }

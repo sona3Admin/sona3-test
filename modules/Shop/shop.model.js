@@ -21,11 +21,12 @@ const shopSchema = mongoose.Schema({
     address: { type: Object },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    rating: { type: Number, min: 1 },
-    reviewCount: { type: Number, min: 0 },
+    rating: { type: Number, min: 1, default: 1 },
+    reviewCount: { type: Number, min: 0, default: 0 },
     joinDate: { type: Date }
 })
 
+shopSchema.index({ location: '2dsphere' });
 
 const shopModel = mongoose.model("shops", shopSchema)
 

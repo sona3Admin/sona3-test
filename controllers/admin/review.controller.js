@@ -2,24 +2,6 @@ const i18n = require('i18n');
 const reviewRepo = require("../../modules/Review/review.repo");
 
 
-exports.createReview = async (req, res) => {
-    try {
-        const operationResultObject = await reviewRepo.create(req.body);
-        console.log(`operationResultObject`, operationResultObject);
-        return res.status(operationResultObject.code).json(operationResultObject);
-
-    } catch (err) {
-        console.log(`err.message controller`, err.message);
-        return res.status(500).json({
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        });
-    }
-
-}
-
-
 exports.listReviews = async (req, res) => {
     try {
         const filterObject = req.query;
@@ -42,22 +24,6 @@ exports.getReview = async (req, res) => {
     try {
         const filterObject = req.query;
         const operationResultObject = await reviewRepo.get(filterObject, {});
-        return res.status(operationResultObject.code).json(operationResultObject);
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return res.status(500).json({
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        });
-    }
-}
-
-
-exports.updateReview = async (req, res) => {
-    try {
-        const operationResultObject = await reviewRepo.update(req.query._id, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

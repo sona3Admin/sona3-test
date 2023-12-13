@@ -115,5 +115,6 @@
 	"invalidValue": "Valid value is required.",
 	"limitExceeded": "Number of files exceeded the limit",
 	"outOfStock": "This product is out of stock.",
-	"reviewExists": "You have already posted your review once."
+	"reviewExists": "You have already posted your review once.",
+	"notPurchased": "You didn't purchase yet"
 }

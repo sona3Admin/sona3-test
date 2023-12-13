@@ -33,6 +33,8 @@ customerSchema.pre("save", async function (next) {
     next();
 })
 
+customerSchema.index({ location: '2dsphere' });
+
 const customerModel = mongoose.model("customers", customerSchema)
 
 

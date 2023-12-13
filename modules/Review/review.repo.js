@@ -108,23 +108,28 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.create = async (formObject) => {
     try {
         let itemToReview = defineReviewedItem(formObject);
-        let existingReviewObject = await this.list({ customer: formObject.customer, ...itemToReview })
-        if (existingReviewObject.success) return { success: false, error: 409, error: i18n.__("reviewExists") }
+        console.log(`itemToReview`, itemToReview);
+        let existingReviewObject = await this.get({ customer: formObject.customer, ...itemToReview })
+        console.log(`existingReviewObject`, existingReviewObject);
 
-        let existingOrderObject = await getPurchasedOrder(formObject)
-        if (!existingOrderObject.success) return { success: false, error: 409, error: i18n.__("reviewExists") }
+        if (existingReviewObject.success) return { success: false, code: 409, error: i18n.__("reviewExists") }
+
+        let existingOrderObject = await getPurchasedOrder(formObject, itemToReview)
+        console.log(`existingOrderObject`, existingOrderObject);
+
+        if (!existingOrderObject.success) return { success: false, code: 409, error: i18n.__("notPurchased") }
 
         const resultObject = new reviewModel(formObject);
         await resultObject.save();
 
-        
+
         if (!resultObject) return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         }
 
-        updateReviewedItemRating(resultObject);
+        updateReviewedItemRating(formObject, itemToReview);
 
         return {
             success: true,
@@ -146,6 +151,7 @@ exports.create = async (formObject) => {
 
 exports.update = async (_id, formObject) => {
     try {
+        let itemToReview = defineReviewedItem(formObject);
         const existingObject = await this.find({ _id });
         if (!existingObject.success) return {
             success: false,
@@ -161,6 +167,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("internalServerError")
         };
 
+        if (formObject.rating) updateReviewedItemRating(formObject, itemToReview);
 
         return {
             success: true,
@@ -207,14 +214,15 @@ exports.updateDirectly = async (_id, formObject) => {
 
 exports.remove = async (_id) => {
     try {
-        const resultObject = await reviewModel.findByIdAndDelete({ _id })
+        const resultObject = await this.find({ _id })
 
         if (!resultObject) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         }
-
+        await reviewModel.findByIdAndDelete({ _id })
+        updateReviewedItemRating(formObject, itemToReview);
         return {
             success: true,
             code: 200,

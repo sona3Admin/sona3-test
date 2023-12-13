@@ -25,6 +25,7 @@ const wishlistRoutes = require("./wishlist.route")
 const cartRoutes = require("./cart.route")
 const orderRoutes = require("./order.route")
 const requestRoutes = require("./request.route");
+const reviewRoutes = require("./review.route");
 
 
 app.use(authRoutes)
@@ -47,6 +48,7 @@ app.use("/wishlists", checkToken(allowedUsers), isAuthorized, wishlistRoutes);
 app.use("/carts", checkToken(allowedUsers), isAuthorized, cartRoutes);
 app.use("/orders", checkToken(allowedUsers), isAuthorized, orderRoutes);
 app.use("/requests", checkToken(allowedUsers), isAuthorized, requestRoutes);
+app.use("/reviews", checkToken(allowedUsers), isAuthorized, reviewRoutes);
 
 
 module.exports = app

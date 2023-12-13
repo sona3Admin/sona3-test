@@ -25,15 +25,15 @@ function handleLocationParams(filterObject) {
     let locationFinalSort = {};
 
     if (filterObject?.long || filterObject?.lat) {
-        const long = filterObject.long;
-        const lat = filterObject.lat;
+        const long = parseFloat(filterObject.long);
+        const lat = parseFloat(filterObject.lat);
+
         locationFinalFilter.location = {
             $near: {
                 $geometry: {
                     type: 'Point',
                     coordinates: [long, lat]
                 },
-                $minDistance: 0,
             }
         }
         locationFinalSort.location = "asc"
