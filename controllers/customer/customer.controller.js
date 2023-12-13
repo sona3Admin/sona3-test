@@ -59,7 +59,12 @@ exports.uploadImage = async (req, res) => {
         if (oldImageObject) await batchRepo.create({ filesToDelete: [oldImageObject.key] })
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("customers", req.files)
-        let operationResultObject = await customerRepo.updateDirectly(req.query._id, { image: operationResultArray[0] });
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+        let operationResultObject = await customerRepo.updateDirectly(req.query._id, { image: operationResultArray.result[0] });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

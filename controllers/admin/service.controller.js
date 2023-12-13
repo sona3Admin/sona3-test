@@ -99,11 +99,16 @@ exports.uploadImages = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("services", req.files)
-        imagesArray = Array.from(imagesArray)
-        imagesArray.map((cover) => {
-            operationResultArray.push(cover)
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
         });
-        let operationResultObject = await serviceRepo.updateDirectly(req.query._id, { images: operationResultArray });
+        imagesArray = Array.from(imagesArray)
+        imagesArray.map((image) => {
+            operationResultArray.result.push(image)
+        });
+        let operationResultObject = await serviceRepo.updateDirectly(req.query._id, { images: operationResultArray.result });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

@@ -24,15 +24,13 @@ exports.uploadFilesToS3 = async (folderName, files) => {
       const uploadCommand = new PutObjectCommand(params);
       const result = await s3.send(uploadCommand);
       const location = `https://${params.Bucket}.s3.${process.env.BUCKETEER_AWS_REGION}.amazonaws.com/${params.Key}`;
-      console.log(`Upload successful. Location: ${location}`);
-      return { ...result, Location: location };
+      console.log(`Upload successful`);
+      return { key: params.Key, Location: location };
     });
 
     const uploadResults = await Promise.all(uploadPromises);
-    return {
-      success: true,
-      results: uploadResults,
-    };
+    console.log(`uploadResults`, uploadResults);
+    return { success: true, result: uploadResults };
 
   } catch (err) {
     console.error('Error uploading files:', err.message);

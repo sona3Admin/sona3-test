@@ -95,7 +95,12 @@ exports.uploadImage = async (req, res) => {
         if (oldImageObject) await batchRepo.create({ filesToDelete: [oldImageObject.key] })
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("shops", req.files)
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { image: operationResultArray[0] });
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { image: operationResultArray.result[0] });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -140,11 +145,16 @@ exports.uploadCovers = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("shopCovers", req.files)
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
         coversArray = Array.from(coversArray)
         coversArray.map((cover) => {
-            operationResultArray.push(cover)
+            operationResultArray.result.push(cover)
         });
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { covers: operationResultArray });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { covers: operationResultArray.result });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -196,11 +206,16 @@ exports.uploadBanners = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("banners", req.files)
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
         bannersArray = Array.from(bannersArray)
         bannersArray.map((banner) => {
-            operationResultArray.push(banner)
+            operationResultArray.result.push(banner)
         });
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { banners: operationResultArray });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { banners: operationResultArray.result });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
