@@ -53,6 +53,13 @@ module.exports = {
             }),
 
 
+            basePrice: joi.number().min(0).required().messages({
+                "number.base": "validItemsTotal",
+                "number.min": "minItemsTotal",
+                "any.required": "requiredItemsTotal",
+            }),
+
+
             rating: joi.number().min(1).optional().messages({
                 "number.base": "validRating",
                 "number.min": "minRating",
@@ -123,6 +130,13 @@ module.exports = {
 
             images: joi.array().items(joi.object()).optional().messages({
                 "array.base": "validArray",
+            }),
+
+
+            basePrice: joi.number().min(0).required().messages({
+                "number.base": "validItemsTotal",
+                "number.min": "minItemsTotal",
+                "any.required": "requiredItemsTotal",
             }),
 
             rating: joi.number().min(1).optional().messages({

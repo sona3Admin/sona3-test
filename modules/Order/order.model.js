@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
-    shops: [{type: mongoose.Types.ObjectId, ref: "shops"}],
-    products: [{type: mongoose.Types.ObjectId, ref: "products"}],
+    shops: [{ type: mongoose.Types.ObjectId, ref: "shops" }],
+    products: [{ type: mongoose.Types.ObjectId, ref: "products" }],
+    variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
     subOrders: [{
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{
@@ -45,7 +46,7 @@ const orderSchema = mongoose.Schema({
     taxesRate: { type: Number, min: 0 },
     orderTotal: { type: Number, min: 0 },
     issueDate: { type: Date },
-    
+
 })
 
 

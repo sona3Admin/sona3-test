@@ -13,6 +13,7 @@ const serviceSchema = mongoose.Schema({
         _id: { type: mongoose.Types.ObjectId, ref: "fields" },
         field: { type: Object }
     }],
+    basePrice: { type: Number, min: 0 },
     images: [{ type: Object }],
     rating: { type: Number, min: 1, default: 1 },
     reviewCount: { type: Number, min: 0, default: 0 },

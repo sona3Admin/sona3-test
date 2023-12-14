@@ -34,6 +34,7 @@ exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await orderModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
+            .populate({ path: "subOrders.shop", select: "nameEn nameAr image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -67,6 +68,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         sortObject = normalizedQueryObjects.sortObject
         const resultArray = await orderModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
+            .populate({ path: "subOrders.shop", select: "nameEn nameAr image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

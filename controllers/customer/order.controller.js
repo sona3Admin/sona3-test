@@ -10,7 +10,7 @@ exports.createOrder = async (req, res) => {
         let customerCartObject = await cartRepo.get({ customer: req.body.customer })
         customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject)
         const operationResultObject = await orderRepo.create(customerOrderObject);
-        cartRepo.flush({ customer: req.body.customer })
+        // cartRepo.flush({ customer: req.body.customer })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
