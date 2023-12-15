@@ -216,13 +216,15 @@ exports.remove = async (_id) => {
     try {
         const resultObject = await this.find({ _id })
 
-        if (!resultObject) return {
+        if (!resultObject.success) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         }
+        itemToReview = { [resultObject.result.reviewOn]: (resultObject.result[resultObject.result.reviewOn]).toString() }
+        updateReviewedItemRating(resultObject.result, itemToReview);
         await reviewModel.findByIdAndDelete({ _id })
-        updateReviewedItemRating(formObject, itemToReview);
+
         return {
             success: true,
             code: 200,
