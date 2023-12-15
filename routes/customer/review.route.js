@@ -7,7 +7,7 @@ app.get("/list", reviewController.listReviews);
 app.get("/get", reviewController.getReview);
 
 app.post("/create", checkIdentity("customer"), reviewController.createReview);
-app.put("/update", checkIdentity("customer"), reviewController.createReview);
+app.put("/update", checkIdentity("customer"), reviewController.updateReview);
 app.delete("/remove", checkIdentity("customer"), reviewController.removeReview);
 
 
