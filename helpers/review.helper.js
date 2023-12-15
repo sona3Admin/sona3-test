@@ -42,7 +42,7 @@ exports.getPurchasedOrder = async (reviewObject, itemToReview) => {
 exports.updateReviewedItemRating = async (reviewObject, itemToReview) => {
     let reviewCount = 0
     let itemRating = parseFloat(reviewObject.rating)
-    let reviewsArray = await reviewRepo.list({ ...itemToReview })
+    let reviewsArray = await reviewRepo.list({ ...itemToReview }) 
     console.log(`customer rating`, itemRating);
     console.log(`itemToReview`, itemToReview);
     console.log(`reviewObject`, reviewObject);
