@@ -1,13 +1,19 @@
 
-exports.prepareQueryObjects = (filterObject, sortObject) => {
+exports.prepareQueryObjects = async (filterObject, sortObject) => {
     try {
+        delete filterObject["page"], delete filterObject["limit"]
         let { locationFinalFilter, locationFinalSort } = handleLocationParams(filterObject);
         let finalFilterObject = handleSearchParams(filterObject);
+        console.log(`finalFilterObject 1`, finalFilterObject);
+
+        finalFilterObject = handleFilterByArrayOfIds(finalFilterObject)
         let finalSortObject = handleSortParams(filterObject);
 
         finalFilterObject = { ...filterObject, ...finalFilterObject, ...locationFinalFilter };
         finalSortObject = { ...sortObject, ...finalSortObject, ...locationFinalSort };
 
+        console.log(`finalFilterObject 2`, finalFilterObject);
+        console.log(`finalSortObject`, finalSortObject);
         return {
             filterObject: finalFilterObject,
             sortObject: finalSortObject,
@@ -48,7 +54,7 @@ function handleLocationParams(filterObject) {
 
 function handleSearchParams(filterObject) {
     let finalFilterObject = {};
-    
+
     finalFilterObject = handleRangeParams(filterObject, finalFilterObject)
 
     finalFilterObject = handleSearchProperty('name', filterObject, finalFilterObject);
@@ -130,11 +136,38 @@ function handleSearchProperty(property, filterObject, finalFilterObject) {
 
 
 function handleSortProperty(property, filterObject, finalSortObject, sortOrder) {
+    console.log(`property`, property);
+    // console.log(`filterObject`, filterObject[property]);
     if (filterObject?.[property]) {
         finalSortObject[property] = sortOrder;
         if (property == "sortByDate") delete filterObject["sortOrder"];
+        if (property == "sortByAlpha") {
+
+            finalSortObject[`${filterObject[property]}`] = 1;
+            delete finalSortObject["sortByAlpha"];
+
+        }
         delete filterObject[property];
     }
 
     return finalSortObject;
+}
+
+
+function handleFilterByArrayOfIds(filterObject) {
+    const modifiedFilterObject = { ...filterObject }; // Create a copy for modification
+    console.log(`modifiedFilterObject 1`, modifiedFilterObject);
+
+    for (const keyName in modifiedFilterObject) {
+        console.log(`keyName`, keyName);
+        if (modifiedFilterObject.hasOwnProperty(keyName)) {
+            if (typeof modifiedFilterObject[keyName] === 'string') {
+                const arrayValue = JSON.parse(modifiedFilterObject[keyName]);
+                if (Array.isArray(arrayValue)) modifiedFilterObject[keyName] = { $in: arrayValue };
+            }
+        }
+    }
+    console.log(`modifiedFilterObject 2`, modifiedFilterObject);
+
+    return modifiedFilterObject;
 }

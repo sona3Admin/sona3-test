@@ -62,7 +62,7 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
-        let normalizedQueryObjects = prepareQueryObjects(filterObject, sortObject)
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         const resultArray = await tagModel.find(filterObject).lean()
