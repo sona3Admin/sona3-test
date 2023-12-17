@@ -1,12 +1,13 @@
 const i18n = require('i18n');
 const orderRepo = require("../../modules/Order/order.repo");
-
+const { getShopOrder, listShopOrders } = require("../../helpers/order.helper")
 
 exports.listOrders = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
-        const operationResultObject = await orderRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        let operationResultObject = await orderRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        operationResultObject.result = listShopOrders(operationResultObject.result, filterObject.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -23,7 +24,8 @@ exports.listOrders = async (req, res) => {
 exports.getOrder = async (req, res) => {
     try {
         const filterObject = req.query;
-        const operationResultObject = await orderRepo.get(filterObject, {});
+        let operationResultObject = await orderRepo.get(filterObject, {});
+        operationResultObject.result = getShopOrder(operationResultObject.result, filterObject.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

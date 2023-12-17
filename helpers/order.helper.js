@@ -1,7 +1,7 @@
 const { getSettings } = require("./settings.helper")
 
 
-exports.setShopItems = (shopItemsArray) => {
+exports.setShopItems = (shopItemsArray, productsArray, variationsArray) => {
     let itemsArray = []
     for (let itemIndex = 0; itemIndex < shopItemsArray.length; itemIndex++) {
         itemsArray.push({
@@ -10,30 +10,39 @@ exports.setShopItems = (shopItemsArray) => {
             quantity: shopItemsArray[itemIndex].quantity,
             itemTotal: shopItemsArray[itemIndex].itemTotal,
         })
+        if (!productsArray.includes(((shopItemsArray[itemIndex]).product._id).toString())) productsArray.push(((shopItemsArray[itemIndex]).product._id).toString())
+        if (!variationsArray.includes(((shopItemsArray[itemIndex]).variation._id).toString())) variationsArray.push(((shopItemsArray[itemIndex]).variation._id).toString())
     }
-    console.log("itemsArray ready");
 
-    return itemsArray
+    return { items: itemsArray, products: productsArray, variations: variationsArray }
 }
 
 
 exports.setSubOrders = (subCartsArray) => {
-    let subOrdersArray = []
+    let subOrdersArray = [];
+    let shopsArray = [];
+    let productsArray = [];
+    let variationsArray = [];
+
     for (let shopCartIndex = 0; shopCartIndex < subCartsArray.length; shopCartIndex++) {
+        const shopId = (subCartsArray[shopCartIndex].shop._id).toString();
+        const shopsItem = this.setShopItems(subCartsArray[shopCartIndex].items, productsArray, variationsArray);
+        shopsArray.push(shopId);
+
         subOrdersArray.push({
             shop: subCartsArray[shopCartIndex].shop,
-            items: this.setShopItems(subCartsArray[shopCartIndex].items),
+            items: shopsItem.items,
             shopTotal: subCartsArray[shopCartIndex].shopTotal,
             shopOriginalTotal: subCartsArray[shopCartIndex].shopOriginalTotal,
             shopTaxes: 0,
             shopShippingFees: 0,
             subOrderTotal: subCartsArray[shopCartIndex].shopTotal
-        })
+        });
     }
-    console.log("subOrdersArray ready");
 
-    return subOrdersArray
-}
+    return { subOrders: subOrdersArray, shops: shopsArray, products: productsArray, variations: variationsArray };
+};
+
 
 
 exports.calculateValueAddedTax = (itemsArray, vatRateNumber) => {
@@ -61,7 +70,11 @@ exports.addOrderTaxes = (shopObject, customerOrderObject) => {
 
 exports.handleOrderCreation = async (customerCartObject, customerOrderObject) => {
     try {
-        customerOrderObject.subOrders = this.setSubOrders(customerCartObject.subCarts)
+        let resultObject = this.setSubOrders(customerCartObject.subCarts)
+        customerOrderObject.subOrders = resultObject.subOrders
+        customerOrderObject.shops = resultObject.shops
+        customerOrderObject.products = resultObject.products
+        customerOrderObject.variations = resultObject.variations
         customerOrderObject.cartTotal = parseFloat(customerCartObject.cartTotal)
         customerOrderObject.orderTotal = parseFloat(customerCartObject.cartTotal)
         customerOrderObject.cartOriginalTotal = parseFloat(customerCartObject.cartOriginalTotal)
@@ -80,21 +93,16 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
 
 
 exports.listShopOrders = (arrayOfOrders, shopId) => {
-    shopOrdersArray = []
     arrayOfOrders.forEach((orderObject) => {
-        orderObject.subOrders.forEach((subOrderObject) => {
-            if (subOrderObject.shop.toString() == shopId) shopOrdersArray.push(subOrderObject)
-        })
+        orderObject.subOrder = getShopOrder(orderObject, shopId)
     });
 
-    return shopOrdersArray
+    return arrayOfOrders
 }
 
 
-exports.getShopOrder = (orderObject) => {
-    let shopOrderObject
-    orderObject.subOrders.forEach((subOrderObject) => {
-        if (subOrderObject.shop.toString() == shopId) shopOrderObject = subOrderObject
-    })
-    return shopOrderObject
-}
+exports.getShopOrder = (orderObject, shopId) => {
+    orderObject.subOrders = orderObject.subOrders.filter((subOrder) => { return subOrder.shop.toString() === shopId })
+    console.log(`orderObject.subOrders`, orderObject.subOrders);
+    return orderObject
+}   

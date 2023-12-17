@@ -130,7 +130,7 @@ exports.addItemToList = async (customerId, itemId) => {
         wishlistResultObject = await this.updateDirectly(wishlistResultObject.result._id, { $addToSet: { items: itemId } })
         return {
             success: true,
-            result: wishlistResultObject,
+            result: wishlistResultObject.result,
             code: 201
         }
     }
