@@ -7,7 +7,7 @@ exports.listOrders = async (req, res) => {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
         let operationResultObject = await orderRepo.list(filterObject, { customer: 1, subOrders: 1, shippingAddress: 1, paymentMethod: 1 }, {}, pageNumber, limitNumber);
-        operationResultObject.result = listShopOrders(operationResultObject.result, filterObject.shop)
+        operationResultObject.result = listShopOrders(operationResultObject.result, filterObject.shops)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -25,7 +25,7 @@ exports.getOrder = async (req, res) => {
     try {
         const filterObject = req.query;
         let operationResultObject = await orderRepo.get(filterObject, { customer: 1, subOrders: 1, shippingAddress: 1, paymentMethod: 1 });
-        operationResultObject.result = getShopOrder(operationResultObject.result, filterObject.shop)
+        operationResultObject.result = getShopOrder(operationResultObject.result, filterObject.shops)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
