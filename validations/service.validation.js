@@ -133,7 +133,7 @@ module.exports = {
             }),
 
 
-            basePrice: joi.number().min(0).required().messages({
+            basePrice: joi.number().min(0).optional().messages({
                 "number.base": "validItemsTotal",
                 "number.min": "minItemsTotal",
                 "any.required": "requiredItemsTotal",
