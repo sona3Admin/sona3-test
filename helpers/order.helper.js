@@ -93,16 +93,18 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
 
 
 exports.listShopOrders = (arrayOfOrders, shopId) => {
-    arrayOfOrders.forEach((orderObject) => {
-        orderObject.subOrder = getShopOrder(orderObject, shopId)
+    let index = 0
+    return arrayOfOrders.map((orderObject) => {
+        const customerOrder = { ...orderObject }; // Shallow copy
+        customerOrder.subOrders[index] = this.getShopOrder(customerOrder, shopId);
+        index++
+        return customerOrder;
     });
-
-    return arrayOfOrders
 }
 
 
 exports.getShopOrder = (orderObject, shopId) => {
-    orderObject.subOrders = orderObject.subOrders.filter((subOrder) => { return subOrder.shop.toString() === shopId })
-    console.log(`orderObject.subOrders`, orderObject.subOrders);
-    return orderObject
-}   
+    const subOrders = [...orderObject.subOrders]; // Shallow copy
+    const filteredSubOrders = subOrders.filter((subOrder) => { return subOrder.shop._id.toString() === shopId });
+    return { ...orderObject, subOrders: filteredSubOrders };
+}
