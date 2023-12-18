@@ -30,6 +30,7 @@ const requestSchema = mongoose.Schema({
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
     requestDate: { type: Date },
     deliveryDate: { type: Date },
+    requestNotes: { type: String }
 })
 
 
