@@ -1,44 +1,29 @@
-const { S3Client, PutObjectCommand, DeleteObjectCommand,
-  DeleteObjectsCommand } = require('@aws-sdk/client-s3');
-
-const { fromIni } = require('@aws-sdk/credential-provider-ini');
-const { v4: uuidv4 } = require('uuid');
-
-const s3 = new S3Client({
-  region: process.env.BUCKETEER_AWS_REGION,
-  credentials: fromIni({
-    accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY,
-  }),
-});
+let AWS = require('aws-sdk');
+const uuid = require("uuid").v4
+const s3 = new AWS.S3();
+process.env.AWS_ACCESS_KEY_ID = process.env.BUCKETEER_AWS_ACCESS_KEY_ID;
+process.env.AWS_SECRET_ACCESS_KEY = process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY;
+process.env.AWS_REGION = process.env.BUCKETEER_AWS_REGION;
 
 
 exports.uploadFilesToS3 = async (folderName, files) => {
   try {
-    const uploadPromises = files.map(async (file) => {
-      const params = {
+    const params = files.map((file) => {
+      return {
         Bucket: process.env.BUCKETEER_BUCKET_NAME,
-        Key: `public/${folderName}/${uuidv4()}-${file.originalname}`,
+        Key: `public/${folderName}/${uuid()}-${file.originalname}`,
         Body: file.buffer,
       };
-      const uploadCommand = new PutObjectCommand(params);
-      const result = await s3.send(uploadCommand);
-      const location = `https://${params.Bucket}.s3.${process.env.BUCKETEER_AWS_REGION}.amazonaws.com/${params.Key}`;
-      console.log(`Upload successful`);
-      return { key: params.Key, Location: location };
     });
-
-    const uploadResults = await Promise.all(uploadPromises);
-    console.log(`uploadResults`, uploadResults);
+    const uploadResults = await Promise.all(params.map((param) => s3.upload(param).promise()));
     return { success: true, result: uploadResults };
-
   } catch (err) {
-    console.error('Error uploading files:', err.message);
-    return {
-      success: false,
-      error: err.message,
-    };
+    console.log(`err.message`, err.message);
+    return err.message
   }
+
+
+
 };
 
 
@@ -48,52 +33,106 @@ exports.deleteFileFromS3 = async (fileName) => {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Key: fileName,
     };
-
-    const deleteCommand = new DeleteObjectCommand(params);
-    await s3.send(deleteCommand);
-
-    console.log('File deleted successfully');
-
-    return {
-      success: true,
-      message: 'File deleted successfully',
-    };
-
+    return await s3.deleteObject(params, function (err, data) {
+      if (err) console.log(err, err.stack);  // error
+      else console.log("file deleted successfully");                 // deleted
+    }).promise();
   } catch (err) {
-    console.error('Error deleting file:', err.message);
-    return {
-      success: false,
-      error: err.message,
-    };
+    console.log(`err.message`, err.message);
+    return err.message
   }
-};
+
+}
 
 
-exports.deleteFilesFromS3 = async (arrayOfFiles) => {
-  try {
+exports.deleteFilesFromS3 = (arrayOfFiles) => {
+  return new Promise((resolve, reject) => {
+    const imageKeys = arrayOfFiles;
+
+    // Construct the delete request
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Delete: {
-        Objects: arrayOfFiles.map((key) => ({ Key: key })),
-        Quiet: false,
-      },
+        Objects: imageKeys.map((key) => ({ Key: key })),
+        Quiet: false
+      }
     };
 
-    const deleteObjectsCommand = new DeleteObjectsCommand(params);
-    const data = await s3.send(deleteObjectsCommand);
+    // Call the deleteObjects method to delete the images
+    s3.deleteObjects(params, (err, data) => {
+      if (err) {
+        console.log(err, err.stack);
+        reject(err);
+      } else {
+        // console.log("deleted the following",data.Deleted);
+        resolve(data.Deleted);
+      }
+    });
+  });
+}
 
-    console.log('Files deleted successfully');
-    return {
-      success: true,
-      message: 'Files deleted successfully',
-      deletedObjects: data.Deleted,
+
+
+exports.uploadPDFtoS3 = async (fileContent) => {
+  try {
+    const params = {
+      Bucket: process.env.BUCKETEER_BUCKET_NAME,
+      Key: `public/barcodes/${uuid()}-barcodes.pdf`,
+      Body: fileContent,
+      ContentType: 'application/pdf'
     };
 
+    return new Promise((resolve, reject) => {
+      s3.upload(params, function (err, data) {
+        if (err) {
+          console.log('Error uploading file:', err);
+          reject({
+            success: false,
+            error: err.message
+          });
+        } else {
+          console.log('File uploaded successfully. URL:', data.Location);
+          resolve({
+            success: true,
+            record: data
+          });
+        }
+      });
+    }).catch((err) => { console.log(`err.message`, err.message); return });
   } catch (err) {
-    console.error('Error deleting files:', err.message);
-    return {
-      success: false,
-      error: err.message,
-    };
+    console.log(`err.message`, err.message);
   }
-};
+}
+
+
+exports.uploadExceltoS3 = async (fileContent) => {
+  try {
+    const params = {
+      Bucket: process.env.BUCKETEER_BUCKET_NAME,
+      Key: `public/barcodes/${uuid()}-barcodes.xlsx`,
+      Body: fileContent,
+      ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    };
+
+
+    return new Promise((resolve, reject) => {
+      s3.upload(params, function (err, data) {
+        if (err) {
+          console.log('Error uploading file:', err);
+          reject({
+            success: false,
+            error: err.message
+          });
+        } else {
+          console.log('File uploaded successfully. URL:', data.Location);
+          resolve({
+            success: true,
+            record: data
+          });
+        }
+      });
+    });
+  } catch (err) {
+    console.log(`err.message`, err.message);
+  }
+}
