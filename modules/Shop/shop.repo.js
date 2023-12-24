@@ -149,11 +149,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("notFound")
         }
 
-        if (formObject.email) {
-            const uniqueObjectResult = await this.isEmailUnique(formObject, existingObject)
-            if (!uniqueObjectResult.success) return uniqueObjectResult
-        }
-
+    
         if (formObject.nameEn || formObject.nameAr) {
             formObject.nameEn = formObject.nameEn ? formObject.nameEn : existingObject.result.nameEn;
             formObject.nameAr = formObject.nameAr ? formObject.nameAr : existingObject.result.nameAr;

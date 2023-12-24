@@ -93,7 +93,7 @@ exports.removeAdmin = async (req, res) => {
     try {
         let existingObject = await adminRepo.find({ _id: req.query._id })
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject)
-        if (req.tokenData.type == "admin" && existingObject.result.type == "superAdmin") return res.status(403).json({
+        if (req.tokenData.role == "admin" && existingObject.result.role == "superAdmin") return res.status(403).json({
             success: false,
             code: 403,
             error: i18n.__("unauthorized")

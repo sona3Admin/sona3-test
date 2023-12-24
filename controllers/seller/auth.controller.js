@@ -33,7 +33,7 @@ exports.login = async (req, res) => {
 
         payloadObject = {
             _id: operationResultObject.result._id,
-            name: operationResultObject.result.name,
+            userName: operationResultObject.result.userName,
             email: operationResultObject.result.email,
             phone: operationResultObject.result.phone,
             role: "seller"

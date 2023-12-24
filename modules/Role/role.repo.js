@@ -262,6 +262,6 @@ exports.isNameUnique = async (formObject, existingObject) => {
 
 
 exports.convertToLowerCase = (formObject) => {
-    if (formObject.nameEn) formObject.nameEn = formObject.nameEn.toLowerCase()
+    if (formObject.name) formObject.name = formObject.name.toLowerCase()
     return formObject
 }
