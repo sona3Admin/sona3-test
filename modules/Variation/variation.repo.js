@@ -3,6 +3,7 @@ const variationModel = require("./variation.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const productRepo = require("../Product/product.repo")
 
+
 exports.find = async (filterObject) => {
     try {
         const resultObject = await variationModel.findOne(filterObject).lean();
@@ -165,6 +166,8 @@ exports.update = async (_id, formObject) => {
         };
         let productFormObject = { $addToSet: { variations: resultObject._id } }
         if (resultObject.isDefault) productRepo.updateDirectly(resultObject.product, productFormObject)
+        if (resultObject.isActive == true) productRepo.updateDirectly(resultObject.product, productFormObject)
+        if (!resultObject.isActive) productRepo.updateDirectly(resultObject.product, { $pull: { variations: resultObject._id } })
         return {
             success: true,
             code: 200,
