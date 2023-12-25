@@ -19,7 +19,10 @@ const productSchema = mongoose.Schema({
     isTrending: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
-    creationDate: { type: Date }
+    creationDate: { type: Date },
+    verifyDate: { type: Date },
+    lastUpdateDate: { type: Date },
+
 })
 
 

@@ -100,6 +100,11 @@ module.exports = {
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
+
+            verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
         }),
     },
 
@@ -195,7 +200,11 @@ module.exports = {
 
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
-            })
+            }),
+
+            verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
         }),
     },
 

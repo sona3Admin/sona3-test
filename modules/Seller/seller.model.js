@@ -16,6 +16,7 @@ const sellerSchema = mongoose.Schema({
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     joinDate: { type: Date },
+    verifyDate: { type: Date },
     token: { type: String },
     session: { type: Object }
 

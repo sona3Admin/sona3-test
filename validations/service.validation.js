@@ -85,6 +85,14 @@ module.exports = {
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
+
+            verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            lastUpdateDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
         }),
     },
 
@@ -163,6 +171,14 @@ module.exports = {
 
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
+            }),
+
+            verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            lastUpdateDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
             }),
         })
     }

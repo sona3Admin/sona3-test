@@ -23,7 +23,8 @@ const shopSchema = mongoose.Schema({
     isActive: { type: Boolean, default: true },
     rating: { type: Number, min: 1, default: 1 },
     reviewCount: { type: Number, min: 0, default: 0 },
-    joinDate: { type: Date }
+    joinDate: { type: Date },
+    verifyDate: { type: Date },
 })
 
 shopSchema.index({ location: '2dsphere' });
