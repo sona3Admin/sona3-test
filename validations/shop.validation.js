@@ -15,12 +15,12 @@ module.exports = {
                 "any.required": "requiredCategory",
             }),
 
-            productCategories: joi.array().required().messages({
+            productCategories: joi.array().optional().messages({
                 "string.base": "validCategory",
                 "any.required": "requiredCategory",
             }),
 
-            serviceCategories: joi.array().required().messages({
+            serviceCategories: joi.array().optional().messages({
                 "string.base": "validCategory",
                 "any.required": "requiredCategory",
             }),

@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const serviceModel = require("./service.model")
-const { prepareQueryObjects } =require("../../helpers/query.helper")
+const { prepareQueryObjects } = require("../../helpers/query.helper")
+const shopRepo = require("../Shop/shop.repo")
 
 
 exports.find = async (filterObject) => {
@@ -119,6 +120,7 @@ exports.create = async (formObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         }
+        shopRepo.updateDirectly(resultObject.shop.toString(), { $addToSet: { serviceCategories: { $each: resultObject.categories } } })
 
         return {
             success: true,
@@ -221,7 +223,7 @@ exports.remove = async (_id) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
-        
+
         return {
             success: true,
             code: 200,
