@@ -33,6 +33,7 @@ app.use("/variations", checkToken(allowedUsers), variationRoutes);
 app.use("/services", checkToken(allowedUsers), serviceRoutes);
 app.use("/banners", checkToken(allowedUsers), bannerRoutes);
 app.use("/orders", checkToken(allowedUsers), orderRoutes);
+app.use("/requests", checkToken(allowedUsers), requestRoutes);
 app.use("/reviews", checkToken(allowedUsers), reviewRoutes);
 
 
