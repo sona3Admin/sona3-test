@@ -170,28 +170,32 @@ exports.uploadCovers = async (req, res) => {
 
 exports.deleteCovers = async (req, res) => {
     try {
-        let coversToDelete = req.body.keys
-        let operationResultObject
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const { _id } = req.query;
+        const { keys } = req.body;
+
+        const existingObject = await shopRepo.find({ _id });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
+        const pullQuery = { $pull: { covers: { key: { $in: keys } } } };
+        const updateOperation = await shopRepo.updateDirectly(req.query._id, pullQuery);
 
-        await coversToDelete.map(async (pathToFile) => {
-            operationResultObject = await shopRepo.updateDirectly(req.query._id, { $pull: { covers: { key: pathToFile } } });
-        });
-        await batchRepo.create({ filesToDelete: coversToDelete })
-        return res.status(operationResultObject.code).json(operationResultObject);
+        if (!updateOperation.success) return res.status(updateOperation.code).json(updateOperation);
 
+
+        batchRepo.create({ filesToDelete: keys });
+
+        return res.status(updateOperation.code).json(updateOperation);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        console.error(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         });
     }
-}
+};
+
 
 
 exports.uploadBanners = async (req, res) => {
@@ -231,21 +235,24 @@ exports.uploadBanners = async (req, res) => {
 
 exports.deleteBanners = async (req, res) => {
     try {
-        let bannersToDelete = req.body.keys
-        let operationResultObject
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const { _id } = req.query;
+        const { keys } = req.body;
+
+        const existingObject = await shopRepo.find({ _id });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
+        const pullQuery = { $pull: { banners: { key: { $in: keys } } } };
+        const updateOperation = await shopRepo.updateDirectly(req.query._id, pullQuery);
 
-        await bannersToDelete.map(async (pathToFile) => {
-            operationResultObject = await shopRepo.updateDirectly(req.query._id, { $pull: { banners: { key: pathToFile } } });
-        });
-        await batchRepo.create({ filesToDelete: bannersToDelete })
-        return res.status(operationResultObject.code).json(operationResultObject);
+        if (!updateOperation.success) return res.status(updateOperation.code).json(updateOperation);
 
+
+        batchRepo.create({ filesToDelete: keys });
+
+        return res.status(updateOperation.code).json(updateOperation);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        console.error(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

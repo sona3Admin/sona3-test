@@ -125,28 +125,28 @@ exports.uploadImages = async (req, res) => {
 
 exports.deleteImages = async (req, res) => {
     try {
-        let imagesToDelete = req.body.keys
-        let operationResultObject
-        const existingObject = await variationRepo.find({ _id: req.query._id })
+        const { _id } = req.query;
+        const { keys } = req.body;
+
+        const existingObject = await variationRepo.find({ _id });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
-        console.log(`existingObject`, existingObject);
+        const pullQuery = { $pull: { images: { key: { $in: keys } } } };
+        const updateOperation = await variationRepo.updateDirectly(req.query._id, pullQuery);
 
-        await Promise.all(imagesToDelete.map(async (pathToFile) => {
-            const operationResultObject = await variationRepo.updateDirectly(req.query._id, { $pull: { images: { key: pathToFile } } });
-            operationResultObject.push(operationResultObject);
-        }));
-        console.log(`operationResultObject`, operationResultObject);
-        await batchRepo.create({ filesToDelete: imagesToDelete })
-        return res.status(operationResultObject.code).json(operationResultObject);
+        if (!updateOperation.success) return res.status(updateOperation.code).json(updateOperation);
 
+
+        batchRepo.create({ filesToDelete: keys });
+
+        return res.status(updateOperation.code).json(updateOperation);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        console.error(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         });
     }
-}
+};
