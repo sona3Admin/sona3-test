@@ -5,10 +5,14 @@ const productRepo = require("../../modules/Product/product.repo");
 exports.listProducts = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 6
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
-        const operationResultObject = await productRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        filterObject["defaultVariation"] = { $exists: true }
+        filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
+
+        let operationResultObject = await productRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        // if (operationResultObject.result) operationResultObject.result = operationResultObject?.result.filter((product) => { return product.variations.length > 0 && product?.defaultVariation })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -27,6 +31,8 @@ exports.getProduct = async (req, res) => {
         const filterObject = req.query;
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
+        filterObject["defaultVariation"] = { $exists: true }
+        filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
         const operationResultObject = await productRepo.get(filterObject, {});
         return res.status(operationResultObject.code).json(operationResultObject);
 

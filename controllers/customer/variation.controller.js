@@ -5,7 +5,7 @@ const variationRepo = require("../../modules/Variation/variation.repo");
 exports.listVariations = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 6
         filterObject["isActive"] = true
         filterObject["stock"].$gte = 1
         // filterObject["isVerified"] = true

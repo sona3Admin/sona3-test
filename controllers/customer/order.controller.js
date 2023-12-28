@@ -29,7 +29,7 @@ exports.createOrder = async (req, res) => {
 exports.listOrders = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 6
         const operationResultObject = await orderRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 
