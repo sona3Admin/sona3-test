@@ -101,6 +101,7 @@ exports.uploadImages = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("services", req.files)
+        console.log(`operationResultArray`, operationResultArray);
         if (!operationResultArray.success) return res.status(500).json({
             success: false,
             code: 500,
