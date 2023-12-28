@@ -89,6 +89,7 @@ exports.removeService = async (req, res) => {
 
 exports.uploadImages = async (req, res) => {
     try {
+        console.log(`req.files`, req.files);
         const existingObject = await serviceRepo.find({ _id: req.query._id })
         let imagesArray = (existingObject.success && existingObject.result.images) ? (existingObject.result.images) : 0
         let numberOfImages = imagesArray.length + req.files.length
