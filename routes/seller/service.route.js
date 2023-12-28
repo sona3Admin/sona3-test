@@ -1,5 +1,5 @@
 const app = require("express").Router();
-const serviceController = require("../../controllers/admin/service.controller")
+const serviceController = require("../../controllers/seller/service.controller")
 const { createServiceValidation, updateServiceValidation } = require("../../validations/service.validation")
 const validator = require("../../helpers/validation.helper")
 const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
