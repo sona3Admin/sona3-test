@@ -89,6 +89,8 @@ exports.removeBanner = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+
         const existingObject = await bannerRepo.find({ _id: req.query._id })
         let oldImageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
 

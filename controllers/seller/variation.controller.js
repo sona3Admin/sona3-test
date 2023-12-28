@@ -89,6 +89,8 @@ exports.removeVariation = async (req, res) => {
 
 exports.uploadImages = async (req, res) => {
     try {
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+
         const existingObject = await variationRepo.find({ _id: req.query._id })
         let imagesArray = (existingObject.success && existingObject.result.images) ? (existingObject.result.images) : 0
         let numberOfImages = imagesArray.length + req.files.length
