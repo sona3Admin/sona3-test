@@ -5,7 +5,7 @@ const { getShopOrder, listShopOrders } = require("../../helpers/order.helper")
 exports.listOrders = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         let operationResultObject = await orderRepo.list(filterObject, { customer: 1, subOrders: 1, shippingAddress: 1, paymentMethod: 1, issueDate: 1 }, {}, pageNumber, limitNumber);
         operationResultObject.result = listShopOrders(operationResultObject.result, filterObject.shops)
         return res.status(operationResultObject.code).json(operationResultObject);

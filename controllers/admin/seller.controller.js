@@ -24,7 +24,7 @@ exports.getSeller = async (req, res) => {
 exports.listSellers = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await sellerRepo.list(filterObject, { password: 0 }, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 

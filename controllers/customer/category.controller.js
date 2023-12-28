@@ -7,7 +7,7 @@ exports.listCategories = async (req, res) => {
         let filterObject = req.query;
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 8
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await categoryRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 

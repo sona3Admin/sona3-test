@@ -5,7 +5,7 @@ const productRepo = require("../../modules/Product/product.repo");
 exports.listProducts = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 6
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
         filterObject["defaultVariation"] = { $exists: true }

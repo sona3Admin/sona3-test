@@ -22,7 +22,7 @@ exports.createCategory = async (req, res) => {
 exports.listCategories = async (req, res) => {
     try {
         let filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await categoryRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 

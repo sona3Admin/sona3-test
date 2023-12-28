@@ -5,7 +5,7 @@ const serviceRepo = require("../../modules/Service/service.repo");
 exports.listServices = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 8
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
         const operationResultObject = await serviceRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
