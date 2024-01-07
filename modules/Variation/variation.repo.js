@@ -192,6 +192,11 @@ exports.updateDirectly = async (_id, formObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
+        
+        let productFormObject = { $addToSet: { variations: resultObject._id } }
+        if (resultObject.isDefault) productRepo.updateDirectly(resultObject.product, productFormObject)
+        if (formObject.isActive == true) productRepo.updateDirectly(resultObject.product, { ...productFormObject, $inc: { stock: resultObject.stock } })
+        if (formObject?.isActive == false) productRepo.updateDirectly(resultObject.product, { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } })
 
         return {
             success: true,

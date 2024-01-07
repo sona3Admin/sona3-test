@@ -28,6 +28,8 @@ const shopSchema = mongoose.Schema({
 })
 
 shopSchema.index({ location: '2dsphere' });
+shopSchema.index({ nameEn: 1 });
+shopSchema.index({ nameAr: 1 });
 
 const shopModel = mongoose.model("shops", shopSchema)
 

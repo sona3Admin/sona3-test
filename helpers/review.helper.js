@@ -40,43 +40,31 @@ exports.getPurchasedOrder = async (reviewObject, itemToReview) => {
 
 
 exports.updateReviewedItemRating = async (reviewObject, itemToReview) => {
-    let reviewCount = 0
-    let itemRating = parseFloat(reviewObject.rating)
-    let reviewsArray = await reviewRepo.list({ ...itemToReview }) 
-    console.log(`customer rating`, itemRating);
+    let reviewsArray = await reviewRepo.list({ ...itemToReview })
+    let { rating, reviewCount } = this.calculateAverageRating(reviewsArray.result)
+    console.log(`customers rating`, rating);
     console.log(`itemToReview`, itemToReview);
     console.log(`reviewObject`, reviewObject);
-    if (itemToReview.shop) {
-        reviewsArray.result.map((shopReview) => {
-            itemRating += parseFloat(shopReview.rating)
-            reviewCount += 1
-        })
-        console.log(`itemToReview.shop`, itemToReview.shop);
-        itemRating = itemRating / reviewCount
-        shopRepo.updateDirectly(itemToReview.shop, { reviewCount, rating: itemRating })
-    }
 
-    if (itemToReview.product) {
-        reviewsArray.result.map((productReview) => {
-            itemRating += parseFloat(productReview.rating)
-            reviewCount += 1
-        })
-        console.log(`itemToReview.product`, itemToReview.product);
+    if (itemToReview.shop) shopRepo.updateDirectly(itemToReview.shop, { reviewCount, rating })
 
-        itemRating = itemRating / reviewCount
-        productRepo.updateDirectly(itemToReview.product, { reviewCount, rating: itemRating })
+    if (itemToReview.product) productRepo.updateDirectly(itemToReview.product, { reviewCount, rating })
 
-    }
+    if (itemToReview.service) serviceRepo.updateDirectly(itemToReview.service, { reviewCount, rating })
 
-    if (itemToReview.service) {
-        reviewsArray.result.map((serviceReview) => {
-            itemRating += parseFloat(serviceReview.rating)
-            reviewCount += 1
-        })
-        console.log(`itemToReview.service`, itemToReview.service);
-
-        itemRating = itemRating / reviewCount
-        serviceRepo.updateDirectly(itemToReview.service, { reviewCount, rating: itemRating })
-
-    }
 }
+
+
+exports.calculateAverageRating = (arrayOfReviews) => {
+    let totalRating = 0;
+    let reviewCount = 0;
+
+    arrayOfReviews.forEach((reviewObject) => {
+        totalRating += parseFloat(reviewObject.rating);
+        reviewCount += 1;
+    });
+
+    const rating = reviewCount === 0 ? 0 : parseFloat((totalRating / reviewCount).toFixed(2));
+
+    return { rating, reviewCount };
+};

@@ -15,6 +15,8 @@ const formSchema = mongoose.Schema({
     isActive: { type: Boolean, default: false }
 })
 
+formSchema.index({ nameEn: 1 });
+formSchema.index({ nameAr: 1 });
 
 const formModel = mongoose.model("forms", formSchema)
 

@@ -26,6 +26,9 @@ const productSchema = mongoose.Schema({
 })
 
 
+productSchema.index({ nameEn: 1 });
+productSchema.index({ nameAr: 1 });
+
 const productModel = mongoose.model("products", productSchema)
 
 

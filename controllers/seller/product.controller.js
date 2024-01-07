@@ -56,6 +56,7 @@ exports.getProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
     try {
+        req.body.isVerified = false
         const operationResultObject = await productRepo.update(req.query._id, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 

@@ -32,6 +32,8 @@ const variationSchema = mongoose.Schema({
     isActive: { type: Boolean, default: true }
 })
 
+variationSchema.index({ descriptionEn: 1 });
+variationSchema.index({ descriptionAr: 1 });
 
 const variationModel = mongoose.model("variations", variationSchema)
 

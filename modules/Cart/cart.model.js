@@ -19,6 +19,7 @@ const cartSchema = mongoose.Schema({
 
 })
 
+cartSchema.index({ customer: 1 });
 
 const cartModel = mongoose.model("carts", cartSchema)
 

@@ -27,6 +27,9 @@ const serviceSchema = mongoose.Schema({
 })
 
 
+serviceSchema.index({ nameEn: 1 });
+serviceSchema.index({ nameAr: 1 });
+
 const serviceModel = mongoose.model("services", serviceSchema)
 
 

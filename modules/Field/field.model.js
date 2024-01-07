@@ -15,6 +15,8 @@ const fieldSchema = mongoose.Schema({
     isActive: { type: Boolean, default: false }
 })
 
+fieldSchema.index({ nameEn: 1 });
+fieldSchema.index({ nameAr: 1 });
 
 const fieldModel = mongoose.model("fields", fieldSchema)
 

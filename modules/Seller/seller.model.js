@@ -27,6 +27,10 @@ sellerSchema.pre("save", async function (next) {
     next();
 })
 
+
+sellerSchema.index({ userName: 1 });
+
+
 const sellerModel = mongoose.model("sellers", sellerSchema)
 
 

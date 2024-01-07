@@ -18,6 +18,9 @@ const categorySchema = mongoose.Schema({
     isActive: { type: Boolean, default: false }
 })
 
+categorySchema.index({ nameEn: 1 });
+categorySchema.index({ nameAr: 1 });
+
 
 const categoryModel = mongoose.model("categories", categorySchema)
 
