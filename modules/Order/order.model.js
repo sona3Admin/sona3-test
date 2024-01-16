@@ -13,6 +13,7 @@ const orderSchema = mongoose.Schema({
             quantity: { type: Number, min: 1 },
             itemTotal: { type: Number, min: 0 }
         }],
+        coupon: { type: Object },
         shopTotal: { type: Number, min: 0 },
         shopOriginalTotal: { type: Number, min: 0 },
         shopTaxes: { type: Number, min: 0 },
@@ -38,7 +39,7 @@ const orderSchema = mongoose.Schema({
         address: { type: Object }
     },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
-    coupon: { type: mongoose.Types.ObjectId, ref: "coupons" },
+    coupon: { type: Object },
     cartTotal: { type: Number, min: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
     shippingFeesTotal: { type: Number, min: 0 },

@@ -11,7 +11,7 @@ const couponSchema = mongoose.Schema({
     code: { type: String },
     quantity: { type: Number, min: 0, default: 1 },
     value: { type: Number, min: 0, default: 0 },
-    usedBy: [{ type: mongoose.Types.ObjectId, ref: "customers" }],
+    usedBy: [{ customer: { type: mongoose.Types.ObjectId, ref: "customers" } }],
     isActive: { type: Boolean, default: true },
     creationDate: { type: Date, default: Date.now() },
     expirationDate: { type: Date, default: Date.now() },
