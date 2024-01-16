@@ -18,6 +18,7 @@ const bannerRoutes = require("./banner.route");
 const orderRoutes = require("./order.route");
 const requestRoutes = require("./request.route");
 const reviewRoutes = require("./review.route");
+const couponRoutes = require("./review.route");
 
 
 
@@ -35,6 +36,7 @@ app.use("/banners", checkToken(allowedUsers), bannerRoutes);
 app.use("/orders", checkToken(allowedUsers), orderRoutes);
 app.use("/requests", checkToken(allowedUsers), requestRoutes);
 app.use("/reviews", checkToken(allowedUsers), reviewRoutes);
+app.use("/coupons", checkToken(allowedUsers), couponRoutes);
 
 
 

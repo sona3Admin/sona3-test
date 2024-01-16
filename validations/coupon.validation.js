@@ -53,6 +53,10 @@ module.exports = {
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
+
+            expirationDate: joi.date().optional().messages({
+                "date.base": "validCreationDate",
+            }),
         }),
     },
 
@@ -105,6 +109,10 @@ module.exports = {
             }),
             
             creationDate: joi.date().optional().messages({
+                "date.base": "validCreationDate",
+            }),
+
+            expirationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
         }),

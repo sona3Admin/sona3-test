@@ -106,6 +106,12 @@ let reviewEndPoints = [
 ]
 
 
+let couponEndPoints = [
+    "/admin/coupon/create", "/admin/coupon/update", "/admin/coupons/get",
+    "/admin/coupons/list", "/admin/coupons/remove",
+]
+
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -125,6 +131,7 @@ cartEndPoints = new Set(cartEndPoints);
 orderEndPoints = new Set(orderEndPoints);
 requestEndPoints = new Set(requestEndPoints);
 reviewEndPoints = new Set(reviewEndPoints);
+couponEndPoints = new Set(couponEndPoints);
 
 
 let permissions = new Map();
@@ -148,6 +155,7 @@ permissions.set("carts", cartEndPoints)
 permissions.set("orders", orderEndPoints)
 permissions.set("requests", requestEndPoints)
 permissions.set("reviews", reviewEndPoints)
+permissions.set("coupons", couponEndPoints)
 
 
 module.exports = { permissions }
