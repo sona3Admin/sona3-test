@@ -36,7 +36,8 @@ exports.setSubOrders = (subCartsArray) => {
             shopOriginalTotal: subCartsArray[shopCartIndex].shopOriginalTotal,
             shopTaxes: 0,
             shopShippingFees: 0,
-            subOrderTotal: subCartsArray[shopCartIndex].shopTotal
+            coupon: (subCartsArray[shopCartIndex]?.coupon) || undefined,
+            subOrderTotal: subCartsArray[shopCartIndex].shopTotal,
         });
     }
 
@@ -78,6 +79,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
         customerOrderObject.cartTotal = parseFloat(customerCartObject.cartTotal)
         customerOrderObject.orderTotal = parseFloat(customerCartObject.cartTotal)
         customerOrderObject.cartOriginalTotal = parseFloat(customerCartObject.cartOriginalTotal)
+        customerOrderObject.coupon = customerCartObject?.coupon || undefined
         customerOrderObject.taxesRate = parseFloat(getSettings("vatRate"))
         customerOrderObject.taxesTotal = 0
 

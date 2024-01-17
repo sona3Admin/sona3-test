@@ -292,6 +292,7 @@ exports.cancel = async (cartId) => {
         let cartObject = await cartRepo.get({ _id: cartId })
         if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
 
+        let customerId = (cartObject.result.customer._id).toString()
         let couponShopId = (cartObject.result.coupon.shop).toString()
         console.log(couponShopId, "couponShopId");
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
@@ -308,6 +309,8 @@ exports.cancel = async (cartId) => {
             $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
             $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1 }
         })
+
+        this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
 
         return {
             success: true,
