@@ -36,12 +36,12 @@ exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await cartModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
-            .populate({ path: "coupon", select: "nameEn nameAr" })
+            .populate({ path: "coupon", select: "nameEn nameAr code value shop" })
             .populate({
                 path: "subCarts",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "coupon", select: "nameEn nameAr" },
+                    { path: "coupon", select: "nameEn nameAr code value shop" },
                     { path: "items.product", select: "nameEn nameAr" },
                     { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
                 ]
@@ -77,12 +77,12 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
     try {
         const resultArray = await cartModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
-            .populate({ path: "coupon", select: "nameEn nameAr" })
+            .populate({ path: "coupon", select: "nameEn nameAr code value shop" })
             .populate({
                 path: "subCarts",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "coupon", select: "nameEn nameAr" },
+                    { path: "coupon", select: "nameEn nameAr code value shop" },
                     { path: "items.product", select: "nameEn nameAr" },
                     { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
                 ]

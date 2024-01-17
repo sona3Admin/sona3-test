@@ -117,5 +117,9 @@
 	"outOfStock": "This product is out of stock.",
 	"reviewExists": "You have already posted your review once.",
 	"notPurchased": "You didn't purchase yet.",
-	"fileNotRecieved": "No file recieved."
+	"fileNotRecieved": "No file received.",
+	"emptyCart": "This cart is empty.",
+	"hasCoupon": "This cart already has a coupon.",
+	"usedCoupon": "You have already used this coupon before.",
+	"invalidCoupon": "Invalid Coupon."
 }

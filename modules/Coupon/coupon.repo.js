@@ -2,7 +2,7 @@ const i18n = require('i18n');
 const couponModel = require("./coupon.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const cartRepo = require("../Cart/cart.repo")
-const { isIdInArray, updateExistingSubCart, calculateCartTotal } = require("../../helpers/cart.helper")
+const { isIdInArray } = require("../../helpers/cart.helper")
 
 exports.find = async (filterObject) => {
     try {
@@ -229,46 +229,95 @@ exports.remove = async (_id) => {
 
 
 exports.apply = async (cartId, couponId) => {
-    let cartObject = await cartRepo.find({ _id: cartId })
-    if (!cartObject.success || cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("") }
-    if (cartObject.result.subCarts.length < 1) return { success: false, code: 409, error: i18n.__("") }
+    try {
+        let cartObject = await cartRepo.find({ _id: cartId })
+        if (!cartObject.success || cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("hasCoupon") }
+        if (cartObject.result.subCarts.length < 1) return { success: false, code: 409, error: i18n.__("emptyCart") }
 
-    let couponObject = await this.find({ _id: couponId })
-    let couponValidationResult = this.validateCoupon(couponObject.result)
-    if (!couponValidationResult.success) return couponValidationResult;
+        let couponObject = await this.find({ _id: couponId })
+        let couponValidationResult = this.validateCoupon(couponObject.result)
+        if (!couponValidationResult.success) return couponValidationResult;
+        console.log("Coupon is valid and cart is valid.");
 
-    let couponShopId = couponObject.result.shop
-    let isShopInCart = isIdInArray(cartObject.subCarts, "shop", couponShopId)
-    if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("") }
-    let subCartObject = cartObject.subCarts[isShopInCart?.result]
+        let couponShopId = (couponObject.result.shop).toString()
+        let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        console.log("subCart index", isShopInCart?.result);
+        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
-    let customerId = cartObject.result.customer
-    let didCustomerUseCoupon = isIdInArray(couponObject.usedBy, "customer", customerId)
-    if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("") }
+        let customerId = (cartObject.result.customer).toString()
+        console.log("customerId", customerId);
+        let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "customer", customerId)
+        if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
 
-    let newShopTotal = parseFloat(subCartObject.shopTotal) - parseFloat(couponObject.value)
-    if (newShopTotal < 0) newShopTotal = 0;
-    subCartObject.shopTotal = newShopTotal
-    subCartObject.coupon = couponId
-    cartObject.subCarts[isShopInCart?.result] = subCartObject
+        let newShopTotal = parseFloat(subCartObject.shopTotal) - parseFloat(couponObject.result.value)
+        if (newShopTotal < 0) newShopTotal = 0;
+        subCartObject.shopTotal = newShopTotal
+        subCartObject.coupon = couponId
+        cartObject.result.subCarts[isShopInCart?.result] = subCartObject
 
-    let newCartTotal = parseFloat(cartObject.result.cartTotal) - newShopTotal
-    let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.subCarts, cartTotal: newCartTotal, coupon: couponId })
+        let newCartTotal = parseFloat(cartObject.result.cartTotal) - parseFloat(couponObject.result.value)
+        let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: newCartTotal, coupon: couponId })
 
-    this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: customerId } })
-    return {
-        success: true,
-        result: updatedCartResult.result,
-        code: 201
-    };
+        this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
+        return {
+            success: true,
+            result: updatedCartResult.result,
+            code: 201
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
 }
 
 
 exports.validateCoupon = (couponObject) => {
-    if (!couponObject.isActive) return { success: false, code: 409, error: i18n.__("") }
-    if (couponObject.quantity < 1) return { success: false, code: 409, error: i18n.__("") }
+    if (!couponObject.isActive) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
+    if (couponObject.quantity < 1) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
     let todayDate = new Date(Date.now())
-    if (couponObject.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("") }
+    if (couponObject.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
 
     return { success: true }
+}
+
+
+exports.cancel = async (cartId) => {
+    try {
+        let cartObject = await cartRepo.get({ _id: cartId })
+        if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
+
+        let couponShopId = (cartObject.result.coupon.shop).toString()
+        console.log(couponShopId, "couponShopId");
+        let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        console.log("subCart index", isShopInCart?.result);
+        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
+        let newShopTotal = parseFloat(subCartObject.shopTotal) + parseFloat(cartObject.result.coupon.value)
+        console.log("newShopTotal", newShopTotal);
+        cartObject.result.subCarts[isShopInCart?.result].shopTotal = newShopTotal
+        cartObject.result.subCarts[isShopInCart?.result].coupon = ""
+
+        let newCartTotal = parseFloat(cartObject.result.cartTotal) + parseFloat(cartObject.result.coupon.value)
+        let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: newCartTotal, $unset: { coupon: 1 } })
+
+        return {
+            success: true,
+            result: updatedCartResult.result,
+            code: 201
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
 }
