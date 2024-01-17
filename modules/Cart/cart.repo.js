@@ -209,6 +209,33 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
 };
 
 
+exports.updateWithFilter = async (filterObject, formObject) => {
+    try {
+        const resultObject = await cartModel.findByIdAndUpdate(filterObject, formObject, { new: true })
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.updateDirectly = async (_id, formObject) => {
     try {
         const resultObject = await cartModel.findByIdAndUpdate({ _id }, formObject, { new: true })

@@ -300,11 +300,14 @@ exports.cancel = async (cartId) => {
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
         let newShopTotal = parseFloat(subCartObject.shopTotal) + parseFloat(cartObject.result.coupon.value)
         console.log("newShopTotal", newShopTotal);
-        cartObject.result.subCarts[isShopInCart?.result].shopTotal = newShopTotal
-        cartObject.result.subCarts[isShopInCart?.result].coupon = ""
 
         let newCartTotal = parseFloat(cartObject.result.cartTotal) + parseFloat(cartObject.result.coupon.value)
-        let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: newCartTotal, $unset: { coupon: 1 } })
+        console.log("newCartTotal", newCartTotal);
+
+        let updatedCartResult = await cartRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
+            $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
+            $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1 }
+        })
 
         return {
             success: true,
