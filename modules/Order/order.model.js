@@ -14,7 +14,7 @@ const orderSchema = mongoose.Schema({
             itemTotal: { type: Number, min: 0 }
         }],
         coupon: { type: Object },
-        loyaltyPoints: { type: Object },
+        usedLoyaltyPoints: { type: Object },
         shopTotal: { type: Number, min: 0 },
         shopOriginalTotal: { type: Number, min: 0 },
         shopTaxes: { type: Number, min: 0 },
@@ -41,7 +41,7 @@ const orderSchema = mongoose.Schema({
     },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
     coupon: { type: Object },
-    loyaltyPoints: { type: Object },
+    usedLoyaltyPoints: [{ type: Object }],
     cartTotal: { type: Number, min: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
     shippingFeesTotal: { type: Number, min: 0 },

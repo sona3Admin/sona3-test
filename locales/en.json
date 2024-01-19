@@ -121,5 +121,6 @@
 	"emptyCart": "This cart is empty.",
 	"hasCoupon": "This cart already has a coupon.",
 	"usedCoupon": "You have already used this coupon before.",
-	"invalidCoupon": "Invalid Coupon."
+	"invalidCoupon": "Invalid Coupon.",
+	"noPoints": "No available points for this shop."
 }

@@ -1,6 +1,8 @@
 const i18n = require('i18n');
 const pointModel = require("./point.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
+const { getSettings } = require("../../helpers/settings.helper")
+const cartRepo = require("../Cart/cart.repo")
 
 
 exports.find = async (filterObject) => {
@@ -235,6 +237,60 @@ exports.remove = async (_id) => {
             success: true,
             code: 200,
             result: { message: i18n.__("recordDeleted") }
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
+exports.apply = async (customerId, shopId, pointsToApply) => {
+    try {
+        let cartObject = await cartRepo.find({ customer: customerId })
+        if (!cartObject.success || cartObject.result.subCarts.length < 1) return { success: false, code: 409, error: i18n.__("emptyCart") }
+
+        let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", shopId)
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        console.log("subCart index", isShopInCart?.result);
+        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
+
+        let pointObject = await this.find({ customer: customerId, shop: shopId })
+        let currentPoints = parseInt(pointObject.result.currentPoints)
+        if (!pointObject.success || currentPoints < 1) return { success: false, code: 409, error: i18n.__("noPoints") }
+        if (currentPoints <= pointsToApply) pointsToApply = currentPoints;
+
+        let pointsValue = await getSettings('pointsToCash')
+        let discountValue = pointsToApply / parseFloat(pointsValue)
+
+        let newShopTotal = parseInt(subCartObject.shopTotal) - discountValue
+        console.log("newShopTotal", newShopTotal);
+
+        let newCartTotal = parseInt(cartObject.result.cartTotal) - discountValue
+        console.log("newCartTotal", newCartTotal);
+
+        let updatedCartResult = await cartRepo.updateWithFilter({ customer: customerId, 'subCarts.shop': shopId }, {
+            $set: {
+                [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal,
+                [`subCarts.${isShopInCart.result}.usedLoyaltyPoints`]: { usedPoints: pointsToApply, pointsValue, discountValue },
+                cartTotal: newCartTotal,
+            },
+            $push: { usedLoyaltyPoints: { shop: shopId, usedPoints: pointsToApply, pointsValue, discountValue } }
+        })
+
+        let pointId = (pointObject.result._id).toString()
+        this.updateDirectly(pointId, { $inc: { currentPoints: -pointsToApply, usedPoints: pointsToApply } })
+
+        return {
+            success: true,
+            result: updatedCartResult.result,
+            code: 201
         };
 
     } catch (err) {

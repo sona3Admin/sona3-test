@@ -35,3 +35,19 @@ exports.getPoint = async (req, res) => {
         });
     }
 }
+
+
+exports.applyPoint = async (req, res) => {
+    try {
+        const operationResultObject = await pointRepo.apply(req.query.customer, req.query.shop, req.query.points);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
