@@ -37,6 +37,7 @@ exports.setSubOrders = (subCartsArray) => {
             shopTaxes: 0,
             shopShippingFees: 0,
             coupon: (subCartsArray[shopCartIndex]?.coupon) || undefined,
+            usedLoyaltyPoints: (subCartsArray[shopCartIndex]?.usedLoyaltyPoints) || undefined,
             subOrderTotal: subCartsArray[shopCartIndex].shopTotal,
         });
     }
@@ -80,6 +81,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
         customerOrderObject.orderTotal = parseFloat(customerCartObject.cartTotal)
         customerOrderObject.cartOriginalTotal = parseFloat(customerCartObject.cartOriginalTotal)
         customerOrderObject.coupon = customerCartObject?.coupon || undefined
+        customerOrderObject.usedLoyaltyPoints = customerCartObject?.usedLoyaltyPoints || undefined
         customerOrderObject.taxesRate = parseFloat(getSettings("vatRate"))
         customerOrderObject.taxesTotal = 0
 
