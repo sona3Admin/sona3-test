@@ -3,6 +3,7 @@ const pointModel = require("./point.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { getSettings } = require("../../helpers/settings.helper")
 const cartRepo = require("../Cart/cart.repo")
+const { isIdInArray } = require("../../helpers/cart.helper")
 
 
 exports.find = async (filterObject) => {
@@ -275,14 +276,18 @@ exports.apply = async (customerId, shopId, pointsToApply) => {
         let newCartTotal = parseInt(cartObject.result.cartTotal) - discountValue
         console.log("newCartTotal", newCartTotal);
 
-        let updatedCartResult = await cartRepo.updateWithFilter({ customer: customerId, 'subCarts.shop': shopId }, {
+        let cartId = (cartObject.result._id).toString()
+        console.log("cart", cartId);
+        let updatedCartResult = await cartRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': shopId }, {
             $set: {
-                [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal,
-                [`subCarts.${isShopInCart.result}.usedLoyaltyPoints`]: { usedPoints: pointsToApply, pointsValue, discountValue },
+                'subCarts.$.shopTotal': newShopTotal,
+                'subCarts.$.usedLoyaltyPoints': { usedPoints: parseInt(pointsToApply), pointsValue, discountValue },
                 cartTotal: newCartTotal,
             },
-            $push: { usedLoyaltyPoints: { shop: shopId, usedPoints: pointsToApply, pointsValue, discountValue } }
-        })
+            $push: { usedLoyaltyPoints: { shop: shopId, usedPoints: parseInt(pointsToApply), pointsValue, discountValue } }
+        }
+        );
+
 
         let pointId = (pointObject.result._id).toString()
         this.updateDirectly(pointId, { $inc: { currentPoints: -pointsToApply, usedPoints: pointsToApply } })

@@ -211,7 +211,7 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
 
 exports.updateWithFilter = async (filterObject, formObject) => {
     try {
-        const resultObject = await cartModel.findByIdAndUpdate(filterObject, formObject, { new: true })
+        const resultObject = await cartModel.findOneAndUpdate(filterObject, formObject, { new: true })
         if (!resultObject) return {
             success: false,
             code: 404,
@@ -299,7 +299,7 @@ exports.flush = async (filterObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, $unset: { coupon: 1 } }
+        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, $unset: { coupon: 1, usedLoyaltyPoints: 1 } }
         resultObject = await cartModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
 
         return {
