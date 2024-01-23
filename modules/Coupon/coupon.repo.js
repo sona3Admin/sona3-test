@@ -250,14 +250,14 @@ exports.apply = async (cartId, couponId) => {
         let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "customer", customerId)
         if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
 
-        let newShopTotal = parseFloat(subCartObject.shopTotal) - parseFloat(couponObject.result.value)
-        if (newShopTotal < 0) newShopTotal = 0;
-        subCartObject.shopTotal = newShopTotal
+        let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "apply")
+        console.log("calculatedTotals", calculatedTotals)
+
+        subCartObject.shopTotal = calculatedTotals.newShopTotal
         subCartObject.coupon = couponId
         cartObject.result.subCarts[isShopInCart?.result] = subCartObject
 
-        let newCartTotal = parseFloat(cartObject.result.cartTotal) - parseFloat(couponObject.result.value)
-        let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: newCartTotal, coupon: couponId })
+        let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: calculatedTotals.newCartTotal, coupon: couponId })
 
         this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
         return {
@@ -294,15 +294,21 @@ exports.cancel = async (cartId) => {
 
         let customerId = (cartObject.result.customer._id).toString()
         let couponShopId = (cartObject.result.coupon.shop).toString()
-        console.log(couponShopId, "couponShopId");
+
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
-        console.log("subCart index", isShopInCart?.result);
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
-        let newShopTotal = parseFloat(subCartObject.shopTotal) + parseFloat(cartObject.result.coupon.value)
+
+        let couponObject = {};
+        couponObject.result = { ...cartObject?.result?.coupon }
+
+        let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "cancel")
+        console.log("calculatedTotals", calculatedTotals)
+
+        let newShopTotal = parseFloat(calculatedTotals.newShopTotal)
         console.log("newShopTotal", newShopTotal);
 
-        let newCartTotal = parseFloat(cartObject.result.cartTotal) + parseFloat(cartObject.result.coupon.value)
+        let newCartTotal = parseFloat(calculatedTotals.newCartTotal)
         console.log("newCartTotal", newCartTotal);
 
         let updatedCartResult = await cartRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
@@ -326,4 +332,43 @@ exports.cancel = async (cartId) => {
             error: i18n.__("internalServerError")
         };
     }
+}
+
+
+exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationType) => {
+    let newShopTotal
+    let newCartTotal
+    console.log("couponObject.result", couponObject.result)
+
+    if (!operationType || operationType == "apply") {
+        if (couponObject.result.discountType == "value") {
+            newShopTotal = parseFloat(subCartObject.shopTotal) - parseFloat(couponObject.result.value)
+            newCartTotal = parseFloat(cartObject.result.cartTotal) - parseFloat(couponObject.result.value)
+        }
+
+        if (couponObject.result.discountType == "percentage") {
+            newShopTotal = parseFloat(subCartObject.shopTotal) - (parseFloat(couponObject.result.percentage) * parseFloat(subCartObject.shopTotal))
+            newCartTotal = parseFloat(cartObject.result.cartTotal) - (parseFloat(couponObject.result.percentage) * parseFloat(subCartObject.shopTotal))
+        }
+    }
+
+    if (operationType == "cancel") {
+        if (couponObject.result.discountType == "value") {
+            newShopTotal = parseFloat(subCartObject.shopTotal) + parseFloat(couponObject.result.value)
+            newCartTotal = parseFloat(cartObject.result.cartTotal) + parseFloat(couponObject.result.value)
+        }
+
+        if (couponObject.result.discountType == "percentage") {
+            console.log("discount", parseFloat(couponObject.result.percentage) * parseFloat(subCartObject.shopTotal));
+            newShopTotal = parseFloat(subCartObject.shopTotal) + (parseFloat(couponObject.result.percentage) * parseFloat(subCartObject.shopTotal))
+            newCartTotal = parseFloat(cartObject.result.cartTotal) + (parseFloat(couponObject.result.percentage) * parseFloat(subCartObject.shopTotal))
+        }
+    }
+
+    if (newShopTotal < 0) newShopTotal = 0;
+    if (newCartTotal < 0) newCartTotal = 0;
+
+    console.log("newShopTotal", newShopTotal);
+    console.log("newCartTotal", newCartTotal);
+    return { newShopTotal, newCartTotal }
 }

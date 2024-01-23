@@ -38,7 +38,16 @@ module.exports = {
                 "number.base": "validQuantity",
             }),
 
+            discountType: joi.string().optional().empty().messages({
+                "string.base": "validCodeString",
+                "string.empty": "emptyCodeString",
+            }),
+
             value: joi.number().optional().min(0).messages({
+                "number.base": "validValue",
+            }),
+
+            percentage: joi.number().optional().min(0).max(1).messages({
                 "number.base": "validValue",
             }),
 
@@ -96,7 +105,16 @@ module.exports = {
                 "number.base": "validQuantity",
             }),
 
+            discountType: joi.string().optional().empty().messages({
+                "string.base": "validCodeString",
+                "string.empty": "emptyCodeString",
+            }),
+
             value: joi.number().optional().min(0).messages({
+                "number.base": "validValue",
+            }),
+
+            percentage: joi.number().optional().min(0).max(1).messages({
                 "number.base": "validValue",
             }),
 
