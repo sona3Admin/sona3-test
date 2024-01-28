@@ -13,9 +13,10 @@ const variationSchema = mongoose.Schema({
     }],
     images: [{ type: Object }],
     stock: { type: Number, min: 0 },
+    rank: { type: Number, min: 1 },
     packages: [{
         quantity: { type: Number, min: 1 },
-        price: { type: Number, min: 0 }, // front will sort by price ascendingly
+        price: { type: Number, min: 0 }, // front will sort by price ascending
         originalPrice: { type: Number, min: 0 }
     }],
     minPackage: {

@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const requestModel = require("./request.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
+const serviceRepo = require("../Service/service.repo")
 
 
 exports.find = async (filterObject) => {
@@ -106,7 +107,7 @@ exports.create = async (formObject) => {
     try {
         const resultObject = new requestModel(formObject);
         await resultObject.save();
-
+        serviceRepo.updateDirectly(resultObject.service.toString(), { $inc: { rank: 1 } })
         if (!resultObject) return {
             success: false,
             code: 500,

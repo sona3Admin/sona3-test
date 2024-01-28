@@ -14,6 +14,7 @@ const serviceSchema = mongoose.Schema({
         field: { type: Object }
     }],
     basePrice: { type: Number, min: 0 },
+    rank: { type: Number, min: 1 },
     images: [{ type: Object }],
     rating: { type: Number, min: 1, default: 1 },
     reviewCount: { type: Number, min: 0, default: 0 },

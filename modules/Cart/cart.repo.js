@@ -143,7 +143,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         cartObject = calculateCartTotal(cartObject);
 
         let updatedStock = currentStock - parseInt(quantityToAdd);
-        variationRepo.updateDirectly(itemId, { stock: updatedStock });
+        variationRepo.updateDirectly(itemId, { stock: updatedStock, $inc: { rank: 1 } });
         let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
 
         return {
@@ -173,7 +173,7 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         if (!isShopInSubCarts || !isShopInSubCarts.success) return { success: false, code: 404, error: i18n.__("notFound") };
         let shopCartIndex = parseInt(isShopInSubCarts.result)
         let shopCartObject = cartObject.subCarts[shopCartIndex]
-        
+
         let isItemInShopCart = isIdInArray(shopCartObject.items, "variation", itemId);
         if (!isItemInShopCart || !isItemInShopCart.success) return { success: false, code: 404, error: i18n.__("notFound") };
         let itemIndex = parseInt(isItemInShopCart.result);
