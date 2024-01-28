@@ -9,13 +9,13 @@ const compression = require('compression');
 const path = require('path');
 const i18n = require('i18n');
 const databaseConnection = require("./database").connection;
-// const executeBatchJobs = require("../utils/batchUpdate").executeBatchJobs;
-const handleCorsPlicy = require("../helpers/cors.helper");
+const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs;
+const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
 
 
 databaseConnection();
-// executeBatchJobs();
+executeBatchJobs();
 i18n.configure({
   locales: ['en', 'ar'],
   directory: path.join(__dirname, '..', 'locales'),
@@ -24,7 +24,7 @@ i18n.configure({
 });
 app.use(i18n.init);
 app.use(cors());
-app.use(handleCorsPlicy);
+app.use(handleCorsPolicy);
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(morgan("dev"));
