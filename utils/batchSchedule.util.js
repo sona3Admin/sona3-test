@@ -38,6 +38,6 @@ exports.deleteAllFiles = async () => {
     }
     console.log("==> Deleted All Target Files");
   } catch (err) {
-    console.log(`err.message`, err.message);
+    console.log(err.message, err.message);
   }
 };
