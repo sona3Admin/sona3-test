@@ -106,9 +106,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
-        // const uniqueObjectResult = await this.isObjectUninque(formObject);
-        // if (!uniqueObjectResult.success) return uniqueObjectResult
-
+       
         const resultObject = new variationModel(formObject);
         await resultObject.save();
         if (!resultObject) return {
@@ -149,16 +147,6 @@ exports.update = async (_id, formObject) => {
             code: 404,
             error: i18n.__("notFound")
         };
-
-        // if (formObject.fields || formObject.quantity || formObject.price) {
-        //     formObject._id = existingObject.result._id.toString()
-        //     formObject.fields = formObject.fields ? formObject.fields : existingObject.result.fields;
-        //     formObject.quantity = formObject.quantity ? formObject.quantity : existingObject.result.quantity;
-        //     formObject.price = formObject.price ? formObject.price : existingObject.result.price;
-
-        //     const uniqueObjectResult = await this.isVariationUnique(formObject)
-        //     if (!uniqueObjectResult.success) return uniqueObjectResult
-        // }
 
         const resultObject = await variationModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
