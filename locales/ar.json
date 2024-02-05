@@ -56,6 +56,7 @@
 	"validCodeString": ".يجب إدخال رمز صحيح",
 	"emptyCodeString": ".لا يمكن أن يكون الرمز فارغًا",
 	"validQuantity": ".يجب إدخال كمية صحيحة",
+	"validDiscountValue": ".يجب إدخال قيمة خصم صحيحة",
 	"validValue": ".يجب إدخال قيمة صحيحة",
 	"validUsedByArray": ".يجب إدخال قائمة المستخدمين بطريقة صحيحة",
 	"validIsActive": ".يجب إدخال الحالة بطريقة صحيحة",

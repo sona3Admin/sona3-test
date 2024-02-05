@@ -97,6 +97,9 @@ module.exports = {
             lastUpdateDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
+            discountValue: joi.number().optional().messages({
+                "number.base": "validDiscountValue"
+            }),
         }),
     },
 
@@ -188,6 +191,9 @@ module.exports = {
 
             lastUpdateDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
+            }),
+            discountValue: joi.number().optional().messages({
+                "number.base": "validDiscountValue"
             }),
         })
     }

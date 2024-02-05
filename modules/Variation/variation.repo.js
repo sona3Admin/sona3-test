@@ -117,9 +117,12 @@ exports.create = async (formObject) => {
             error: i18n.__("internalServerError")
         }
         let productFormObject = { $push: { variations: resultObject._id }, $inc: { stock: resultObject.stock } }
-        if (resultObject.isDefault) productFormObject.defaultVariation = resultObject._id
+        if (resultObject.isDefault) {
+            productFormObject.defaultVariation = resultObject._id
+            let discountValue = resultObject.minPackage.originalPrice - resultObject.minPackage.price
+            productFormObject.discountValue = discountValue
+        }
         productRepo.updateDirectly(resultObject.product, productFormObject)
-
         return {
             success: true,
             code: 201,
@@ -165,7 +168,10 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("internalServerError")
         };
         let productFormObject = { $addToSet: { variations: resultObject._id } }
-        if (resultObject.isDefault) productRepo.updateDirectly(resultObject.product, productFormObject)
+        if (resultObject.isDefault) {
+            let discountValue = resultObject.minPackage.originalPrice - resultObject.minPackage.price
+            productRepo.updateDirectly(resultObject.product, { ...productFormObject , discountValue: discountValue })
+        }
         if (formObject.isActive == true) productRepo.updateDirectly(resultObject.product, { ...productFormObject, $inc: { stock: resultObject.stock } })
         if (formObject?.isActive == false) productRepo.updateDirectly(resultObject.product, { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } })
         return {
