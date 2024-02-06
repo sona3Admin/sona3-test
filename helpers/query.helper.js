@@ -114,6 +114,9 @@ function handleSortParams(filterObject) {
     finalSortObject = handleSortProperty('sortByRating', filterObject, finalSortObject, filterObject?.sortByRating === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('sortByStock', filterObject, finalSortObject, filterObject?.sortByStock === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('sortByPrice', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('discountValue', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('rank', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('rating', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('sortByDate', filterObject, finalSortObject, filterObject?.sortOrder || -1);
 
     return finalSortObject;
