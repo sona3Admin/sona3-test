@@ -10,7 +10,8 @@ exports.prepareQueryObjects = async (filterObject, sortObject) => {
 
         finalFilterObject = { ...filterObject, ...finalFilterObject, ...locationFinalFilter };
         finalSortObject = { ...sortObject, ...finalSortObject, ...locationFinalSort };
-
+        // console.log("finalSortObject", finalSortObject);
+        // console.log("finalFilterObject", finalFilterObject);
         return {
             filterObject: finalFilterObject,
             sortObject: finalSortObject,
@@ -133,10 +134,15 @@ function handleSearchProperty(property, filterObject, finalFilterObject) {
 
 
 function handleSortProperty(property, filterObject, finalSortObject, sortOrder) {
-    // console.log(`filterObject`, filterObject[property]);
+    
     if (filterObject?.[property]) {
         finalSortObject[property] = sortOrder;
-        if (property == "sortByDate") delete filterObject["sortOrder"];
+
+        if (property == "sortByDate") {
+            finalSortObject[`${filterObject[property]}`] = filterObject["sortOrder"];
+            delete filterObject["sortOrder"];
+            delete finalSortObject["sortByDate"];
+        }
         if (property == "sortByAlpha") {
 
             finalSortObject[`${filterObject[property]}`] = 1;
@@ -145,7 +151,6 @@ function handleSortProperty(property, filterObject, finalSortObject, sortOrder) 
         }
         delete filterObject[property];
     }
-
     return finalSortObject;
 }
 
