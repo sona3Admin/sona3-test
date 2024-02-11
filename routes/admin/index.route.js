@@ -23,6 +23,7 @@ const serviceRoutes = require("./service.route");
 const bannerRoutes = require("./banner.route");
 const wishlistRoutes = require("./wishlist.route")
 const cartRoutes = require("./cart.route")
+const basketRoutes = require("./basket.route")
 const orderRoutes = require("./order.route")
 const requestRoutes = require("./request.route");
 const reviewRoutes = require("./review.route");
@@ -48,6 +49,7 @@ app.use("/services", checkToken(allowedUsers), isAuthorized, serviceRoutes);
 app.use("/banners", checkToken(allowedUsers), isAuthorized, bannerRoutes);
 app.use("/wishlists", checkToken(allowedUsers), isAuthorized, wishlistRoutes);
 app.use("/carts", checkToken(allowedUsers), isAuthorized, cartRoutes);
+app.use("/baskets", checkToken(allowedUsers), isAuthorized, basketRoutes);
 app.use("/orders", checkToken(allowedUsers), isAuthorized, orderRoutes);
 app.use("/requests", checkToken(allowedUsers), isAuthorized, requestRoutes);
 app.use("/reviews", checkToken(allowedUsers), isAuthorized, reviewRoutes);

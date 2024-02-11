@@ -91,6 +91,12 @@ let cartEndPoints = [
 ]
 
 
+let basketEndPoints = [
+    "/admin/baskets/get", "/admin/baskets/list", "/admin/baskets/update",
+    "/admin/baskets/remove"
+]
+
+
 let orderEndPoints = [
     "/admin/orders/get", "/admin/orders/list", "/admin/orders/update",
 ]
@@ -128,6 +134,7 @@ serviceEndPoints = new Set(serviceEndPoints);
 bannerEndPoints = new Set(bannerEndPoints);
 wishlistEndPoints = new Set(wishlistEndPoints);
 cartEndPoints = new Set(cartEndPoints);
+basketEndPoints = new Set(basketEndPoints);
 orderEndPoints = new Set(orderEndPoints);
 requestEndPoints = new Set(requestEndPoints);
 reviewEndPoints = new Set(reviewEndPoints);
@@ -152,6 +159,7 @@ permissions.set("services", serviceEndPoints)
 permissions.set("banners", bannerEndPoints)
 permissions.set("wishlists", wishlistEndPoints)
 permissions.set("carts", cartEndPoints)
+permissions.set("baskets", basketEndPoints)
 permissions.set("orders", orderEndPoints)
 permissions.set("requests", requestEndPoints)
 permissions.set("reviews", reviewEndPoints)
