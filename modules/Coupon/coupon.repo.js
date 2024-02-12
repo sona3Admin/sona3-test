@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const couponModel = require("./coupon.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const cartRepo = require("../Cart/cart.repo")
+const basketRepo = require("../Basket/basket.repo")
 const { isIdInArray } = require("../../helpers/cart.helper")
 
 exports.find = async (filterObject) => {
@@ -274,16 +275,6 @@ exports.apply = async (cartId, couponId, shopId) => {
 }
 
 
-exports.validateCoupon = (couponObject) => {
-    if (!couponObject.isActive) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
-    if (couponObject.quantity < 1) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
-    let todayDate = new Date(Date.now())
-    if (couponObject.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
-
-    return { success: true }
-}
-
-
 exports.cancel = async (cartId) => {
     try {
         let cartObject = await cartRepo.get({ _id: cartId })
@@ -306,6 +297,97 @@ exports.cancel = async (cartId) => {
         let newCartTotal = parseFloat(calculatedTotals.newCartTotal)
 
         let updatedCartResult = await cartRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
+            $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
+            $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1 }
+        })
+
+        this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
+
+        return {
+            success: true,
+            result: updatedCartResult.result,
+            code: 201
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+
+exports.applyOnBasket = async (basketId, couponId, shopId) => {
+    try {
+        let cartObject = await basketRepo.find({ _id: basketId })
+        if (!cartObject.success || cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("hasCoupon") }
+        if (cartObject.result.subCarts.length < 1) return { success: false, code: 409, error: i18n.__("emptyCart") }
+
+        let couponObject = await this.find({ _id: couponId })
+        let couponValidationResult = this.validateCoupon(couponObject.result)
+        if (!couponValidationResult.success) return couponValidationResult;
+
+        let couponShopId = (couponObject?.result?.shop).toString() || shopId
+        let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
+
+        let customerId = (cartObject.result.customer).toString()
+        let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "customer", customerId)
+        if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
+
+        let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "apply")
+
+        subCartObject.shopTotal = calculatedTotals.newShopTotal
+        subCartObject.coupon = couponId
+        if(!couponObject?.result?.shop) subCartObject.couponShop = shopId
+
+        cartObject.result.subCarts[isShopInCart?.result] = subCartObject
+        let updatedCartResult = await basketRepo.updateDirectly(basketId, { subCarts: cartObject.result.subCarts, cartTotal: calculatedTotals.newCartTotal, coupon: couponId })
+
+        this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
+        return {
+            success: true,
+            result: updatedCartResult.result,
+            code: 201
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+
+exports.cancelFromBasket = async (basketId) => {
+    try {
+        let cartObject = await basketRepo.get({ _id: basketId })
+        if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
+
+        let customerId = (cartObject.result.customer._id).toString()
+        let couponShopId = (cartObject?.result?.coupon?.shop).toString() || cartObject?.result?.couponShop
+
+        let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
+
+        let couponObject = {};
+        couponObject.result = { ...cartObject?.result?.coupon }
+
+        let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "cancel")
+
+        let newShopTotal = parseFloat(calculatedTotals.newShopTotal)
+
+        let newCartTotal = parseFloat(calculatedTotals.newCartTotal)
+
+        let updatedCartResult = await basketRepo.updateWithFilter({ _id: basketId, 'subCarts.shop': couponShopId }, {
             $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
             $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1 }
         })
@@ -361,4 +443,14 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
     if (newCartTotal < 0) newCartTotal = 0;
 
     return { newShopTotal, newCartTotal }
+}
+
+
+exports.validateCoupon = (couponObject) => {
+    if (!couponObject.isActive) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
+    if (couponObject.quantity < 1) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
+    let todayDate = new Date(Date.now())
+    if (couponObject.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
+
+    return { success: true }
 }

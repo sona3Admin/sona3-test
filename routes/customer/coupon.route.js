@@ -7,4 +7,7 @@ app.get("/get", couponController.getCoupon);
 app.post("/apply", couponController.applyCoupon);
 app.delete("/cancel", couponController.cancelCoupon);
 
+app.post("/applyOnBasket", couponController.applyCouponOnBasket);
+app.delete("/cancelFromBasket", couponController.cancelCouponFromBasket);
+
 module.exports = app

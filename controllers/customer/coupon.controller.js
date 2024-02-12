@@ -34,6 +34,38 @@ exports.cancelCoupon = async (req, res) => {
 }
 
 
+exports.applyCouponOnBasket = async (req, res) => {
+    try {
+        const operationResultObject = await couponRepo.applyOnBasket(req.query.basket, req.query.coupon, req.query.shop)
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.cancelCouponFromBasket = async (req, res) => {
+    try {
+        const operationResultObject = await couponRepo.cancelFromBasket(req.query.basket)
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.listCoupons = async (req, res) => {
     try {
         const filterObject = req.query;
