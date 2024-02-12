@@ -4,7 +4,7 @@ module.exports = {
 
     createCouponValidation: {
         body: joi.object().required().keys({
-            shop: joi.string().required().messages({
+            shop: joi.string().optional().messages({
                 "string.base": "validSeller",
                 "any.required": "requiredSeller",
             }),

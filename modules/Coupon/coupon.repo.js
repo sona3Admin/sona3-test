@@ -228,7 +228,7 @@ exports.remove = async (_id) => {
 }
 
 
-exports.apply = async (cartId, couponId) => {
+exports.apply = async (cartId, couponId, shopId) => {
     try {
         let cartObject = await cartRepo.find({ _id: cartId })
         if (!cartObject.success || cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("hasCoupon") }
@@ -238,7 +238,7 @@ exports.apply = async (cartId, couponId) => {
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
-        let couponShopId = (couponObject.result.shop).toString()
+        let couponShopId = (couponObject?.result?.shop).toString() || shopId
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
@@ -251,8 +251,9 @@ exports.apply = async (cartId, couponId) => {
 
         subCartObject.shopTotal = calculatedTotals.newShopTotal
         subCartObject.coupon = couponId
-        cartObject.result.subCarts[isShopInCart?.result] = subCartObject
+        if(!couponObject?.result?.shop) subCartObject.couponShop = shopId
 
+        cartObject.result.subCarts[isShopInCart?.result] = subCartObject
         let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: calculatedTotals.newCartTotal, coupon: couponId })
 
         this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
@@ -289,7 +290,7 @@ exports.cancel = async (cartId) => {
         if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
 
         let customerId = (cartObject.result.customer._id).toString()
-        let couponShopId = (cartObject.result.coupon.shop).toString()
+        let couponShopId = (cartObject?.result?.coupon?.shop).toString() || cartObject?.result?.couponShop
 
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }

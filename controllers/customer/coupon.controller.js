@@ -4,7 +4,7 @@ const couponRepo = require("../../modules/Coupon/coupon.repo");
 
 exports.applyCoupon = async (req, res) => {
     try {
-        const operationResultObject = await couponRepo.apply(req.query.cart, req.query.coupon)
+        const operationResultObject = await couponRepo.apply(req.query.cart, req.query.coupon, req.query.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

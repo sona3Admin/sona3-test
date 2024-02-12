@@ -18,6 +18,7 @@ const cartSchema = mongoose.Schema({
     cartTotal: { type: Number, min: 0, default: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
     coupon: { type: mongoose.Types.ObjectId, ref: "coupons" },
+    couponShop: { type: mongoose.Types.ObjectId, ref: "shops" },
     usedLoyaltyPoints: { type: Object },
 })
 
