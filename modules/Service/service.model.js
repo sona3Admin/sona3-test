@@ -24,7 +24,9 @@ const serviceSchema = mongoose.Schema({
     creationDate: { type: Date },
     verifyDate: { type: Date },
     lastUpdateDate: { type: Date },
-
+    preparationTime: { type: Number },
+    isFood: { type: Boolean, default: false },
+    isDeliverable: { type: Boolean, default: true }
 })
 
 

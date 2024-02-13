@@ -106,7 +106,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
-       
+
         const resultObject = new variationModel(formObject);
         await resultObject.save();
         if (!resultObject) return {
@@ -155,18 +155,29 @@ exports.update = async (_id, formObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
+        
         let productFormObject = { $addToSet: { variations: resultObject._id } }
-        if (resultObject.isDefault) {
+
+        if (formObject.isDefault) {
             let discountValue = resultObject.minPackage.originalPrice - resultObject.minPackage.price
-            productRepo.updateDirectly(resultObject.product, { ...productFormObject , discountValue: discountValue })
+            productRepo.updateDirectly(resultObject.product, { ...productFormObject, discountValue, defaultVariation: _id })
         }
-        if (formObject.isActive == true) productRepo.updateDirectly(resultObject.product, { ...productFormObject, $inc: { stock: resultObject.stock } })
-        if (formObject?.isActive == false) productRepo.updateDirectly(resultObject.product, { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } })
+
+        if (!resultObject?.isActive && formObject?.isActive) productRepo.updateDirectly(resultObject.product, { ...productFormObject, $inc: { stock: resultObject.stock } })
+
+        if (formObject?.isActive == false) {
+            let productUpdateObject = { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } }
+            let defaultVariationOfProduct = await productRepo.find({ defaultVariation: _id })
+            if (defaultVariationOfProduct.success) productUpdateObject.$unset = { defaultVariation: true }
+            productRepo.updateDirectly(resultObject.product, productUpdateObject)
+        }
+
         return {
             success: true,
             code: 200,
             result: resultObject
         };
+
     } catch (err) {
         console.log(`err.message`, err.message);
         return {
@@ -186,7 +197,7 @@ exports.updateDirectly = async (_id, formObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        
+
         let productFormObject = { $addToSet: { variations: resultObject._id } }
         if (resultObject.isDefault) productRepo.updateDirectly(resultObject.product, productFormObject)
         if (formObject.isActive == true) productRepo.updateDirectly(resultObject.product, { ...productFormObject, $inc: { stock: resultObject.stock } })
@@ -225,7 +236,14 @@ exports.remove = async (_id) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
-        productRepo.updateDirectly(resultObject.product, { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } })
+
+        let productUpdateObject = { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } }
+
+
+        let defaultVariationOfProduct = await productRepo.find({ defaultVariation: _id })
+        if (defaultVariationOfProduct.success) productUpdateObject.$unset = { defaultVariation: true }
+
+        productRepo.updateDirectly(resultObject.product, productUpdateObject)
         return {
             success: true,
             code: 200,
