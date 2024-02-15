@@ -20,7 +20,7 @@ let customerEndPoints = [
 
 
 let sellerEndPoints = [
-    "/admin/sellers/list", "/admin/sellers/get", "/admin/sellers/update", "/admin/sellers/remove",
+    "/admin/sellers/list", "/admin/sellers/get", "/admin/sellers/create", "/admin/sellers/update", "/admin/sellers/remove",
     "/admin/sellers/image", "/admin/sellers/password"
 ]
 

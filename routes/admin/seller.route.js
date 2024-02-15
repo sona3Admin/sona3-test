@@ -1,12 +1,12 @@
 const app = require("express").Router();
 const sellerController = require("../../controllers/admin/seller.controller")
-const { updateSellerValidation, resetPasswordValidation } = require("../../validations/seller.validation")
+const { createSellerValidation, updateSellerValidation, resetPasswordValidation } = require("../../validations/seller.validation")
 const validator = require("../../helpers/validation.helper")
 
 const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
 const uploadedFiles = uploadImagesToMemory()
 
-
+app.post("/create", validator(createSellerValidation), sellerController.createSeller)
 app.put("/update", validator(updateSellerValidation), sellerController.updateSeller);
 app.put("/password", validator(resetPasswordValidation), sellerController.resetPassword);
 app.delete("/remove", sellerController.removeSeller);

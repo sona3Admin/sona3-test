@@ -4,6 +4,24 @@ const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
 
 
+exports.createSeller = async (req, res) => {
+    try {
+        const operationResultObject = await sellerRepo.create(req.body);
+        if (operationResultObject.success) delete operationResultObject.result.password;
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+
+}
+
+
 exports.getSeller = async (req, res) => {
     try {
         const filterObject = req.query;
