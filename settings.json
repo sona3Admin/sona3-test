@@ -1,4 +1,5 @@
 {
     "vatRate": 10,
-    "pointsToCash": 1000
+    "cashbackPercentage": 1,
+    "cashbackThreshold": 1000
 }

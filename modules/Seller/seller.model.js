@@ -14,6 +14,8 @@ const sellerSchema = mongoose.Schema({
     },
     address: { type: Object },
     isVerified: { type: Boolean, default: false },
+    isEmailVerified: { type: Boolean, default: false },
+    isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     joinDate: { type: Date },
     verifyDate: { type: Date },

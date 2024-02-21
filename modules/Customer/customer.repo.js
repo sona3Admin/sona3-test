@@ -100,7 +100,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        const uniqueObjectResult = await this.isObjectUninque(formObject);
+        const uniqueObjectResult = await this.isObjectUnique(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
         const resultObject = new customerModel(formObject);
         await resultObject.save();
@@ -306,7 +306,7 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 }
 
 
-exports.isObjectUninque = async (formObject) => {
+exports.isObjectUnique = async (formObject) => {
     const duplicateObject = await this.find({ email: formObject.email })
 
     if (duplicateObject.success) {

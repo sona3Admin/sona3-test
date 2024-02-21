@@ -2,9 +2,11 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
+    sellers: { type: mongoose.Types.ObjectId, ref: "sellers" },
     shops: [{ type: mongoose.Types.ObjectId, ref: "shops" }],
     products: [{ type: mongoose.Types.ObjectId, ref: "products" }],
     variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
+    categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     subOrders: [{
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{
@@ -14,7 +16,6 @@ const orderSchema = mongoose.Schema({
             itemTotal: { type: Number, min: 0 }
         }],
         coupon: { type: Object },
-        usedLoyaltyPoints: { type: Object },
         shopTotal: { type: Number, min: 0 },
         shopOriginalTotal: { type: Number, min: 0 },
         shopTaxes: { type: Number, min: 0 },
@@ -41,7 +42,7 @@ const orderSchema = mongoose.Schema({
     },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
     coupon: { type: Object },
-    usedLoyaltyPoints: [{ type: Object }],
+    usedCashback: { type: Number, default: 0, min: 0 },
     cartTotal: { type: Number, min: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
     shippingFeesTotal: { type: Number, min: 0 },

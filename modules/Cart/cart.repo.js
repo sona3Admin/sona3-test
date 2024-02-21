@@ -35,14 +35,14 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await cartModel.findOne(filterObject).lean()
-            .populate({ path: "customer", select: "name image" })
+            .populate({ path: "customer", select: "name image loyaltyPoints cashback hasPurchased birthDate" })
             .populate({ path: "coupon", select: "nameEn nameAr code discountType value percentage shop" })
             .populate({
                 path: "subCarts",
                 populate: [
-                    { path: "shop", select: "nameEn nameAr image" },
+                    { path: "shop", select: "nameEn nameAr image seller" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
-                    { path: "items.product", select: "nameEn nameAr" },
+                    { path: "items.product", select: "nameEn nameAr categories" },
                     { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
                 ]
             })

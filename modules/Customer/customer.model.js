@@ -21,12 +21,17 @@ const customerSchema = mongoose.Schema({
         },
         address: { type: Object }
     }],
-    isVerified: { type: Boolean, default: false },
+    isEmailVerified: { type: Boolean, default: false },
+    isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     joinDate: { type: Date },
     verifyDate: { type: Date },
     token: { type: String },
-    session: { type: Object }
+    session: { type: Object },
+    loyaltyPoints: { type: Number, default: 0, min: 0 },
+    cashback: { type: Number, default: 0, min: 0 },
+    hasPurchased: { type: Boolean, default: false },
+    birthDate: { type: Date }
 })
 
 customerSchema.pre("save", async function (next) {

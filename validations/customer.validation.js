@@ -50,7 +50,11 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-            isVerified: joi.boolean().optional().messages({
+            isPhoneVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
+
+            isEmailVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
 
@@ -67,6 +71,10 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
         })
@@ -120,7 +128,11 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-            isVerified: joi.boolean().optional().messages({
+            isPhoneVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
+
+            isEmailVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
 
@@ -137,6 +149,10 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
         }),

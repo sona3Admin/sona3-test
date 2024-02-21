@@ -53,6 +53,14 @@ module.exports = {
                 "boolean.base": "validIsVerified",
             }),
 
+            isPhoneVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
+
+            isEmailVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
+
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
             }),
@@ -118,6 +126,14 @@ module.exports = {
             }),
 
             isVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
+
+            isPhoneVerified: joi.boolean().optional().messages({
+                "boolean.base": "validIsVerified",
+            }),
+
+            isEmailVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
 

@@ -28,7 +28,8 @@ exports.login = async (req, res) => {
 
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
-        if (!operationResultObject.result.isVerified || !operationResultObject.result.isActive)
+        if (!operationResultObject.result.isEmailVerified || !operationResultObject.result.isPhoneVerified
+            || !operationResultObject.result.isVerified || !operationResultObject.result.isActive)
             return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized") })
 
         payloadObject = {
