@@ -8,6 +8,7 @@ const sellerSchema = mongoose.Schema({
     password: { type: String, required: true },
     phone: { type: String },
     image: { type: Object },
+    identity: [{ type: Object }],
     location: {
         type: { type: String, default: "Point" },
         coordinates: { type: Array, default: [0, 0] }
@@ -20,7 +21,9 @@ const sellerSchema = mongoose.Schema({
     joinDate: { type: Date },
     verifyDate: { type: Date },
     token: { type: String },
-    session: { type: Object }
+    session: { type: Object },
+    birthDate: { type: Date },
+    bankAccountData: { type: Object }
 
 })
 

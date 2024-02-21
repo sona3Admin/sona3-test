@@ -45,6 +45,16 @@ module.exports = {
                 "any.required": "requiredDescriptionAr",
             }),
 
+            policyEn: joi.string().optional().messages({
+                "string.base": "validDescriptionEn",
+                "any.required": "requiredDescriptionEn",
+            }),
+
+            policyAr: joi.string().optional().messages({
+                "string.base": "validDescriptionAr",
+                "any.required": "requiredDescriptionAr",
+            }),
+
             phone: joi.string().optional().messages({
                 "string.base": "validPhone",
             }),
@@ -144,6 +154,16 @@ module.exports = {
 
             descriptionAr: joi.string().optional().messages({
                 "string.base": "validDescriptionAr",
+            }),
+
+            policyEn: joi.string().optional().messages({
+                "string.base": "validDescriptionEn",
+                "any.required": "requiredDescriptionEn",
+            }),
+
+            policyAr: joi.string().optional().messages({
+                "string.base": "validDescriptionAr",
+                "any.required": "requiredDescriptionAr",
             }),
 
             phone: joi.string().optional().messages({

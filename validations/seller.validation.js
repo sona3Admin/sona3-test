@@ -69,6 +69,10 @@ module.exports = {
                 "object.base": "validSession",
             }),
 
+            bankAccountData: joi.object().optional().messages({
+                "object.base": "validSession",
+            }),
+
 
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
@@ -76,6 +80,10 @@ module.exports = {
 
 
             verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
         }),
@@ -145,12 +153,20 @@ module.exports = {
                 "object.base": "validSession",
             }),
 
+            bankAccountData: joi.object().optional().messages({
+                "object.base": "validSession",
+            }),
+
 
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
             verifyDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
         }),

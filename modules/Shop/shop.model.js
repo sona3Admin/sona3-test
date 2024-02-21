@@ -14,6 +14,7 @@ const shopSchema = mongoose.Schema({
     image: { type: Object },
     covers: [{ type: Object }],
     banners: [{ type: Object }],
+    shopLicense: [{ type: Object }],
     location: {
         type: { type: String, default: "Point" },
         coordinates: { type: Array, default: [0, 0] }
@@ -25,6 +26,8 @@ const shopSchema = mongoose.Schema({
     reviewCount: { type: Number, min: 0, default: 0 },
     joinDate: { type: Date },
     verifyDate: { type: Date },
+    policyEn: { type: String },
+    policyAr: { type: String }
 })
 
 shopSchema.index({ location: '2dsphere' });

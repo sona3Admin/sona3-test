@@ -261,3 +261,69 @@ exports.deleteBanners = async (req, res) => {
         });
     }
 }
+
+
+exports.uploadShopLicense = async (req, res) => {
+    try {
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+
+        const existingObject = await shopRepo.find({ _id: req.query._id })
+        let images = (existingObject.success && existingObject.result.shopLicense) ? (existingObject.result.shopLicense) : 0
+        let numberOfCovers = images.length + req.files.length
+        if (numberOfCovers > 10) return res.status(409).json({
+            success: false,
+            code: 409,
+            error: i18n.__("limitExceeded")
+        });
+
+        let operationResultArray = await s3StorageHelper.uploadFilesToS3("shopLicenses", req.files)
+        if (!operationResultArray.success) return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+        images = Array.from(images)
+        images.map((image) => {
+            operationResultArray.result.push(image)
+        });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { shopLicense: operationResultArray.result });
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.deleteShopLicense = async (req, res) => {
+    try {
+        const { _id } = req.query;
+        const { keys } = req.body;
+
+        const existingObject = await shopRepo.find({ _id });
+        if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
+
+        const pullQuery = { $pull: { shopLicense: { key: { $in: keys } } } };
+        const updateOperation = await shopRepo.updateDirectly(req.query._id, pullQuery);
+
+        if (!updateOperation.success) return res.status(updateOperation.code).json(updateOperation);
+
+
+        batchRepo.create({ filesToDelete: keys });
+
+        return res.status(updateOperation.code).json(updateOperation);
+
+    } catch (err) {
+        console.error(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
