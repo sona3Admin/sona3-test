@@ -8,6 +8,8 @@ app.post("/item", checkIdentity("customer"), cartController.addItemToCart);
 app.delete("/item", checkIdentity("customer"), cartController.removeItemFromCart);
 app.delete("/flush", checkIdentity("customer"), cartController.flushCart);
 
+app.post("/cashback", checkIdentity("customer"), cartController.applyCashback)
+app.delete("/cashback", checkIdentity("customer"), cartController.redeemCashback)
 
 
 module.exports = app

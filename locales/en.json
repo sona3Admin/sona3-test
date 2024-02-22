@@ -123,6 +123,5 @@
 	"hasCoupon": "This cart already has a coupon.",
 	"usedCoupon": "You have already used this coupon before.",
 	"invalidCoupon": "Invalid Coupon.",
-	"noPoints": "No available points for this shop.",
-	"\"discountType\" is not allowed": "\"discountType\" is not allowed"
+	"noPoints": "Insufficient Cashback."
 }

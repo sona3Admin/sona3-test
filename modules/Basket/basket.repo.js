@@ -1,5 +1,6 @@
 let basketModel = require("./basket.model");
 let variationRepo = require("../Variation/variation.repo")
+let customerRepo = require("../Customer/customer.repo")
 const i18n = require('i18n');
 const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromSubCartsArray, decreaseItemQuantity,
     addNewSubCart, updateExistingSubCart, calculateCartTotal } = require("../../helpers/cart.helper")
@@ -35,14 +36,14 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await basketModel.findOne(filterObject).lean()
-            .populate({ path: "customer", select: "name image" })
+            .populate({ path: "customer", select: "name image loyaltyPoints cashback hasPurchased birthDate" })
             .populate({ path: "coupon", select: "nameEn nameAr code discountType value percentage shop" })
             .populate({
                 path: "subCarts",
                 populate: [
-                    { path: "shop", select: "nameEn nameAr image" },
+                    { path: "shop", select: "nameEn nameAr image seller" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
-                    { path: "items.product", select: "nameEn nameAr" },
+                    { path: "items.product", select: "nameEn nameAr categories" },
                     { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
                 ]
             })
@@ -299,7 +300,7 @@ exports.flush = async (filterObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, $unset: { coupon: 1, usedLoyaltyPoints: 1 } }
+        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1 } }
         resultObject = await basketModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
 
         return {
@@ -318,3 +319,52 @@ exports.flush = async (filterObject) => {
     }
 }
 
+
+exports.useCashback = async (customerId, cashbackToUse) => {
+    try {
+        cashbackToUse = parseInt(cashbackToUse)
+        let cartResultObject = await this.get({ customer: customerId });
+        if (!cartResultObject.success) return cartResultObject;
+
+        const currentCustomerCashback = parseInt(cartResultObject?.result?.customer?.cashback)
+        if (cashbackToUse > currentCustomerCashback)
+            return { success: false, code: 409, error: i18n.__("noPoints") }
+
+        let updatedCartResult = await this.updateDirectly(cartResultObject.result._id, { $inc: { usedCashback: cashbackToUse } });
+        customerRepo.updateDirectly(cartResultObject?.result?.customer?._id.toString(), { $inc: { cashback: -cashbackToUse } })
+        return updatedCartResult
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+    }
+}
+
+
+exports.redeemCashback = async (customerId, cashbackToRedeem) => {
+    try {
+        cashbackToRedeem = parseInt(cashbackToRedeem)
+        let cartResultObject = await this.get({ customer: customerId });
+        if (!cartResultObject.success) return cartResultObject;
+
+        const usedCashback = parseInt(cartResultObject?.result?.usedCashback)
+        if (cashbackToRedeem > usedCashback)
+            return { success: false, code: 409, error: i18n.__("noPoints") }
+
+        let updatedCartResult = await this.updateDirectly(cartResultObject.result._id, { $inc: { usedCashback: -cashbackToRedeem } });
+        customerRepo.updateDirectly(cartResultObject?.result?.customer?._id.toString(), { $inc: { cashback: cashbackToRedeem } })
+        return updatedCartResult
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+    }
+}

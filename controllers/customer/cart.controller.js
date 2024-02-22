@@ -64,3 +64,33 @@ exports.flushCart = async (req, res) => {
         });
     }
 }
+
+
+exports.applyCashback = async (req, res) => {
+    try {
+        const operationResultObject = await cartRepo.useCashback(req.query.customer, req.query.cashback)
+        return res.status(operationResultObject.code).json(operationResultObject);
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.redeemCashback = async (req, res) => {
+    try {
+        const operationResultObject = await cartRepo.redeemCashback(req.query.customer, req.query.cashback)
+        return res.status(operationResultObject.code).json(operationResultObject);
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
