@@ -36,7 +36,7 @@ exports.get = async (filterObject, selectionObject) => {
         const resultObject = await requestModel.findOne(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
-            .populate({ path: "service", select: "nameEn nameAr descriptionEn descriptionAr images" })
+            .populate({ path: "service", select: "-fields -tags -categories" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -71,7 +71,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await requestModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
-            .populate({ path: "service", select: "nameEn nameAr descriptionEn descriptionAr images" })
+            .populate({ path: "service", select: "-fields -tags -categories" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
