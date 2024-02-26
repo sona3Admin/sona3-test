@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const reviewSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers", required: true },
     reviewOn: { type: String, enum: ["shop", "product", "service"], required: true },
+    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     shop: { type: mongoose.Types.ObjectId, ref: "shops" },
     product: { type: mongoose.Types.ObjectId, ref: "products" },
     service: { type: mongoose.Types.ObjectId, ref: "services" },

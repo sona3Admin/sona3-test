@@ -26,7 +26,10 @@ const serviceSchema = mongoose.Schema({
     lastUpdateDate: { type: Date },
     preparationTime: { type: Number },
     isFood: { type: Boolean, default: false },
-    isDeliverable: { type: Boolean, default: true }
+    isDeliverable: { type: Boolean, default: true },
+    width: { type: Number },
+    height: { type: Number },
+    length: { type: Number },
 })
 
 

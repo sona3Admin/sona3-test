@@ -100,6 +100,21 @@ module.exports = {
             discountValue: joi.number().optional().messages({
                 "number.base": "validDiscountValue"
             }),
+
+            width: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
+            height: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
+            length: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
         }),
     },
 
@@ -192,8 +207,24 @@ module.exports = {
             lastUpdateDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
+            
             discountValue: joi.number().optional().messages({
                 "number.base": "validDiscountValue"
+            }),
+
+            width: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
+            height: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
+            length: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
             }),
         })
     }

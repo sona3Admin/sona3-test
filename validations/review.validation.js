@@ -14,6 +14,10 @@ module.exports = {
                 "any.required": "requiredReviewOn",
             }),
 
+            seller: joi.string().optional().messages({
+                "string.base": "validSeller",
+            }),
+
             shop: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
@@ -52,6 +56,10 @@ module.exports = {
 
             reviewOn: joi.string().valid("shop", "product", "service").optional().messages({
                 "string.base": "validReviewOn",
+            }),
+
+            seller: joi.string().optional().messages({
+                "string.base": "validSeller",
             }),
 
             shop: joi.string().optional().messages({
