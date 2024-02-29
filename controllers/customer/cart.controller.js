@@ -52,7 +52,7 @@ exports.removeItemFromCart = async (req, res) => {
 
 exports.flushCart = async (req, res) => {
     try {
-        const operationResultObject = await cartRepo.flush(req.query);
+        const operationResultObject = await cartRepo.reset(req.query);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
