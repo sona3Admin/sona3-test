@@ -7,6 +7,20 @@ exports.register = async (req, res) => {
     try {
         const operationResultObject = await customerRepo.create(req.body);
         if (operationResultObject.success) delete operationResultObject.result.password;
+
+        payloadObject = {
+            _id: operationResultObject.result._id,
+            name: operationResultObject.result.name,
+            email: operationResultObject.result.email,
+            phone: operationResultObject.result.phone,
+            role: "customer",
+            tokenType: "temp"
+        }
+
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        customerRepo.updateDirectly(operationResultObject.result._id, { token })
+        delete operationResultObject.result["password"]
+        delete operationResultObject.result["token"]
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -28,9 +42,6 @@ exports.login = async (req, res) => {
 
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
-        if (!operationResultObject.result.isEmailVerified || !operationResultObject.result.isPhoneVerified || !operationResultObject.result.isActive)
-            return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized") })
-
         payloadObject = {
             _id: operationResultObject.result._id,
             name: operationResultObject.result.name,
@@ -39,8 +50,19 @@ exports.login = async (req, res) => {
             role: "customer"
         }
 
-        const token = jwtHelper.generateToken(payloadObject, "30d")
-        await customerRepo.updateDirectly(operationResultObject.result._id, { token })
+        if (!operationResultObject.result.isEmailVerified ||
+            !operationResultObject.result.isPhoneVerified ||
+            !operationResultObject.result.isActive) {
+            payloadObject.tokenType = "temp"
+            const token = jwtHelper.generateToken(payloadObject, "1d")
+            customerRepo.updateDirectly(operationResultObject.result._id, { token })
+            delete operationResultObject.result["password"]
+            delete operationResultObject.result["token"]
+            return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result, token })
+        }
+
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        customerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })

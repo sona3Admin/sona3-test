@@ -1,13 +1,15 @@
 const app = require("express").Router();
 const authController = require("../../controllers/customer/auth.controller")
-const { createCustomerValidation, loginValidation } = require("../../validations/customer.validation")
+const customerController = require("../../controllers/customer/customer.controller")
+const { createCustomerValidation, loginValidation, updateCustomerValidation } = require("../../validations/customer.validation")
 const validator = require("../../helpers/validation.helper")
-
+let checkToken = require("../../helpers/jwt.helper").verifyToken;
+const allowedUsers = ["customer"]
 
 app.post("/register", validator(createCustomerValidation), authController.register);
 app.post("/login", validator(loginValidation), authController.login);
 app.post("/guest", authController.loginAsGuest);
-
+app.put("/verify", checkToken(allowedUsers), validator(updateCustomerValidation), customerController.updateCustomer)
 
 
 module.exports = app
