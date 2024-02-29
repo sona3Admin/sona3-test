@@ -25,12 +25,18 @@ exports.verifyToken = (roleString) => {
             if (!token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
 
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
-
+                console.log("token", tokenData);
                 if (err) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
 
                 if (tokenData?.role && !roleString.includes(tokenData.role)) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
 
-
+                if (tokenData?.tokenType && tokenData?.tokenType == "temp") {
+                    const endPoint = req.originalUrl.split("?").shift().slice(7);
+                    const allowedAPIs = ["/seller/identity", "/seller/login"]
+                    console.log("here");
+                    console.log("endpoint", endPoint);
+                    if (!allowedAPIs.includes(endPoint)) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
+                }
                 // if (tokenData.role == "admin") {
                 //     const operationResultObject = await adminRepo.find({ _id: tokenData._id });
                 //     if (!operationResultObject.success || operationResultObject.result.token != token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 });
