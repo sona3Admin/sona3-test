@@ -1,6 +1,7 @@
 let cartModel = require("./cart.model");
 let variationRepo = require("../Variation/variation.repo")
 let customerRepo = require("../Customer/customer.repo")
+const productRepo = require("../Product/product.repo")
 const i18n = require('i18n');
 const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromSubCartsArray, decreaseItemQuantity,
     addNewSubCart, updateExistingSubCart, calculateCartTotal } = require("../../helpers/cart.helper")
@@ -146,6 +147,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         let updatedStock = currentStock - parseInt(quantityToAdd);
         variationRepo.updateDirectly(itemId, { stock: updatedStock, $inc: { rank: 1 } });
         let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
+        productRepo.updateDirectly(variationResultObject.result.product, {$inc: { stock: -parseInt(quantityToAdd) }});
 
         return {
             success: true,
@@ -190,6 +192,7 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
 
         let updatedStock = parseInt(itemObject.variation.stock) + parseInt(quantityToRemove);
         variationRepo.updateDirectly(itemId, { stock: updatedStock });
+        productRepo.updateDirectly(itemObject.product._id, {$inc: { stock: parseInt(quantityToRemove) }});
 
         let updatedCartResult = await this.updateDirectly(cartObject._id, cartObject);
 
@@ -291,6 +294,38 @@ exports.remove = async (_id) => {
 
 }
 
+exports.reset = async (filterObject) => {
+    try {
+        let resultObject = await this.find(filterObject)
+        if (!resultObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+        await resultObject.result.subCarts.forEach(subCart => {
+            subCart.items.forEach(item => {
+                variationRepo.updateDirectly(item.variation, { $inc: { stock: parseInt(item.quantity) } });
+                productRepo.updateDirectly(item.product, {$inc: { stock: parseInt(item.quantity) }});
+            })
+        });
+        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1 } }
+        resultObject = await cartModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        }
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+    }
+}
 
 exports.flush = async (filterObject) => {
     try {
