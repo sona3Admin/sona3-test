@@ -5,12 +5,15 @@ const { createSellerValidation, loginValidation } = require("../../validations/s
 const validator = require("../../helpers/validation.helper")
 const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
 const uploadedFiles = uploadImagesToMemory()
+let checkToken = require("../../helpers/jwt.helper").verifyToken;
+const allowedUsers = ["seller"]
+
 
 app.post("/register", validator(createSellerValidation), authController.register);
 app.post("/login", validator(loginValidation), authController.login);
 
-app.post("/identity", uploadedFiles.array('image', 2), sellerController.uploadIdentityImages)
-app.delete("/identity", sellerController.deleteIdentityImages)
+app.post("/identity", checkToken(allowedUsers), uploadedFiles.array('image', 2), sellerController.uploadIdentityImages)
+app.delete("/identity", checkToken(allowedUsers), sellerController.deleteIdentityImages)
 
 
 
