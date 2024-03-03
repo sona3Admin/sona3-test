@@ -1,9 +1,14 @@
 const app = require("express").Router();
 const orderController = require("../../controllers/customer/order.controller")
+const cartOrderController = require("../../controllers/customer/order/cart.controller")
+const basketOrderController = require("../../controllers/customer/order/basket.controller")
 const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
-app.post("/create", checkIdentity("customer"), orderController.createOrder);
+app.post("/create", checkIdentity("customer"), cartOrderController.createOrder);
+app.post("/cart", checkIdentity("customer"), cartOrderController.createOrder);
+app.post("/basket", checkIdentity("customer"), basketOrderController.createOrder);
+
 app.put("/update", checkIdentity("customer"), orderController.updateOrder);
 
 app.get("/list", checkIdentity("customer"), orderController.listOrders);

@@ -3,53 +3,61 @@ const customerRepo = require("../modules/Customer/customer.repo")
 
 
 exports.setShopItems = (shopItemsArray, productsArray, variationsArray, categoriesArray) => {
-    let itemsArray = []
-    for (let itemIndex = 0; itemIndex < shopItemsArray.length; itemIndex++) {
-        let productCategories = Array.from(shopItemsArray[itemIndex]?.product?.categories)
-        itemsArray.push({
-            product: { ...shopItemsArray[itemIndex].product },
-            variation: { ...shopItemsArray[itemIndex].variation },
-            quantity: shopItemsArray[itemIndex].quantity,
-            itemTotal: shopItemsArray[itemIndex].itemTotal,
-        })
-        if (!productsArray.includes(((shopItemsArray[itemIndex]).product._id).toString())) productsArray.push(((shopItemsArray[itemIndex]).product._id).toString())
-        if (!variationsArray.includes(((shopItemsArray[itemIndex]).variation._id).toString())) variationsArray.push(((shopItemsArray[itemIndex]).variation._id).toString())
-        productCategories.forEach((categoryId) => {
-            if (!categoriesArray.includes(categoryId.toString())) categoriesArray.push(categoryId.toString())
-        })
-    }
+    try {
+        let itemsArray = []
+        for (let itemIndex = 0; itemIndex < shopItemsArray.length; itemIndex++) {
+            let productCategories = Array.from(shopItemsArray[itemIndex]?.product?.categories)
+            itemsArray.push({
+                product: { ...shopItemsArray[itemIndex].product },
+                variation: { ...shopItemsArray[itemIndex].variation },
+                quantity: shopItemsArray[itemIndex].quantity,
+                itemTotal: shopItemsArray[itemIndex].itemTotal,
+            })
+            if (!productsArray.includes(((shopItemsArray[itemIndex]).product._id).toString())) productsArray.push(((shopItemsArray[itemIndex]).product._id).toString())
+            if (!variationsArray.includes(((shopItemsArray[itemIndex]).variation._id).toString())) variationsArray.push(((shopItemsArray[itemIndex]).variation._id).toString())
+            productCategories.forEach((categoryId) => {
+                if (!categoriesArray.includes(categoryId.toString())) categoriesArray.push(categoryId.toString())
+            })
+        }
 
-    return { items: itemsArray, products: productsArray, variations: variationsArray, categories: categoriesArray }
+        return { items: itemsArray, products: productsArray, variations: variationsArray, categories: categoriesArray }
+    } catch (err) {
+        console.log("err.message setShopItems", err.message);
+    }
 }
 
 
 exports.setSubOrders = (subCartsArray) => {
-    let subOrdersArray = [];
-    let sellersArray = [];
-    let shopsArray = [];
-    let productsArray = [];
-    let variationsArray = [];
-    let categoriesArray = [];
+    try {
+        let subOrdersArray = [];
+        let sellersArray = [];
+        let shopsArray = [];
+        let productsArray = [];
+        let variationsArray = [];
+        let categoriesArray = [];
 
-    for (let shopCartIndex = 0; shopCartIndex < subCartsArray.length; shopCartIndex++) {
-        let shopData = subCartsArray[shopCartIndex].shop
-        const shopId = (shopData._id).toString();
-        const shopsItem = this.setShopItems(subCartsArray[shopCartIndex].items, productsArray, variationsArray, categoriesArray);
-        if (sellersArray.includes(shopData.seller.toString())) sellersArray.push(shopData.seller.toString())
-        shopsArray.push(shopId);
-        subOrdersArray.push({
-            shop: shopId,
-            items: shopsItem.items,
-            shopTotal: subCartsArray[shopCartIndex].shopTotal,
-            shopOriginalTotal: subCartsArray[shopCartIndex].shopOriginalTotal,
-            shopTaxes: 0,
-            shopShippingFees: 0,
-            coupon: (subCartsArray[shopCartIndex]?.coupon) || undefined,
-            subOrderTotal: subCartsArray[shopCartIndex].shopTotal,
-        });
+        for (let shopCartIndex = 0; shopCartIndex < subCartsArray.length; shopCartIndex++) {
+            let shopData = subCartsArray[shopCartIndex].shop
+            const shopId = (shopData._id).toString();
+            const shopsItem = this.setShopItems(subCartsArray[shopCartIndex].items, productsArray, variationsArray, categoriesArray);
+            if (!sellersArray.includes(shopData.seller.toString())) sellersArray.push(shopData.seller.toString())
+            shopsArray.push(shopId);
+            subOrdersArray.push({
+                shop: shopId,
+                items: shopsItem.items,
+                shopTotal: subCartsArray[shopCartIndex].shopTotal,
+                shopOriginalTotal: subCartsArray[shopCartIndex].shopOriginalTotal,
+                shopTaxes: 0,
+                shopShippingFees: 0,
+                coupon: (subCartsArray[shopCartIndex]?.coupon) || undefined,
+                subOrderTotal: subCartsArray[shopCartIndex].shopTotal,
+            });
+        }
+
+        return { subOrders: subOrdersArray, sellers: sellersArray, shops: shopsArray, products: productsArray, variations: variationsArray, categories: categoriesArray };
+    } catch (err) {
+        console.log("err.message setSubOrders", err.message);
     }
-
-    return { subOrders: subOrdersArray, sellers: sellersArray, shops: shopsArray, products: productsArray, variations: variationsArray, categories: categoriesArray };
 };
 
 
@@ -89,7 +97,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
         customerOrderObject.orderTotal = parseFloat(customerCartObject.cartTotal)
         customerOrderObject.cartOriginalTotal = parseFloat(customerCartObject.cartOriginalTotal)
         customerOrderObject.coupon = customerCartObject?.coupon || undefined
-        customerOrderObject.usedCashback = customerCartObject?.usedCashback || 0
+        customerOrderObject.usedCashback = parseInt(customerCartObject?.usedCashback) || 0
         customerOrderObject.taxesRate = parseFloat(getSettings("vatRate"))
         customerOrderObject.taxesTotal = 0
 

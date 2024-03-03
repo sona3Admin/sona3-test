@@ -294,6 +294,7 @@ exports.remove = async (_id) => {
 
 }
 
+
 exports.reset = async (filterObject) => {
     try {
         let resultObject = await this.find(filterObject)
@@ -326,6 +327,7 @@ exports.reset = async (filterObject) => {
         }
     }
 }
+
 
 exports.flush = async (filterObject) => {
     try {
