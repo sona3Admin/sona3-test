@@ -113,25 +113,6 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
 }
 
 
-exports.listShopOrders = (arrayOfOrders, shopId) => {
-    arrayOfOrders = arrayOfOrders.map((orderObject) => {
-        const subOrders = [...orderObject.subOrders]; // Shallow copy
-        const filteredSubOrders = subOrders.filter((subOrder) => {
-            return subOrder.shop._id.toString() == shopId
-        });
-        return { ...orderObject, subOrders: filteredSubOrders };
-    });
-    return arrayOfOrders;
-};
-
-
-exports.getShopOrder = (orderObject, shopId) => {
-    const subOrders = [...orderObject.subOrders]; // Shallow copy
-    const filteredSubOrders = subOrders.filter((subOrder) => { return subOrder.shop._id.toString() === shopId });
-    return { ...orderObject, subOrders: filteredSubOrders };
-}
-
-
 exports.calculateCashback = async (customerCartObject) => {
     try {
         const cashbackPercentage = await getSettings('cashbackPercentage');
@@ -198,4 +179,23 @@ exports.isDateEqualToToday = (isoStringDate) => {
     } catch {
         return false
     }
+}
+
+
+exports.listShopOrders = (arrayOfOrders, shopId) => {
+    arrayOfOrders = arrayOfOrders.map((orderObject) => {
+        const subOrders = [...orderObject.subOrders]; // Shallow copy
+        const filteredSubOrders = subOrders.filter((subOrder) => {
+            return subOrder.shop._id.toString() == shopId
+        });
+        return { ...orderObject, subOrders: filteredSubOrders };
+    });
+    return arrayOfOrders;
+};
+
+
+exports.getShopOrder = (orderObject, shopId) => {
+    const subOrders = [...orderObject.subOrders]; // Shallow copy
+    const filteredSubOrders = subOrders.filter((subOrder) => { return subOrder.shop._id.toString() === shopId });
+    return { ...orderObject, subOrders: filteredSubOrders };
 }
