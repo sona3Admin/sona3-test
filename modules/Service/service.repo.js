@@ -36,7 +36,7 @@ exports.get = async (filterObject, selectionObject) => {
         const resultObject = await serviceModel.findOne(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
-            .populate({ path: "categories", select: "nameEn nameAr image" })
+            .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "tags", select: "nameEn nameAr" })
             .select(selectionObject)
 
@@ -73,7 +73,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await serviceModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
-            .populate({ path: "categories", select: "nameEn nameAr image" })
+            .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "tags", select: "nameEn nameAr" })
             .sort(sortObject)
             .select(selectionObject)

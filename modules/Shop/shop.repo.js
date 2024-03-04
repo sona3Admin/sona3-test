@@ -35,9 +35,9 @@ exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await shopModel.findOne(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
-            .populate({ path: "categories", select: "nameEn nameAr image" })
-            .populate({ path: "productCategories", select: "nameEn nameAr image" })
-            .populate({ path: "serviceCategories", select: "nameEn nameAr image" })
+            .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
+            .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
+            .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -72,9 +72,9 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         sortObject = normalizedQueryObjects.sortObject
         let resultArray = await shopModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
-            .populate({ path: "categories", select: "nameEn nameAr image" })
-            .populate({ path: "productCategories", select: "nameEn nameAr image" })
-            .populate({ path: "serviceCategories", select: "nameEn nameAr image" })
+            .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
+            .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
+            .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
