@@ -43,6 +43,7 @@ exports.setSubOrders = (subCartsArray) => {
             if (!sellersArray.includes(shopData.seller.toString())) sellersArray.push(shopData.seller.toString())
             shopsArray.push(shopId);
             subOrdersArray.push({
+                seller: shopData.seller.toString(),
                 shop: shopId,
                 items: shopsItem.items,
                 shopTotal: subCartsArray[shopCartIndex].shopTotal,
@@ -197,5 +198,25 @@ exports.listShopOrders = (arrayOfOrders, shopId) => {
 exports.getShopOrder = (orderObject, shopId) => {
     const subOrders = [...orderObject.subOrders]; // Shallow copy
     const filteredSubOrders = subOrders.filter((subOrder) => { return subOrder.shop._id.toString() === shopId });
+    return { ...orderObject, subOrders: filteredSubOrders };
+}
+
+
+exports.listSellerOrders = (arrayOfOrders, sellerId) => {
+    console.log("seller", sellerId);
+    arrayOfOrders = arrayOfOrders.map((orderObject) => {
+        const subOrders = [...orderObject.subOrders]; // Shallow copy
+        const filteredSubOrders = subOrders.filter((subOrder) => {
+            return subOrder?.seller?.toString() == sellerId
+        });
+        return { ...orderObject, subOrders: filteredSubOrders };
+    });
+    return arrayOfOrders;
+};
+
+
+exports.getSellerOrder = (orderObject, sellerId) => {
+    const subOrders = [...orderObject.subOrders]; // Shallow copy
+    const filteredSubOrders = subOrders.filter((subOrder) => { return subOrder.seller.toString() === sellerId });
     return { ...orderObject, subOrders: filteredSubOrders };
 }
