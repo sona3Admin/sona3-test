@@ -82,6 +82,15 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+
+            isDeliverable: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
+            isFood: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
@@ -92,6 +101,12 @@ module.exports = {
 
             lastUpdateDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
+            }),
+
+
+            preparationTime: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
             }),
 
             width: joi.number().min(0).optional().messages({
@@ -184,6 +199,15 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+
+            isDeliverable: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
+            isFood: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
@@ -194,6 +218,12 @@ module.exports = {
 
             lastUpdateDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
+            }),
+
+
+            preparationTime: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
             }),
 
             width: joi.number().min(0).optional().messages({

@@ -86,6 +86,11 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+
+            isFood: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
@@ -193,6 +198,11 @@ module.exports = {
             }),
 
             isActive: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
+
+            isFood: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
 
