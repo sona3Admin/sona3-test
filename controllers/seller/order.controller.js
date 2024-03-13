@@ -7,6 +7,7 @@ exports.listOrders = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        if (filterObject.seller) filterObject.sellers = filterObject.seller
         let operationResultObject = await orderRepo.list(filterObject, { customer: 1, subOrders: 1, shippingAddress: 1, paymentMethod: 1, issueDate: 1 }, {}, pageNumber, limitNumber);
         if (filterObject.seller) operationResultObject.result = listSellerOrders(operationResultObject.result, filterObject.seller)
         if (filterObject.shops) operationResultObject.result = listShopOrders(operationResultObject.result, filterObject.shops)

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const requestSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     shop: { type: mongoose.Types.ObjectId, ref: "shops" },
+    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     service: { type: mongoose.Types.ObjectId, ref: "services" },
     fields: [{
         _id: { type: mongoose.Types.ObjectId, ref: "fields" },
