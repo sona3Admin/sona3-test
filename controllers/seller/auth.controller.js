@@ -6,7 +6,7 @@ const jwtHelper = require("../../helpers/jwt.helper")
 exports.register = async (req, res) => {
     try {
         const operationResultObject = await sellerRepo.create(req.body);
-        if (operationResultObject.success) delete operationResultObject.result.password;
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
         payloadObject = {
             _id: operationResultObject.result._id,
@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         }
 
         const token = jwtHelper.generateToken(payloadObject, "1d")
-        sellerRepo.updateDirectly(operationResultObject.result._id, { token })
+        if (operationResultObject?.result?._id) sellerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })

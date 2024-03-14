@@ -6,7 +6,7 @@ const jwtHelper = require("../../helpers/jwt.helper")
 exports.register = async (req, res) => {
     try {
         const operationResultObject = await customerRepo.create(req.body);
-        if (operationResultObject.success) delete operationResultObject.result.password;
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
         payloadObject = {
             _id: operationResultObject.result._id,

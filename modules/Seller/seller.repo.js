@@ -102,7 +102,6 @@ exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
         uniqueObjectResult = await this.isObjectUninque(formObject);
-
         if (!uniqueObjectResult.success) return uniqueObjectResult
         const resultObject = new sellerModel(formObject);
         await resultObject.save();
