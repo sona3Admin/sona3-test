@@ -35,6 +35,37 @@ exports.register = async (req, res) => {
 }
 
 
+exports.authenticateBySocialMediaAccount = async (req, res) => {
+    try {
+        let operationResultObject = await customerRepo.find({ email: req.body.email })
+        if (operationResultObject.code == 404) operationResultObject = await customerRepo.create({ ...req.body, isEmailVerified: true })
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+        
+        payloadObject = {
+            _id: operationResultObject.result._id,
+            name: operationResultObject.result.name,
+            email: operationResultObject.result.email,
+            phone: operationResultObject.result.phone,
+            role: "customer"
+        }
+
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        customerRepo.updateDirectly(operationResultObject.result._id, { token })
+        delete operationResultObject.result["password"]
+        delete operationResultObject.result["token"]
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject })
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -51,7 +82,7 @@ exports.login = async (req, res) => {
         }
 
         if (!operationResultObject.result.isEmailVerified ||
-            !operationResultObject.result.isPhoneVerified ||
+            // !operationResultObject.result.isPhoneVerified ||
             !operationResultObject.result.isActive) {
             payloadObject.tokenType = "temp"
             const token = jwtHelper.generateToken(payloadObject, "1d")

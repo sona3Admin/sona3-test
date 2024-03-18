@@ -5,7 +5,7 @@ const saltrounds = 5;
 const sellerSchema = mongoose.Schema({
     userName: { type: String, required: true, dropDups: true },
     email: { type: String, required: true, dropDups: true },
-    password: { type: String, required: true },
+    password: { type: String },
     phone: { type: String },
     image: { type: Object },
     identity: [{ type: Object }],
@@ -28,7 +28,7 @@ const sellerSchema = mongoose.Schema({
 })
 
 sellerSchema.pre("save", async function (next) {
-    this.password = await bcrypt.hash(this.password, saltrounds);
+    if (this.password) this.password = await bcrypt.hash(this.password, saltrounds);
     next();
 })
 

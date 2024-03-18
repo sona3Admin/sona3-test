@@ -77,3 +77,34 @@ exports.login = async (req, res) => {
         });
     }
 }
+
+
+exports.authenticateBySocialMediaAccount = async (req, res) => {
+    try {
+        let operationResultObject = await sellerRepo.find({ email: req.body.email })
+        if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create({ ...req.body, isEmailVerified: true })
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+        
+        payloadObject = {
+            _id: operationResultObject.result._id,
+            userName: operationResultObject.result.userName,
+            email: operationResultObject.result.email,
+            phone: operationResultObject.result.phone,
+            role: "seller"
+        }
+
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        sellerRepo.updateDirectly(operationResultObject.result._id, { token })
+        delete operationResultObject.result["password"]
+        delete operationResultObject.result["token"]
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject })
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}

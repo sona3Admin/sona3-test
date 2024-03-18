@@ -177,6 +177,39 @@ module.exports = {
         }),
     },
 
+    authenticateBySocialMediaValidation: {
+        body: joi.object().required().keys({
+            email: joi.string()
+                .email({ minDomainSegments: 2 })
+                .empty().required()
+                .messages({
+                    "string.email": "validEmail",
+                    "any.required": "requiredEmail",
+                }),
+
+            name: joi.string().optional().empty().messages({
+                "string.base": "validName",
+            }),
+
+            phone: joi.string().optional().messages({
+                "string.base": "validPhone",
+            }),
+
+            image: joi.object().optional().messages({
+                "object.base": "validImage",
+            }),
+
+            joinDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            birthDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+        }),
+    },
+
 
     sendEmailValidation: {
         body: joi.object().required().keys({
