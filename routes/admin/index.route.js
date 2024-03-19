@@ -28,6 +28,7 @@ const orderRoutes = require("./order.route")
 const requestRoutes = require("./request.route");
 const reviewRoutes = require("./review.route");
 const couponRoutes = require("./coupon.route");
+const roomRoutes = require("./room.route");
 
 
 app.use(authRoutes)
@@ -53,6 +54,7 @@ app.use("/orders", checkToken(allowedUsers), isAuthorized, orderRoutes);
 app.use("/requests", checkToken(allowedUsers), isAuthorized, requestRoutes);
 app.use("/reviews", checkToken(allowedUsers), isAuthorized, reviewRoutes);
 app.use("/coupons", checkToken(allowedUsers), isAuthorized, couponRoutes);
+app.use("/rooms", checkToken(allowedUsers), isAuthorized, roomRoutes);
 
 
 module.exports = app

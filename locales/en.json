@@ -123,5 +123,6 @@
 	"hasCoupon": "This cart already has a coupon.",
 	"usedCoupon": "You have already used this coupon before.",
 	"invalidCoupon": "Invalid Coupon.",
-	"noPoints": "Insufficient Cashback."
+	"noPoints": "Insufficient Cashback.",
+	"roomBlocked": "This room is blocked."
 }

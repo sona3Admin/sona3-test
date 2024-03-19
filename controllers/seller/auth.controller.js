@@ -81,10 +81,11 @@ exports.login = async (req, res) => {
 
 exports.authenticateBySocialMediaAccount = async (req, res) => {
     try {
+        let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
-        if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create({ ...req.body, isEmailVerified: true })
+        if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create(sellerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
-        
+
         payloadObject = {
             _id: operationResultObject.result._id,
             userName: operationResultObject.result.userName,

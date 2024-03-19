@@ -1,8 +1,6 @@
 const i18n = require('i18n');
 const socketLocales = {};
-const { adminSocketHandler } = require("../sockets/admin/admin.socket")
-const { customerSocketHandler } = require("../sockets/customer/customer.socket")
-const { sellerSocketHandler } = require("../sockets/seller/seller.socket")
+const { chatSocketHandler } = require("./chat.socket")
 
 
 exports.serverSocketHandler = (socket, io) => {
@@ -21,15 +19,7 @@ exports.serverSocketHandler = (socket, io) => {
         })
 
 
-        adminSocketHandler(socket, io, socketId, localeMessages);
-        customerSocketHandler(socket, io, socketId, localeMessages);
-        sellerSocketHandler(socket, io, socketId, localeMessages);
-
-
-        // socket.on('disconnect', () => {
-        //     console.log('A client disconnected.');
-        // });
-
+        chatSocketHandler(socket, io, socketId, localeMessages);
 
     } catch (err) {
         return console.log(`err.message`, err.message);
@@ -42,5 +32,6 @@ function setLocalizedMessage(locale) {
     return {
         welcomeMessage: i18n.__({ phrase: 'welcomeMessage', locale }),
         internalServerError: i18n.__({ phrase: 'internalServerError', locale }),
+        roomBlocked: i18n.__({ phrase: 'roomBlocked', locale }),
     }
 }

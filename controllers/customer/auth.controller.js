@@ -37,10 +37,11 @@ exports.register = async (req, res) => {
 
 exports.authenticateBySocialMediaAccount = async (req, res) => {
     try {
+        let customerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await customerRepo.find({ email: req.body.email })
-        if (operationResultObject.code == 404) operationResultObject = await customerRepo.create({ ...req.body, isEmailVerified: true })
+        if (operationResultObject.code == 404) operationResultObject = await customerRepo.create(customerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
-        
+
         payloadObject = {
             _id: operationResultObject.result._id,
             name: operationResultObject.result.name,
@@ -82,7 +83,7 @@ exports.login = async (req, res) => {
         }
 
         if (!operationResultObject.result.isEmailVerified ||
-            // !operationResultObject.result.isPhoneVerified ||
+            !operationResultObject.result.isPhoneVerified ||
             !operationResultObject.result.isActive) {
             payloadObject.tokenType = "temp"
             const token = jwtHelper.generateToken(payloadObject, "1d")
