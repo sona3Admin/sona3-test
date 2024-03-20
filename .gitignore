@@ -3,4 +3,3 @@ node_modules/
 logs/
 policy.json
 .env
-firebaseServiceKey.json
