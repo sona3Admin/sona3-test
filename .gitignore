@@ -2,5 +2,5 @@ node_modules/
 .vscode
 logs/
 policy.json
-.env
 firebaseServiceKey.json
+.env
