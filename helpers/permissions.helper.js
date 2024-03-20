@@ -113,14 +113,20 @@ let reviewEndPoints = [
 
 
 let couponEndPoints = [
-    "/admin/coupon/create", "/admin/coupon/update", "/admin/coupons/get",
+    "/admin/coupons/create", "/admin/coupons/update", "/admin/coupons/get",
     "/admin/coupons/list", "/admin/coupons/remove",
 ]
 
 
 let roomEndPoints = [
-    "/admin/room/update", "/admin/rooms/get",
+    "/admin/rooms/update", "/admin/rooms/get",
     "/admin/rooms/list", "/admin/rooms/remove",
+]
+
+
+let notificationEndPoints = [
+    "/admin/notifications/create", "/admin/notifications/update", "/admin/notifications/get",
+    "/admin/notifications/list", "/admin/notifications/remove",
 ]
 
 
@@ -146,6 +152,7 @@ requestEndPoints = new Set(requestEndPoints);
 reviewEndPoints = new Set(reviewEndPoints);
 couponEndPoints = new Set(couponEndPoints);
 roomEndPoints = new Set(roomEndPoints);
+notificationEndPoints = new Set(notificationEndPoints);
 
 
 let permissions = new Map();
@@ -172,6 +179,7 @@ permissions.set("requests", requestEndPoints)
 permissions.set("reviews", reviewEndPoints)
 permissions.set("coupons", couponEndPoints)
 permissions.set("rooms", roomEndPoints)
+permissions.set("notifications", notificationEndPoints)
 
 
 module.exports = { permissions }

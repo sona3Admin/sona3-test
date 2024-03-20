@@ -31,7 +31,8 @@ const customerSchema = mongoose.Schema({
     loyaltyPoints: { type: Number, default: 0, min: 0 },
     cashback: { type: Number, default: 0, min: 0 },
     hasPurchased: { type: Boolean, default: false },
-    birthDate: { type: Date }
+    birthDate: { type: Date },
+    fcmToken: { type: String }
 })
 
 customerSchema.pre("save", async function (next) {

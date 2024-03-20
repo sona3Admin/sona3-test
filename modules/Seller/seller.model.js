@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const saltrounds = 5;
 
 const sellerSchema = mongoose.Schema({
-    userName: { type: String, required: true, dropDups: true },
+    userName: { type: String, required: true },
     email: { type: String, required: true, dropDups: true },
     password: { type: String },
     phone: { type: String },
@@ -23,7 +23,8 @@ const sellerSchema = mongoose.Schema({
     token: { type: String },
     session: { type: Object },
     birthDate: { type: Date },
-    bankAccountData: { type: Object }
+    bankAccountData: { type: Object },
+    fcmToken: { type: String }
 
 })
 

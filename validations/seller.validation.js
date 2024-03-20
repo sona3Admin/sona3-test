@@ -188,6 +188,10 @@ module.exports = {
                 "any.required": "requiredPassword",
                 "string.empty": "emptyPassword",
             }),
+
+            fcmToken: joi.string().optional().empty().messages({
+                "string.base": "validPassword",
+            }),
         }),
     },
 
@@ -219,6 +223,12 @@ module.exports = {
 
             birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
+            }),
+            fcmToken: joi.string().optional().empty().messages({
+                "string.base": "validPassword",
+            }),
+            socialToken: joi.string().optional().empty().messages({
+                "string.base": "validPassword",
             }),
 
         }),

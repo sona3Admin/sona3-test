@@ -2,7 +2,7 @@ let bcrypt = require("bcrypt");
 const i18n = require('i18n');
 let sellerModel = require("./seller.model")
 let saltrounds = 5;
-const { prepareQueryObjects } =require("../../helpers/query.helper")
+const { prepareQueryObjects } = require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -315,7 +315,10 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
-        $or: [{ email: formObject.email }, { userName: formObject.userName }]
+        $or: [
+            { email: formObject.email },
+            // { userName: formObject.userName }
+        ]
     })
 
 
@@ -326,11 +329,11 @@ exports.isObjectUninque = async (formObject) => {
             error: i18n.__("emailUsed")
         }
 
-        if (duplicateObject.result.userName == formObject.userName) return {
-            success: false,
-            code: 409,
-            error: i18n.__("nameUsed")
-        }
+        // if (duplicateObject.result.userName == formObject.userName) return {
+        //     success: false,
+        //     code: 409,
+        //     error: i18n.__("nameUsed")
+        // }
     }
 
     return {
