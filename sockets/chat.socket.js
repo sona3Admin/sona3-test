@@ -62,7 +62,17 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
 
 function sendNotification(roomObject, messageObject) {
-    let sender 
-    let notificationObject = { title: "New Message", body: "" }
+    let sender, receiver
+    if (messageObject.admin) sender = "Sona3"
+    if (messageObject.seller) sender = messageObject.seller.name
+    if (messageObject.customer) sender = messageObject.customer.name
+    let notificationObject = { 
+        title: `New Message from ${sender}`, 
+        body: messageObject.text,
+        redirectId: roomObject._id.toString(),
+        redirectType: "room",
+        type: "message",
+        receivers:[]
+    }
     notificationRepo.create()
 }
