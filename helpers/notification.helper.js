@@ -1,19 +1,27 @@
 const firebase = require("../utils/firebaseConfig.util")
 
 
-exports.sendPushNotification = (notificationTitle, notificationBody, deviceToken) => {
+exports.sendPushNotification = (notificationTitle, notificationBody, deviceTokensArray) => {
     try {
         const message = {
             notification: {
                 title: notificationTitle,
                 body: notificationBody
             },
-            token: deviceToken
+            tokens: deviceTokensArray,
+            sound: "default",
+            android: {
+                notification: {
+                    // imageUrl: 'https://foo.bar.pizza-monster.png',
+                    icon: 'ic_launcher',
+                    color: '#7e55c3'
+                }
+            },
         };
 
-        firebase.messaging().send(message)
+        firebase.messaging().sendEachForMulticast(message)
             .then((response) => {
-                console.log('Successfully sent message:', response);
+                console.log('Successfully sent message:', response.successCount);
                 return {
                     success: true,
                     result: response,

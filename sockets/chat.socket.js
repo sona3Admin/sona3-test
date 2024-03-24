@@ -1,4 +1,6 @@
 const roomRepo = require("../modules/Room/room.repo")
+const notificationHelper = require("../helpers/notification.helper")
+const notificationRepo = require("../modules/Notification/notification.repo")
 
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
@@ -40,6 +42,8 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
             socket.join(dataObject.roomId);
             console.log(socketId, " joined room: ", dataObject.roomId);
             io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message })
+
+
             return sendAck(resultObject)
 
         } catch (err) {
@@ -54,4 +58,11 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
     })
 
+}
+
+
+function sendNotification(roomObject, messageObject) {
+    let sender 
+    let notificationObject = { title: "New Message", body: "" }
+    notificationRepo.create()
 }
