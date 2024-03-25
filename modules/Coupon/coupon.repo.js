@@ -193,6 +193,25 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+exports.removeMany = async (filterObject) => {
+    try {
+        const resultObject = await couponModel.updateMany(filterObject, { isActive: false })
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
 
 exports.remove = async (_id) => {
     try {

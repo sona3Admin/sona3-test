@@ -124,5 +124,6 @@
 	"usedCoupon": "You have already used this coupon before.",
 	"invalidCoupon": "Invalid Coupon.",
 	"noPoints": "Insufficient Cashback.",
-	"roomBlocked": "This room is blocked."
+	"roomBlocked": "This room is blocked.",
+	"\"isVerified\" is not allowed": "\"isVerified\" is not allowed"
 }

@@ -3,6 +3,7 @@ const i18n = require('i18n');
 let sellerModel = require("./seller.model")
 let saltrounds = 5;
 const { prepareQueryObjects } = require("../../helpers/query.helper")
+const shopRepo = require('../Shop/shop.repo');
 
 
 exports.find = async (filterObject) => {
@@ -220,6 +221,7 @@ exports.remove = async (_id) => {
             code: 500,
             error: i18n.__("internalServerError")
         }
+        shopRepo.removeMany({ seller: _id });
 
         return {
             success: true,

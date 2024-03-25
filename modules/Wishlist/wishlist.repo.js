@@ -260,6 +260,33 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+exports.updateMany = async (filterObject, formObject) => {
+    try {
+        const resultObject = await wishlistModel.updateMany(filterObject, formObject)
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 
 exports.remove = async (_id) => {
     try {

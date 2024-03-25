@@ -2,6 +2,9 @@ const i18n = require('i18n');
 const variationModel = require("./variation.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const productRepo = require("../Product/product.repo")
+const wishlistRepo = require("../Wishlist/wishlist.repo")
+const basketRepo = require("../Basket/basket.repo")
+const cartRepo = require("../Cart/cart.repo")
 
 
 exports.find = async (filterObject) => {
@@ -155,7 +158,7 @@ exports.update = async (_id, formObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
-        
+
         let productFormObject = { $addToSet: { variations: resultObject._id } }
 
         if (formObject.isDefault) {
@@ -220,6 +223,32 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+exports.removeMany = async (filterObject) => {
+    try {
+        const existingArray = await variationModel.find(filterObject);
+        const resultObject = await variationModel.updateMany(filterObject, { isActive: false, stock: 0 })
+
+        existingArray.forEach(async (variation) => {
+            wishlistRepo.updateMany({}, { $pull: { items: variation._id } })
+            cartRepo.updateManyCarts(variation.shop, variation._id)
+            basketRepo.updateManyCarts(variation.shop, variation._id)
+        });
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
 
 exports.remove = async (_id) => {
     try {
@@ -230,7 +259,7 @@ exports.remove = async (_id) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await variationModel.findByIdAndUpdate({ _id }, { isActive: false });
+        const resultObject = await variationModel.findByIdAndUpdate({ _id }, { isActive: false, stock: 0 });
         if (!resultObject) return {
             success: false,
             code: 500,
@@ -244,6 +273,11 @@ exports.remove = async (_id) => {
         if (defaultVariationOfProduct.success) productUpdateObject.$unset = { defaultVariation: true }
 
         productRepo.updateDirectly(resultObject.product, productUpdateObject)
+
+        wishlistRepo.updateMany({}, { $pull: { items: _id } })
+        cartRepo.updateManyCarts(resultObject.shop, _id)
+        basketRepo.updateManyCarts(resultObject.shop, _id)
+
         return {
             success: true,
             code: 200,

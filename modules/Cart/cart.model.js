@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const cartSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
+    variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
     subCarts: [{
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{

@@ -1,6 +1,9 @@
 const i18n = require('i18n');
 let shopModel = require("./shop.model")
-const { prepareQueryObjects } =require("../../helpers/query.helper")
+const { prepareQueryObjects } = require("../../helpers/query.helper");
+const productRepo = require('../Product/product.repo');
+const serviceRepo = require('../Service/service.repo');
+const couponRepo = require('../Coupon/coupon.repo');
 
 
 
@@ -149,7 +152,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("notFound")
         }
 
-    
+
         if (formObject.nameEn || formObject.nameAr) {
             formObject.nameEn = formObject.nameEn ? formObject.nameEn : existingObject.result.nameEn;
             formObject.nameAr = formObject.nameAr ? formObject.nameAr : existingObject.result.nameAr;
@@ -209,6 +212,31 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+exports.removeMany = async (filterObject) => {
+    try {
+        const existingArray = await shopModel.find(filterObject);
+        const resultObject = await shopModel.updateMany(filterObject, { isActive: false })
+        existingArray.forEach(async (shop) => {
+            productRepo.removeMany({ shop: shop._id });
+            serviceRepo.removeMany({ shop: shop._id });
+            couponRepo.removeMany({ shop: shop._id });
+        });
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
 
 exports.remove = async (_id) => {
     try {
@@ -226,6 +254,9 @@ exports.remove = async (_id) => {
             code: 500,
             error: i18n.__("internalServerError")
         }
+        productRepo.removeMany({ shop: _id });
+        serviceRepo.removeMany({ shop: _id });
+        couponRepo.removeMany({ shop: _id });
 
         return {
             success: true,

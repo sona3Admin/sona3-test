@@ -140,7 +140,8 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         if (isShopInSubCarts.success) updateExistingSubCart(cartObject, isShopInSubCarts?.result, itemObject, itemId, parseInt(quantityToAdd))
 
         if (!isShopInSubCarts.success) addNewSubCart(cartObject, itemObject, parseInt(quantityToAdd))
-
+        delete cartObject.variations;
+        cartObject.$addToSet = { variations: itemId }
         cartObject = calculateCartTotal(cartObject);
 
         let updatedStock = currentStock - parseInt(quantityToAdd);
@@ -181,7 +182,11 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         let itemObject = shopCartObject.items[itemIndex];
         quantityToRemove = parseInt(quantityToRemove)
 
-        if (parseInt(quantityToRemove) >= itemObject.quantity) shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex);
+        if (parseInt(quantityToRemove) >= itemObject.quantity) {
+            shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex)
+            delete cartObject.variations;
+            cartObject.$pull = { variations: itemId }
+        };
         if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
         if (parseInt(quantityToRemove) < parseInt(itemObject.quantity))
             shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, parseInt(itemIndex), parseInt(quantityToRemove), itemObject.variation);
@@ -263,6 +268,46 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+exports.updateManyCarts = async (shopId, itemId) => {
+    try {
+        const existingArray = await basketModel.find({ variations: itemId });
+        existingArray.forEach(async (cart) => {
+            let isShopInSubCarts = isIdInArray(cart.subCarts, "shop", shopId)
+            let shopCartIndex = parseInt(isShopInSubCarts.result)
+            let shopCartObject = cart.subCarts[shopCartIndex]
+            let isItemInShopCart = isIdInArray(shopCartObject.items, "variation", itemId);
+            let itemIndex = parseInt(isItemInShopCart.result);
+            let itemObject = shopCartObject.items[itemIndex];
+            let cartTotal = cart.cartTotal - itemObject.itemTotal
+            let cartOriginalTotal = cart.cartOriginalTotal - itemObject.itemTotal
+
+            cart.subCarts[shopCartIndex].items.splice(itemIndex, 1);
+            if (cart.subCarts[shopCartIndex].items.length <= 0) {
+                cart.subCarts.splice(shopCartIndex, 1)
+            } else {
+                let shopTotal = shopCartObject.shopTotal - itemObject.itemTotal
+                cart.subCarts[shopCartIndex].shopTotal = shopTotal
+            }
+            cart.cartTotal = cartTotal
+            cart.cartOriginalTotal = cartOriginalTotal
+            cart.variations.pull(itemId);
+            this.updateDirectly(cart._id, cart);
+        });
+        return {
+            success: true,
+            code: 200
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
 
 exports.remove = async (_id) => {
     try {

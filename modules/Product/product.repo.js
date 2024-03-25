@@ -2,6 +2,8 @@ const i18n = require('i18n');
 const productModel = require("./product.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require("../Shop/shop.repo")
+const variationRepo = require("../Variation/variation.repo")
+
 
 exports.find = async (filterObject) => {
     try {
@@ -209,6 +211,29 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+exports.removeMany = async (filterObject) => {
+    try {
+        const existingArray = await productModel.find(filterObject);
+        const resultObject = await productModel.updateMany(filterObject, { isActive: false, stock: 0 })
+        existingArray.forEach(async (product) => {
+            variationRepo.removeMany({ product: product._id });
+        });
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
 
 exports.remove = async (_id) => {
     try {
@@ -219,12 +244,13 @@ exports.remove = async (_id) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await productModel.findByIdAndUpdate({ _id }, { isActive: false });
+        const resultObject = await productModel.findByIdAndUpdate({ _id }, { isActive: false, stock: 0 });
         if (!resultObject) return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         };
+        variationRepo.removeMany({ product: _id });
 
         return {
             success: true,
