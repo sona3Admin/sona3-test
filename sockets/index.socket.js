@@ -33,5 +33,6 @@ function setLocalizedMessage(locale) {
         welcomeMessage: i18n.__({ phrase: 'welcomeMessage', locale }),
         internalServerError: i18n.__({ phrase: 'internalServerError', locale }),
         roomBlocked: i18n.__({ phrase: 'roomBlocked', locale }),
+        newMessage: i18n.__({ phrase: 'newMessage', locale })
     }
 }

@@ -125,5 +125,10 @@
 	"invalidCoupon": "Invalid Coupon.",
 	"noPoints": "Insufficient Cashback.",
 	"roomBlocked": "This room is blocked.",
+<<<<<<< HEAD
 	"\"isVerified\" is not allowed": "\"isVerified\" is not allowed"
+=======
+	"newMessage": "You have a new message."
+
+>>>>>>> 915de7a9ed4c2b65a8f2cdf0c5e5e83254b79720
 }

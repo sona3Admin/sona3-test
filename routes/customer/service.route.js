@@ -1,5 +1,5 @@
 const app = require("express").Router();
-const serviceController = require("../../controllers/admin/service.controller")
+const serviceController = require("../../controllers/customer/service.controller")
 
 
 app.get("/list", serviceController.listServices);

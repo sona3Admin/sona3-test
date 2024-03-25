@@ -33,8 +33,8 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await roomModel.findOne(filterObject).lean()
-            .populate({ path: "customer", select: "name image" })
-            .populate({ path: "seller", select: "userName image" })
+            .populate({ path: "customer", select: "name image fcmToken" })
+            .populate({ path: "seller", select: "userName image fcmToken" })
             .populate({ path: "messages.admin", select: "name image" })
             .select(selectionObject)
 

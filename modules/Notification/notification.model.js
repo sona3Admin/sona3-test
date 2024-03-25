@@ -4,14 +4,8 @@ const notificationSchema = new mongoose.Schema({
     admin: { type: mongoose.Types.ObjectId, ref: "admins" },
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
-    receivers: [{
-        _id: { type: mongoose.Schema.Types.ObjectId },
-        type: { type: String, enum: ["admin", "customer", "seller"] }
-    }],
-    seenBy: [{
-        _id: { type: mongoose.Schema.Types.ObjectId },
-        type: { type: String, enum: ["admin", "customer", "seller"] }
-    }],
+    receivers: [{ type: mongoose.Schema.Types.ObjectId }],
+    seenBy: [{ type: mongoose.Schema.Types.ObjectId }],
     title: { type: String },
     body: { type: String },
     image: { type: Object },
