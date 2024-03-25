@@ -26,7 +26,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
     socket.on("sendMessage", async (dataObject, sendAck) => {
         try {
-            const existingObject = await roomRepo.find({ _id: dataObject.roomId })
+            const existingObject = await roomRepo.get({ _id: dataObject.roomId })
             if (!existingObject.success || existingObject.result.isBlocked) return sendAck({
                 code: 409,
                 success: false,
@@ -42,7 +42,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
             socket.join(dataObject.roomId);
             console.log(socketId, " joined room: ", dataObject.roomId);
             io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message })
-
+            sendMessageNotification(existingObject.result, dataObject.message)
 
             return sendAck(resultObject)
 
@@ -61,18 +61,37 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 }
 
 
-function sendNotification(roomObject, messageObject) {
-    let sender, receiver
-    if (messageObject.admin) sender = "Sona3"
-    if (messageObject.seller) sender = messageObject.seller.name
-    if (messageObject.customer) sender = messageObject.customer.name
-    let notificationObject = { 
-        title: `New Message from ${sender}`, 
-        body: messageObject.text,
-        redirectId: roomObject._id.toString(),
-        redirectType: "room",
-        type: "message",
-        receivers:[]
+function sendMessageNotification(roomObject, messageObject) {
+    try {
+        console.log("Sending notification");
+        let sender = {}, receiver = {}
+        if (messageObject.admin) {
+            sender["name"] = "Sona3"
+            receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer
+        }
+
+        if (messageObject.seller) {
+            sender = messageObject.seller
+            sender.name = sender.userName
+            receiver = roomObject?.customer
+        }
+
+        if (messageObject.customer) {
+            sender = messageObject.customer
+            receiver = roomObject?.seller
+        }
+
+        let notificationObject = {
+            title: `New Message from ${sender.name}`,
+            body: messageObject.text,
+            redirectId: roomObject._id.toString(),
+            redirectType: "room",
+            type: "message",
+            receivers: receiver ? [receiver] : []
+        }
+        notificationRepo.create(notificationObject)
+        notificationHelper.sendPushNotification(notificationObject.title, notificationObject.body, [receiver.fcmToken])
+    } catch (err) {
+        console.log("err.message", err.message);
     }
-    notificationRepo.create()
 }
