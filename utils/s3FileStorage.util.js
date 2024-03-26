@@ -16,10 +16,14 @@ exports.uploadFilesToS3 = async (folderName, files) => {
       };
     });
     const uploadResults = await Promise.all(params.map((param) => s3.upload(param).promise()));
-    return { success: true, result: uploadResults };
+    return { success: true, result: uploadResults, code: 201 };
   } catch (err) {
     console.log(`err.message`, err.message);
-    return err.message
+    return {
+      success: false,
+      code: 500,
+      error: err.message
+    }
   }
 
 

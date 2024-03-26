@@ -120,7 +120,7 @@ let couponEndPoints = [
 
 let roomEndPoints = [
     "/admin/rooms/update", "/admin/rooms/get",
-    "/admin/rooms/list", "/admin/rooms/remove",
+    "/admin/rooms/list", "/admin/rooms/remove", "/admin/rooms/file"
 ]
 
 
