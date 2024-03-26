@@ -82,7 +82,7 @@ exports.uploadFile = async (req, res) => {
             code: 500,
             error: i18n.__("internalServerError")
         });
-
+        operationResultArray.result = operationResultArray.result[0]
         return res.status(operationResultArray.code).json(operationResultArray);
 
     } catch (err) {
