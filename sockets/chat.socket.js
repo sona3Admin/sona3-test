@@ -5,6 +5,10 @@ const notificationRepo = require("../modules/Notification/notification.repo")
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
+    socket.on("joinPersonalRoom", () => {
+
+    })
+
     socket.on("joinRoom", async (dataObject, sendAck) => {
         try {
             let roomObject = await roomRepo.find(dataObject)
@@ -42,7 +46,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
             socket.join(dataObject.roomId);
             console.log(socketId, " joined room: ", dataObject.roomId);
             io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message })
-            sendMessageNotification(existingObject.result, dataObject.message)
+            sendMessageNotification(io, existingObject.result, dataObject.message)
 
             return sendAck(resultObject)
 
@@ -61,10 +65,11 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 }
 
 
-function sendMessageNotification(roomObject, messageObject) {
+function sendMessageNotification(io, roomObject, messageObject) {
     try {
         console.log("Sending notification");
         let sender = {}, receiver = {}
+        
         if (messageObject.admin) {
             sender["name"] = "Sona3"
             receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer
@@ -80,17 +85,20 @@ function sendMessageNotification(roomObject, messageObject) {
             sender = messageObject.customer
             receiver = roomObject?.seller
         }
-
+        
         let notificationObject = {
             title: `New Message from ${sender.name}`,
             body: messageObject.text,
             redirectId: roomObject._id.toString(),
             redirectType: "room",
             type: "message",
-            receivers: receiver ? [receiver] : []
+            receivers: receiver ? [receiver._id.toString()] : []
         }
         notificationRepo.create(notificationObject)
+        console.log("receiver", receiver._id.toString())
+        io.to(receiver._id.toString()).emit("newMessageNotification", { success: true, code: 201, result: notificationObject })
         notificationHelper.sendPushNotification(notificationObject.title, notificationObject.body, [receiver.fcmToken])
+
     } catch (err) {
         console.log("err.message", err.message);
     }
