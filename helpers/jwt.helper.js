@@ -72,14 +72,14 @@ exports.verifyTokenInSocket = (token, roleString) => {
 
         if (!token) return { success: false, error: i18n.__("unauthorized"), code: 401 }
 
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
-            // console.log("token", tokenData);
+        let tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
             if (err) return { success: false, error: i18n.__("invalidToken"), code: 403 }
 
             if (tokenData?.role && !roleString.includes(tokenData.role)) return { success: false, error: i18n.__("unauthorized"), code: 401 }
 
             return { success: true, code: 200, result: tokenData };
         })
+        return tokenData
 
     } catch (err) {
         console.log(`err.message`, err.message);

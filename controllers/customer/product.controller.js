@@ -13,11 +13,11 @@ exports.listProducts = async (req, res) => {
 
         let operationResultObject = await productRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
 
-        if (operationResultObject.result) {
-            operationResultObject.result = operationResultObject?.result.filter((product) => {
-                if (product?.defaultVariation?.isActive) product.variations = product.variations.filter(variation => variation.isActive)
-            })
-        }
+        // if (operationResultObject.result) {
+        //     operationResultObject.result = operationResultObject?.result.filter((product) => {
+        //         if (product?.defaultVariation?.isActive) product.variations = product.variations.filter(variation => variation.isActive)
+        //     })
+        // }
 
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -41,9 +41,9 @@ exports.getProduct = async (req, res) => {
         filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
         const operationResultObject = await productRepo.get(filterObject, {});
         
-        if (operationResultObject.result) {
-            if (operationResultObject.result?.defaultVariation?.isActive) operationResultObject.result.variations = operationResultObject.result.variations.filter(variation => variation.isActive)
-        }
+        // if (operationResultObject.result) {
+        //     if (operationResultObject.result?.defaultVariation?.isActive) operationResultObject.result.variations = operationResultObject.result.variations.filter(variation => variation.isActive)
+        // }
 
         return res.status(operationResultObject.code).json(operationResultObject);
 

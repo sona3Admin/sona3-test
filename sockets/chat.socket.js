@@ -82,12 +82,13 @@ function sendMessageNotification(io, roomObject, messageObject) {
             redirectId: roomObject._id.toString(),
             redirectType: "room",
             type: "message",
-            receivers: receiver ? [receiver._id.toString()] : []
+            receivers: receiver ? [receiver._id.toString()] : [],
+            deviceTokens: receiver? [receiver.fcmToken] : [],
         }
         notificationRepo.create(notificationObject)
         console.log("receiver", receiver._id.toString())
         io.to(receiver._id.toString()).emit("newMessageNotification", { success: true, code: 201, result: notificationObject })
-        notificationHelper.sendPushNotification(notificationObject.title, notificationObject.body, [receiver.fcmToken])
+        notificationHelper.sendPushNotification(notificationObject.title, notificationObject.body, notificationObject.deviceTokens)
 
     } catch (err) {
         console.log("err.message", err.message);
