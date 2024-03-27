@@ -1,6 +1,8 @@
 const i18n = require('i18n');
 const socketLocales = {};
 const { chatSocketHandler } = require("./chat.socket")
+const { notificationSocketHandler } = require("./notification.socket")
+const { adminSocketHandler } = require("./admin.socket")
 
 
 exports.serverSocketHandler = (socket, io) => {
@@ -18,8 +20,9 @@ exports.serverSocketHandler = (socket, io) => {
             message: localeMessages.welcomeMessage
         })
 
-
+        adminSocketHandler(socket, io, socketId, localeMessages);
         chatSocketHandler(socket, io, socketId, localeMessages);
+        notificationSocketHandler(socket, io, socketId, localeMessages);
 
     } catch (err) {
         return console.log(`err.message`, err.message);

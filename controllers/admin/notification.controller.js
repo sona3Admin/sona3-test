@@ -5,7 +5,7 @@ const notificationHelper = require("../../helpers/notification.helper")
 exports.createNotification = async (req, res) => {
     try {
         const operationResultObject = await notificationRepo.create(req.body);
-        notificationHelper.sendPushNotification("Test", "Test Notification", req.body.deviceTokens)
+        notificationHelper.sendPushNotification(operationResultObject.result.title, operationResultObject.result.body, req.body.deviceTokens)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

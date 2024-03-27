@@ -1,6 +1,7 @@
 const roomRepo = require("../modules/Room/room.repo")
 const notificationHelper = require("../helpers/notification.helper")
 const notificationRepo = require("../modules/Notification/notification.repo")
+const { getSettings } = require("../helpers/settings.helper")
 
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
@@ -16,11 +17,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
         } catch (err) {
             console.log(`err.message`, err.message);
-            return io.to(socketId).emit("error", {
-                success: false,
-                code: 500,
-                error: localeMessages.internalServerError
-            })
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
 
@@ -49,12 +46,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
         } catch (err) {
             console.log(`err.message`, err.message);
-            return io.to(socketId).emit("error", {
-                success: false,
-                code: 500,
-                error: localeMessages.internalServerError
-            })
-
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
 
     })
@@ -69,20 +61,21 @@ function sendMessageNotification(io, roomObject, messageObject) {
 
         if (messageObject.admin) {
             sender["name"] = "Sona3"
+            sender["_id"] = getSettings("adminsRoomId")
             receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer
         }
 
         if (messageObject.seller) {
             sender = messageObject.seller
             sender.name = roomObject.seller.userName
-            receiver = roomObject?.customer
+            receiver = roomObject?.customer ? roomObject.customer : { _id: getSettings("adminsRoomId") }
         }
 
         if (messageObject.customer) {
             sender = roomObject.customer
-            receiver = roomObject?.seller
+            receiver = roomObject?.seller ? roomObject.seller : { _id: getSettings("adminsRoomId") }
         }
-        
+
         let notificationObject = {
             title: `New Message from ${sender.name}`,
             body: messageObject.text,
@@ -98,5 +91,6 @@ function sendMessageNotification(io, roomObject, messageObject) {
 
     } catch (err) {
         console.log("err.message", err.message);
+        return
     }
 }

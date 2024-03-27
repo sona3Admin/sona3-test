@@ -1,4 +1,5 @@
 let jwt = require("jsonwebtoken")
+const i18n = require('i18n');
 let adminRepo = require("../modules/Admin/admin.repo")
 let customerRepo = require("../modules/Customer/customer.repo")
 let sellerRepo = require("../modules/Seller/seller.repo")
@@ -61,6 +62,28 @@ exports.verifyToken = (roleString) => {
             console.log(`err.message`, err.message);
             return res.status(500).json({ success: false, error: res.__("internalServerError"), code: 401 })
         }
+    }
+
+}
+
+
+exports.verifyTokenInSocket = (token, roleString) => {
+    try {
+
+        if (!token) return { success: false, error: i18n.__("unauthorized"), code: 401 }
+
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
+            // console.log("token", tokenData);
+            if (err) return { success: false, error: i18n.__("invalidToken"), code: 403 }
+
+            if (tokenData?.role && !roleString.includes(tokenData.role)) return { success: false, error: i18n.__("unauthorized"), code: 401 }
+
+            return { success: true, code: 200, result: tokenData };
+        })
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return { success: false, error: i18n.__("internalServerError"), code: 401 }
     }
 
 }

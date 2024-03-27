@@ -233,6 +233,7 @@ exports.removeMany = async (filterObject) => {
             cartRepo.updateManyCarts(variation.shop, variation._id)
             basketRepo.updateManyCarts(variation.shop, variation._id)
         });
+        
         return {
             success: true,
             code: 200,

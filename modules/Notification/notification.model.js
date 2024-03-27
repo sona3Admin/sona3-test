@@ -5,6 +5,7 @@ const notificationSchema = new mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     receivers: [{ type: mongoose.Schema.Types.ObjectId }],
+    deviceTokens: [{ type: String }],
     seenBy: [{ type: mongoose.Schema.Types.ObjectId }],
     title: { type: String },
     body: { type: String },
