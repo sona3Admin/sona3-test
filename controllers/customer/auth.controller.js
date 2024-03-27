@@ -37,6 +37,7 @@ exports.register = async (req, res) => {
 
 exports.authenticateBySocialMediaAccount = async (req, res) => {
     try {
+        const { fcmToken } = req.body;
         let customerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await customerRepo.find({ email: req.body.email })
         if (operationResultObject.code == 404) operationResultObject = await customerRepo.create(customerObject)
@@ -51,7 +52,7 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         }
 
         const token = jwtHelper.generateToken(payloadObject, "1d")
-        customerRepo.updateDirectly(operationResultObject.result._id, { token })
+        customerRepo.updateDirectly(operationResultObject.result._id, { token, fcmToken })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })

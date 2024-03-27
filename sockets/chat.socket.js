@@ -5,9 +5,6 @@ const notificationRepo = require("../modules/Notification/notification.repo")
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages) => {
 
-    socket.on("joinPersonalRoom", () => {
-
-    })
 
     socket.on("joinRoom", async (dataObject, sendAck) => {
         try {
@@ -69,7 +66,7 @@ function sendMessageNotification(io, roomObject, messageObject) {
     try {
         console.log("Sending notification");
         let sender = {}, receiver = {}
-        
+
         if (messageObject.admin) {
             sender["name"] = "Sona3"
             receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer
@@ -77,12 +74,12 @@ function sendMessageNotification(io, roomObject, messageObject) {
 
         if (messageObject.seller) {
             sender = messageObject.seller
-            sender.name = sender.userName
+            sender.name = roomObject.seller.userName
             receiver = roomObject?.customer
         }
 
         if (messageObject.customer) {
-            sender = messageObject.customer
+            sender = roomObject.customer
             receiver = roomObject?.seller
         }
         
