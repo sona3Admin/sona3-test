@@ -23,7 +23,7 @@ exports.listOrders = async (req, res) => {
 exports.getOrder = async (req, res) => {
     try {
         const filterObject = req.query;
-        const operationResultObject = await orderRepo.get(filterObject, {});
+        const operationResultObject = await orderRepo.get(filterObject, { sellers: 0 });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

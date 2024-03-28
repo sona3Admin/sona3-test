@@ -18,7 +18,7 @@ const notificationSchema = new mongoose.Schema({
     endDate: { type: Date },
     reach: { type: Number, default: 0 },
     clicks: { type: Number, default: 0 },
-    type: { type: String, enum: ["admin", "message", "serviceRequest", "order", "Verified"] },
+    type: { type: String, enum: ["admin", "message", "serviceRequest", "order", "verified"] },
 });
 
 

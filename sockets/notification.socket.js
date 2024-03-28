@@ -1,6 +1,5 @@
 const notificationHelper = require("../helpers/notification.helper")
 const notificationRepo = require("../modules/Notification/notification.repo")
-const { getSettings } = require("../helpers/settings.helper")
 
 
 exports.notificationSocketHandler = (socket, io, socketId, localeMessages) => {
@@ -11,7 +10,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages) => {
 
             let resultObject = await notificationRepo.create(dataObject)
             resultObject.result.receivers.forEach((receiver) => {
-                io.to(receiver.toString()).emit("newMessageNotification", { success: true, code: 201, result: resultObject.result })
+                io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
             })
             notificationHelper.sendPushNotification(resultObject.result.title, resultObject.result.body, resultObject.result.deviceTokens)
             return sendAck(resultObject)

@@ -87,7 +87,7 @@ function sendMessageNotification(io, roomObject, messageObject) {
         }
         notificationRepo.create(notificationObject)
         console.log("receiver", receiver._id.toString())
-        io.to(receiver._id.toString()).emit("newMessageNotification", { success: true, code: 201, result: notificationObject })
+        io.to(receiver._id.toString()).emit("newNotification", { success: true, code: 201, result: notificationObject })
         notificationHelper.sendPushNotification(notificationObject.title, notificationObject.body, notificationObject.deviceTokens)
 
     } catch (err) {

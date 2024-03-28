@@ -10,7 +10,7 @@ let websocketServer = (io) => {
             let authenticationResult = await verifyTokenInSocket(userToken, userRole)
             if (!authenticationResult.success) return socket.disconnect(true);
             if (!userId || authenticationResult.result._id !== userId) return socket.disconnect(true);
-
+            
             socket.join(userId)
             console.log("socketId", socket.id)
             serverSocketHandler(socket, io)
