@@ -9,19 +9,22 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages, language)
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
-            let customerId = socket.handshake.headers['_id']
-            const customerObject = await customerRepo.find({ _id: customerId })
-            if (!customerObject.success) return sendAck(customerObject)
 
-            let bodyText = { en: "", ar: "" }, deviceTokens = [], receivers = [], receiversIds = []
-            let orderType = dataObject.order ? { en: "Order", ar: "طلب" } : { en: "Service Request", ar: "طلب خدمة" }
-            let notificationType = dataObject.order ? "order" : "serviceRequest"
+            // let customerId = socket.handshake.headers['_id']
+            // const customerObject = await customerRepo.find({ _id: customerId })
+            // if (!customerObject.success) return sendAck(customerObject)
+
+            let bodyText = {}, deviceTokens = [], receivers = [], receiversIds = []
+            let orderType = {}, notificationType = {}
+
             let sender = {
-                _id: customerObject.result._id.toString(),
-                name: customerObject.result.name
+                _id: socket.socketTokenData._id,
+                name: socket.socketTokenData.name
             }
 
             if (dataObject.order) {
+                orderType = { en: "Order", ar: "طلب" }
+                notificationType = "order"
                 const existingObject = await orderRepo.get({ _id: dataObject.order })
                 if (!existingObject.success) return sendAck(existingObject)
                 receivers = existingObject.result.sellers
@@ -31,6 +34,8 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages, language)
 
 
             if (dataObject.request) {
+                orderType = { en: "Service Request", ar: "طلب خدمة" }
+                notificationType = "order"
                 const existingObject = await requestRepo.get({ _id: dataObject.request })
                 if (!existingObject.success) return sendAck(existingObject)
                 receivers = [existingObject.result.seller]
@@ -43,7 +48,7 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages, language)
                 deviceTokens.push(receiver.fcmToken)
                 receiversIds.push(receiver._id.toString())
             })
-            
+
             let notificationObject = {
                 customer: sender._id,
                 titleEn: `New ${orderType.en} from ${sender.name}`,

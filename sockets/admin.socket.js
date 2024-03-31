@@ -23,7 +23,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
     })
 
 
-    socket.on("sendDataUpdates", async (dataObject, sendAck) => {
+    socket.on("sendStatusUpdates", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
             let actionEnumValues = ["activate", "deactivate", "changeData"]
