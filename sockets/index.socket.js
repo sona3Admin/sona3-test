@@ -21,10 +21,10 @@ exports.serverSocketHandler = (socket, io) => {
             message: localeMessages.welcomeMessage
         })
 
-        adminSocketHandler(socket, io, socketId, localeMessages);
-        chatSocketHandler(socket, io, socketId, localeMessages);
-        notificationSocketHandler(socket, io, socketId, localeMessages);
-        customerSocketHandler(socket, io, socketId, localeMessages);
+        adminSocketHandler(socket, io, socketId, localeMessages, locale);
+        chatSocketHandler(socket, io, socketId, localeMessages, locale);
+        notificationSocketHandler(socket, io, socketId, localeMessages, locale);
+        customerSocketHandler(socket, io, socketId, localeMessages, locale);
     } catch (err) {
         return console.log(`err.message`, err.message);
     }
@@ -37,9 +37,6 @@ function setLocalizedMessage(locale) {
         welcomeMessage: i18n.__({ phrase: 'welcomeMessage', locale }),
         internalServerError: i18n.__({ phrase: 'internalServerError', locale }),
         roomBlocked: i18n.__({ phrase: 'roomBlocked', locale }),
-        newMessage: i18n.__({ phrase: 'newMessage', locale }),
-        activationMessage: i18n.__({ phrase: 'newMessage', locale }),
-        deactivationMessage: i18n.__({ phrase: 'newMessage', locale }),
-        changeDataMessage: i18n.__({ phrase: 'newMessage', locale }),
+        newMessage: i18n.__({ phrase: 'newMessage', locale })
     }
 }

@@ -5,65 +5,72 @@ const orderRepo = require("../modules/Order/order.repo")
 const customerRepo = require("../modules/Customer/customer.repo")
 
 
-exports.customerSocketHandler = (socket, io, socketId, localeMessages) => {
+exports.customerSocketHandler = (socket, io, socketId, localeMessages, language) => {
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
             let customerId = socket.handshake.headers['_id']
-            let lang = socket.handshake.headers['accept-language'] || "en";
             const customerObject = await customerRepo.find({ _id: customerId })
             if (!customerObject.success) return sendAck(customerObject)
 
-            let bodyText, deviceTokens = []
-            let orderType = dataObject.order ? "Order" : "Service Request"
+            let bodyText = { en: "", ar: "" }, deviceTokens = [], receivers = [], receiversIds = []
+            let orderType = dataObject.order ? { en: "Order", ar: "طلب" } : { en: "Service Request", ar: "طلب خدمة" }
             let notificationType = dataObject.order ? "order" : "serviceRequest"
-            let receivers = []
             let sender = {
                 _id: customerObject.result._id.toString(),
                 name: customerObject.result.name
             }
 
-
             if (dataObject.order) {
                 const existingObject = await orderRepo.get({ _id: dataObject.order })
                 if (!existingObject.success) return sendAck(existingObject)
                 receivers = existingObject.result.sellers
-                bodyText = `${sender.name} created a new order`
+                bodyText.en = `${sender.name} created a new order`
+                bodyText.ar = `انشأ طلب جديد ${sender.name}`
             }
 
 
             if (dataObject.request) {
                 const existingObject = await requestRepo.get({ _id: dataObject.request })
                 if (!existingObject.success) return sendAck(existingObject)
-
                 receivers = [existingObject.result.seller]
-                bodyText = `${sender.name} requested your service 
-                ${existingObject.result.service.nameEn} from the following shop: 
-                ${existingObject.result.shop.nameEn}`
+                bodyText.en = `${sender.name} requested your service ${existingObject.result.service.nameEn} from the following shop: ${existingObject.result.shop.nameEn}`
+                bodyText.ar = `${sender.name} طلب خدمة ${existingObject.result.service.nameAr} من المتجر التالي: ${existingObject.result.shop.nameAr} `
+
             }
 
             receivers.forEach((receiver) => {
                 deviceTokens.push(receiver.fcmToken)
-                receiver = receiver._id.toString();
+                receiversIds.push(receiver._id.toString())
             })
-
+            
             let notificationObject = {
                 customer: sender._id,
-                title: `New ${orderType} from ${sender.name}`,
-                body: bodyText,
-                type: notificationType,
+                titleEn: `New ${orderType.en} from ${sender.name}`,
+                titleAr: `${sender.name} ${orderType.ar} جديدة من`,
+                bodyEn: bodyText.en,
+                bodyAr: bodyText.ar,
                 redirectId: dataObject?.order ? dataObject.order : dataObject.request,
                 redirectType: notificationType,
-                receivers: receivers,
+                type: notificationType,
+                receivers: receiversIds,
                 deviceTokens: deviceTokens
             }
 
             let resultObject = await notificationRepo.create(notificationObject)
+            let title = {
+                en: resultObject.result.titleEn,
+                ar: resultObject.result.titleAr
+            }
+            let body = {
+                en: resultObject.result.bodyEn,
+                ar: resultObject.result.bodyAr
+            }
             resultObject.result.receivers.forEach((receiver) => {
                 io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
             })
-            
-            notificationHelper.sendPushNotification(resultObject.result.title, resultObject.result.body, resultObject.result.deviceTokens)
+
+            notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
 
         } catch (err) {

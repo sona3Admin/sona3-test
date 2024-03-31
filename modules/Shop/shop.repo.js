@@ -37,7 +37,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await shopModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "userName image" })
+            .populate({ path: "seller", select: "userName image fcmToken" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })

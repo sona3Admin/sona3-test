@@ -5,8 +5,8 @@ exports.sendPushNotification = (notificationTitle, notificationBody, deviceToken
     try {
         const message = {
             notification: {
-                title: notificationTitle,
-                body: notificationBody
+                title: notificationTitle.en,
+                body: notificationBody.en
             },
             tokens: deviceTokensArray,
             sound: "default",
