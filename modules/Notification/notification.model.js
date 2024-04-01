@@ -5,6 +5,7 @@ const notificationSchema = new mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     receivers: [{ type: mongoose.Schema.Types.ObjectId }],
+    toAdmin: { type: Boolean, default: false },
     deviceTokens: [{ type: String }],
     seenBy: [{ type: mongoose.Schema.Types.ObjectId }],
     titleEn: { type: String },
@@ -20,7 +21,7 @@ const notificationSchema = new mongoose.Schema({
     endDate: { type: Date },
     reach: { type: Number, default: 0 },
     clicks: { type: Number, default: 0 },
-    type: { type: String, enum: ["admin", "message", "serviceRequest", "order", "activate", "deactivate", "changeData"] },
+    type: { type: String, enum: ["admin", "message", "serviceRequest", "order", "activate", "deactivate", "changeData", "creation"] },
 });
 
 

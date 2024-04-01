@@ -7,12 +7,19 @@ module.exports = {
             admin: joi.string().optional().messages({
                 "string.base": "validAdmin",
             }),
+
             customer: joi.string().optional().messages({
                 "string.base": "validCustomer",
             }),
+
+            toAdmin: joi.boolean().optional().messages({
+                "boolean.base": "validToAdmin",
+            }),
+
             seller: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
+
             receivers: joi.array().items(joi.string()).optional().messages({
                 "array.base": "validReceivers",
             }),

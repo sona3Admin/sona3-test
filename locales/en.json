@@ -159,7 +159,8 @@
 	"validRedirectType": "Valid type is required.",
 	"validReceivers": "Valid receivers array is required.",
 	"validDeviceTokens": "Valid device Tokens array is required.",
-	"validSeenByArray": "Valid seenBy array is required."
+	"validSeenByArray": "Valid seenBy array is required.",
+	"validToAdmin": "Valid toAdmin flag is required."
 
 
 

@@ -47,8 +47,9 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 },
             }
             let sender = {
-                _id: socket.handshake.headers['_id'],
-                name: "Sona3"
+                _id: socket.socketTokenData._id,
+                name: "Sona3",
+                role: socket.socketTokenData.role
             }
 
 
@@ -56,7 +57,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 const existingObject = await sellerRepo.find({ _id: dataObject.seller })
                 if (!existingObject.success) return sendAck(existingObject)
                 receiver = existingObject.result
-                redirectId = existingObject.result._id
+                redirectId = dataObject.seller
                 redirectType = "seller"
                 bodyTextEn = "Your account" + bodyMessages[`${dataObject.action}`].en
                 bodyTextAr = "الحساب الخاص بك" + bodyMessages[`${dataObject.action}`].ar
@@ -67,7 +68,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 const existingObject = await shopRepo.get({ _id: dataObject.shop })
                 if (!existingObject.success) return sendAck(existingObject)
                 receiver = existingObject.result.seller
-                redirectId = existingObject.result._id
+                redirectId = dataObject.shop
                 redirectType = "shop"
                 bodyTextEn = "Your shop " + `${existingObject.result.nameEn}` + bodyMessages[`${dataObject.action}`].en
                 bodyTextAr = "المتجر الخاصة بك " + `${existingObject.result.nameAr}` + bodyMessages[`${dataObject.action}`].ar
@@ -78,7 +79,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 const existingObject = await productRepo.get({ _id: dataObject.product })
                 if (!existingObject.success) return sendAck(existingObject)
                 receiver = existingObject.result.seller
-                redirectId = existingObject.result._id
+                redirectId = dataObject.product
                 redirectType = "product"
                 bodyTextEn = "Your product " + `${existingObject.result.nameEn}` + bodyMessages[`${dataObject.action}`].en
                 bodyTextAr = "المنتج الخاصة بك " + `${existingObject.result.nameAr}` + bodyMessages[`${dataObject.action}`].ar
@@ -89,7 +90,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 const existingObject = await serviceRepo.get({ _id: dataObject.service })
                 if (!existingObject.success) return sendAck(existingObject)
                 receiver = existingObject.result.seller
-                redirectId = existingObject.result._id
+                redirectId = dataObject.service
                 redirectType = "service"
                 bodyTextEn = "Your service " + `${existingObject.result.nameEn}` + bodyMessages[`${dataObject.action}`].en
                 bodyTextAr = "الخدمة الخاصة بك " + `${existingObject.result.nameAr}` + bodyMessages[`${dataObject.action}`].ar
