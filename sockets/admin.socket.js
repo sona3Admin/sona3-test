@@ -17,8 +17,8 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             return sendAck({ success: true, code: 200 })
         } catch (err) {
             console.log("err.message", err.message)
-            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-
+            // return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            return
         }
     })
 
@@ -127,8 +127,8 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             return sendAck(resultObject)
         } catch (err) {
             console.log("err.message", err.message)
-            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-
+            // return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            return
         }
     })
 
