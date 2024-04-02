@@ -8,7 +8,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
 
     socket.on("sendNotificationToGroup", async (dataObject, sendAck) => {
         try {
-            if (!sendAck) return
+            if (!sendAck) return socket.disconnect(true)
             console.log("Sending notification");
             let validator = await socketValidator(createNotificationValidation, dataObject, language)
             if (!validator.success) return sendAck(validator)

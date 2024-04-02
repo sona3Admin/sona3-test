@@ -11,7 +11,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
     socket.on("joinRoom", async (dataObject, sendAck) => {
         try {
-            if (!sendAck) return
+            if (!sendAck) return socket.disconnect(true)
             let roomObject = await roomRepo.find(dataObject)
             if (!roomObject.success) roomObject = await roomRepo.create({ ...dataObject, lastMessage: {} })
             socket.join(roomObject.result._id.toString());
@@ -28,7 +28,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
     socket.on("sendMessage", async (dataObject, sendAck) => {
         try {
-            if (!sendAck) return
+            if (!sendAck) return socket.disconnect(true)
             let validator = await socketValidator(sendMessageValidation, dataObject, language)
             if (!validator.success) return sendAck(validator)
 

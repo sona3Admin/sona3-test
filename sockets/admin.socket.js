@@ -12,7 +12,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
 
     socket.on("joinAdminsRoom", (dataObject, sendAck) => {
         try {
-            if (!sendAck) return
+            if (!sendAck) return socket.disconnect(true)
             const adminsRoomId = getSettings("adminsRoomId")
             socket.join(adminsRoomId.toString())
             return sendAck({ success: true, code: 200 })
@@ -27,7 +27,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
     socket.on("sendStatusUpdates", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
-            if (!sendAck) return
+            if (!sendAck) return socket.disconnect(true)
             let actionEnumValues = ["activate", "deactivate", "changeData"]
             if (!dataObject.action || !actionEnumValues.includes(dataObject.action)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 

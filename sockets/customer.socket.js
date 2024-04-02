@@ -13,7 +13,7 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages, language)
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
-            if (!sendAck) return
+            if (!sendAck) return socket.disconnect(true)
             let notificationResult = {}
             let sender = {
                 _id: socket.socketTokenData._id,
