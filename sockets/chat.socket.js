@@ -65,40 +65,49 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 async function sendMessageNotification(io, roomObject, messageObject) {
     try {
         console.log("Sending notification");
-        let sender = {}, receiver = {}, notificationObject = {}
+        let sender = {}, receiver = {}, notificationObject = {}, textFile = {}, receiverRole
+
+        let adminsRoomId = { _id: getSettings("adminsRoomId") }
 
         if (messageObject.admin) {
             sender["name"] = "Sona3"
             sender["_id"] = getSettings("adminsRoomId")
+            console.log();
             notificationObject.admin = messageObject.admin
             receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer
+            receiverRole = roomObject?.seller ? "seller" : "customer"
         }
 
         if (messageObject.seller) {
             sender = messageObject.seller
             sender.name = roomObject.seller.userName
             notificationObject.seller = messageObject.seller
-            receiver = roomObject?.customer ? roomObject.customer : { _id: getSettings("adminsRoomId") }
+            receiver = roomObject?.customer ? roomObject.customer : []
+            receiverRole = roomObject?.customer ? "customer" : "admin"
         }
 
         if (messageObject.customer) {
             sender = roomObject.customer
             notificationObject.customer = messageObject.customer
-            receiver = roomObject?.seller ? roomObject.seller : { _id: getSettings("adminsRoomId") }
+            receiver = roomObject?.seller ? roomObject.seller : []
+            receiverRole = roomObject?.seller ? "seller" : "admin"
         }
+
+        if (messageObject.file) textFile = { en: `${sender.name} sent a file`, ar: `أرسل ${sender.name} ملفًا` }
+
         notificationObject = {
             ...notificationObject,
             titleEn: `New Notification from ${sender.name}`,
             titleAr: `${sender.name} رسالة جديدة من`,
-            bodyEn: messageObject.text,
-            bodyAr: messageObject.text,
+            bodyEn: messageObject.text ? messageObject.text : textFile.en,
+            bodyAr: messageObject.text ? messageObject.text : textFile.ar,
             redirectId: roomObject._id.toString(),
             redirectType: "room",
             type: "message",
-            receivers: receiver ? [receiver._id.toString()] : [],
-            deviceTokens: receiver ? [receiver.fcmToken] : []
+            toAdmin: receiverRole != "admin" ? false : true,
+            receivers: receiver?.length != 0 ? [receiver._id.toString()] : [],
+            deviceTokens: receiver?.fcmToken ? [receiver.fcmToken] : []
         }
-
         let resultObject = await notificationRepo.create(notificationObject)
         let title = {
             en: resultObject.result.titleEn,
@@ -108,9 +117,10 @@ async function sendMessageNotification(io, roomObject, messageObject) {
             en: resultObject.result.bodyEn,
             ar: resultObject.result.bodyAr
         }
+        receiver = receiverRole != "admin" ? receiver : adminsRoomId
         console.log("receiver", receiver._id.toString())
         io.to(receiver._id.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
-        notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
+        if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
 
     } catch (err) {
         console.log("err.message", err.message);

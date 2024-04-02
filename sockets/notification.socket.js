@@ -25,7 +25,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
                 en: resultObject.result.bodyEn,
                 ar: resultObject.result.bodyAr
             }
-            notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
+            if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
         } catch (err) {
             console.log("err.message", err.message)

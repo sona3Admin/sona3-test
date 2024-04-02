@@ -50,7 +50,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             }
             let sender = {
                 _id: socket.socketTokenData._id,
-                name:  "Sona3" ,
+                name: "Sona3",
 
                 // name: socket.socketTokenData.role != "seller" ? "Sona3" : socket.socketTokenData.userName,
                 role: socket.socketTokenData.role
@@ -112,7 +112,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 redirectType: redirectType,
                 type: dataObject.action,
                 receivers: receiver ? [receiver._id.toString()] : [],
-                deviceTokens: receiver ? [receiver.fcmToken] : []
+                deviceTokens: receiver.fcmToken ? [receiver.fcmToken] : []
             }
 
             let resultObject = await notificationRepo.create(notificationObject)
@@ -125,7 +125,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 ar: resultObject.result.bodyAr
             }
             io.to(receiver._id.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
-            notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
+            if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
         } catch (err) {
             console.log("err.message", err.message)
