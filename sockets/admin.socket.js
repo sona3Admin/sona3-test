@@ -27,7 +27,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
         try {
             console.log("Sending notification");
             let actionEnumValues = ["activate", "deactivate", "changeData"]
-            if (!actionEnumValues.includes(dataObject.action)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if (!dataObject.action || !actionEnumValues.includes(dataObject.action)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
             let bodyTextEn, bodyTextAr, redirectType, redirectId;
             let receiver = {}
@@ -48,9 +48,12 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             }
             let sender = {
                 _id: socket.socketTokenData._id,
-                name: "Sona3",
+                name:  "Sona3" ,
+
+                // name: socket.socketTokenData.role != "seller" ? "Sona3" : socket.socketTokenData.userName,
                 role: socket.socketTokenData.role
             }
+            // if (sender.role == "seller" && dataObject.action != "changeData") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
 
             if (dataObject.seller) {
