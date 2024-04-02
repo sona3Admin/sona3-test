@@ -13,7 +13,7 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages, language)
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
-
+            if (!sendAck) return
             let notificationResult = {}
             let sender = {
                 _id: socket.socketTokenData._id,
@@ -45,8 +45,8 @@ exports.customerSocketHandler = (socket, io, socketId, localeMessages, language)
 
         } catch (err) {
             console.log("err.message", err.message)
-            // return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-            return
+            if (!sendAck) return
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
 }

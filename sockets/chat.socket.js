@@ -11,6 +11,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
     socket.on("joinRoom", async (dataObject, sendAck) => {
         try {
+            if (!sendAck) return
             let roomObject = await roomRepo.find(dataObject)
             if (!roomObject.success) roomObject = await roomRepo.create({ ...dataObject, lastMessage: {} })
             socket.join(roomObject.result._id.toString());
@@ -19,14 +20,15 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
         } catch (err) {
             console.log(`err.message`, err.message);
-            // return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-            return
+            if (!sendAck) return
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
 
 
     socket.on("sendMessage", async (dataObject, sendAck) => {
         try {
+            if (!sendAck) return
             let validator = await socketValidator(sendMessageValidation, dataObject, language)
             if (!validator.success) return sendAck(validator)
 
@@ -47,13 +49,13 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             console.log(socketId, " joined room: ", dataObject.roomId);
             io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message })
             sendMessageNotification(io, existingObject.result, dataObject.message)
-
+            
             return sendAck(resultObject)
 
         } catch (err) {
             console.log(`err.message`, err.message);
-            // return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-            return
+            if (!sendAck) return
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
 
     })

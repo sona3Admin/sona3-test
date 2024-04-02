@@ -8,8 +8,8 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
 
     socket.on("sendNotificationToGroup", async (dataObject, sendAck) => {
         try {
+            if (!sendAck) return
             console.log("Sending notification");
-
             let validator = await socketValidator(createNotificationValidation, dataObject, language)
             if (!validator.success) return sendAck(validator)
 
@@ -29,8 +29,8 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             return sendAck(resultObject)
         } catch (err) {
             console.log("err.message", err.message)
-            // return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-            return
+            if (!sendAck) return
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
 
