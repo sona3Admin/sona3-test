@@ -40,16 +40,15 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             })
 
             let resultObject = await roomRepo.updateDirectly(dataObject.roomId, {
-                $push: { messages: dataObject.message },
+                $push: { messages: { $each: [dataObject.message], $position: 0 } },
                 lastMessage: dataObject.message,
                 lastDate: dataObject.message.timestamp
             })
-
             socket.join(dataObject.roomId);
             console.log(socketId, " joined room: ", dataObject.roomId);
             io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message })
             sendMessageNotification(io, existingObject.result, dataObject.message)
-            
+
             return sendAck(resultObject)
 
         } catch (err) {
