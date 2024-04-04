@@ -3,7 +3,6 @@ const socketLocales = {};
 const { chatSocketHandler } = require("./chat.socket")
 const { notificationSocketHandler } = require("./notification.socket")
 const { adminSocketHandler } = require("./admin.socket")
-const { customerSocketHandler } = require("./customer.socket")
 
 
 exports.serverSocketHandler = (socket, io) => {
@@ -24,13 +23,11 @@ exports.serverSocketHandler = (socket, io) => {
         adminSocketHandler(socket, io, socketId, localeMessages, locale);
         chatSocketHandler(socket, io, socketId, localeMessages, locale);
         notificationSocketHandler(socket, io, socketId, localeMessages, locale);
-        customerSocketHandler(socket, io, socketId, localeMessages, locale);
     } catch (err) {
         return console.log(`err.message`, err.message);
     }
 
 }
-
 
 function setLocalizedMessage(locale) {
     return {
