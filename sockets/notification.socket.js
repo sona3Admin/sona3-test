@@ -55,8 +55,10 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
         try {
             console.log("Sending notification");
             if (!sendAck) return socket.disconnect(true)
-            let actionEnumValues = ["activate", "deactivate", "changeData"]
+            let actionEnumValues = ["activate", "deactivate", "changeData", "updateStatus"]
             if (!dataObject.action || !actionEnumValues.includes(dataObject.action)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if (!dataObject.order && !dataObject.request && dataObject.action == "updateStatus") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if ((dataObject.order || dataObject.request) && dataObject.action != "updateStatus") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
             let notificationResult;
 
@@ -73,6 +75,10 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
                     en: " data has changed",
                     ar: " لقد تغيرت بياناته"
                 },
+                updateStatus: {
+                    en: " status has changed",
+                    ar: " لقد تغيرت حالته"
+                }
             }
 
             let sender = {
@@ -86,15 +92,12 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             }
             else if (sender.role == "seller") {
                 sender.name = socket.socketTokenData.userName
-                if (dataObject.order || dataObject.request) {
-                    if (dataObject.action != "changeData") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-                    notificationResult = await updateOrderOrRequest(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
-                }
+                if (dataObject.order || dataObject.request) notificationResult = await updateOrderOrRequest(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
                 else notificationResult = await sellerUpdateSomething(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                
             }
             else if (sender.role == "customer" && (dataObject.order || dataObject.request)) {
                 sender.name = socket.socketTokenData.name
-                if (dataObject.action != "changeData") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
                 notificationResult = await updateOrderOrRequest(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
             }
             else return sendAck({ success: false, error: localeMessages.unauthorized, code: 403 })
