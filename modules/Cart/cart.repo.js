@@ -123,8 +123,13 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
     try {
         console.log("itemId", itemId);
-        let variationResultObject = await variationRepo.find({ _id: itemId });
+        let variationResultObject = await variationRepo.get({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
+        if (variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("isNotFoodCart") }
+        
+        variationResultObject.result.seller = variationResultObject.result.seller._id
+        variationResultObject.result.shop = variationResultObject.result.shop._id
+        variationResultObject.result.product = variationResultObject.result.product._id
 
         let itemObject = variationResultObject.result;
         console.log("itemObject", itemObject._id);

@@ -160,7 +160,9 @@
 	"validReceivers": "Valid receivers array is required.",
 	"validDeviceTokens": "Valid device Tokens array is required.",
 	"validSeenByArray": "Valid seenBy array is required.",
-	"validToAdmin": "Valid toAdmin flag is required."
+	"validToAdmin": "Valid toAdmin flag is required.",
+	"isNotFoodCart": "you can't add food to this cart",
+	"cartFoodOnly": "you can only add food to this cart"
 
 
 

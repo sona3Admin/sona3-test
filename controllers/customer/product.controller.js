@@ -15,7 +15,6 @@ exports.listProducts = async (req, res) => {
 
         // if (operationResultObject.success) {
         //     operationResultObject.result = operationResultObject?.result.filter((product) => {
-        //         console.log(product?.defaultVariation?.isActive);
         //         if (product?.defaultVariation?.isActive) return product.variations.filter(variation => variation.isActive)
         //     })
         // }
@@ -41,11 +40,13 @@ exports.getProduct = async (req, res) => {
         filterObject["defaultVariation"] = { $exists: true }
         filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
         const operationResultObject = await productRepo.get(filterObject, {});
-        
-        // if (operationResultObject.success) {
-        //     if (operationResultObject.result?.defaultVariation?.isActive) return operationResultObject.result.variations.filter(variation => variation.isActive)
-        // }
 
+        // if (operationResultObject.success) {
+        //     if (operationResultObject.result?.defaultVariation?.isActive)
+        //         operationResultObject.result.variations = operationResultObject.result.variations.filter(variation => variation.isActive)
+        //     if (operationResultObject.result.variations.length == 0)
+        //         return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        // }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
