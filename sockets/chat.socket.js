@@ -12,6 +12,8 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
     socket.on("joinRoom", async (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
+            let isAuthorizedResult = await isAuthorizedRoom(socket, dataObject, localeMessages)
+            if (!isAuthorizedResult.success) return sendAck(isAuthorizedResult)
             let roomObject = await roomRepo.find(dataObject)
             if (!roomObject.success) roomObject = await roomRepo.create({ ...dataObject, lastMessage: {} })
             socket.join(roomObject.result._id.toString());
@@ -31,8 +33,11 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             if (!sendAck) return socket.disconnect(true)
             let validator = await socketValidator(sendMessageValidation, dataObject, language)
             if (!validator.success) return sendAck(validator)
-
             const existingObject = await roomRepo.get({ _id: dataObject.roomId })
+
+            let isAuthorizedResult = await isAuthorizedMessage(existingObject.result, socket, dataObject, localeMessages)
+            if (!isAuthorizedResult.success) return sendAck(isAuthorizedResult)
+            
             if (!existingObject.success || existingObject.result.isBlocked) return sendAck({
                 code: 409,
                 success: false,
@@ -125,5 +130,47 @@ async function sendMessageNotification(io, roomObject, messageObject) {
     } catch (err) {
         console.log("err.message", err.message);
         return
+    }
+}
+
+
+async function isAuthorizedRoom(socket, dataObject, localeMessages) {
+    try {
+        if (socket.socketTokenData.role == "admin" || socket.socketTokenData.role == "superAdmin") return { success: true, code: 200 }
+        if (socket.socketTokenData.role == "seller") {
+            if (!dataObject.seller || dataObject.seller != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            return { success: true, code: 200 }
+        }
+        if (socket.socketTokenData.role == "customer") {
+            if (!dataObject.customer || dataObject.customer != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            return { success: true, code: 200 }
+        }
+    } catch (err) {
+        console.log("err.message", err.message);
+        return { success: false, code: 500, error: localeMessages.unauthorized }
+    }
+}
+
+
+async function isAuthorizedMessage(roomObject, socket, dataObject, localeMessages) {
+    try {
+
+        if (socket.socketTokenData.role == "admin" || socket.socketTokenData.role == "superAdmin") {
+            if (!roomObject.withAdmin || dataObject.message.admin != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            return { success: true, code: 200 }
+        }
+        if (socket.socketTokenData.role == "seller") {
+            if (!roomObject.seller || roomObject.seller._id.toString() != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            if (!dataObject.message.seller || dataObject.message.seller != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            return { success: true, code: 200 }
+        }
+        if (socket.socketTokenData.role == "customer") {
+            if (!roomObject.customer || roomObject.customer._id.toString() != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            if (!dataObject.message.customer || dataObject.message.customer != socket.socketTokenData._id) return { success: false, code: 500, error: localeMessages.unauthorized }
+            return { success: true, code: 200 }
+        }
+    } catch (err) {
+        console.log("err.message", err.message);
+        return { success: false, code: 500, error: localeMessages.unauthorized }
     }
 }
