@@ -14,34 +14,33 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
-            if (!sendAck) return socket.disconnect(true)
             let notificationResult = {}
+
+            if (!sendAck) return socket.disconnect(true)
+            if (!socket.socketTokenData.role) return sendAck({ success: false, error: localeMessages.unauthorized, code: 403 })
+
             let sender = {
                 _id: socket.socketTokenData._id,
                 name: socket.socketTokenData.role == "seller" ? socket.socketTokenData.userName : socket.socketTokenData.name,
                 role: socket.socketTokenData.role
             }
 
-            if (sender.role == "customer") notificationResult = await CustomerCreateSomething(sender, dataObject, localeMessages)
-            else if (sender.role == "seller") notificationResult = await sellerCreateSomething(sender, dataObject, localeMessages)
-            else return sendAck({ success: false, error: localeMessages.unauthorized, code: 403 })
-
+            if (sender.role == "customer") notificationResult = await handleCreationByCustomer(sender, dataObject, localeMessages)
+            if (sender.role == "seller") notificationResult = await handleCreationBySeller(sender, dataObject, localeMessages)
             if (!notificationResult.success) return sendAck(notificationResult)
 
-
             let resultObject = await notificationRepo.create(notificationResult.notificationObject)
-            let title = {
-                en: resultObject.result.titleEn,
-                ar: resultObject.result.titleAr
-            }
-            let body = {
-                en: resultObject.result.bodyEn,
-                ar: resultObject.result.bodyAr
-            }
+
+            let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
+            let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
+
             notificationResult.receivers.forEach((receiver) => {
-                io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
+                io.to(receiver.toString()).emit("newNotification", {
+                    success: true, code: 201, result: resultObject.result
+                })
             })
-            if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
+
+            if (resultObject.result.deviceTokens.length > 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
 
         } catch (err) {
@@ -51,75 +50,59 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
         }
     })
 
+
     socket.on("sendStatusUpdates", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
-            if (!sendAck) return socket.disconnect(true)
+
+            let notificationResult;
             let actionEnumValues = ["activate", "deactivate", "changeData", "updateStatus"]
+
+            if (!sendAck) return socket.disconnect(true)
+            if (!socket.socketTokenData.role) return sendAck({ success: false, error: localeMessages.unauthorized, code: 403 })
             if (!dataObject.action || !actionEnumValues.includes(dataObject.action)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
             if (!dataObject.order && !dataObject.request && dataObject.action == "updateStatus") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
             if ((dataObject.order || dataObject.request) && dataObject.action != "updateStatus") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
-            let notificationResult;
-
             let bodyMessages = {
-                activate: {
-                    en: " is verified",
-                    ar: " تم التحقق منه",
-                },
-                deactivate: {
-                    en: " is not verified",
-                    ar: " لم يتم التحقق منه"
-                },
-                changeData: {
-                    en: " data has changed",
-                    ar: " لقد تغيرت بياناته"
-                },
-                updateStatus: {
-                    en: " status has changed",
-                    ar: " لقد تغيرت حالته"
-                }
+                activate: { en: " is verified", ar: " تم التحقق منه", },
+                deactivate: { en: " is not verified", ar: " لم يتم التحقق منه" },
+                changeData: { en: " data has changed", ar: " لقد تغيرت بياناته" },
+                updateStatus: { en: " status has changed", ar: " لقد تغيرت حالته" }
             }
 
-            let sender = {
-                _id: socket.socketTokenData._id,
-                role: socket.socketTokenData.role
-            }
+            let sender = { _id: socket.socketTokenData._id, role: socket.socketTokenData.role }
 
             if (sender.role == "admin" || sender.role == "superAdmin") {
                 sender.name = "Sona3"
-                notificationResult = await adminUpdateSomething(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                notificationResult = await handleUpdateByAdmin(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
             }
-            else if (sender.role == "seller") {
+
+            if (sender.role == "seller") {
                 sender.name = socket.socketTokenData.userName
-                if (dataObject.order || dataObject.request) notificationResult = await updateOrderOrRequest(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
-                else notificationResult = await sellerUpdateSomething(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
-                
+                if (dataObject.order || dataObject.request) notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                notificationResult = await handleUpdateBySeller(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
             }
-            else if (sender.role == "customer" && (dataObject.order || dataObject.request)) {
+
+            if (sender.role == "customer" && (dataObject.order || dataObject.request)) {
                 sender.name = socket.socketTokenData.name
-                notificationResult = await updateOrderOrRequest(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
             }
-            else return sendAck({ success: false, error: localeMessages.unauthorized, code: 403 })
 
             if (!notificationResult.success) return sendAck(notificationResult)
 
             let resultObject = await notificationRepo.create(notificationResult.notificationObject)
-            let title = {
-                en: resultObject.result.titleEn,
-                ar: resultObject.result.titleAr
-            }
-            let body = {
-                en: resultObject.result.bodyEn,
-                ar: resultObject.result.bodyAr
-            }
+
+            let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
+            let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
 
             notificationResult.receivers.forEach((receiver) => {
                 io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
             })
-            if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
 
+            if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
+
         } catch (err) {
             console.log("err.message", err.message)
             if (!sendAck) return
@@ -129,10 +112,10 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
 
 }
 
-async function CustomerCreateSomething(sender, dataObject, localeMessages) {
+
+async function handleCreationByCustomer(sender, dataObject, localeMessages) {
     try {
         let bodyText = {}, orderType = {}, notificationType = {}, deviceTokens = [], receivers = [], receiversIds = []
-
 
         if (dataObject.order) {
             orderType = { en: "Order", ar: "طلب" }
@@ -147,7 +130,7 @@ async function CustomerCreateSomething(sender, dataObject, localeMessages) {
 
         if (dataObject.request) {
             orderType = { en: "Service Request", ar: "طلب خدمة" }
-            notificationType = "order"
+            notificationType = "serviceRequest"
             const existingObject = await requestRepo.get({ _id: dataObject.request })
             if (!existingObject.success) return existingObject
             receivers = [existingObject.result.seller]
@@ -173,13 +156,13 @@ async function CustomerCreateSomething(sender, dataObject, localeMessages) {
             receivers: receiversIds,
             deviceTokens: deviceTokens
         }
-        let resultObject = {
-            code: 200,
+
+        return {
             success: true,
             notificationObject: notificationObject,
-            receivers: receiversIds
+            receivers: receiversIds,
+            code: 200,
         }
-        return resultObject
 
     } catch (err) {
         console.log("err.message", err.message);
@@ -187,7 +170,8 @@ async function CustomerCreateSomething(sender, dataObject, localeMessages) {
     }
 }
 
-async function sellerCreateSomething(sender, dataObject, localeMessages) {
+
+async function handleCreationBySeller(sender, dataObject, localeMessages) {
     try {
         let bodyText = {}, creationType = {}, redirectType = {}, redirectId, receiver
 
@@ -245,13 +229,13 @@ async function sellerCreateSomething(sender, dataObject, localeMessages) {
             receivers: [],
             deviceTokens: []
         }
-        let resultObject = {
+
+        return {
             code: 200,
             success: true,
             notificationObject: notificationObject,
             receivers: [getSettings("adminsRoomId").toString()]
         }
-        return resultObject
 
     } catch (err) {
         console.log("err.message", err.message);
@@ -259,7 +243,8 @@ async function sellerCreateSomething(sender, dataObject, localeMessages) {
     }
 }
 
-async function adminUpdateSomething(sender, dataObject, localeMessages, bodyMessageAction) {
+
+async function handleUpdateByAdmin(sender, dataObject, localeMessages, bodyMessageAction) {
     try {
         let bodyText = {}, receiver = {}, redirectType, redirectId;
 
@@ -273,7 +258,6 @@ async function adminUpdateSomething(sender, dataObject, localeMessages, bodyMess
             bodyText.ar = "الحساب الخاص بك" + bodyMessageAction.ar
         }
 
-
         if (dataObject.shop) {
             const existingObject = await shopRepo.get({ _id: dataObject.shop })
             if (!existingObject.success) return existingObject
@@ -284,7 +268,6 @@ async function adminUpdateSomething(sender, dataObject, localeMessages, bodyMess
             bodyText.ar = "المتجر الخاصة بك " + `${existingObject.result.nameAr}` + bodyMessageAction.ar
         }
 
-
         if (dataObject.product) {
             const existingObject = await productRepo.get({ _id: dataObject.product })
             if (!existingObject.success) return existingObject
@@ -294,7 +277,6 @@ async function adminUpdateSomething(sender, dataObject, localeMessages, bodyMess
             bodyText.en = "Your product " + `${existingObject.result.nameEn}` + bodyMessageAction.en
             bodyText.ar = "المنتج الخاصة بك " + `${existingObject.result.nameAr}` + bodyMessageAction.ar
         }
-
 
         if (dataObject.service) {
             const existingObject = await serviceRepo.get({ _id: dataObject.service })
@@ -319,13 +301,12 @@ async function adminUpdateSomething(sender, dataObject, localeMessages, bodyMess
             deviceTokens: receiver?.fcmToken ? [receiver.fcmToken] : []
         }
 
-        let resultObject = {
+        return {
             code: 200,
             success: true,
             notificationObject: notificationObject,
             receivers: receiver ? [receiver._id.toString()] : [],
         }
-        return resultObject
 
     } catch (err) {
         console.log("err.message", err.message);
@@ -333,11 +314,10 @@ async function adminUpdateSomething(sender, dataObject, localeMessages, bodyMess
     }
 }
 
-async function sellerUpdateSomething(sender, dataObject, localeMessages, bodyMessageAction) {
+
+async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMessageAction) {
     try {
         let bodyText = {}, receiver = {}, redirectType, redirectId;
-
-
 
         if (dataObject.seller) {
             const existingObject = await sellerRepo.find({ _id: dataObject.seller })
@@ -349,7 +329,6 @@ async function sellerUpdateSomething(sender, dataObject, localeMessages, bodyMes
             bodyText.ar = `البائع ${sender.name} ` + bodyMessageAction.ar
         }
 
-
         if (dataObject.shop) {
             const existingObject = await shopRepo.get({ _id: dataObject.shop })
             if (!existingObject.success) return existingObject
@@ -360,7 +339,6 @@ async function sellerUpdateSomething(sender, dataObject, localeMessages, bodyMes
             bodyText.ar = `المتجر ${existingObject.result.nameAr} للبائع ${sender.name} ` + bodyMessageAction.ar
         }
 
-
         if (dataObject.product) {
             const existingObject = await productRepo.get({ _id: dataObject.product })
             if (!existingObject.success) return existingObject
@@ -370,7 +348,6 @@ async function sellerUpdateSomething(sender, dataObject, localeMessages, bodyMes
             bodyText.en = `${existingObject.result.nameEn} product for seller ${sender.name} ` + bodyMessageAction.en
             bodyText.ar = `المنتج ${existingObject.result.nameAr} للبائع ${sender.name} ` + bodyMessageAction.ar
         }
-
 
         if (dataObject.service) {
             const existingObject = await serviceRepo.get({ _id: dataObject.service })
@@ -396,13 +373,12 @@ async function sellerUpdateSomething(sender, dataObject, localeMessages, bodyMes
             deviceTokens: []
         }
 
-        let resultObject = {
+        return {
             code: 200,
             success: true,
             notificationObject: notificationObject,
             receivers: [getSettings("adminsRoomId").toString()]
         }
-        return resultObject
 
     } catch (err) {
         console.log("err.message", err.message);
@@ -410,7 +386,8 @@ async function sellerUpdateSomething(sender, dataObject, localeMessages, bodyMes
     }
 }
 
-async function updateOrderOrRequest(sender, dataObject, localeMessages, bodyMessageAction) {
+
+async function updateTransactionStatus(sender, dataObject, localeMessages, bodyMessageAction) {
     try {
         let bodyText = {}, orderType = {}, receivers = [], redirectType, receiversIds = [], deviceTokens = []
 

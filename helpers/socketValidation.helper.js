@@ -5,12 +5,13 @@ exports.socketValidator = (schema, dataObject, locale) => {
 
         let validationResult = schema.body.validate(dataObject);
         var validation = [];
-        if (validationResult.error) {
-            validation.push(i18n.__({ phrase: validationResult.error.details[0].message, locale }))
-        }
-        if (validation.length) {
-            return { success: false, error: validation.join(), code: 400 };
-        }
+        
+        if (validationResult.error) validation.push(i18n.__({
+            phrase: validationResult.error.details[0].message, locale
+        }))
+
+        if (validation.length) return { success: false, error: validation.join(), code: 400 };
+
         return { success: true, code: 200 };
 
     } catch (err) {

@@ -7,7 +7,7 @@ const { socketValidator } = require("../helpers/socketValidation.helper")
 
 exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) => {
 
-    socket.on("joinAdminsRoom", (dataObject, sendAck) => {
+    socket.on("joinAdminsRoom", (sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
             const adminsRoomId = getSettings("adminsRoomId")
@@ -24,8 +24,8 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
         try {
             if (!sendAck) return socket.disconnect(true)
             console.log("Sending notification");
-            let validator = await socketValidator(createNotificationValidation, dataObject, language)
-            if (!validator.success) return sendAck(validator)
+            let validationResult = await socketValidator(createNotificationValidation, dataObject, language)
+            if (!validationResult.success) return sendAck(validationResult)
 
             let resultObject = await notificationRepo.create(dataObject)
             resultObject.result.receivers.forEach((receiver) => {

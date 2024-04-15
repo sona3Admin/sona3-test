@@ -35,6 +35,6 @@ function setLocalizedMessage(locale) {
         internalServerError: i18n.__({ phrase: 'internalServerError', locale }),
         roomBlocked: i18n.__({ phrase: 'roomBlocked', locale }),
         newMessage: i18n.__({ phrase: 'newMessage', locale }),
-        unauthorized:i18n.__({ phrase:"unauthorized", locale })
+        unauthorized: i18n.__({ phrase: "unauthorized", locale })
     }
 }
