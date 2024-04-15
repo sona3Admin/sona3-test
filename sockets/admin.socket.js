@@ -10,6 +10,8 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
     socket.on("joinAdminsRoom", (sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
+            if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
+                return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
             const adminsRoomId = getSettings("adminsRoomId")
             socket.join(adminsRoomId.toString())
             return sendAck({ success: true, code: 200 })
@@ -23,6 +25,8 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
     socket.on("sendNotificationToGroup", async (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
+            if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
+                return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
             console.log("Sending notification");
             let validationResult = await socketValidator(createNotificationValidation, dataObject, language)
             if (!validationResult.success) return sendAck(validationResult)
