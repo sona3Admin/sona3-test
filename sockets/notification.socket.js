@@ -105,10 +105,24 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
 
         } catch (err) {
             console.log("err.message", err.message)
-            if (!sendAck) return
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
+
+
+    socket.on('markAsSeen', async (dataObject, sendAck) => {
+        try {
+            if (!sendAck) return socket.disconnect(true)
+            let resultObject = notificationRepo.update(dataObject.notification, {
+                $addToSet: { seenBy: socket.socketTokenData._id }
+            })
+            sendAck(resultObject)
+
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    });
 
 }
 

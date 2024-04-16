@@ -16,7 +16,8 @@ const roomSchema = mongoose.Schema({
     }],
     lastMessage: { type: Object },
     lastDate: { type: Date, default: Date.now() },
-    isBlocked: { type: Boolean, default: false }
+    isBlocked: { type: Boolean, default: false },
+    unreadCount: { type: Number, default: 0, min: 0 }
 })
 
 

@@ -6,7 +6,7 @@ const s3StorageHelper = require("../../utils/s3FileStorage.util")
 exports.listRooms = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
         const operationResultObject = await roomRepo.list(filterObject, { messages: 0 }, { lastUpdate: -1 }, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 

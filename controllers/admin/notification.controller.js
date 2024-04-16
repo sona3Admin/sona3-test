@@ -25,6 +25,7 @@ exports.listNotifications = async (req, res) => {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await notificationRepo.list(filterObject, {}, { timestamp: -1 }, pageNumber, limitNumber);
+        operationResultObject.result = notificationRepo.isSeenByUser(operationResultObject.result, req.tokenData._id)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

@@ -36,7 +36,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
             let isAuthorizedResult = await isAuthorizedMessage(existingObject.result, socket, dataObject, localeMessages)
             if (!isAuthorizedResult.success) return sendAck(isAuthorizedResult)
-            
+
             if (!existingObject.success || existingObject.result.isBlocked) return sendAck({
                 code: 409,
                 success: false,
@@ -45,6 +45,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
             let resultObject = await roomRepo.updateDirectly(dataObject.roomId, {
                 $push: { messages: { $each: [dataObject.message], $position: 0 } },
+                $inc: { unreadCount: 1 },
                 lastMessage: dataObject.message,
                 lastDate: dataObject.message.timestamp
             })
@@ -61,6 +62,20 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
         }
 
     })
+
+
+    socket.on('markAsRead', async (dataObject, sendAck) => {
+        try {
+            if (!sendAck) return socket.disconnect(true)
+            let resultObject = notificationRepo.removeBy({ receivers: socket.socketTokenData._id, redirectId: dataObject.roomId })
+            roomRepo.update(dataObject.roomId, { unreadCount: 0 })
+            sendAck(resultObject)
+
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    });
 
 }
 
