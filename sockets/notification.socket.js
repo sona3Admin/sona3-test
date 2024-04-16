@@ -61,8 +61,8 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (!sendAck) return socket.disconnect(true)
             if (!socket.socketTokenData.role) return sendAck({ success: false, error: localeMessages.unauthorized, code: 403 })
             if (!dataObject.action || !actionEnumValues.includes(dataObject.action)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-            if (!dataObject.order && !dataObject.request && dataObject.action == "updateStatus") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
-            if ((dataObject.order || dataObject.request) && dataObject.action != "updateStatus") return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if (dataObject.action == "updateStatus" && !dataObject.order && !dataObject.request) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if (dataObject.action != "updateStatus" && (dataObject.order || dataObject.request)) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
             let bodyMessages = {
                 activate: { en: " is verified", ar: " تم التحقق منه", },
@@ -81,7 +81,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (sender.role == "seller") {
                 sender.name = socket.socketTokenData.userName
                 if (dataObject.order || dataObject.request) notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
-                notificationResult = await handleUpdateBySeller(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                else notificationResult = await handleUpdateBySeller(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
             }
 
             if (sender.role == "customer" && (dataObject.order || dataObject.request)) {

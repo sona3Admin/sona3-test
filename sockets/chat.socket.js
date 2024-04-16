@@ -22,7 +22,6 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
         } catch (err) {
             console.log(`err.message`, err.message);
-            if (!sendAck) return
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -31,7 +30,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
     socket.on("sendMessage", async (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
-            let validator = await socketValidator(sendMessageValidation, dataObject, language)
+            let validator = socketValidator(sendMessageValidation, dataObject, language)
             if (!validator.success) return sendAck(validator)
             const existingObject = await roomRepo.get({ _id: dataObject.roomId })
 
@@ -58,7 +57,6 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
         } catch (err) {
             console.log(`err.message`, err.message);
-            if (!sendAck) return
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
 
@@ -125,7 +123,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         receiver = receiverRole != "admin" ? receiver : adminsRoomId
         console.log("receiver", receiver._id.toString())
         io.to(receiver._id.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
-        if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
+        if (resultObject.result.deviceTokens.length > 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
 
     } catch (err) {
         console.log("err.message", err.message);

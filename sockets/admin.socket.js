@@ -17,10 +17,10 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             return sendAck({ success: true, code: 200 })
         } catch (err) {
             console.log("err.message", err.message)
-            if (!sendAck) return
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
+
 
     socket.on("sendNotificationToGroup", async (dataObject, sendAck) => {
         try {
@@ -28,7 +28,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
             console.log("Sending notification");
-            let validationResult = await socketValidator(createNotificationValidation, dataObject, language)
+            let validationResult = socketValidator(createNotificationValidation, dataObject, language)
             if (!validationResult.success) return sendAck(validationResult)
 
             let resultObject = await notificationRepo.create(dataObject)
@@ -47,7 +47,6 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             return sendAck(resultObject)
         } catch (err) {
             console.log("err.message", err.message)
-            if (!sendAck) return
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
