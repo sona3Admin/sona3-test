@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
         customerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
-        return res.status(operationResultObject.code).json(operationResultObject);
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject });
 
     } catch (err) {
         console.log(`err.message controller`, err.message);
