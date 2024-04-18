@@ -39,7 +39,7 @@ exports.get = async (filterObject, selectionObject) => {
                 path: "items",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr" }
+                    { path: "product", select: "nameEn name isFood" }
                 ]
             })
             .select(selectionObject)
@@ -78,7 +78,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
                 path: "items",
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr" }
+                    { path: "product", select: "nameEn nameAr isFood" }
                 ]
             })
             .sort(sortObject)
