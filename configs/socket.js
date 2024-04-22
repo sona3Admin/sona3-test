@@ -4,9 +4,9 @@ let { verifyTokenInSocket } = require("../helpers/jwt.helper")
 let websocketServer = (io) => {
     try {
         io.on('connection', async (socket) => {
-            const userId = socket.handshake.headers['_id']
-            const userToken = socket.handshake.headers['token']
-            const userRole = socket.handshake.headers['role']
+            const userId = socket.handshake.headers['_id'] || socket.handshake.auth['_id']
+            const userToken = socket.handshake.headers['token'] || socket.handshake.auth['token']
+            const userRole = socket.handshake.headers['role'] || socket.handshake.auth['role']
             console.log("user id: ", userId)
             console.log("user token: ", userToken)
             console.log("user role: ", userRole)
