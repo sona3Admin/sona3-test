@@ -7,6 +7,9 @@ let websocketServer = (io) => {
             const userId = socket.handshake.headers['_id']
             const userToken = socket.handshake.headers['token']
             const userRole = socket.handshake.headers['role']
+            console.log("user id: ", userId)
+            console.log("user token: ", userToken)
+            console.log("user role: ", userRole)
             let authenticationResult = await verifyTokenInSocket(userToken, userRole)
             if (!authenticationResult.success) return socket.disconnect(true);
             if (!userId || authenticationResult.result._id !== userId) return socket.disconnect(true);
