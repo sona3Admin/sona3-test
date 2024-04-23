@@ -116,7 +116,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             let resultObject = notificationRepo.update(dataObject.notification, {
                 $addToSet: { seenBy: socket.socketTokenData._id }
             })
-            sendAck(resultObject)
+            sendAck({ success: true, code: 200 })
 
         } catch (err) {
             console.log("err.message", err.message)

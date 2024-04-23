@@ -69,7 +69,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             if (!sendAck) return socket.disconnect(true)
             let resultObject = notificationRepo.removeBy({ receivers: socket.socketTokenData._id, redirectId: dataObject.roomId })
             roomRepo.update(dataObject.roomId, { unreadCount: 0 })
-            sendAck(resultObject)
+            sendAck({ success: true, code: 200 })
 
         } catch (err) {
             console.log("err.message", err.message)
@@ -111,7 +111,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
             receiverRole = roomObject?.seller ? "seller" : "admin"
         }
 
-        if(receiverRole == "admin") notificationObject.toAdmin = true 
+        if (receiverRole == "admin" || receiverRole == "superAdmin") notificationObject.toAdmin = true
 
         if (messageObject.file) textFile = { en: `${sender.name} sent a file`, ar: `أرسل ${sender.name} ملفًا` }
 
