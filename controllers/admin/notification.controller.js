@@ -24,7 +24,7 @@ exports.listNotifications = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
-        const operationResultObject = await notificationRepo.list(filterObject, {}, { timestamp: -1 }, pageNumber, limitNumber);
+        const operationResultObject = await notificationRepo.list(filterObject, { receivers: 0 }, { timestamp: -1 }, pageNumber, limitNumber);
         operationResultObject.result = notificationRepo.isSeenByUser(operationResultObject.result, req.tokenData._id)
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -42,7 +42,8 @@ exports.listNotifications = async (req, res) => {
 exports.getNotification = async (req, res) => {
     try {
         const filterObject = req.query;
-        const operationResultObject = await notificationRepo.get(filterObject, {});
+        const operationResultObject = await notificationRepo.get(filterObject, { receivers: 0 });
+        operationResultObject.result = notificationRepo.isSeenByUser([operationResultObject.result], req.tokenData._id)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -54,6 +55,7 @@ exports.getNotification = async (req, res) => {
         });
     }
 }
+
 
 
 exports.updateNotification = async (req, res) => {

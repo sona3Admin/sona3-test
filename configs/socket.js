@@ -7,15 +7,15 @@ let websocketServer = (io) => {
             const userId = socket.handshake.headers['_id'] || socket.handshake.auth['_id']
             const userToken = socket.handshake.headers['token'] || socket.handshake.auth['token']
             const userRole = socket.handshake.headers['role'] || socket.handshake.auth['role']
-            console.log("user id: ", userId)
-            console.log("user token: ", userToken)
-            console.log("user role: ", userRole)
+            // console.log("user id: ", userId)
+            // console.log("user token: ", userToken)
+            // console.log("user role: ", userRole)
             let authenticationResult = await verifyTokenInSocket(userToken, userRole)
             if (!authenticationResult.success) return socket.disconnect(true);
             if (!userId || authenticationResult.result._id !== userId) return socket.disconnect(true);
             socket.socketTokenData = authenticationResult.result
             socket.join(userId)
-            console.log("socketId", socket.id)
+            // console.log("socketId", socket.id)
             serverSocketHandler(socket, io)
         })
 
