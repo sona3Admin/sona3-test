@@ -124,6 +124,52 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
         }
     });
 
+
+    socket.on("sendServicePriceUpdate", async (dataObject, sendAck) => {
+        try {
+            console.log("Sending notification");
+
+            let notificationResult;
+
+            if (!sendAck) return socket.disconnect(true)
+            if (!dataObject.request) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+
+            let serviceRequest = await requestRepo.get({ _id: dataObject.request })
+            if (!serviceRequest.success) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if (serviceRequest.result.seller._id.toString() != socket.socketTokenData._id) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+
+            let receiver = serviceRequest.result.customer._id.toString()
+            let sender = { _id: socket.socketTokenData._id, role: socket.socketTokenData.role }
+
+            let notificationObject = {
+                seller: socket.socketTokenData._id,
+                titleEn: "Update on your service request",
+                titleAr: "هناك تحديث لسعر طلب الخدمة",
+                bodyEn: `${serviceRequest.result.shop.nameEn} has updated the price for your request on service ${serviceRequest.result.service.nameEn}`,
+                bodyAr: `قام ${serviceRequest.result.shop.nameAr} بتحديث سعر طلبك للخدمة ${serviceRequest.result.service.nameAr}`,
+                redirectId: dataObject.request,
+                redirectType: "serviceRequest",
+                type: "servicePriceUpdate",
+                receivers: [receiver],
+                deviceTokens: [serviceRequest.result.customer.fcmToken]
+            }
+
+            let resultObject = await notificationRepo.create(notificationObject)
+
+            let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
+            let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
+
+            io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
+
+            if (serviceRequest.result.customer.fcmToken) notificationHelper.sendPushNotification(title, body, serviceRequest.result.customer.fcmToken)
+            return sendAck(resultObject)
+
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    })
+
 }
 
 
