@@ -129,8 +129,6 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
         try {
             console.log("Sending notification");
 
-            let notificationResult;
-
             if (!sendAck) return socket.disconnect(true)
             if (!dataObject.request) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
