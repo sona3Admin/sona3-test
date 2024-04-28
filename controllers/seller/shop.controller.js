@@ -103,7 +103,7 @@ exports.uploadImage = async (req, res) => {
             code: 500,
             error: i18n.__("internalServerError")
         });
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { image: operationResultArray.result[0] });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { image: operationResultArray.result[0], isVerified: false });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -159,7 +159,7 @@ exports.uploadCovers = async (req, res) => {
         coversArray.map((cover) => {
             operationResultArray.result.push(cover)
         });
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { covers: operationResultArray.result });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { covers: operationResultArray.result, isVerified: false });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -220,7 +220,7 @@ exports.uploadBanners = async (req, res) => {
         bannersArray.map((banner) => {
             operationResultArray.result.push(banner)
         });
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { banners: operationResultArray.result });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { banners: operationResultArray.result, isVerified: false });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -286,7 +286,7 @@ exports.uploadShopLicense = async (req, res) => {
         images.map((image) => {
             operationResultArray.result.push(image)
         });
-        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { shopLicense: operationResultArray.result });
+        let operationResultObject = await shopRepo.updateDirectly(req.query._id, { shopLicense: operationResultArray.result, isVerified: false });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

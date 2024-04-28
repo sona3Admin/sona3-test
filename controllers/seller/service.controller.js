@@ -112,7 +112,7 @@ exports.uploadImages = async (req, res) => {
         imagesArray.map((cover) => {
             operationResultArray.result.push(cover)
         });
-        let operationResultObject = await serviceRepo.updateDirectly(req.query._id, { images: operationResultArray.result });
+        let operationResultObject = await serviceRepo.updateDirectly(req.query._id, { images: operationResultArray.result, isVerified: false });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
