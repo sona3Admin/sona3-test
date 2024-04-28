@@ -12,7 +12,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
     socket.on("joinRoom", async (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
-            let isAuthorizedResult = await isAuthorizedRoom(socket, dataObject, localeMessages)
+            let isAuthorizedResult = await isAuthorized(socket, dataObject, localeMessages)
             if (!isAuthorizedResult.success) return sendAck(isAuthorizedResult)
             let roomObject = await roomRepo.find(dataObject)
 
@@ -37,7 +37,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             if (!validator.success) return sendAck(validator)
             const existingObject = await roomRepo.get({ _id: dataObject.roomId })
 
-            let isAuthorizedResult = await isAuthorizedMessage(existingObject.result, socket, dataObject, localeMessages)
+            let isAuthorizedResult = await isAuthorizedToSendMessage(existingObject.result, socket, dataObject, localeMessages)
             if (!isAuthorizedResult.success) return sendAck(isAuthorizedResult)
 
             if (!existingObject.success || existingObject.result.isBlocked) return sendAck({
@@ -152,7 +152,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
 }
 
 
-async function isAuthorizedRoom(socket, dataObject, localeMessages) {
+async function isAuthorized(socket, dataObject, localeMessages) {
     try {
         if (socket.socketTokenData.role == "admin" || socket.socketTokenData.role == "superAdmin") return { success: true, code: 200 }
         if (socket.socketTokenData.role == "seller") {
@@ -170,7 +170,7 @@ async function isAuthorizedRoom(socket, dataObject, localeMessages) {
 }
 
 
-async function isAuthorizedMessage(roomObject, socket, dataObject, localeMessages) {
+async function isAuthorizedToSendMessage(roomObject, socket, dataObject, localeMessages) {
     try {
 
         if (socket.socketTokenData.role == "admin" || socket.socketTokenData.role == "superAdmin") {
