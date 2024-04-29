@@ -16,8 +16,8 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             if (!isAuthorizedResult.success) return sendAck(isAuthorizedResult)
             let roomObject = await roomRepo.find(dataObject)
 
-            if(dataObject.customer) dataObject.withCustomer = true
-            if(dataObject.seller) dataObject.withSeller = true
+            if (dataObject.customer) dataObject.withCustomer = true
+            if (dataObject.seller) dataObject.withSeller = true
             if (!roomObject.success) roomObject = await roomRepo.create({ ...dataObject, lastMessage: {} })
             socket.join(roomObject.result._id.toString());
             console.log(socketId, " joined room: ", roomObject.result._id.toString());
@@ -54,7 +54,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             })
             socket.join(dataObject.roomId);
             console.log(socketId, " joined room: ", dataObject.roomId);
-            io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message })
+            io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message, roomId: dataObject.roomId })
             sendMessageNotification(io, existingObject.result, dataObject.message)
 
             return sendAck(resultObject)
