@@ -114,8 +114,11 @@ async function sendMessageNotification(io, roomObject, messageObject) {
             receiverRole = roomObject?.seller ? "seller" : "admin"
         }
 
-        if (receiverRole == "admin" || receiverRole == "superAdmin") notificationObject.toAdmin = true
-
+        if (receiverRole == "admin" || receiverRole == "superAdmin") {
+            const adminsRoomId = getSettings("adminsRoomId")
+            notificationObject.toAdmin = true
+            receiver["_id"] = adminsRoomId
+        }
         if (messageObject.file) textFile = { en: `${sender.name} sent a file`, ar: `أرسل ${sender.name} ملفًا` }
 
         notificationObject = {
