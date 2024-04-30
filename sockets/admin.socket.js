@@ -7,7 +7,7 @@ const { socketValidator } = require("../helpers/socketValidation.helper")
 
 exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) => {
 
-    socket.on("joinAdminsRoom", (sendAck) => {
+    socket.on("joinAdminsRoom", (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
             if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
