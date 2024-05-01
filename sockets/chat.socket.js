@@ -93,22 +93,23 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         if (messageObject.admin) {
             sender["name"] = "Sona3"
             sender["_id"] = getSettings("adminsRoomId")
-            console.log();
+
             notificationObject.admin = messageObject.admin
             receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer
             receiverRole = roomObject?.seller ? "seller" : "customer"
         }
 
         if (messageObject.seller) {
-            sender = messageObject.seller
-            sender.name = roomObject.seller.userName
+            sender["_id"] = messageObject.seller
+            sender["name"] = roomObject.seller.userName
+
             notificationObject.seller = messageObject.seller
             receiver = roomObject?.customer ? roomObject.customer : []
             receiverRole = roomObject?.customer ? "customer" : "admin"
         }
 
         if (messageObject.customer) {
-            sender = roomObject.customer
+            sender["_id"] = roomObject.customer
             notificationObject.customer = messageObject.customer
             receiver = roomObject?.seller ? roomObject.seller : []
             receiverRole = roomObject?.seller ? "seller" : "admin"
