@@ -115,7 +115,6 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         }
 
         if (receiverRole == "admin" || receiverRole == "superAdmin") {
-            const adminsRoomId = getSettings("adminsRoomId")
             notificationObject.toAdmin = true
             receiver["_id"] = adminsRoomId
         }
