@@ -84,6 +84,11 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         const { fcmToken } = req.body;
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
+        
+        if (operationResultObject.success &&
+            (!operationResultObject.result.isVerified || !operationResultObject.result.isActive)
+        ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
+        
         if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create(sellerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
