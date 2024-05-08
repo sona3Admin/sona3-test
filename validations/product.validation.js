@@ -91,6 +91,11 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+            preparationTime: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
@@ -206,6 +211,11 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+            preparationTime: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
@@ -217,7 +227,7 @@ module.exports = {
             lastUpdateDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
-            
+
             discountValue: joi.number().optional().messages({
                 "number.base": "validDiscountValue"
             }),

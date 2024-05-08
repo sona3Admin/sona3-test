@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const productRepo = require("../../modules/Product/product.repo");
+const exportExcelHelper = require("../../helpers/exportFile.helper")
 
 
 exports.createProduct = async (req, res) => {
@@ -74,6 +75,25 @@ exports.removeProduct = async (req, res) => {
     try {
         const operationResultObject = await productRepo.remove(req.query._id);
         return res.status(operationResultObject.code).json(operationResultObject);
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.exportListOfProducts = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        let operationResultObject = await productRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        operationResultObject = await exportExcelHelper.exportExcelSheetWithProducts(operationResultObject.result) 
+        return res.status(operationResultObject.code).json(operationResultObject);
+
     } catch (err) {
         console.log(`err.message`, err.message);
         return res.status(500).json({

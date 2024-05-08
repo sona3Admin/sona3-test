@@ -57,7 +57,7 @@ let formEndPoints = [
 
 let productEndPoints = [
     "/admin/products/create", "/admin/products/update", "/admin/products/remove",
-    "/admin/products/list", "/admin/products/get"
+    "/admin/products/list", "/admin/products/get", "/admin/products/export"
 ]
 
 

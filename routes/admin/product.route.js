@@ -9,6 +9,8 @@ app.delete("/remove", productController.removeProduct);
 
 app.get("/list", productController.listProducts);
 app.get("/get", productController.getProduct);
+app.get("/export", productController.exportListOfProducts);
+
 
 
 module.exports = app

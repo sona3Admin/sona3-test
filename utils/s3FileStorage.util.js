@@ -109,15 +109,14 @@ exports.uploadPDFtoS3 = async (fileContent) => {
 }
 
 
-exports.uploadExceltoS3 = async (fileContent) => {
+exports.uploadExceltoS3 = async (fileContent, fileName) => {
   try {
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
-      Key: `public/barcodes/${uuid()}-barcodes.xlsx`,
+      Key: `public/sheets/${fileName}.xlsx`,
       Body: fileContent,
       ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     };
-
 
     return new Promise((resolve, reject) => {
       s3.upload(params, function (err, data) {
@@ -125,13 +124,15 @@ exports.uploadExceltoS3 = async (fileContent) => {
           console.log('Error uploading file:', err);
           reject({
             success: false,
-            error: err.message
+            error: err.message,
+            code: 500
           });
         } else {
           console.log('File uploaded successfully. URL:', data.Location);
           resolve({
             success: true,
-            record: data
+            result: data,
+            code: 201
           });
         }
       });

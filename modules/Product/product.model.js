@@ -20,6 +20,7 @@ const productSchema = mongoose.Schema({
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
     isFood: { type: Boolean, default: false },
+    preparationTime: { type: Number },
     creationDate: { type: Date },
     verifyDate: { type: Date },
     lastUpdateDate: { type: Date },
