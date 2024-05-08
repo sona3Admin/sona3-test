@@ -24,7 +24,7 @@ exports.listNotifications = async (req, res) => {
     try {
         let filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
-        if (filterObject.seenBy == false) filterObject.seenBy = { $nin: [req.tokenData._id] }
+        if (filterObject.seenBy == "false") filterObject.seenBy = { $nin: [req.tokenData._id] }
         
         const operationResultObject = await notificationRepo.list(filterObject, { receivers: 0 }, { timestamp: -1 }, pageNumber, limitNumber);
         operationResultObject.result = notificationRepo.isSeenByUser(operationResultObject.result, req.tokenData._id)

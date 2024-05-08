@@ -68,6 +68,8 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+
+        console.log("filter object", filterObject)
         const resultArray = await notificationModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "seller", select: "userName image" })
