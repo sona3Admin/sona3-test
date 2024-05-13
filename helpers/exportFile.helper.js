@@ -1,6 +1,8 @@
 const i18n = require('i18n');
 const excel = require('exceljs');
 const s3StorageHelper = require("../utils/s3FileStorage.util")
+const batchRepo = require("../modules/Batch/batch.repo");
+
 
 exports.exportExcelSheetWithProducts = async (arrayOfProducts) => {
     return new Promise(async (resolve, reject) => {
@@ -44,11 +46,12 @@ exports.exportExcelSheetWithProducts = async (arrayOfProducts) => {
             const fileContent = await workbook.xlsx.writeBuffer();
             console.log('Excel file generated successfully.');
             let file = await s3StorageHelper.uploadExceltoS3(fileContent, `${shopObject.nameEn}-products-${Date.now()}`);
-
+            batchRepo.create({ filesToDelete: [file.result.key] })
+        
             resolve({
                 success: true,
                 code: 201,
-                result: file
+                result: file.result
             });
 
         } catch (err) {

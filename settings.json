@@ -2,5 +2,7 @@
     "vatRate": 10,
     "cashbackPercentage": 1,
     "cashbackThreshold": 1000,
-    "adminsRoomId": "Sona3AdminsRoom"
+    "adminsRoomId": "Sona3AdminsRoom",
+    "customersRoomId": "Sona3CustomersRoom",
+    "sellersRoomId": "Sona3SellersRoom"
 }

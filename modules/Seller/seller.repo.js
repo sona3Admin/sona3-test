@@ -319,7 +319,7 @@ exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
         $or: [
             { email: formObject.email },
-            // { userName: formObject.userName }
+            { userName: formObject.userName }
         ]
     })
 
@@ -331,11 +331,11 @@ exports.isObjectUninque = async (formObject) => {
             error: i18n.__("emailUsed")
         }
 
-        // if (duplicateObject.result.userName == formObject.userName) return {
-        //     success: false,
-        //     code: 409,
-        //     error: i18n.__("nameUsed")
-        // }
+        if (duplicateObject.result.userName == formObject.userName) return {
+            success: false,
+            code: 409,
+            error: i18n.__("nameUsed")
+        }
     }
 
     return {

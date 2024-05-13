@@ -51,4 +51,43 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
         }
     })
 
+
+    socket.on("sendNotificationToAll", async (dataObject, sendAck) => {
+        try {
+            if (!sendAck) return socket.disconnect(true)
+            if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
+                return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
+            console.log("Sending notification");
+            let validationResult = socketValidator(createNotificationValidation, dataObject, language)
+            if (!validationResult.success) return sendAck(validationResult)
+
+            let resultObject = await notificationRepo.create(dataObject)
+
+            if (dataObject.toAll) io.emit("newNotification", { success: true, code: 201, result: resultObject.result })
+
+            if (dataObject.toAllCustomers) {
+                const customersRoomId = getSettings("customersRoomId")
+                io.to(customersRoomId.toString()).emit("newNotification", {
+                    success: true,
+                    code: 201,
+                    result: resultObject.result
+                })
+            }
+
+            if (dataObject.toAllSellers) {
+                const sellersRoomId = getSettings("sellersRoomId")
+                io.to(sellersRoomId.toString()).emit("newNotification", {
+                    success: true,
+                    code: 201,
+                    result: resultObject.result
+                })
+            }
+
+            return sendAck(resultObject)
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    })
+
 }

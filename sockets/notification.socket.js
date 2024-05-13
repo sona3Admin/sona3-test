@@ -11,6 +11,36 @@ const { getSettings } = require("../helpers/settings.helper")
 
 exports.notificationSocketHandler = (socket, io, socketId, localeMessages, language) => {
 
+    socket.on("joinCustomersRoom", (dataObject, sendAck) => {
+        try {
+            if (!sendAck) return socket.disconnect(true)
+            if (socket.socketTokenData.role != "customer")
+                return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
+            const customersRoomId = getSettings("customersRoomId")
+            socket.join(customersRoomId.toString())
+            return sendAck({ success: true, code: 200 })
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    })
+
+
+    socket.on("joinSellersRoom", (dataObject, sendAck) => {
+        try {
+            if (!sendAck) return socket.disconnect(true)
+            if (socket.socketTokenData.role != "seller")
+                return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
+            const sellersRoomId = getSettings("sellersRoomId")
+            socket.join(sellersRoomId.toString())
+            return sendAck({ success: true, code: 200 })
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    })
+
+    
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");

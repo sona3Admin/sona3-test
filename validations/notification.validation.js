@@ -16,6 +16,18 @@ module.exports = {
                 "boolean.base": "validToAdmin",
             }),
 
+            toAll: joi.boolean().optional().messages({
+                "boolean.base": "validToAdmin",
+            }),
+
+            toAllCustomers: joi.boolean().optional().messages({
+                "boolean.base": "validToAdmin",
+            }),
+
+            toAllSellers: joi.boolean().optional().messages({
+                "boolean.base": "validToAdmin",
+            }),
+
             seller: joi.string().optional().messages({
                 "string.base": "validSeller",
             }),
