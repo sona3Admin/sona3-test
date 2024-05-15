@@ -156,6 +156,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         return {
             success: true,
             result: updatedCartResult.result,
+            newStock: updatedStock,
             code: 201
         };
 
