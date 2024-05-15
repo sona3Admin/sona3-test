@@ -4,6 +4,7 @@ const requestRepo = require("../modules/Request/request.repo")
 const orderRepo = require("../modules/Order/order.repo")
 const serviceRepo = require("../modules/Service/service.repo")
 const productRepo = require("../modules/Product/product.repo")
+const variationRepo = require("../modules/Variation/variation.repo")
 const shopRepo = require("../modules/Shop/shop.repo")
 const sellerRepo = require("../modules/Seller/seller.repo")
 const { getSettings } = require("../helpers/settings.helper")
@@ -180,6 +181,48 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
                 type: "servicePriceUpdate",
                 receivers: [receiver],
                 deviceTokens: [serviceRequest.result.customer.fcmToken]
+            }
+
+            let resultObject = await notificationRepo.create(notificationObject)
+
+            let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
+            let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
+
+            io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
+
+            if (serviceRequest.result.customer.fcmToken) notificationHelper.sendPushNotification(title, body, serviceRequest.result.customer.fcmToken)
+            return sendAck(resultObject)
+
+        } catch (err) {
+            console.log("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    })
+
+
+    socket.on("sendOutOfStockAlert", async (dataObject, sendAck) => {
+        try {
+            console.log("Sending notification");
+
+            if (!sendAck) return socket.disconnect(true)
+            if (!dataObject.variation) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+
+            let variationObject = await variationRepo.get({ _id: dataObject.variation })
+            if (!variationObject.success) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+
+            let receiver = variationObject.result.seller._id.toString()
+
+            let notificationObject = {
+                seller: receiver,
+                titleEn: "A product is running out of stock",
+                titleAr: "لديك منتج ينفد من المخزون",
+                bodyEn: `${variationObject.result.descriptionEn} from the product  ${variationObject.result.product.nameEn} is running out of stock`,
+                bodyAr: `التشكيلة ${variationObject.result.descriptionAr} من المنتج ${variationObject.result.product.nameAr} على وشك النفاذ من المخزن`,
+                redirectId: dataObject.variation,
+                redirectType: "variation",
+                type: "admin",
+                receivers: [receiver],
+                deviceTokens: [variationObject.result.seller.fcmToken]
             }
 
             let resultObject = await notificationRepo.create(notificationObject)

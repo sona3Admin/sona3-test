@@ -37,7 +37,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await variationModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "userName image" })
+            .populate({ path: "seller", select: "userName image fcmToken" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "product", select: "-variations -defaultVariation -shop" })
             .select(selectionObject)

@@ -18,7 +18,7 @@ const notificationSchema = new mongoose.Schema({
     image: { type: Object },
     link: { type: String },
     redirectId: { type: mongoose.Schema.Types.ObjectId },
-    redirectType: { type: String, enum: ["room", "order", "serviceRequest", "shop", "product", "seller", "service"] },
+    redirectType: { type: String, enum: ["room", "order", "serviceRequest", "shop", "product", "variation", "seller", "service"] },
     timestamp: { type: Date, default: Date.now() },
     startDate: { type: Date },
     endDate: { type: Date },
