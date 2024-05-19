@@ -72,6 +72,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await requestModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
+	    .populate({ path: "seller", select: "userName image fcmToken" })
             .populate({ path: "service", select: "-fields -tags -categories" })
             .sort(sortObject)
             .select(selectionObject)
