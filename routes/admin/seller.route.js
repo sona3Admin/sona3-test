@@ -17,5 +17,7 @@ app.get("/list", sellerController.listSellers);
 app.post("/image", uploadedFiles.array('image', 1), sellerController.uploadImage)
 app.delete("/image", sellerController.deleteImage)
 
+app.post("/identity", uploadedFiles.array('image', 2), sellerController.uploadIdentityImages)
+app.delete("/identity", sellerController.deleteIdentityImages)
 
 module.exports = app
