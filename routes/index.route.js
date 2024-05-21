@@ -2,6 +2,7 @@ let app = require("express").Router();
 let adminRoutes = require("./admin/index.route")
 let customerRoutes = require("./customer/index.route")
 let sellerRoutes = require("./seller/index.route")
+let mockRoutes = require("./mock/index.route")
 const i18n = require('i18n');
 
 
@@ -13,6 +14,7 @@ app.get("/api", (req, res) => {
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/seller", sellerRoutes);
+app.use("/api/v1/mock", mockRoutes);
 
 
 app.all("*", (req, res) => {
