@@ -102,6 +102,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         if (messageObject.seller) {
             sender["_id"] = messageObject.seller
             sender["name"] = roomObject.seller.userName
+            sender["image"] = roomObject.seller.image
 
             notificationObject.seller = messageObject.seller
             receiver = roomObject?.customer ? roomObject.customer : []
@@ -110,6 +111,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
 
         if (messageObject.customer) {
             sender["_id"] = roomObject.customer
+            sender["image"] = roomObject.customer.image
             notificationObject.customer = messageObject.customer
             receiver = roomObject?.seller ? roomObject.seller : []
             receiverRole = roomObject?.seller ? "seller" : "admin"
@@ -145,6 +147,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         }
         receiver = receiverRole != "admin" ? receiver : adminsRoomId
         console.log("receiver", receiver._id.toString())
+        resultObject.result["sender"] = sender
         io.to(receiver._id.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
         if (resultObject.result.deviceTokens.length > 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
 
