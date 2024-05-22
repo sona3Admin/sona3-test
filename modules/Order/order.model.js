@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
+    // phone: { type: String },
     sellers: [{ type: mongoose.Types.ObjectId, ref: "sellers" }],
     shops: [{ type: mongoose.Types.ObjectId, ref: "shops" }],
     products: [{ type: mongoose.Types.ObjectId, ref: "products" }],
@@ -17,11 +18,11 @@ const orderSchema = mongoose.Schema({
             itemTotal: { type: Number, min: 0 }
         }],
         coupon: { type: Object },
-        shopTotal: { type: Number, min: 0 },
-        shopOriginalTotal: { type: Number, min: 0 },
-        shopTaxes: { type: Number, min: 0 },
-        shopShippingFees: { type: Number, min: 0 },
-        subOrderTotal: { type: Number, min: 0 },
+        shopTotal: { type: Number, min: 0, default: 0 },
+        shopOriginalTotal: { type: Number, min: 0, default: 0 },
+        shopTaxes: { type: Number, min: 0, default: 0 },
+        shopShippingFees: { type: Number, min: 0, default: 0 },
+        subOrderTotal: { type: Number, min: 0, default: 0 },
         subOrderDeliveryDate: { type: Date },
         subOrderStatus: {
             type: String,
@@ -44,12 +45,12 @@ const orderSchema = mongoose.Schema({
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
     coupon: { type: Object },
     usedCashback: { type: Number, default: 0, min: 0 },
-    cartTotal: { type: Number, min: 0 },
+    cartTotal: { type: Number, min: 0, default: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
-    shippingFeesTotal: { type: Number, min: 0 },
-    taxesTotal: { type: Number, min: 0 },
-    taxesRate: { type: Number, min: 0 },
-    orderTotal: { type: Number, min: 0 },
+    shippingFeesTotal: { type: Number, min: 0 , default: 0},
+    taxesTotal: { type: Number, min: 0, default: 0 },
+    taxesRate: { type: Number, min: 0, default: 0 },
+    orderTotal: { type: Number, min: 0, default: 0 },
     issueDate: { type: Date },
 
 })

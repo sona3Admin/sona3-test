@@ -82,6 +82,17 @@ exports.addOrderTaxes = (shopObject, customerOrderObject) => {
     shopObject.subOrderTotal = parseFloat(shopObject.shopTaxes) + parseFloat(shopObject.shopTotal)
     customerOrderObject.taxesTotal += parseFloat(shopObject.shopTaxes)
     customerOrderObject.orderTotal += parseFloat(customerOrderObject.taxesTotal)
+
+    this.addOrderShippingFees(shopObject, customerOrderObject)
+}
+
+
+exports.addOrderShippingFees = (shopObject, customerOrderObject) => {
+    const ifastShippingCost = 15
+    shopObject.shopShippingFees = ifastShippingCost
+    shopObject.subOrderTotal = parseFloat(shopObject.shopShippingFees) + parseFloat(shopObject.shopTotal)
+    customerOrderObject.shippingFeesTotal += parseFloat(shopObject.shopShippingFees)
+    customerOrderObject.orderTotal += parseFloat(customerOrderObject.shippingFeesTotal)
 }
 
 
@@ -101,9 +112,13 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
         customerOrderObject.usedCashback = parseInt(customerCartObject?.usedCashback) || 0
         customerOrderObject.taxesRate = parseFloat(getSettings("vatRate"))
         customerOrderObject.taxesTotal = 0
+        customerOrderObject.shippingFeesTotal = 0
+        customerOrderObject.name = customerCartObject.customer.name
+        customerOrderObject.phone = customerCartObject.customer.phone
 
         let subOrders = customerOrderObject.subOrders
         subOrders.forEach((shopObject) => this.addOrderTaxes(shopObject, customerOrderObject))
+        // subOrders.forEach((shopObject) => this.addOrderShippingFees(shopObject, customerOrderObject))
 
         this.calculateCashback(customerCartObject);
         return customerOrderObject

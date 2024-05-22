@@ -36,7 +36,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await basketModel.findOne(filterObject).lean()
-            .populate({ path: "customer", select: "name image loyaltyPoints cashback hasPurchased birthDate" })
+            .populate({ path: "customer", select: "name phone image loyaltyPoints cashback hasPurchased birthDate" })
             .populate({ path: "coupon", select: "nameEn nameAr code discountType value percentage shop" })
             .populate({
                 path: "subCarts",

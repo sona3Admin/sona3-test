@@ -21,7 +21,7 @@ exports.getIfastToken = async (req, res) => {
 
 exports.createNewBulkOrder = async (req, res) => {
     try {
-        const operationResultObject = await ifastHelper.createNewBulkOrder();
+        const operationResultObject = await ifastHelper.createNewBulkOrder(req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
