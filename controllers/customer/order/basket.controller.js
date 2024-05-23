@@ -12,7 +12,8 @@ exports.createOrder = async (req, res) => {
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
         customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject)
         const operationResultObject = await orderRepo.create(customerOrderObject);
-        ifastShipperHelper.createNewBulkOrder(customerOrderObject)
+        let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject)
+        operationResultObject["orderData"] = shippingData.orderData
         // basketRepo.flush({ customer: req.body.customer })
         return res.status(operationResultObject.code).json(operationResultObject);
 

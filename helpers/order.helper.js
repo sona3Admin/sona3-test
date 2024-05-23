@@ -44,6 +44,10 @@ exports.setSubOrders = (subCartsArray) => {
             shopsArray.push(shopId);
             subOrdersArray.push({
                 seller: shopData.seller.toString(),
+                name: shopData.nameEn || shopData.nameAr,
+                phone: shopData.phone,
+                address: shopData.address,
+                location: shopData.location,
                 shop: shopId,
                 items: shopsItem.items,
                 shopTotal: subCartsArray[shopCartIndex].shopTotal,

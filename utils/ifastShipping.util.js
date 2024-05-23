@@ -118,24 +118,23 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
 
 exports.createNewBulkOrder = async (orderDetailsObject) => {
     try {
-        // console.log("customerOrderObject", orderDetailsObject);
-        // let orderData = this.handleOrderData(orderDetailsObject)
-        // const { token } = await this.getAuthToken();
-        // console.log('Creating New Order...');
+        let orderData = this.handleOrderData(orderDetailsObject)
+        const { token } = await this.getAuthToken();
+        console.log('Creating New Order...');
 
-        // const response = await axios.post(`${ifastBaseUrl}/api/order/placeorderbulkwithpickup`, orderData, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': `Bearer ${token}`
-        //     }
-        // });
+        const response = await axios.post(`${ifastBaseUrl}/api/order/placeorderbulkwithpickup`, orderData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-        // console.log('Order created successfully:', response.data);
+        console.log('Order created successfully:', response.data);
         return {
             success: true,
             code: 201,
-            // result: response.data
-            result: orderDetailsObject
+            result: response.data,
+            orderData
         };
 
     } catch (err) {
@@ -155,44 +154,39 @@ exports.handleOrderData = (orderDetailsObject) => {
         let orderData = {
             list: []
         };
-
-
-        const totalCOG = orderDetailsObject.subOrders.reduce((total, subOrder) => total + subOrder.subOrderTotal, 0).toFixed(2);
-        const numberOfPieces = orderDetailsObject.subOrders.reduce((total, subOrder) => total + subOrder.items.reduce((subTotal, item) => subTotal + item.quantity, 0), 0);
-        
-        const pickupName = "test"; // Assuming static value for pickup name
-        const pickupMobileNumber = "563798893"; // Assuming static value for pickup mobile number
-        const pickupAddress = "test123"; // Assuming static value for pickup address
-        const pickupLatitude = 25.165919; // Assuming static value for pickup latitude
-        const pickupLongitude = 55.241885; // Assuming static value for pickup longitude
-
-        // Constructing the order object
-        const order = {
+        const customerData = {
             RecipientName: orderDetailsObject.name,
-            TotalCOG: totalCOG, /////////////////
             MobileNumber: orderDetailsObject.phone,
             AddressCountry: orderDetailsObject.shippingAddress.address.country,
             City: orderDetailsObject.shippingAddress.address.city,
             Street: orderDetailsObject.shippingAddress.address.street,
             MobileNumber2: orderDetailsObject.phone,
             Remarks: orderDetailsObject.shippingAddress.address.remarks,
-            NumberOfPieces: numberOfPieces.toString(),
             latitude: orderDetailsObject.shippingAddress.location.coordinates[0],
             longitude: orderDetailsObject.shippingAddress.location.coordinates[1],
-            pickup: {
-                name: pickupName,
-                mobileNumber: pickupMobileNumber,
-                address: pickupAddress,
-                latitude: pickupLatitude,
-                longitude: pickupLongitude,
-                date: new Date().toISOString()
-            }
         };
 
-        // Adding the constructed order to the list
-        orderData.list.push(order);
+        orderDetailsObject.subOrders.forEach(subOrder => {
+            let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
+                return accumulator + currentItem.quantity;
+            }, 0)
 
-        // Return the formatted order data
+            let subOrderData = {
+                ...customerData,
+                NumberOfPieces: numberOfPieces,
+                TotalCOG: subOrder.subOrderTotal,
+                pickup: {
+                    name: subOrder.name,
+                    mobileNumber: subOrder.phone,
+                    address: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
+                    latitude: subOrder.location.coordinates[0],
+                    longitude: subOrder.location.coordinates[1],
+                    date: new Date().toISOString()
+                }
+            }
+            orderData.list.push(subOrderData);
+        });
+
         return orderData;
 
     } catch (err) {

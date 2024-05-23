@@ -41,7 +41,7 @@ exports.get = async (filterObject, selectionObject) => {
             .populate({
                 path: "subCarts",
                 populate: [
-                    { path: "shop", select: "nameEn nameAr image seller" },
+                    { path: "shop", select: "nameEn nameAr phone image seller location address" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
                     { path: "items.product", select: "nameEn nameAr categories" },
                     { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
