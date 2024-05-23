@@ -14,7 +14,7 @@ exports.createOrder = async (req, res) => {
         const operationResultObject = await orderRepo.create(customerOrderObject);
         let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject)
         operationResultObject["orderData"] = shippingData.orderData
-        // basketRepo.flush({ customer: req.body.customer })
+        basketRepo.flush({ customer: req.body.customer })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
