@@ -385,7 +385,7 @@ exports.flush = async (filterObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        let formObject = { subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1 } }
+        let formObject = { variations: [], subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1 } }
         resultObject = await basketModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
 
         return {

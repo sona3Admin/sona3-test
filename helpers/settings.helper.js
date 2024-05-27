@@ -25,11 +25,19 @@ exports.setSettings = (newSettings) => {
         }
 
         fs.writeFileSync(settingsFile, JSON.stringify(settings));
-        return settings;
+        return {
+            code: 200,
+            result: settings,
+            success: true
+        };
 
-    } catch (error) {
-        console.error('Error updating settings file:', error);
-        return null;
+    } catch (err) {
+        console.log('Error setting settings file:', err);
+        return {
+            code: 500,
+            error: err.message,
+            success: false
+        };
     }
 }
 
@@ -38,11 +46,19 @@ exports.listSettings = async () => {
     try {
         const data = fs.readFileSync(settingsFile);
         const settings = JSON.parse(data);
-        return settings;
-        
-    } catch (error) {
-        console.error('Error reading settings file:', error);
-        return null;
+        return {
+            code: 200,
+            result: settings,
+            success: true
+        };
+
+    } catch (err) {
+        console.log('Error reading settings file:', err);
+        return {
+            code: 500,
+            error: err.message,
+            success: false
+        };
     }
 }
 

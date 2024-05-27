@@ -173,6 +173,7 @@ exports.handleOrderData = (orderDetailsObject) => {
 
             let subOrderData = {
                 ...customerData,
+                ShipperRef: subOrder._id.toString(),
                 NumberOfPieces: numberOfPieces,
                 TotalCOG: subOrder.subOrderTotal,
                 pickup: {

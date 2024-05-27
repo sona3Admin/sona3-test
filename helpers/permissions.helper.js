@@ -130,6 +130,12 @@ let notificationEndPoints = [
 ]
 
 
+let settingEndPoints = [
+    "/admin/settings/update",
+    "/admin/settings/list",
+]
+
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -153,6 +159,7 @@ reviewEndPoints = new Set(reviewEndPoints);
 couponEndPoints = new Set(couponEndPoints);
 roomEndPoints = new Set(roomEndPoints);
 notificationEndPoints = new Set(notificationEndPoints);
+settingEndPoints = new Set(settingEndPoints);
 
 
 let permissions = new Map();
@@ -180,6 +187,7 @@ permissions.set("reviews", reviewEndPoints)
 permissions.set("coupons", couponEndPoints)
 permissions.set("rooms", roomEndPoints)
 permissions.set("notifications", notificationEndPoints)
+permissions.set("settings", settingEndPoints)
 
 
 module.exports = { permissions }
