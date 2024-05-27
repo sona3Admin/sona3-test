@@ -43,6 +43,7 @@ exports.setSubOrders = (subCartsArray) => {
             if (!sellersArray.includes(shopData.seller.toString())) sellersArray.push(shopData.seller.toString())
             shopsArray.push(shopId);
             subOrdersArray.push({
+                _id: subCartsArray[shopCartIndex]._id,
                 seller: shopData.seller.toString(),
                 name: shopData.nameEn || shopData.nameAr,
                 phone: shopData.phone,

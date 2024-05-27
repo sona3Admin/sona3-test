@@ -16,7 +16,7 @@ const productSchema = mongoose.Schema({
     reviewCount: { type: Number, min: 0, default: 0 },
     isTopDeal: { type: Boolean, default: false },
     isInStock: { type: Boolean, default: true },
-    isTrending: { type: Boolean, default: false },
+    isSustainable: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
     isFood: { type: Boolean, default: false },

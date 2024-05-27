@@ -4,7 +4,7 @@ const cartSchema = mongoose.Schema({
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
     subCarts: [{
-        _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+        _id: { type: String },
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{
             product: { type: mongoose.Types.ObjectId, ref: "products" },

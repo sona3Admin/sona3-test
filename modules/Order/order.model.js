@@ -8,7 +8,7 @@ const orderSchema = mongoose.Schema({
     variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     subOrders: [{
-        _id: { type: mongoose.Schema.Types.ObjectId },
+        _id: { type: String },
         seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{

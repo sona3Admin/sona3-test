@@ -74,7 +74,7 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
-            isTrending: joi.boolean().optional().messages({
+            isSustainable: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
 
@@ -194,7 +194,7 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
-            isTrending: joi.boolean().optional().messages({
+            isSustainable: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
 

@@ -69,7 +69,7 @@ module.exports = {
                 "object.base": "validSession",
             }),
 
-            bankAccountData: joi.object().optional().messages({
+            bankAccountNumber: joi.string().optional().messages({
                 "object.base": "validSession",
             }),
 
@@ -156,7 +156,7 @@ module.exports = {
                 "object.base": "validSession",
             }),
 
-            bankAccountData: joi.object().optional().messages({
+            bankAccountNumber: joi.string().optional().messages({
                 "object.base": "validSession",
             }),
 

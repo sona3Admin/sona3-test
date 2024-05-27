@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const i18n = require('i18n');
+const { ObjectId } = require('mongodb');
 
+
+exports.generateSubCartId = () => {
+    return new ObjectId().toString().substr(0, 15);
+}
 
 exports.isStockAvailable = (currentStock, quantityToAdd) => {
     return currentStock > 0 && currentStock >= quantityToAdd;
@@ -98,6 +103,7 @@ exports.addNewSubCart = (cartObject, itemObject, quantityToAdd) => {
     let shopCartObject = cartObject.subCarts[shopCartIndex]
     console.log("addNewSubCart");
     console.log(`quantityToAdd`, quantityToAdd);
+    shopCartObject._id = this.generateSubCartId()
     shopCartObject.items = this.addItemToItemsArray(shopCartObject.items, parseInt(quantityToAdd), itemObject);
     this.calculateShopTotal(shopCartObject)
 }

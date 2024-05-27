@@ -274,6 +274,7 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+
 exports.updateManyCarts = async (shopId, itemId) => {
     try {
         const existingArray = await basketModel.find({ variations: itemId });
@@ -314,6 +315,7 @@ exports.updateManyCarts = async (shopId, itemId) => {
     }
 
 }
+
 
 exports.remove = async (_id) => {
     try {

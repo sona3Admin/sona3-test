@@ -23,7 +23,7 @@ const sellerSchema = mongoose.Schema({
     token: { type: String },
     session: { type: Object },
     birthDate: { type: Date },
-    bankAccountData: { type: Object },
+    bankAccountNumber: { type: String },
     fcmToken: { type: String }
 
 })
