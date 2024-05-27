@@ -23,7 +23,7 @@ module.exports = {
                 "string.base": "validSeller",
             }),
 
-            requestDate: joi.date().optional().messages({
+            creationDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
             }),
             
@@ -57,7 +57,7 @@ module.exports = {
                 "string.base": "validSeller",
             }),
 
-            requestDate: joi.date().optional().messages({
+            creationDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
             }),
 

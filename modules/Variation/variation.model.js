@@ -29,6 +29,7 @@ const variationSchema = mongoose.Schema({
         price: { type: Number, min: 0 },
         originalPrice: { type: Number, min: 0 }
     },
+    creationDate: { type: Date, default: Date.now() },
     isDefault: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true }
 })

@@ -10,7 +10,7 @@ const fieldSchema = mongoose.Schema({
     isRequired: { type: Boolean, default: true },
     isRequested: { type: Boolean, default: false },
     requestedBy: { type: mongoose.Types.ObjectId, ref: "sellers" },
-    requestDate: { type: Date, default: Date.now() },
+    creationDate: { type: Date, default: Date.now() },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }
 })

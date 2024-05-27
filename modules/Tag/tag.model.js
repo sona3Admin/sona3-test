@@ -5,7 +5,7 @@ const tagSchema = mongoose.Schema({
     nameAr: { type: String, required: true },
     isRequested: { type: Boolean, default: false },
     requestedBy: { type: mongoose.Types.ObjectId, ref: "sellers" },
-    requestDate: { type: Date },
+    creationDate: { type: Date, default: Date.now() },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }
 })

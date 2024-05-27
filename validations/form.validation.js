@@ -38,8 +38,8 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
+            creationDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
             }),
 
             requestDate: joi.date().messages({
@@ -96,8 +96,8 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
+            creationDate: joi.date().optional().messages({
+                "date.base": "validRequestDate",
             }),
 
             requestDate: joi.date().optional().messages({
