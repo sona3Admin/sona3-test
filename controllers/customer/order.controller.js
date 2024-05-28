@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const orderRepo = require("../../modules/Order/order.repo")
+const ifastHelper = require("../../utils/ifastShipping.util")
 
 
 exports.listOrders = async (req, res) => {
@@ -50,4 +51,21 @@ exports.updateOrder = async (req, res) => {
             error: i18n.__("internalServerError")
         });
     }
+}
+
+
+exports.getOrderShipmentLastStatus = async (req, res) => {
+    try {
+        const operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+
 }

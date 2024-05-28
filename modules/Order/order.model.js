@@ -7,6 +7,7 @@ const orderSchema = mongoose.Schema({
     products: [{ type: mongoose.Types.ObjectId, ref: "products" }],
     variations: [{ type: mongoose.Types.ObjectId, ref: "variations" }],
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
+    shipments: [{ type: String }],
     subOrders: [{
         _id: { type: String },
         shippingId: { type: String },

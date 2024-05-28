@@ -210,12 +210,13 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
         let subOrdersArray = orderData.subOrders
         let index = 0
+        let shipments = []
         subOrdersArray.forEach((subOrderObject) => {
-            console.log("tracking number", arrayOfTrackingObjects[index].tracking_no)
             subOrderObject.shippingId = arrayOfTrackingObjects[index].tracking_no
+            shipments.push(arrayOfTrackingObjects[index].tracking_no)
             index++
         })
-        const resultObject = await orderRepo.updateDirectly(orderData._id.toString(), { subOrders: subOrdersArray })
+        const resultObject = await orderRepo.updateDirectly(orderData._id.toString(), { subOrders: subOrdersArray, shipments })
         return resultObject
 
     } catch (err) {

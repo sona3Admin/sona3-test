@@ -98,7 +98,7 @@ let basketEndPoints = [
 
 
 let orderEndPoints = [
-    "/admin/orders/get", "/admin/orders/list", "/admin/orders/update",
+    "/admin/orders/get", "/admin/orders/list", "/admin/orders/update", "/admin/orders/status",
 ]
 
 
