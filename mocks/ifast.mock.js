@@ -51,3 +51,20 @@ exports.getOrderShipmentLastStatus = async (req, res) => {
     }
 
 }
+
+
+exports.cancelOrderShipment = async (req, res) => {
+    try {
+        const operationResultObject = await ifastHelper.cancelOrderShipment(req.query.trackingno);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+
+}
