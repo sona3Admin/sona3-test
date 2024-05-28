@@ -130,6 +130,11 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
 
     } catch (err) {
         console.log("err.message", err.message);
+        return {
+            success: false,
+            code: 500,
+            error: err.message
+        };
     }
 }
 

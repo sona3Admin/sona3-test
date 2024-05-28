@@ -1,5 +1,8 @@
 const axios = require('axios');
 const qs = require('qs');
+const i18n = require('i18n');
+const orderRepo = require("../modules/Order/order.repo")
+
 
 const ifastBaseUrl = process.env.IFAST_API_URL;
 const ifastUsername = process.env.IFAST_USER_NAME;
@@ -179,7 +182,7 @@ exports.handleOrderData = (orderDetailsObject) => {
                 pickup: {
                     name: subOrder.name,
                     mobileNumber: subOrder.phone,
-                    address: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
+                    address: `${subOrder.address.country}-${subOrder.address.city.name}-${subOrder.address.street}`,
                     latitude: subOrder.location.coordinates[0],
                     longitude: subOrder.location.coordinates[1],
                     date: new Date().toISOString()
@@ -199,3 +202,58 @@ exports.handleOrderData = (orderDetailsObject) => {
         };
     }
 };
+
+
+exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
+    try {
+        console.log("Saving Shipment data")
+        if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
+        let subOrdersArray = orderData.subOrders
+        let index = 0
+        subOrdersArray.forEach((subOrderObject) => {
+            console.log("tracking number", arrayOfTrackingObjects[index].tracking_no)
+            subOrderObject.shippingId = arrayOfTrackingObjects[index].tracking_no
+            index++
+        })
+        const resultObject = await orderRepo.updateDirectly(orderData._id.toString(), { subOrders: subOrdersArray })
+        return resultObject
+
+    } catch (err) {
+        console.log('Error Saving shipment data', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
+
+
+exports.getOrderShipmentLastStatus = async (trackingId) => {
+    try {
+        const { token } = await this.getAuthToken();
+        console.log("tracking data", trackingId)
+        let orderData = { trackingNos: trackingId }
+        console.log("Getting order last status!")
+        const response = await axios.post(`${ifastBaseUrl}/api/order/ShipmentLastStatus`, orderData, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return {
+            success: true,
+            code: 201,
+            result: response.data.data[0],
+            orderData
+        };
+
+    } catch (err) {
+        console.log('Error getting status', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}

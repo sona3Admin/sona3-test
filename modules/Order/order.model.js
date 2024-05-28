@@ -9,6 +9,7 @@ const orderSchema = mongoose.Schema({
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     subOrders: [{
         _id: { type: String },
+        shippingId: { type: String },
         seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
         shop: { type: mongoose.Types.ObjectId, ref: "shops" },
         items: [{
@@ -47,7 +48,7 @@ const orderSchema = mongoose.Schema({
     usedCashback: { type: Number, default: 0, min: 0 },
     cartTotal: { type: Number, min: 0, default: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
-    shippingFeesTotal: { type: Number, min: 0 , default: 0},
+    shippingFeesTotal: { type: Number, min: 0, default: 0 },
     taxesTotal: { type: Number, min: 0, default: 0 },
     taxesRate: { type: Number, min: 0, default: 0 },
     orderTotal: { type: Number, min: 0, default: 0 },

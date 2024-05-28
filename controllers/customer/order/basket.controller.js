@@ -11,10 +11,17 @@ exports.createOrder = async (req, res) => {
         let customerCartObject = await basketRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
         customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject)
-        const operationResultObject = await orderRepo.create(customerOrderObject);
+        let operationResultObject = await orderRepo.create(customerOrderObject);
+        if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+
         let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject)
+        if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+
+        operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
+        if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+
         operationResultObject["orderData"] = shippingData.orderData
-        basketRepo.flush({ customer: req.body.customer })
+        // basketRepo.flush({ customer: req.body.customer })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
