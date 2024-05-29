@@ -26,7 +26,11 @@ app.use(i18n.init);
 app.use(cors());
 app.use(handleCorsPolicy);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(morgan("dev"));
 app.use(helmet({
   contentSecurityPolicy: {
@@ -39,7 +43,7 @@ app.use(helmet({
 app.use(compression())
 app.set("view engine", "ejs")
 // app.use(express.static(path.join(__dirname, '../public')))
-app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(routes);
 
 
