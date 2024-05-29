@@ -96,10 +96,8 @@ exports.verifyHookToken = (token) => {
 
         let tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
             if (err) return { success: false, error: i18n.__("invalidToken"), code: 403 }
-            console.log(tokenData);
             return { success: true, code: 200, result: tokenData };
         })
-        console.log(tokenData);
 
         return tokenData
 
