@@ -2,6 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
+const { getSettings, setSettings } = require("../helpers/settings.helper")
 
 
 const ifastBaseUrl = process.env.IFAST_API_URL;
@@ -9,8 +10,7 @@ const ifastUsername = process.env.IFAST_USER_NAME;
 const ifastPassword = process.env.IFAST_PASSWORD;
 const ifastAccountNumber = process.env.IFAST_ACCOUNT_NUMBER;
 const grantType = "password"
-let ifastToken = null;
-let tokenExpiry = null;
+
 
 const authData = {
     Username: ifastUsername,
@@ -19,61 +19,63 @@ const authData = {
     grant_type: grantType,
 }
 
-let orderData = {
-    list: [
-        {
-            RecipientName: "JT",
-            TotalCOG: "41.50", // order total
-            MobileNumber: "554545454",
-            AddressCountry: "United Arab Emirates",
-            City: "Dubai",
-            Street: "123 Jumeirah St - JumeirahJumeirah 1 - Dubai",
-            MobileNumber2: "554545454",
-            Remarks: "abc",
-            NumberOfPieces: "1",
-            latitude: 25.165919,
-            longitude: 55.241885,
-            pickup: {
-                name: "test",
-                mobileNumber: "563798893",
-                address: "test123",
-                latitude: 25.165919,
-                longitude: 55.241885,
-                date: "2024-05-20T10:29:05.592Z"
-            }
-        },
-        {
-            RecipientName: "JT test",
-            TotalCOG: "11.50",
-            MobileNumber: "563798893",
-            AddressCountry: "United Arab Emirates",
-            City: "Dubai",
-            Street: "152 - Dubai - United Arab Emirates 123",
-            MobileNumber2: "563798893",
-            Remarks: "",
-            NumberOfPieces: "1",
-            latitude: 25.165919,
-            longitude: 55.241885,
-            pickup: {
-                name: "test",
-                mobileNumber: "563798893",
-                address: "test123",
-                latitude: 25.165919,
-                longitude: 55.241885,
-                date: "2024-05-20T10:29:05.592Z"
-            }
-        }
-    ]
-}
+// let orderData = {
+//     list: [
+//         {
+//             RecipientName: "JT",
+//             TotalCOG: "41.50", // order total
+//             MobileNumber: "554545454",
+//             AddressCountry: "United Arab Emirates",
+//             City: "Dubai",
+//             Street: "123 Jumeirah St - JumeirahJumeirah 1 - Dubai",
+//             MobileNumber2: "554545454",
+//             Remarks: "abc",
+//             NumberOfPieces: "1",
+//             latitude: 25.165919,
+//             longitude: 55.241885,
+//             pickup: {
+//                 name: "test",
+//                 mobileNumber: "563798893",
+//                 address: "test123",
+//                 latitude: 25.165919,
+//                 longitude: 55.241885,
+//                 date: "2024-05-20T10:29:05.592Z"
+//             }
+//         },
+//         {
+//             RecipientName: "JT test",
+//             TotalCOG: "11.50",
+//             MobileNumber: "563798893",
+//             AddressCountry: "United Arab Emirates",
+//             City: "Dubai",
+//             Street: "152 - Dubai - United Arab Emirates 123",
+//             MobileNumber2: "563798893",
+//             Remarks: "",
+//             NumberOfPieces: "1",
+//             latitude: 25.165919,
+//             longitude: 55.241885,
+//             pickup: {
+//                 name: "test",
+//                 mobileNumber: "563798893",
+//                 address: "test123",
+//                 latitude: 25.165919,
+//                 longitude: 55.241885,
+//                 date: "2024-05-20T10:29:05.592Z"
+//             }
+//         }
+//     ]
+// }
 
 exports.getAuthToken = async () => {
     try {
+        let ifastToken = getSettings("ifastToken") || null;
+        let tokenExpiry = getSettings("tokenExpiry") || null;
 
         if (!ifastToken || !tokenExpiry || Date.now() >= tokenExpiry) {
             console.log("Ifast Token Expired or Not Found!")
             result = await this.acquireTokenFromIfast(authData);
             ifastToken = result.token
-        }
+        } else console.log("Ifast Token is Found and Valid!")
 
         return {
             success: true,
@@ -98,9 +100,11 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
 
-        ifastToken = response.data.access_token;
-        tokenExpiry = Date.now() + response.data.expires_in * 1000;
-        console.log('New Token Acquired from Ifast');
+        let ifastToken = response.data.access_token;
+        let tokenExpiry = Date.now() + response.data.expires_in * 1000;
+        let newSettings = setSettings({ ifastToken, tokenExpiry })
+
+        console.log('New Token Acquired from Ifast', newSettings);
         return {
             success: true,
             code: 200,
