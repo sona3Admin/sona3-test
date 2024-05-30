@@ -286,3 +286,30 @@ exports.cancelOrderShipment = async (trackingId) => {
         };
     }
 }
+
+
+exports.listCities = async (countryID) => {
+    try {
+        const { token } = await this.getAuthToken();
+        console.log("countryID", countryID)
+        const response = await axios.get(`${ifastBaseUrl}/api/CommonAPI/Cities?countryID=${countryID}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return {
+            success: true,
+            code: 201,
+            result: response.data.data
+        };
+
+    } catch (err) {
+        console.log('Error getting status', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
