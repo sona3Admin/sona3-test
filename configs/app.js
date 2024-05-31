@@ -45,23 +45,16 @@ app.set("view engine", "ejs")
 
 
 app.use(function (req, res, next) {
-  if (toobusy()) {
-    res.status(503);
-    res.send("Server is busy right now, sorry.");
-  } else {
-    next();
-  }
+  if (toobusy()) res.status(503).json({ success: false, code: 503, error: "Server is busy right now, sorry." });
+  else next();
 });
 
 
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  res.status(err.status || 500);
-  res.send({ "message": "404 Page Not Found..!" });
-
+  res.status(err.status || 500).json({ success: false, code: 500, error: "Internal Server Error!" });
 });
 
 
