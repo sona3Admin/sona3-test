@@ -11,7 +11,7 @@ console.log("CURRENT_ENV", process.env.CURRENT_ENV);
 const selectedEnv = process.env.CURRENT_ENV || 'development'; // Default to 'dev' if CURRENT_ENV is not set
 let uri = uriMap[selectedEnv];
 
-const connection = async () => {
+const connectToDatabase = async () => {
     return mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         .then(() => {
             // if (process.env.CURRENT_ENV !== 'local')
@@ -24,7 +24,7 @@ const connection = async () => {
 
 
 module.exports = {
-    connection,
+    connectToDatabase,
     mongoose,
     uri,
     connect: () => {

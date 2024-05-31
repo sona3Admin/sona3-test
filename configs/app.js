@@ -2,20 +2,19 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const morgan = require("morgan");
+const logger = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
 const compression = require('compression');
 const path = require('path');
 const i18n = require('i18n');
-const databaseConnection = require("./database").connection;
+const toobusy = require('node-toobusy');
+const connectToDatabase = require("./database").connectToDatabase;
 const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs;
 const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
 
 
-databaseConnection();
-executeBatchJobs();
 i18n.configure({
   locales: ['en', 'ar'],
   directory: path.join(__dirname, '..', 'locales'),
@@ -31,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(morgan("dev"));
+app.use(logger("dev"));
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -44,7 +43,43 @@ app.use(compression())
 app.set("view engine", "ejs")
 // app.use(express.static(path.join(__dirname, '../public')))
 
-app.use(routes);
 
+app.use(function (req, res, next) {
+  if (toobusy()) {
+    res.status(503);
+    res.send("Server is busy right now, sorry.");
+  } else {
+    next();
+  }
+});
+
+
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  res.status(err.status || 500);
+  res.send({ "message": "404 Page Not Found..!" });
+
+});
+
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at promise ' + promise + ' reason ', reason);
+  console.log('Server is still running...\n');
+});
+
+
+// globally catching unhandled exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception is thrown =>', error + '\n');
+  process.exit();
+});
+
+
+app.use(routes);
+connectToDatabase();
+executeBatchJobs();
 
 module.exports = app;
