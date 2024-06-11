@@ -9,6 +9,7 @@ app.post("/create", checkIdentity("customer"), cartOrderController.createOrder);
 app.post("/cart", checkIdentity("customer"), cartOrderController.createOrder);
 app.post("/basket", checkIdentity("customer"), basketOrderController.createOrder);
 app.delete("/basket", checkIdentity("customer"), basketOrderController.returnSubOrder);
+app.put("/basket", checkIdentity("customer"), basketOrderController.cancelSubOrder);
 
 app.put("/update", checkIdentity("customer"), orderController.updateOrder);
 
