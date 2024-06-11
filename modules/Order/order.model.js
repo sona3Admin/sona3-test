@@ -26,17 +26,17 @@ const orderSchema = mongoose.Schema({
         shopShippingFees: { type: Number, min: 0, default: 0 },
         subOrderTotal: { type: Number, min: 0, default: 0 },
         subOrderDeliveryDate: { type: Date },
-        subOrderStatus: {
+        status: {
             type: String,
-            enum: ["pending", "in progress", "delivered"],
+            enum: ["pending", "canceled", "in progress", "delivered", "to be returned", "returned"],
             default: "pending"
         }
     }],
-    status: {
-        type: String,
-        enum: ["pending", "in progress", "delivered", "canceled"],
-        default: "pending"
-    },
+    // status: {
+    //     type: String,
+    //     enum: ["pending", "canceled", "in progress", "delivered", "to be returned", "returned"],
+    //     default: "pending"
+    // },
     shippingAddress: {
         location: {
             type: { type: String, default: "Point" },
@@ -44,7 +44,7 @@ const orderSchema = mongoose.Schema({
         },
         address: { type: Object }
     },
-    paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
+    paymentMethod: { type: String, enum: ["cashOnDelivery", "visa"], default: "cashOnDelivery" },
     coupon: { type: Object },
     usedCashback: { type: Number, default: 0, min: 0 },
     cartTotal: { type: Number, min: 0, default: 0 },

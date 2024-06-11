@@ -104,7 +104,7 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
         let tokenExpiry = Date.now() + response.data.expires_in * 1000;
         let newSettings = setSettings({ ifastToken, tokenExpiry })
 
-        console.log('New Token Acquired from Ifast', newSettings);
+        console.log('New Token Acquired from Ifast');
         return {
             success: true,
             code: 200,
@@ -123,9 +123,9 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
 };
 
 
-exports.createNewBulkOrder = async (orderDetailsObject) => {
+exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
     try {
-        let orderData = this.handleOrderData(orderDetailsObject)
+        let orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
         console.log('Creating New Order...');
 
@@ -155,7 +155,7 @@ exports.createNewBulkOrder = async (orderDetailsObject) => {
 }
 
 
-exports.handleOrderData = (orderDetailsObject) => {
+exports.handleOrderData = (orderDetailsObject, isReverse) => {
     try {
 
         let orderData = {
@@ -182,7 +182,7 @@ exports.handleOrderData = (orderDetailsObject) => {
                 ...customerData,
                 ShipperRef: subOrder._id.toString(),
                 NumberOfPieces: numberOfPieces,
-                TotalCOG: subOrder.subOrderTotal,
+                TotalCOG: isReverse == true ? -1 * subOrder.subOrderTotal : subOrder.subOrderTotal,
                 pickup: {
                     name: subOrder.name,
                     mobileNumber: subOrder.phone,

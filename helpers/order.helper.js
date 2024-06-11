@@ -1,5 +1,6 @@
 const { getSettings } = require("./settings.helper")
 const customerRepo = require("../modules/Customer/customer.repo")
+const { findObjectInArray, generateSubCartId } = require("./cart.helper")
 
 
 exports.setShopItems = (shopItemsArray, productsArray, variationsArray, categoriesArray) => {
@@ -136,6 +137,24 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
             error: err.message
         };
     }
+}
+
+
+exports.handleReverseOrderCreation = (orderObject, subOrderId) => {
+    orderObject.name = orderObject.customer.name
+    orderObject.phone = orderObject.customer.phone
+
+    let subOrderObject = findObjectInArray(orderObject.subOrders, "_id", subOrderId)
+    subOrderObject = subOrderObject.result
+    subOrderObject._id = generateSubCartId()
+    subOrderObject.name = subOrderObject.shop.nameEn
+    subOrderObject.phone = subOrderObject.shop.phone
+    subOrderObject.address = subOrderObject.shop.address
+    subOrderObject.location = subOrderObject.shop.location
+    subOrderObject.status = "to be returned"
+    orderObject.subOrders = [subOrderObject]
+
+    return orderObject
 }
 
 

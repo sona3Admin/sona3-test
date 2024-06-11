@@ -27,6 +27,23 @@ exports.isIdInArray = (arrayOfObjects, targetField, targetId) => {
 }
 
 
+exports.findObjectInArray = (arrayOfObjects, targetField, targetId) => {
+    try {
+        const filteredArray = arrayOfObjects.filter(object => {
+            return object[`${targetField}`] == targetId
+        })
+        console.log(filteredArray)
+        if (filteredArray.length > 0) return { success: true, result: filteredArray[0], code: 200 }
+        console.log(`item not found in`, targetField, "array");
+        return { success: false, error: i18n.__("notFound"), code: 404 }
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return { success: false, code: 500, error: i18n.__("internalServerError") }
+    }
+}
+
+
 exports.increaseItemQuantity = (cartItemsArray, itemIndex, quantityToAdd, itemObject) => {
     let existingQuantity = cartItemsArray[itemIndex].quantity;
     let newQuantity = parseInt(existingQuantity) + quantityToAdd;
