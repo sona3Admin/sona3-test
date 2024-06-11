@@ -37,7 +37,6 @@ exports.createOrder = async (req, res) => {
 
 exports.returnSubOrder = async (req, res) => {
     try {
-        // get order by id and shipping id,
         let orderObject = await orderRepo.get({ _id: req.query._id, "subOrders._id": req.query.subOrder })
         if (!orderObject.success) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
         orderObject = handleReverseOrderCreation(orderObject.result, req.query.subOrder)
@@ -50,9 +49,9 @@ exports.returnSubOrder = async (req, res) => {
         operationResultObject["orderData"] = shippingData.orderData
 
         return res.status(operationResultObject.code).json(operationResultObject);
-        // update sub order status
 
-    } catch (err) {
+    }
+    catch (err) {
         console.log(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
