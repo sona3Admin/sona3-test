@@ -19,10 +19,10 @@ const requestSchema = mongoose.Schema({
         },
         address: { type: Object }
     },
-    requestStatus: { type: String, enum: ["pending", "accepted", "rejected", "canceled", "purchased"], default: "pending" },
-    shippingStatus: {
+    
+    status: {
         type: String,
-        enum: ["pending", "in progress", "delivered", "canceled"],
+        enum: ["pending", "accepted", "rejected", "canceled", "in progress", "delivered", "to be returned", "returned"],
         default: "pending"
     },
     serviceTotal: { type: Number, min: 0 },

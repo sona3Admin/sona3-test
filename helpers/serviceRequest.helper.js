@@ -35,7 +35,8 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
             shippingFeesTotal: customerRequestObject.shippingFeesTotal,
             orderTotal: customerRequestObject.orderTotal,
             shipperRef: customerRequestObject.shipperRef,
-            shippingAddress: customerRequestObject.shippingAddress
+            shippingAddress: customerRequestObject.shippingAddress,
+            status: "purchased"
         }
         return customerRequestObject
     } catch (err) {
@@ -43,3 +44,15 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
     }
 }
 
+
+exports.handleReturnService = (customerRequestObject, subOrderId) => {
+    customerRequestObject.name = customerRequestObject.customer.name
+    customerRequestObject.phone = customerRequestObject.customer.phone
+    customerRequestObject.shipperRef = generateSubCartId()
+    customerRequestObject.status = "to be returned"
+    customerRequestObject.calculations = {
+        shipperRef: customerRequestObject.shipperRef,
+        status: "to be returned"
+    }
+    return customerRequestObject
+}

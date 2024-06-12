@@ -5,6 +5,9 @@ const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 app.post("/create", checkIdentity("customer"), requestController.createRequest);
 app.post("/purchase", checkIdentity("customer"), requestController.purchaseRequest);
+app.delete("/return", checkIdentity("customer"), requestController.returnRequest);
+app.patch("/cancel", checkIdentity("customer"), requestController.cancelRequest);
+
 app.put("/update", checkIdentity("customer"), requestController.updateRequest);
 
 app.get("/list", checkIdentity("customer"), requestController.listRequests);
