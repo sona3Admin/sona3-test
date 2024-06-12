@@ -5,6 +5,8 @@ const requestSchema = mongoose.Schema({
     shop: { type: mongoose.Types.ObjectId, ref: "shops" },
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     service: { type: mongoose.Types.ObjectId, ref: "services" },
+    shipperRef: { type: String },
+    shippingId: { type: String },
     fields: [{
         _id: { type: mongoose.Types.ObjectId, ref: "fields" },
         field: { type: Object },

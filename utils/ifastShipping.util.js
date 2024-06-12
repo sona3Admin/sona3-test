@@ -2,6 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
+const requestRepo = require("../modules/Request/request.repo")
 const { getSettings, setSettings } = require("../helpers/settings.helper")
 
 
@@ -125,7 +126,10 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
 
 exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
     try {
-        let orderData = this.handleOrderData(orderDetailsObject, isReverse)
+        let orderData
+        
+        if (orderDetailsObject.service) orderData = this.handleServiceData(orderDetailsObject, isReverse)
+        else orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
         console.log('Creating New Order...');
 
@@ -208,10 +212,69 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
 };
 
 
+exports.handleServiceData = (orderDetailsObject, isReverse) => {
+    try {
+        console.log("handleServiceData")
+
+        let orderData = {
+            list: []
+        };
+    
+        const customerData = {
+            RecipientName: orderDetailsObject.name,
+            MobileNumber: orderDetailsObject.phone,
+            AddressCountry: orderDetailsObject.shippingAddress.address.country,
+            City: orderDetailsObject.shippingAddress.address.city,
+            Street: orderDetailsObject.shippingAddress.address.street,
+            MobileNumber2: orderDetailsObject.phone,
+            Remarks: orderDetailsObject.shippingAddress.address.remarks,
+            latitude: orderDetailsObject.shippingAddress.location.coordinates[0],
+            longitude: orderDetailsObject.shippingAddress.location.coordinates[1],
+        };
+        
+        let subOrderData = {
+            ...customerData,
+            ShipperRef: orderDetailsObject.shipperRef.toString(),
+            NumberOfPieces: 1,
+            TotalCOG: isReverse == true ? -1 * orderDetailsObject.orderTotal : orderDetailsObject.orderTotal,
+            pickup: {
+                name: orderDetailsObject.shop.nameEn,
+                mobileNumber: orderDetailsObject.shop.phone,
+                address: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city.name}-${orderDetailsObject.shop.address.street}`,
+                latitude: orderDetailsObject.shop.location.coordinates[0],
+                longitude: orderDetailsObject.shop.location.coordinates[1],
+                date: new Date().toISOString()
+            }
+        }
+        orderData.list.push(subOrderData);
+
+        return orderData;
+
+    } catch (err) {
+        console.log('Error processing order data:', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+};
+
+
 exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
     try {
         console.log("Saving Shipment data")
+        let resultObject
+        if (orderData.service) {
+            
+            let shippingId = arrayOfTrackingObjects[0].tracking_no
+            resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
+        
+            return resultObject
+        }
+
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
+
         let subOrdersArray = orderData.subOrders
         let index = 0
         let shipments = []
@@ -220,7 +283,7 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
             shipments.push(arrayOfTrackingObjects[index].tracking_no)
             index++
         })
-        const resultObject = await orderRepo.updateDirectly(orderData._id.toString(), { subOrders: subOrdersArray, shipments })
+        resultObject = await orderRepo.updateDirectly(orderData._id.toString(), { subOrders: subOrdersArray, shipments })
         return resultObject
 
     } catch (err) {

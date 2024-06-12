@@ -1,56 +1,43 @@
 const { getSettings } = require("./settings.helper")
-const customerRepo = require("../modules/Customer/customer.repo")
+const { generateSubCartId } = require("./cart.helper")
 
 
-
-exports.calculateValueAddedTax = (itemsArray, vatRateNumber) => {
+exports.calculateValueAddedTax = (serviceTotal) => {
+    let vatRateNumber = parseFloat(getSettings("vatRate"))
     const vatValue = parseFloat(vatRateNumber / 100)
     if (typeof vatRateNumber !== 'number' || vatRateNumber < 0 || typeof vatValue !== 'number') return 'Invalid input. Please provide a valid array of items and a non-negative VAT rate.'
 
     let taxesTotal = parseFloat(0);
-    const vatAmount = vatValue * parseFloat(itemObject.itemTotal);
+
+    const vatAmount = vatValue * parseFloat(serviceTotal);
     taxesTotal += vatAmount;
-    
+
     return taxesTotal;
 }
 
 
-exports.addOrderTaxes = (shopObject, customerOrderObject) => {
-    shopObject.shopTaxes = this.calculateValueAddedTax(shopObject.items, customerOrderObject.taxesRate)
-    shopObject.subOrderTotal = parseFloat(shopObject.shopTaxes) + parseFloat(shopObject.shopTotal)
-    customerOrderObject.taxesTotal += parseFloat(shopObject.shopTaxes)
-    customerOrderObject.orderTotal += parseFloat(customerOrderObject.taxesTotal)
-
-    this.addOrderShippingFees(shopObject, customerOrderObject)
-}
-
-
-exports.addOrderShippingFees = (shopObject, customerOrderObject) => {
-    const ifastShippingCost = 15
-    shopObject.shopShippingFees = ifastShippingCost
-    shopObject.subOrderTotal = parseFloat(shopObject.shopShippingFees) + parseFloat(shopObject.shopTotal)
-    customerOrderObject.shippingFeesTotal += parseFloat(shopObject.shopShippingFees)
-    customerOrderObject.orderTotal += parseFloat(customerOrderObject.shippingFeesTotal)
-}
-
-
-exports.handleOrderCreation = async (customerCartObject, customerOrderObject) => {
+exports.handleRequestPurchase = async (customerRequestObject, customerOrderObject) => {
     try {
+        const ifastShippingCost = 15
 
-        customerOrderObject.cartTotal = parseFloat(customerCartObject.cartTotal)
-        customerOrderObject.orderTotal = parseFloat(customerCartObject.cartTotal)
-        customerOrderObject.cartOriginalTotal = parseFloat(customerCartObject.cartOriginalTotal)
-
-        customerOrderObject.taxesRate = parseFloat(getSettings("vatRate"))
-        customerOrderObject.taxesTotal = 0
-        customerOrderObject.shippingFeesTotal = 0
-        customerOrderObject.name = customerCartObject.customer.name
-        customerOrderObject.phone = customerCartObject.customer.phone
-
-        this.addOrderTaxes(shopObject, customerOrderObject)
-
-        return customerOrderObject
-
+        customerRequestObject.name = customerRequestObject.customer.name
+        customerRequestObject.phone = customerRequestObject.customer.phone
+        customerRequestObject.taxesTotal = this.calculateValueAddedTax(customerRequestObject.serviceTotal)
+        customerRequestObject.taxesRate = parseFloat(getSettings("vatRate"))
+        customerRequestObject.shippingFeesTotal = ifastShippingCost
+        customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal) + ifastShippingCost
+        customerRequestObject.shipperRef = generateSubCartId()
+        customerRequestObject.shippingAddress = customerOrderObject.shippingAddress
+        customerRequestObject.paymentMethod = customerOrderObject?.paymentMethod
+        customerRequestObject.calculations = {
+            taxesTotal: customerRequestObject.taxesTotal,
+            taxesRate: customerRequestObject.taxesRate,
+            shippingFeesTotal: customerRequestObject.shippingFeesTotal,
+            orderTotal: customerRequestObject.orderTotal,
+            shipperRef: customerRequestObject.shipperRef,
+            shippingAddress: customerRequestObject.shippingAddress
+        }
+        return customerRequestObject
     } catch (err) {
         console.log("err.message", err.message);
     }

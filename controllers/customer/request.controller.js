@@ -1,20 +1,24 @@
 const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
-const { handleOrderCreation } = require("../../helpers/serviceRequest.helper")
+const { handleRequestPurchase } = require("../../helpers/serviceRequest.helper")
 
 
 exports.purchaseRequest = async (req, res) => {
     try {
         let customerOrderObject = req.body
-        let customerRequestObject = await requestRepo.get({ _id: req.body._id })
+        let customerRequestObject = await requestRepo.get({ _id: req.query._id })
+        customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
 
-        customerOrderObject = await handleOrderCreation(customerRequestObject.result, customerOrderObject)
-        const operationResultObject = await requestRepo.updateDirectly(req.body._id, { ...customerOrderObject, requestStatus: "purchased" });
+        let operationResultObject = await requestRepo.updateDirectly(req.query._id, { ...customerOrderObject.calculations, requestStatus: "purchased" });
 
         if (customerRequestObject.result.service.isFood && customerRequestObject.result.service.isDeliverable) {
-            let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject)
+            let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject, false)
             operationResultObject["orderData"] = shippingData.orderData
+        
+            if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+            operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
+            if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         }
 
         return res.status(operationResultObject.code).json(operationResultObject);
