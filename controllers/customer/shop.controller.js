@@ -46,7 +46,7 @@ exports.listShopsBanners = async (req, res) => {
         const filterObject = req.query;
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 100
         const operationResultObject = await shopRepo.list(filterObject, { nameEn: 1, nameAr: 1, banners: 1, seller: 0, categories: 0, productCategories: 0, serviceCategories: 0 }, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 
