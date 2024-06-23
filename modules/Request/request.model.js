@@ -22,9 +22,11 @@ const requestSchema = mongoose.Schema({
     
     status: {
         type: String,
-        enum: ["pending", "accepted", "rejected", "canceled", "in progress", "delivered", "to be returned", "returned"],
+        enum: ["pending", "canceled", "accepted", "rejected", "purchased", "in progress", "delivered", "to be returned", "returned"],
         default: "pending"
     },
+    shippingStatus: { type: String, default: "pending" },
+
     serviceTotal: { type: Number, min: 0 },
     taxesTotal: { type: Number, min: 0 },
     taxesRate: { type: Number, min: 0 },
