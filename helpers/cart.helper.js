@@ -31,8 +31,6 @@ exports.findObjectInArray = (arrayOfObjects, targetField, targetId) => {
     try {
         
         for (let i = 0; i < arrayOfObjects.length; i++) {
-            console.log("arrayOfObjects[i][targetField]", arrayOfObjects[i][targetField])
-            console.log("targetId", targetId)
             if (arrayOfObjects[i][targetField] == targetId) return {
                 success: true,
                 result: arrayOfObjects[i],
