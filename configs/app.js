@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const logger = require("morgan");
 const helmet = require("helmet");
 const cors = require("cors");
@@ -13,7 +13,8 @@ const connectToDatabase = require("./database").connectToDatabase;
 const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs;
 const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
-
+const multer = require('multer');
+const upload = multer();
 
 i18n.configure({
   locales: ['en', 'ar'],
@@ -27,8 +28,8 @@ app.use(handleCorsPolicy);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(logger("dev"));
 app.use(helmet({
@@ -70,7 +71,7 @@ process.on('uncaughtException', (error) => {
   process.exit();
 });
 
-
+app.use(upload.none());
 app.use(routes);
 connectToDatabase();
 executeBatchJobs();
