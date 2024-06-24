@@ -126,7 +126,7 @@
 	"noPoints": "Insufficient Cashback.",
 	"roomBlocked": "This room is blocked.",
 	"newMessage": "You have a new message.",
-	"validRoomId":"Valid Room Id is required.",
+	"validRoomId": "Valid Room Id is required.",
 	"requiredRoomId": "Room Id is required.",
 	"validWithAdmin": "Valid with admin flag is required.",
 	"validText": "Valid text is required.",
@@ -162,8 +162,6 @@
 	"validSeenByArray": "Valid seenBy array is required.",
 	"validToAdmin": "Valid toAdmin flag is required.",
 	"isNotFoodCart": "you can't add food to this cart",
-	"cartFoodOnly": "you can only add food to this cart"
-
-
-
+	"cartFoodOnly": "you can only add food to this cart",
+	"validImageFile": "validImageFile"
 }

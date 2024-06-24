@@ -132,7 +132,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         else orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
         console.log('Creating New Order...');
-
+        console.log("orderData", orderData.pickup)
         const response = await axios.post(`${ifastBaseUrl}/api/order/placeorderbulkwithpickup`, orderData, {
             headers: {
                 'Content-Type': 'application/json',

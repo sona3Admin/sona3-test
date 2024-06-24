@@ -13,8 +13,7 @@ const connectToDatabase = require("./database").connectToDatabase;
 const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs;
 const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
-const multer = require('multer');
-const upload = multer();
+
 
 i18n.configure({
   locales: ['en', 'ar'],
@@ -71,7 +70,7 @@ process.on('uncaughtException', (error) => {
   process.exit();
 });
 
-app.use(upload.none());
+
 app.use(routes);
 connectToDatabase();
 executeBatchJobs();
