@@ -21,7 +21,6 @@ exports.uploadImagesToMemory = () => {
             },
             limits: { fileSize: 3000000, files: 8 },
         });
-
         return upload;
     } catch (err) {
         console.log("err.message", err.message);

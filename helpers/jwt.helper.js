@@ -26,7 +26,7 @@ exports.verifyToken = (roleString) => {
             if (!token) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
 
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
-                // console.log("token", tokenData);
+
                 if (err) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
 
                 if (tokenData?.role && !roleString.includes(tokenData.role)) return res.status(401).json({ success: false, error: res.__("unauthorized"), code: 401 })
@@ -34,8 +34,7 @@ exports.verifyToken = (roleString) => {
                 if (tokenData?.tokenType && tokenData?.tokenType == "temp") {
                     const endPoint = req.originalUrl.split("?").shift().slice(7);
                     const allowedAPIs = ["/seller/identity", "/seller/verify", "/customer/verify"]
-                    // console.log("here");
-                    // console.log("endpoint", endPoint);
+                   
                     if (!allowedAPIs.includes(endPoint)) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
                 }
                 // if (tokenData.role == "admin") {
@@ -91,13 +90,15 @@ exports.verifyTokenInSocket = (token, roleString) => {
 
 exports.verifyHookToken = (token) => {
     try {
-
+        console.log("token", token)
         if (!token) return { success: false, error: i18n.__("unauthorized"), code: 401 }
 
         let tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
+            console.log("err", err)
             if (err) return { success: false, error: i18n.__("invalidToken"), code: 403 }
             return { success: true, code: 200, result: tokenData };
         })
+        console.log("tokenData", tokenData)
 
         return tokenData
 
