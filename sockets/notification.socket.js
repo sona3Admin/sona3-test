@@ -41,7 +41,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
         }
     })
 
-    
+
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
             console.log("Sending notification");
@@ -59,7 +59,6 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (sender.role == "customer") notificationResult = await handleCreationByCustomer(sender, dataObject, localeMessages)
             if (sender.role == "seller") notificationResult = await handleCreationBySeller(sender, dataObject, localeMessages)
             if (!notificationResult.success) return sendAck(notificationResult)
-
             let resultObject = await notificationRepo.create(notificationResult.notificationObject)
 
             let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
@@ -274,6 +273,7 @@ async function handleCreationByCustomer(sender, dataObject, localeMessages) {
             if (receiver.fcmToken) deviceTokens.push(receiver.fcmToken)
             receiversIds.push(receiver._id.toString())
         })
+        console.log("handleCreationByCustomer", dataObject.timestamp)
 
         let notificationObject = {
             customer: sender._id,
@@ -285,7 +285,8 @@ async function handleCreationByCustomer(sender, dataObject, localeMessages) {
             redirectType: notificationType,
             type: notificationType,
             receivers: receiversIds,
-            deviceTokens: deviceTokens
+            deviceTokens: deviceTokens,
+            timestamp: dataObject.timestamp
         }
 
         return {
@@ -296,7 +297,7 @@ async function handleCreationByCustomer(sender, dataObject, localeMessages) {
         }
 
     } catch (err) {
-        console.log("err.message", err.message);
+        console.log("err.message --", err.message);
         return { success: false, code: 500, error: localeMessages.internalServerError }
     }
 }
@@ -358,7 +359,8 @@ async function handleCreationBySeller(sender, dataObject, localeMessages) {
             type: "creation",
             toAdmin: true,
             receivers: [],
-            deviceTokens: []
+            deviceTokens: [],
+            timestamp: dataObject.timestamp
         }
 
         return {

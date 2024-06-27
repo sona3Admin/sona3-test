@@ -1,1 +1,10 @@
-{"vatRate":10,"cashbackPercentage":1,"cashbackThreshold":1000,"adminsRoomId":"Sona3AdminsRoom","customersRoomId":"Sona3CustomersRoom","sellersRoomId":"Sona3SellersRoom","ifastToken":"oURWUx5Je4LkmMkNn6L4X_zgfaqG4fSQLnm3GHiCOd1OSItF-kOtLzMJQ6cpI2R_yOQpY20y81CoBCE5H_cQNDebOqwwpCsKM4-EDON-Yz1LugLyzRaDUSsokPWmoZrhqTPppIpfcQGg-DpbNmheGfCSaGB2gzyjmD-Qm9Cz8PqraQX3nK03Iih2xy2TSxItUtd89Uso9X4NxPmQ6-IdEYd82NccPHEjcsiXNpl54DbtMZwz3cROvlJU1rvqXFqFzUh8hYNbiIBZMfXHqzGEDJSqGjIcaCb94ONFeYAX3u4qqomzRoUgCpG-ROm3xXQgNmvuGSeU-eHhI4Ca9zExl5G1QKBM0_jYxGGbWJ5z3Wc","tokenExpiry":1719251206519}
+{
+    "vatRate": 10,
+    "cashbackPercentage": 1,
+    "cashbackThreshold": 1000,
+    "adminsRoomId": "Sona3AdminsRoom",
+    "customersRoomId": "Sona3CustomersRoom",
+    "sellersRoomId": "Sona3SellersRoom",
+    "ifastToken": "oURWUx5Je4LkmMkNn6L4X_zgfaqG4fSQLnm3GHiCOd1OSItF-kOtLzMJQ6cpI2R_yOQpY20y81CoBCE5H_cQNDebOqwwpCsKM4-EDON-Yz1LugLyzRaDUSsokPWmoZrhqTPppIpfcQGg-DpbNmheGfCSaGB2gzyjmD-Qm9Cz8PqraQX3nK03Iih2xy2TSxItUtd89Uso9X4NxPmQ6-IdEYd82NccPHEjcsiXNpl54DbtMZwz3cROvlJU1rvqXFqFzUh8hYNbiIBZMfXHqzGEDJSqGjIcaCb94ONFeYAX3u4qqomzRoUgCpG-ROm3xXQgNmvuGSeU-eHhI4Ca9zExl5G1QKBM0_jYxGGbWJ5z3Wc",
+    "tokenExpiry": 1719251206519
+}

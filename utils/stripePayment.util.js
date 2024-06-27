@@ -1,6 +1,17 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 
 
+exports.createConnectedAccount = async () => {
+    try {
+        const account = await stripe.accounts.create({ type: 'express' });
+        return { success: true, code: 201, result: account.id };
+    } catch (err) {
+        console.error("Error creating connected account:", err);
+        return { success: false, code: 500, error: err.message };
+    }
+};
+
+
 exports.initiatePayment = async (orderCostObject, orderDetails) => {
     try {
 
@@ -48,6 +59,12 @@ exports.initiatePayment = async (orderCostObject, orderDetails) => {
                     quantity: 1,
                 }
             ],
+            payment_intent_data: {
+                application_fee_amount: 100, // Example application fee (in cents)
+                transfer_data: {
+                    destination: req.body.items[0].sellerAccountId, // Assuming all items belong to the same seller
+                },
+            },
             success_url: successUrl,
             cancel_url: cancelUrl,
             metadata: { ...orderDetails }
