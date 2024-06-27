@@ -1,16 +1,17 @@
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
 const { findObjectInArray } = require("../helpers/cart.helper")
-const statusEnums = ["Order Placed", "Delivered", "Out For Delivery", "Cancelled",
-    "To be Picked Up", "Return Attempt", "Return to Origin", "Returned to Origin"]
+
 
 exports.updateOrderShipmentStatus = async (req, res) => {
     try {
-        let status 
+        let status
         let orderObject = await orderRepo.find({ shipments: req.body.track_id })
         if (!orderObject.success) {
             let requestObject = await requestRepo.find({ shippingId: req.body.track_id })
-            status = handleStatus(req.body.Status) || requestObject.result.status
+            status = handleStatus(req.body.Status, "request") || requestObject.result.status
+            console.log("request status", status)
+
             requestRepo.updateDirectly(requestObject.result._id.toString(), { shippingStatus: req.body.Status, status })
         }
 
@@ -19,7 +20,8 @@ exports.updateOrderShipmentStatus = async (req, res) => {
 
         let subOrders
         orderObject.result.subOrders[subOrderObject.index].shippingStatus = req.body.Status
-        orderObject.result.subOrders[subOrderObject.index].status = handleStatus(req.body.Status) || subOrderObject.result.status
+        orderObject.result.subOrders[subOrderObject.index].status = handleStatus(req.body.Status, "order") || subOrderObject.result.status
+        console.log("order status", orderObject.result.subOrders[subOrderObject.index].status)
         orderRepo.updateDirectly(orderObject.result._id.toString(), { subOrders })
         return res.status(200).json({
             status: true,
@@ -38,8 +40,14 @@ exports.updateOrderShipmentStatus = async (req, res) => {
 }
 
 
-function handleStatus(ifastStausText) { 
+function handleStatus(ifastStausText, orderType) {
     let status = undefined
-
+    if (ifastStausText == "Order Placed" && orderType == "order") status = "pending"
+    if (ifastStausText == "Order Placed" && orderType == "request") status = "purchased"
+    if (ifastStausText == "Delivered") status = "delivered"
+    if (ifastStausText == "Cancelled") status = "canceled"
+    if (ifastStausText == "Returned to Origin") status = "returned"
+    if (ifastStausText == "To be Picked Up" || ifastStausText == "Out For Delivery") status = "in progress"
+    if (ifastStausText == "Return Attempt" || ifastStausText == "Return to Origin") status = "to be returned"
     return status
 }

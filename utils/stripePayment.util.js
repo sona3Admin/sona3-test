@@ -15,15 +15,6 @@ exports.createConnectedAccount = async () => {
 exports.initiatePayment = async (orderCostObject, orderDetails) => {
     try {
 
-        const clientType = req.body.clientType;
-        let successUrl = `${process.env.STRIPE_SUCCESS_URL}`;
-        let cancelUrl = `${process.env.STRIPE_CANCEL_URL}`
-
-        if (clientType === 'mobile') {
-            successUrl = `${process.env.STRIPE_SUCCESS_DEEP_LINK}`
-            cancelUrl = `${process.env.STRIPE_CANCEL_DEEP_LINK}`
-        }
-
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
@@ -65,8 +56,6 @@ exports.initiatePayment = async (orderCostObject, orderDetails) => {
                     destination: req.body.items[0].sellerAccountId, // Assuming all items belong to the same seller
                 },
             },
-            success_url: successUrl,
-            cancel_url: cancelUrl,
             metadata: { ...orderDetails }
         })
         return { success: true, code: 201, result: session.url }
