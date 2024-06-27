@@ -59,6 +59,8 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (sender.role == "customer") notificationResult = await handleCreationByCustomer(sender, dataObject, localeMessages)
             if (sender.role == "seller") notificationResult = await handleCreationBySeller(sender, dataObject, localeMessages)
             if (!notificationResult.success) return sendAck(notificationResult)
+
+            if (!notificationResult.notificationObject.timestamp) notificationResult.notificationObject.timestamp = dataObject.timestamp
             let resultObject = await notificationRepo.create(notificationResult.notificationObject)
 
             let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
@@ -120,6 +122,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             }
 
             if (!notificationResult.success) return sendAck(notificationResult)
+            if (!notificationResult.notificationObject.timestamp) notificationResult.notificationObject.timestamp = dataObject.timestamp
 
             let resultObject = await notificationRepo.create(notificationResult.notificationObject)
 
@@ -179,7 +182,8 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
                 redirectType: "serviceRequest",
                 type: "servicePriceUpdate",
                 receivers: [receiver],
-                deviceTokens: [serviceRequest.result.customer.fcmToken]
+                deviceTokens: [serviceRequest.result.customer.fcmToken],
+                timestamp: dataObject.timestamp
             }
 
             let resultObject = await notificationRepo.create(notificationObject)
@@ -221,7 +225,8 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
                 redirectType: "variation",
                 type: "admin",
                 receivers: [receiver],
-                deviceTokens: [variationObject.result.seller.fcmToken]
+                deviceTokens: [variationObject.result.seller.fcmToken],
+                timestamp: dataObject.timestamp
             }
 
             let resultObject = await notificationRepo.create(notificationObject)
@@ -431,7 +436,8 @@ async function handleUpdateByAdmin(sender, dataObject, localeMessages, bodyMessa
             redirectType: redirectType,
             type: dataObject.action,
             receivers: receiver ? [receiver._id.toString()] : [],
-            deviceTokens: receiver?.fcmToken ? [receiver.fcmToken] : []
+            deviceTokens: receiver?.fcmToken ? [receiver.fcmToken] : [],
+            timestamp: dataObject.timestamp
         }
 
         return {
@@ -503,7 +509,8 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
             type: dataObject.action,
             toAdmin: true,
             receivers: [],
-            deviceTokens: []
+            deviceTokens: [],
+            timestamp: dataObject.timestamp
         }
 
         return {
@@ -561,7 +568,8 @@ async function updateTransactionStatus(sender, dataObject, localeMessages, bodyM
             redirectType: redirectType,
             type: redirectType,
             receivers: receiversIds,
-            deviceTokens: deviceTokens
+            deviceTokens: deviceTokens,
+            timestamp: dataObject.timestamp
         }
 
         let resultObject = {
