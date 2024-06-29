@@ -12,6 +12,7 @@ exports.getPaymentSuccessAck = (req, res, next) => {
         // req.body = orderDetails
         // console.log("orderDetails", orderDetails)
         console.log(`Checkout session completed: ${session.id}`);
+        console.log("Session", session)
         // return next()
         return res.send()
 
