@@ -4,6 +4,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 exports.getPaymentSuccessAck = (req, res, next) => {
     try {
         console.log("triggered")
+        console.log("req.body", req.body)
         const sig = req.headers['stripe-signature'];
         let event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
         // if (event.type === 'checkout.session.completed' || event.type == "payment_intent.succeeded") {
