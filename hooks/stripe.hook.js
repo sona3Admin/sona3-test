@@ -21,7 +21,4 @@ exports.getPaymentSuccessAck = (req, res, next) => {
         console.log("err.message", err.message)
         return res.status(400).json({ success: false, code: 400, error: err.message })
     }
-
-
-
 }
