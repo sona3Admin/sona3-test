@@ -14,6 +14,16 @@ exports.createConnectedAccount = async () => {
 
 exports.initiatePayment = async (orderCostObject, orderDetails) => {
     try {
+        const cents = 100
+        const orderDetailsObject = {
+            customer: orderDetails.customer,
+            country: orderDetails.shippingAddress.address.country,
+            city: orderDetails.shippingAddress.address.city,
+            street: orderDetails.shippingAddress.address.street,
+            remarks: orderDetails.shippingAddress.address.remarks,
+            long: orderDetails.shippingAddress.location.coordinates[0],
+            lat: orderDetails.shippingAddress.location.coordinates[1],
+        }
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -25,7 +35,7 @@ exports.initiatePayment = async (orderCostObject, orderDetails) => {
                         product_data: {
                             name: "Items Total",
                         },
-                        unit_amount: orderCostObject.cartTotal,
+                        unit_amount: (orderCostObject.cartTotal) * cents,
                     },
                     quantity: 1,
                 },
@@ -35,7 +45,7 @@ exports.initiatePayment = async (orderCostObject, orderDetails) => {
                         product_data: {
                             name: "Tax",
                         },
-                        unit_amount: orderCostObject.taxesTotal,
+                        unit_amount: (orderCostObject.taxesTotal) * cents,
                     },
                     quantity: 1,
                 },
@@ -45,18 +55,14 @@ exports.initiatePayment = async (orderCostObject, orderDetails) => {
                         product_data: {
                             name: "Shipping Fee",
                         },
-                        unit_amount: orderCostObject.shippingFeesTotal,
+                        unit_amount: (orderCostObject.shippingFeesTotal) * cents,
                     },
                     quantity: 1,
                 }
             ],
-            payment_intent_data: {
-                application_fee_amount: 100, // Example application fee (in cents)
-                transfer_data: {
-                    destination: req.body.items[0].sellerAccountId, // Assuming all items belong to the same seller
-                },
-            },
-            metadata: { ...orderDetails }
+            success_url: `${process.env.STRIPE_SUCCESS_URL}`,
+            cancel_url: `${process.env.STRIPE_CANCEL_URL}`,
+            metadata: { ...orderDetailsObject }
         })
         return { success: true, code: 201, result: session.url }
     } catch (err) {
@@ -85,4 +91,19 @@ exports.getPaymentSuccessAck = (req, res, next) => {
 
 
 
+}
+
+
+exports.refundToCustomer = async (amount, paymentIntentId) => {
+    try{
+        const refund = await stripe.refunds.create({
+            payment_intent: paymentIntentId,
+            amount: amount,
+        });
+        return { success: true, code: 201, result: refund }
+
+    } catch (err) {
+        console.log("err", err.message)
+        return { success: false, code: 500, error: err.message }
+    }
 }
