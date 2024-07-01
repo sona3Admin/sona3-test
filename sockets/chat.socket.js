@@ -129,6 +129,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
             titleAr: `${sender.name} رسالة جديدة من`,
             bodyEn: messageObject.text ? messageObject.text : textFile.en,
             bodyAr: messageObject.text ? messageObject.text : textFile.ar,
+            timestamp: messageObject.timestamp,
             redirectId: roomObject._id.toString(),
             redirectType: "room",
             type: "message",
