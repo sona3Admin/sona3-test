@@ -25,9 +25,7 @@ const productSchema = mongoose.Schema({
     verifyDate: { type: Date },
     lastUpdateDate: { type: Date },
     discountValue: { type: Number, default: 0 },
-    width: { type: Number },
-    height: { type: Number },
-    length: { type: Number },
+   
 })
 
 

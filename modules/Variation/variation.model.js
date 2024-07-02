@@ -31,7 +31,10 @@ const variationSchema = mongoose.Schema({
     },
     creationDate: { type: Date, default: Date.now() },
     isDefault: { type: Boolean, default: false },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    width: { type: Number },
+    height: { type: Number },
+    length: { type: Number },
 })
 
 variationSchema.index({ descriptionEn: 1 });
