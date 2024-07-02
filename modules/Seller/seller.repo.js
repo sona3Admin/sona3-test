@@ -246,7 +246,7 @@ exports.comparePassword = async (emailString, passwordString) => {
         emailString = emailString.toLowerCase()
         let existingObject = await this.find({ email: emailString })
 
-        if (!existingObject.success) return {
+        if (!existingObject.success || !existingObject.result.password) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
