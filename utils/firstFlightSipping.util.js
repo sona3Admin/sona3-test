@@ -5,40 +5,39 @@ const requestRepo = require("../modules/Request/request.repo")
 const { getSettings, setSettings } = require("../helpers/settings.helper")
 
 
-const firstFligthBaseUrl = process.env.FIRSTFLIGHT_API_URL;
-const firstFligthUsername = process.env.FIRSTFLIGHT_USER_NAME;
-const firstFligthPassword = process.env.FIRSTFLIGHT_PASSWORD;
-const firstFligthAccountNumber = process.env.FIRSTFLIGHT_ACCOUNT_NUMBER;
-const firstFligthCountry = process.env.FIRSTFLIGHT_COUNTRY;
+const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
+const firstFlightUsername = process.env.FIRSTFLIGHT_USER_NAME;
+const firstFlightPassword = process.env.FIRSTFLIGHT_PASSWORD;
+const firstFlightAccountNumber = process.env.FIRSTFLIGHT_ACCOUNT_NUMBER;
+const firstFlightCountry = process.env.FIRSTFLIGHT_COUNTRY;
 
 
 const authData = {
-    UserName: firstFligthUsername,
-    Password: firstFligthPassword,
-    AccountNo: firstFligthAccountNumber,
-    Country: firstFligthCountry,
+    UserName: firstFlightUsername,
+    Password: firstFlightPassword,
+    AccountNo: firstFlightAccountNumber,
+    Country: firstFlightCountry,
 }
 
 
-exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
+exports.createNewBulkOrder = async (orderDetailsObject, isCod) => {
     try {
-        let orderData = { ...authData }
-
-        if (orderDetailsObject.service) orderData = this.handleServiceData(orderDetailsObject, isReverse)
-        else orderData = this.handleOrderData(orderDetailsObject, isReverse)
 
         console.log('Creating New Order...');
+        orderDetailsObject.subOrders.forEach(async (subOrder) => {
+            let orderData = await this.handleOrderData(orderDetailsObject, subOrder, isCod, orderDetailsObject)
+            const response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+        })
 
-        const response = await axios.post(`${firstFligthBaseUrl}/CreateAirwayBill`, orderData, {
-            headers: { 'Content-Type': 'application/json' }
-        });
 
-        console.log('Order created successfully:', response.data);
+        // console.log('Order created successfully:', response.data);
         return {
             success: true,
             code: 201,
-            result: response.data,
-            orderData
+            // result: response.data,
+            // orderData
         };
 
     } catch (err) {
@@ -52,17 +51,53 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
 }
 
 
-exports.handleOrderData = (orderDetailsObject, isCod, isReverse) => {
+exports.calculateOrderShippingCost = async (orderDetailsObject) => {
     try {
 
+        console.log('calculateOrderShippingCost...');
+        let originCity = orderDetailsObject.shippingAddress.address.cityCode;
+        let shippingCost = { total: 0 };
+        orderDetailsObject.subOrders.forEach(async (subOrder) => {
+            let destinationCity = subOrder.address.cityCode
+            let subOrderCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity)
+            shippingCost[`${subOrder.shop.toString()}`] = subOrderCost.result
+            shippingCost.total += subOrderCost.result
+        })
+
+        return {
+            success: true,
+            code: 201,
+            result: shippingCost
+        };
+
+    } catch (err) {
+        console.log('err.message', err.message)
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
+
+
+exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
+    try {
+        let originCity = orderDetailsObject.shippingAddress.address.cityCode;
+        let destinationCity = subOrder.address.cityCode
+        let shippingCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity)
+        // construct order and send create request
+
         let orderData = {
-            ...orderDetailsObject,
-            AirwayBillData: {}
+            ...authData,
+            AirwayBillData: {
+                AirWayBillCreatedBy: "Sona3",
+                RecipientName: orderDetailsObject.name,
+                MobileNumber: orderDetailsObject.phone,
+            }
         };
         const customerData = {
-            AirWayBillCreatedBy: "Sona3",
-            RecipientName: orderDetailsObject.name,
-            MobileNumber: orderDetailsObject.phone,
+
             AddressCountry: orderDetailsObject.shippingAddress.address.country,
             City: orderDetailsObject.shippingAddress.address.city,
             Street: orderDetailsObject.shippingAddress.address.street,
@@ -72,31 +107,7 @@ exports.handleOrderData = (orderDetailsObject, isCod, isReverse) => {
             longitude: orderDetailsObject.shippingAddress.location.coordinates[1],
         };
 
-        orderDetailsObject.subOrders.forEach(subOrder => {
-            let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
-                return accumulator + currentItem.quantity;
-            }, 0)
 
-            let subOrderData = {
-                ...customerData,
-                ShipperRef: subOrder._id.toString(),
-                NumberOfPieces: numberOfPieces.toString(),
-                CODAmount: isCod && isCod == true ? (subOrder.subOrderTotal).toString() : "0",
-                CODCurrency: "AED",
-                Origin: "",
-                Destination: "",
-                DutyConsigneePay: "0",
-                pickup: {
-                    name: subOrder.name,
-                    mobileNumber: subOrder.phone,
-                    address: `${subOrder.address.country}-${subOrder.address.city.name}-${subOrder.address.street}`,
-                    latitude: subOrder.location.coordinates[0],
-                    longitude: subOrder.location.coordinates[1],
-                    date: new Date().toISOString()
-                }
-            }
-            orderData.AirwayBillData = subOrderData;
-        });
 
         return orderData;
 
@@ -202,7 +213,7 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
         console.log("tracking data", trackingId)
         let orderData = { trackingNos: trackingId }
         console.log("Getting order last status!")
-        const response = await axios.post(`${firstFligthBaseUrl}/api/order/ShipmentLastStatus`, orderData, {
+        const response = await axios.post(`${firstFlightBaseUrl}/api/order/ShipmentLastStatus`, orderData, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -231,7 +242,7 @@ exports.cancelOrderShipment = async (trackingId) => {
         const { token } = await this.getAuthToken();
         console.log("tracking id", trackingId)
         console.log("Canceling Shipment!")
-        const response = await axios.get(`${firstFligthBaseUrl}/api/order/DeleteShipment?trackingno=${trackingId}`, {
+        const response = await axios.get(`${firstFlightBaseUrl}/api/order/DeleteShipment?trackingno=${trackingId}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -254,24 +265,40 @@ exports.cancelOrderShipment = async (trackingId) => {
 }
 
 
-exports.listCities = async (countryID) => {
+exports.calculateSubOrderShippingCost = async (subOrder, originCity, destinationCity) => {
     try {
-        const { token } = await this.getAuthToken();
-        console.log("countryID", countryID)
-        const response = await axios.get(`${firstFligthBaseUrl}/api/CommonAPI/Cities?countryID=${countryID}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+        let totalVolume = 0
+        subOrder.items.forEach(item => {
+            let itemVolume = item.variation["width"] * item.variation["height"] * item.variation["length"]
+            let totalItemVolume = itemVolume * item.quantity
+            totalVolume += totalItemVolume
         });
+
+        let itemLength = Math.cbrt(totalVolume);
+
+        let rateParameterObject = {
+            ...authData,
+            Origin: originCity,
+            Destination: destinationCity,
+            ServiceType: "NOR",
+            Product: "DOX",
+            Dimension: `${itemLength}X${itemLength}X${itemLength}`
+
+        }
+
+        const response = await axios.post(`${firstFlightBaseUrl}/RateFinder`, rateParameterObject, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        let subOrderShippingCost = response.data.NetAmount
+
         return {
             success: true,
-            code: 201,
-            result: response.data.data
-        };
-
+            code: 200,
+            result: subOrderShippingCost
+        }
     } catch (err) {
-        console.log('Error getting status', err.message);
+        console.log('err.message', err.message)
         return {
             success: false,
             error: err.message,
@@ -279,3 +306,5 @@ exports.listCities = async (countryID) => {
         };
     }
 }
+
+
