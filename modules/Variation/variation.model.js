@@ -35,6 +35,7 @@ const variationSchema = mongoose.Schema({
     width: { type: Number },
     height: { type: Number },
     length: { type: Number },
+    weight: { type: Number }
 })
 
 variationSchema.index({ descriptionEn: 1 });

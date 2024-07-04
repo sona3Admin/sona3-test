@@ -1,6 +1,6 @@
 const i18n = require('i18n');
 const cartRepo = require("../../modules/Cart/cart.repo");
-
+const firstFlightHelper = require("../../utils/firstFlightSipping.util")
 
 exports.getCart = async (req, res) => {
     try {
@@ -85,6 +85,24 @@ exports.redeemCashback = async (req, res) => {
     try {
         const operationResultObject = await cartRepo.redeemCashback(req.query.customer, req.query.cashback)
         return res.status(operationResultObject.code).json(operationResultObject);
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.calculateCartShippingCost = async (req, res) => {
+    try {
+        let cartObject = await cartRepo.get({ customer: req.query.customer }, {});
+        cartObject.result.shippingAddress = req.body.shippingAddress
+        const operationResultObject = await firstFlightHelper.calculateOrderShippingCost(cartObject.result)
+        return res.status(operationResultObject.code).json(operationResultObject);
+
     } catch (err) {
         console.log(`err.message`, err.message);
         return res.status(500).json({

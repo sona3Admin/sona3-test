@@ -125,6 +125,12 @@ module.exports = {
                 "number.min": "minQuantity",
             }),
 
+
+            weight: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
         }),
     },
 
@@ -248,6 +254,12 @@ module.exports = {
             }),
 
             length: joi.number().min(0).optional().messages({
+                "number.base": "validQuantity",
+                "number.min": "minQuantity",
+            }),
+
+
+            weight: joi.number().min(0).optional().messages({
                 "number.base": "validQuantity",
                 "number.min": "minQuantity",
             }),

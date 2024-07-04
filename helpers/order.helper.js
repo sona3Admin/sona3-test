@@ -83,13 +83,13 @@ exports.calculateValueAddedTax = (itemsArray, vatRateNumber) => {
 }
 
 
-exports.addOrderTaxes = (shopObject, customerOrderObject) => {
+exports.addOrderTaxes = (shopObject, customerOrderObject, isFood) => {
     shopObject.shopTaxes = this.calculateValueAddedTax(shopObject.items, customerOrderObject.taxesRate)
     shopObject.subOrderTotal = parseFloat(shopObject.shopTaxes) + parseFloat(shopObject.shopTotal)
     customerOrderObject.taxesTotal += parseFloat(shopObject.shopTaxes)
     customerOrderObject.orderTotal += parseFloat(customerOrderObject.taxesTotal)
 
-    this.addOrderShippingFees(shopObject, customerOrderObject)
+    if (isFood) this.addOrderShippingFees(shopObject, customerOrderObject)
 }
 
 
@@ -102,7 +102,7 @@ exports.addOrderShippingFees = (shopObject, customerOrderObject) => {
 }
 
 
-exports.handleOrderCreation = async (customerCartObject, customerOrderObject) => {
+exports.handleOrderCreation = async (customerCartObject, customerOrderObject, isFood) => {
     try {
         let resultObject = this.setSubOrders(customerCartObject.subCarts)
         customerOrderObject.subOrders = resultObject.subOrders
@@ -123,7 +123,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject) =>
         customerOrderObject.phone = customerCartObject.customer.phone
 
         let subOrders = customerOrderObject.subOrders
-        subOrders.forEach((shopObject) => this.addOrderTaxes(shopObject, customerOrderObject))
+        subOrders.forEach((shopObject) => this.addOrderTaxes(shopObject, customerOrderObject, isFood))
         // subOrders.forEach((shopObject) => this.addOrderShippingFees(shopObject, customerOrderObject))
 
         this.calculateCashback(customerCartObject);

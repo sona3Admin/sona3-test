@@ -5,9 +5,7 @@ const basketOrderController = require("../../controllers/customer/order/basket.c
 const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
-app.post("/create", checkIdentity("customer"), cartOrderController.createOrder);
 app.post("/cart", checkIdentity("customer"), cartOrderController.createOrder);
-
 
 app.post("/basket", checkIdentity("customer"), basketOrderController.createOrder);
 app.delete("/basket", checkIdentity("customer"), basketOrderController.returnSubOrder);

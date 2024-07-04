@@ -11,5 +11,7 @@ app.delete("/flush", checkIdentity("customer"), cartController.flushCart);
 app.post("/cashback", checkIdentity("customer"), cartController.applyCashback)
 app.delete("/cashback", checkIdentity("customer"), cartController.redeemCashback)
 
+app.post("/shipping", checkIdentity("customer"), cartController.calculateCartShippingCost)
+
 
 module.exports = app
