@@ -106,10 +106,11 @@ exports.calculateSubOrderShippingCost = async (subOrder, originCity, destination
 };
 
 
-exports.createNewBulkOrder = async (orderDetailsObject, isCod) => {
+exports.createNewBulkOrder = async (orderDetailsObject) => {
     try {
         console.log('Creating New Order...');
-
+        let isCod = true
+        if (orderDetailsObject.paymentMethod == "visa") isCod = false
         const responses = [];
         for (const subOrder of orderDetailsObject.subOrders) {
 
@@ -272,10 +273,12 @@ exports.handleServiceData = (orderDetailsObject, isReverse) => {
 };
 
 
-exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
+exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCost) => {
     try {
         console.log("Saving Shipment data")
         let resultObject
+        let shippingFeesTotal = parseFloat(shippingCost.total)
+        delete shippingCost["total"]
         if (orderData.service) {
 
             let shippingId = arrayOfTrackingObjects[0].tracking_no
@@ -290,11 +293,16 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
         let index = 0
         let shipments = []
         subOrdersArray.forEach((subOrderObject) => {
-            subOrderObject.shippingId = arrayOfTrackingObjects[index].tracking_no
-            shipments.push(arrayOfTrackingObjects[index].tracking_no)
+            subOrderObject.shippingId = arrayOfTrackingObjects[index].AirwayBillNumber
+            subOrderObject.shopShippingFees = parseFloat(shippingCost[`${subOrderObject.shop}`])
+            subOrderObject.subOrderTotal += parseFloat(shippingCost[`${subOrderObject.shop}`])
+            shipments.push(arrayOfTrackingObjects[index].AirwayBillNumber)
             index++
         })
-        resultObject = await orderRepo.updateDirectly(orderData._id.toString(), { subOrders: subOrdersArray, shipments })
+        resultObject = await orderRepo.updateDirectly(orderData._id.toString(), {
+            subOrders: subOrdersArray, shipments, shippingFeesTotal,
+            $inc: { orderTotal : shippingFeesTotal}
+        })
         return resultObject
 
     } catch (err) {

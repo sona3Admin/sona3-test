@@ -112,6 +112,7 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         if (messageObject.customer) {
             sender["_id"] = roomObject.customer
             sender["image"] = roomObject.customer.image
+            sender["name"] = roomObject.seller.name
             notificationObject.customer = messageObject.customer
             receiver = roomObject?.seller ? roomObject.seller : []
             receiverRole = roomObject?.seller ? "seller" : "admin"

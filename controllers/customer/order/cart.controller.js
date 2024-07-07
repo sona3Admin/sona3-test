@@ -16,14 +16,14 @@ exports.createOrder = async (req, res) => {
         let operationResultObject = await orderRepo.create(customerOrderObject);
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
-        let shippingData = await fisrtFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
+        let shippingData = await fisrtFlightShipperHelper.createNewBulkOrder(customerOrderObject)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
-        operationResultObject = await fisrtFlightShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
+        operationResultObject = await fisrtFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
         operationResultObject["orderData"] = shippingData.orderData
-        cartRepo.flush({ customer: req.body.customer })
+        // cartRepo.flush({ customer: req.body.customer })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
