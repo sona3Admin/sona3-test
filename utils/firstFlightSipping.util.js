@@ -106,6 +106,49 @@ exports.calculateSubOrderShippingCost = async (subOrder, originCity, destination
 };
 
 
+exports.calculateServiceShippingCost = async (orderDetailsObject) => {
+    try {
+        console.log('calculateServiceShippingCost...');
+        let originCity = orderDetailsObject.cityCode || "DXB";
+        let shippingCost = { total: 0 };
+        let destinationCity = orderDetailsObject?.shop?.address?.cityCode || "DXB";
+        let itemVolume = (orderDetailsObject.service?.width * orderDetailsObject.service?.height * orderDetailsObject.service?.length) || 125
+
+        let itemLength = parseInt(Math.cbrt(itemVolume));
+
+        let rateParameterObject = {
+            ...authData,
+            Origin: originCity,
+            Destination: destinationCity,
+            ServiceType: "NOR",
+            Product: "DOX",
+            Dimension: `${itemLength}X${itemLength}X${itemLength}`
+        };
+
+        // console.log("rateParameterObject", firstFlightBaseUrl)
+        const response = await axios.post(`${firstFlightBaseUrl}/RateFinder`, rateParameterObject, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        let serviceShippingCost = response.data.NetAmount;
+
+        return {
+            success: true,
+            code: 200,
+            result: serviceShippingCost
+        };
+
+    } catch (err) {
+        console.log('err.message', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
+
+
 exports.createNewBulkOrder = async (orderDetailsObject) => {
     try {
         console.log('Creating New Order...');
@@ -228,41 +271,19 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
 };
 
 
-exports.handleServiceData = (orderDetailsObject, isReverse) => {
+exports.createServiceOrder = (orderDetailsObject) => {
     try {
-        console.log("handleServiceData")
+        console.log('Creating New Service Order...');
+        let isCod = true
+        if (orderDetailsObject.paymentMethod == "visa") isCod = false
 
-        let orderData = {
-            list: []
-        };
+        let originCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
+        let destinationCity = orderDetailsObject?.shop?.address?.cityCode || "DXB"
+        let shopId = orderDetailsObject?.shop?._id?.toString()
+        console.log("shopId", shopId)
+        let shippingCost = orderDetailsObject.shippingCost[`${shopId}`]
+        console.log("shippingCost", shippingCost)
 
-        const customerData = {
-            RecipientName: orderDetailsObject.name,
-            MobileNumber: orderDetailsObject.phone,
-            AddressCountry: orderDetailsObject.shippingAddress.address.country,
-            City: orderDetailsObject.shippingAddress.address.city,
-            Street: orderDetailsObject.shippingAddress.address.street,
-            MobileNumber2: orderDetailsObject.phone,
-            Remarks: orderDetailsObject.shippingAddress.address.remarks,
-            latitude: orderDetailsObject.shippingAddress.location.coordinates[0],
-            longitude: orderDetailsObject.shippingAddress.location.coordinates[1],
-        };
-
-        let subOrderData = {
-            ...customerData,
-            ShipperRef: orderDetailsObject.shipperRef.toString(),
-            NumberOfPieces: 1,
-            TotalCOG: isReverse == true ? -1 * orderDetailsObject.orderTotal : orderDetailsObject.orderTotal,
-            pickup: {
-                name: orderDetailsObject.shop.nameEn,
-                mobileNumber: orderDetailsObject.shop.phone,
-                address: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city.name}-${orderDetailsObject.shop.address.street}`,
-                latitude: orderDetailsObject.shop.location.coordinates[0],
-                longitude: orderDetailsObject.shop.location.coordinates[1],
-                date: new Date().toISOString()
-            }
-        }
-        orderData.list.push(subOrderData);
 
         return orderData;
 

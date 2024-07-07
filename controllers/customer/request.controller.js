@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
+const firstFlightShipperHelper = require("../../utils/firstFlightShipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
 
 
@@ -138,6 +139,24 @@ exports.getRequest = async (req, res) => {
 exports.updateRequest = async (req, res) => {
     try {
         const operationResultObject = await requestRepo.update(req.query._id, req.body);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.calculateRequestShippingCost = async (req, res) => {
+    try {
+        let requestObject = await requestRepo.get({ _id: req.query._id }, {});
+        // requestObject.result.shippingAddress = req.body.shippingAddress
+        const operationResultObject = await firstFlightHelper.calculateRequestShippingCost(requestObject.result)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

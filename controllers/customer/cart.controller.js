@@ -99,7 +99,7 @@ exports.redeemCashback = async (req, res) => {
 exports.calculateCartShippingCost = async (req, res) => {
     try {
         let cartObject = await cartRepo.get({ customer: req.query.customer }, {});
-        cartObject.result.shippingAddress = req.body.shippingAddress
+        // cartObject.result.shippingAddress = req.body.shippingAddress
         const operationResultObject = await firstFlightHelper.calculateOrderShippingCost(cartObject.result)
         return res.status(operationResultObject.code).json(operationResultObject);
 

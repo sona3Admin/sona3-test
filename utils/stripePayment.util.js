@@ -25,6 +25,43 @@ exports.initiatePayment = async (orderCostObject, orderDetails) => {
             lat: orderDetails.shippingAddress.location.coordinates[1],
         }
 
+        const ephemeralKey = await stripe.ephemeralKeys.create({ apiVersion: '2024-06-20' });
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: (orderCostObject.orderTotal) * cents,
+            currency: 'aed',
+            automatic_payment_methods: {
+                enabled: true,
+            },
+            metadata: { ...orderDetailsObject }
+        });
+
+        return {
+            success: true, code: 201, 
+            result: {
+                paymentIntent: paymentIntent.client_secret,
+                ephemeralKey: ephemeralKey.secret,
+            }
+        }
+    } catch (err) {
+        console.log("err", err.message)
+        return { success: false, code: 500, error: err.message }
+    }
+}
+
+
+exports.initiatePayment = async (orderCostObject, orderDetails) => {
+    try {
+        const cents = 100
+        const orderDetailsObject = {
+            customer: orderDetails.customer,
+            country: orderDetails.shippingAddress.address.country,
+            city: orderDetails.shippingAddress.address.city,
+            street: orderDetails.shippingAddress.address.street,
+            remarks: orderDetails.shippingAddress.address.remarks,
+            long: orderDetails.shippingAddress.location.coordinates[0],
+            lat: orderDetails.shippingAddress.location.coordinates[1],
+        }
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",

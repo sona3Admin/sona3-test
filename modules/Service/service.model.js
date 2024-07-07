@@ -30,6 +30,7 @@ const serviceSchema = mongoose.Schema({
     width: { type: Number },
     height: { type: Number },
     length: { type: Number },
+    weight: { type: Number }
 })
 
 

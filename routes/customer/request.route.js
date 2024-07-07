@@ -13,5 +13,6 @@ app.put("/update", checkIdentity("customer"), requestController.updateRequest);
 app.get("/list", checkIdentity("customer"), requestController.listRequests);
 app.get("/get", checkIdentity("customer"), requestController.getRequest);
 
+app.post("/shipping", checkIdentity("customer"), requestController.calculateRequestShippingCost)
 
 module.exports = app
