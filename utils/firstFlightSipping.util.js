@@ -147,7 +147,10 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
         let originCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
         let destinationCity = subOrder?.address?.cityCode || "DXB"
         let shopId = subOrder.shop?._id?.toString() || subOrder.shop
+        console.log("shopId", shopId)
         let shippingCost = orderDetailsObject.shippingCost[`${shopId}`]
+        console.log("shippingCost", shippingCost)
+
         // console.log("shippingCost", shippingCost)
         // construct order and send create request
 
@@ -159,10 +162,11 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
             ReceiversCity: orderDetailsObject.shippingAddress.address.city,
             ReceiversCountry: orderDetailsObject.shippingAddress.address.country,
             ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
-            ReceiversPhone: "971" + orderDetailsObject.phone,
-            ReceiversMobile: "971" + orderDetailsObject.phone
+            ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
+            ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
         // console.log("customerData", customerData)
+        console.log("971${orderDetailsObject.phone}", `971${orderDetailsObject.phone}`)
 
         let shopData = {
             SendersCompany: subOrder.name,
@@ -172,14 +176,14 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
             SendersCity: subOrder.address.city,
             SendersCountry: subOrder.address.country,
             SendersGeoLocation: `${subOrder.location.coordinates[0]},${subOrder.location.coordinates[0]}`,
-            SendersPhone: "971" + subOrder.phone,
-            SendersMobile: "971" + subOrder.phone
+            SendersPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
+            SendersMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
         }
-        // console.log("shopData", shopData)
+        console.log("971${subOrder.phone}", `971${subOrder.phone}`)
 
         let productNames = ``
         productNames = subOrder.items.forEach((item) => {
-            productNames += `${item?.product?.nameEn || "Product"} - `
+            productNames += `${item?.product?.nameEn || "Product - "} `
         })
         console.log("productNames", productNames)
         let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
@@ -202,7 +206,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
                 DutyConsigneePay: "0",
                 ProductType: "XPS",
                 ServiceType: "NOR",
-                CODAmount: isCod ? (subOrder.subOrderTotal + shippingCost.toString).toString() : "0",
+                CODAmount: isCod ? (subOrder.subOrderTotal + shippingCost).toString() : "0",
                 Origin: originCity,
                 Destination: destinationCity,
                 GoodsDescription: productNames || "Product Desc",
