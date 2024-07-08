@@ -21,6 +21,14 @@ exports.purchaseRequest = async (req, res) => {
             operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
             if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         }
+        else {
+            let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject)
+            operationResultObject["orderData"] = shippingData.orderData
+
+            if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+            operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
+            if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        }
 
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -155,7 +163,8 @@ exports.updateRequest = async (req, res) => {
 exports.calculateRequestShippingCost = async (req, res) => {
     try {
         let requestObject = await requestRepo.get({ _id: req.query._id }, {});
-        // requestObject.result.shippingAddress = req.body.shippingAddress
+        console.log("cityCode", req.body.cityCode)
+        requestObject.result.cityCode = req.body.cityCode
         const operationResultObject = await firstFlightShipperHelper.calculateServiceShippingCost(requestObject.result)
         return res.status(operationResultObject.code).json(operationResultObject);
 

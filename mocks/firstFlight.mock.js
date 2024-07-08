@@ -17,3 +17,20 @@ exports.createNewBulkOrder = async (req, res) => {
     }
 
 }
+
+
+exports.listCities = async (req, res) => {
+    try {
+        const operationResultObject = await firstFlightHelper.listCities();
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+
+}

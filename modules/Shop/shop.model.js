@@ -27,7 +27,8 @@ const shopSchema = mongoose.Schema({
     joinDate: { type: Date },
     verifyDate: { type: Date },
     policyEn: { type: String },
-    policyAr: { type: String }
+    policyAr: { type: String },
+    isFood: { type: Boolean, default: false }
 })
 
 shopSchema.index({ location: '2dsphere' });

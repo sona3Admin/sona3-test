@@ -130,12 +130,12 @@ exports.calculateServiceShippingCost = async (orderDetailsObject) => {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        let serviceShippingCost = response.data.NetAmount;
+        shippingCost.total = response.data.NetAmount;
 
         return {
             success: true,
             code: 200,
-            result: serviceShippingCost
+            result: shippingCost
         };
 
     } catch (err) {
@@ -306,7 +306,7 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
         delete shippingCost["total"]
         if (orderData.service) {
 
-            let shippingId = arrayOfTrackingObjects[0].tracking_no
+            let shippingId = arrayOfTrackingObjects[0].AirwayBillNumber
             resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
 
             return resultObject
@@ -326,7 +326,7 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
         })
         resultObject = await orderRepo.updateDirectly(orderData._id.toString(), {
             subOrders: subOrdersArray, shipments, shippingFeesTotal,
-            $inc: { orderTotal : shippingFeesTotal}
+            $inc: { orderTotal: shippingFeesTotal }
         })
         return resultObject
 
@@ -399,6 +399,24 @@ exports.cancelOrderShipment = async (trackingId) => {
 }
 
 
+exports.listCities = async () => {
+    try {
 
+        const response = await axios.post(`https://customerapp.firstflightme.com/FirstFlightService.svc/CityList`, authData, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return {
+            success: true,
+            code: 201,
+            result: response.data.CityListLocation
+        };
 
-
+    } catch (err) {
+        console.log('Error getting status', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}

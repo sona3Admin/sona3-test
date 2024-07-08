@@ -260,7 +260,7 @@ exports.apply = async (cartId, couponId, shopId) => {
 
         let couponShopId = (couponObject?.result?.shop).toString() || shopId
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
-        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("couponNotValid") }
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
         let customerId = (cartObject.result.customer).toString()
@@ -351,7 +351,7 @@ exports.applyOnBasket = async (basketId, couponId, shopId) => {
 
         let couponShopId = (couponObject?.result?.shop).toString() || shopId
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
-        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
+        if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("couponNotValid") }
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
         let customerId = (cartObject.result.customer).toString()

@@ -115,6 +115,10 @@ module.exports = {
                 "date.base": "validJoinDate",
             }),
 
+            isFood: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
         }),
     },
 
@@ -224,6 +228,10 @@ module.exports = {
 
             verifyDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
+            }),
+
+            isFood: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
             }),
         }),
     },
