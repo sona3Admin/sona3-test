@@ -1,7 +1,7 @@
 const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
-const firstFlightShipperHelper = require("../../utils/firstFlightShipping.util")
+const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
 
 
@@ -156,7 +156,7 @@ exports.calculateRequestShippingCost = async (req, res) => {
     try {
         let requestObject = await requestRepo.get({ _id: req.query._id }, {});
         // requestObject.result.shippingAddress = req.body.shippingAddress
-        const operationResultObject = await firstFlightHelper.calculateRequestShippingCost(requestObject.result)
+        const operationResultObject = await firstFlightShipperHelper.calculateServiceShippingCost(requestObject.result)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
