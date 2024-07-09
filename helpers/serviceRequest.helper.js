@@ -19,7 +19,6 @@ exports.calculateValueAddedTax = (serviceTotal) => {
 exports.handleRequestPurchase = async (customerRequestObject, customerOrderObject) => {
     try {
         const ifastShippingCost = 15
-        console.log("customerRequestObject?.shippingFeesTotal", customerOrderObject?.shippingFeesTotal)
         customerRequestObject.name = customerRequestObject.customer.name
         customerRequestObject.phone = customerRequestObject.customer.phone
         customerRequestObject.taxesTotal = this.calculateValueAddedTax(customerRequestObject.serviceTotal)

@@ -295,7 +295,7 @@ exports.createServiceOrder = async (orderDetailsObject) => {
             ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
-        console.log("orderDetailsObject.shop.name", orderDetailsObject.shop.name)
+
         let shopData = {
             SendersCompany: orderDetailsObject.shop.nameEn,
             SendersContactPerson: orderDetailsObject.shop.nameEn,
@@ -368,7 +368,7 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
        
         if (orderData.service) {
             let shippingId = arrayOfTrackingObjects.AirwayBillNumber
-            console.log("service shipping id", shippingId)
+            
             resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
 
             return resultObject
