@@ -209,7 +209,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
             ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
         // console.log("customerData", customerData)
-        console.log("971${orderDetailsObject.phone}", `971${orderDetailsObject.phone}`)
+
 
         let shopData = {
             SendersCompany: subOrder.name,
@@ -271,7 +271,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
 };
 
 
-exports.createServiceOrder = (orderDetailsObject) => {
+exports.createServiceOrder = async (orderDetailsObject) => {
     try {
         console.log('Creating New Service Order...');
         let isCod = true
@@ -281,11 +281,73 @@ exports.createServiceOrder = (orderDetailsObject) => {
         let destinationCity = orderDetailsObject?.shop?.address?.cityCode || "DXB"
         let shopId = orderDetailsObject?.shop?._id?.toString()
         console.log("shopId", shopId)
-        let shippingCost = orderDetailsObject.shippingCost[`${shopId}`]
+        let shippingCost = orderDetailsObject.shippingFeesTotal
         console.log("shippingCost", shippingCost)
 
+        let customerData = {
+            ReceiversCompany: orderDetailsObject.name,
+            ReceiversContactPerson: orderDetailsObject.name,
+            ReceiversAddress1: orderDetailsObject.shippingAddress.address.street,
+            ReceiversAddress2: orderDetailsObject.shippingAddress.address.remarks,
+            ReceiversCity: orderDetailsObject.shippingAddress.address.city,
+            ReceiversCountry: orderDetailsObject.shippingAddress.address.country,
+            ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
+            ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
+        }
+        console.log("orderDetailsObject.shop.name", orderDetailsObject.shop.name)
+        let shopData = {
+            SendersCompany: orderDetailsObject.shop.nameEn,
+            SendersContactPerson: orderDetailsObject.shop.nameEn,
+            SendersAddress1: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city}-${orderDetailsObject.shop.address.street}`,
+            SendersAddress2: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city}-${orderDetailsObject.shop.address.street}`,
+            SendersCity: orderDetailsObject.shop.address.city,
+            SendersCountry: orderDetailsObject.shop.address.country,
+            SendersGeoLocation: `${orderDetailsObject.shop.location.coordinates[0]},${orderDetailsObject.shop.location.coordinates[0]}`,
+            SendersPhone: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454",
+            SendersMobile: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454"
+        }
 
-        return orderData;
+        let productName = orderDetailsObject.service.nameEn
+        console.log("productName", productName)
+        let numberOfPieces = 1
+        let weight = orderDetailsObject.service.weight || "5"
+        console.log("weight", weight)
+
+
+        let orderData = {
+            ...authData,
+            AirwayBillData: {
+                ...customerData,
+                ...shopData,
+                AirWayBillCreatedBy: "Sona3",
+                CODCurrency: "AED",
+                ShipmentInvoiceCurrency: "AED",
+                ShipmentInvoiceValue: "0",
+                DutyConsigneePay: "0",
+                ProductType: "XPS",
+                ServiceType: "NOR",
+                CODAmount: isCod ? (orderDetailsObject.orderTotal + shippingCost).toString() : "0",
+                Origin: originCity,
+                Destination: destinationCity,
+                GoodsDescription: productName || "Product Desc",
+                NumberofPeices: numberOfPieces.toString(),
+                Weight: weight.toString(),
+            }
+        };
+
+
+        const response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+
+        console.log('Order created successfully:', response.data);
+        return {
+            success: true,
+            code: 201,
+            result: response.data,
+        };
 
     } catch (err) {
         console.log('Error processing order data:', err.message);
@@ -303,20 +365,21 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
         console.log("Saving Shipment data")
         let resultObject
         let shippingFeesTotal = parseFloat(shippingCost.total)
-        delete shippingCost["total"]
+       
         if (orderData.service) {
-
-            let shippingId = arrayOfTrackingObjects[0].AirwayBillNumber
+            let shippingId = arrayOfTrackingObjects.AirwayBillNumber
+            console.log("service shipping id", shippingId)
             resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
 
             return resultObject
         }
-
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
 
         let subOrdersArray = orderData.subOrders
         let index = 0
         let shipments = []
+        delete shippingCost["total"]
+
         subOrdersArray.forEach((subOrderObject) => {
             subOrderObject.shippingId = arrayOfTrackingObjects[index].AirwayBillNumber
             subOrderObject.shopShippingFees = parseFloat(shippingCost[`${subOrderObject.shop}`])

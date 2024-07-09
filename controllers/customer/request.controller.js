@@ -8,12 +8,13 @@ const { handleRequestPurchase, handleReturnService } = require("../../helpers/se
 exports.purchaseRequest = async (req, res) => {
     try {
         let customerOrderObject = req.body
+
         let customerRequestObject = await requestRepo.get({ _id: req.query._id })
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
 
         let operationResultObject = await requestRepo.updateDirectly(req.query._id, { ...customerOrderObject.calculations });
-
         if (customerRequestObject.result.service.isFood && customerRequestObject.result.service.isDeliverable) {
+            console.log("Ifast")
             let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject, false)
             operationResultObject["orderData"] = shippingData.orderData
 
@@ -21,12 +22,13 @@ exports.purchaseRequest = async (req, res) => {
             operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
             if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         }
-        else {
+        else if (customerRequestObject.result.service.isDeliverable && !customerRequestObject.result.service.isFood) {
+            console.log("First Flight")
             let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject)
-            operationResultObject["orderData"] = shippingData.orderData
 
             if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-            operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
+
+            operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingFeesTotal)
             if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         }
 
