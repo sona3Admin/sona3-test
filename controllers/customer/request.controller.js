@@ -179,3 +179,22 @@ exports.calculateRequestShippingCost = async (req, res) => {
         });
     }
 }
+
+
+exports.getOrderShipmentLastStatus = async (req, res) => {
+    try {
+        let operationResultObject
+        if(req.query.isFood == true) operationResultObject = await ifastShipperHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        else operationResultObject = await firstFlightShipperHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+
+}

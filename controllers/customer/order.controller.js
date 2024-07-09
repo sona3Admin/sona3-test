@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const orderRepo = require("../../modules/Order/order.repo")
 const ifastHelper = require("../../utils/ifastShipping.util")
+const firstFlightHelper = require("../../utils/firstFlightSipping.util")
 
 
 exports.listOrders = async (req, res) => {
@@ -56,7 +57,9 @@ exports.updateOrder = async (req, res) => {
 
 exports.getOrderShipmentLastStatus = async (req, res) => {
     try {
-        const operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        let operationResultObject
+        if(req.query.isFood == true) operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        else operationResultObject = await firstFlightHelper.getOrderShipmentLastStatus(req.query.shippingId);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

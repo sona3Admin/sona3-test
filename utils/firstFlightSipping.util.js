@@ -365,10 +365,10 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
         console.log("Saving Shipment data")
         let resultObject
         let shippingFeesTotal = parseFloat(shippingCost.total)
-       
+
         if (orderData.service) {
             let shippingId = arrayOfTrackingObjects.AirwayBillNumber
-            
+
             resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
 
             return resultObject
@@ -406,16 +406,13 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
 
 exports.getOrderShipmentLastStatus = async (trackingId) => {
     try {
-        const { token } = await this.getAuthToken();
         console.log("tracking data", trackingId)
-        let orderData = { trackingNos: trackingId }
+        let orderData = { TrackingAWB: trackingId, ...authData }
         console.log("Getting order last status!")
-        const response = await axios.post(`${firstFlightBaseUrl}/api/order/ShipmentLastStatus`, orderData, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+        const response = await axios.post(`${firstFlightBaseUrl}/Tracking`, orderData, {
+            headers: { 'Content-Type': 'application/json' }
         });
+        
         return {
             success: true,
             code: 201,
