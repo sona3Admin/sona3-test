@@ -14,6 +14,6 @@ app.get("/list", checkIdentity("customer"), requestController.listRequests);
 app.get("/get", checkIdentity("customer"), requestController.getRequest);
 
 app.post("/shipping", checkIdentity("customer"), requestController.calculateRequestShippingCost)
-app.get("/statue", checkIdentity("customer"), requestController.getOrderShipmentLastStatus)
+app.get("/status", checkIdentity("customer"), requestController.getOrderShipmentLastStatus)
 
 module.exports = app

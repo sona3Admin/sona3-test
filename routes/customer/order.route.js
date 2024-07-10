@@ -6,6 +6,7 @@ const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
 app.post("/cart", checkIdentity("customer"), cartOrderController.createOrder);
+app.delete("/cart", checkIdentity("customer"), cartOrderController.returnSubOrder);
 
 app.post("/basket", checkIdentity("customer"), basketOrderController.createOrder);
 app.delete("/basket", checkIdentity("customer"), basketOrderController.returnSubOrder);

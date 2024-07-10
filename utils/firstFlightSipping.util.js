@@ -149,7 +149,7 @@ exports.calculateServiceShippingCost = async (orderDetailsObject) => {
 }
 
 
-exports.createNewBulkOrder = async (orderDetailsObject) => {
+exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
     try {
         console.log('Creating New Order...');
         let isCod = true
@@ -157,11 +157,12 @@ exports.createNewBulkOrder = async (orderDetailsObject) => {
         const responses = [];
         for (const subOrder of orderDetailsObject.subOrders) {
 
-            let orderData = await this.handleOrderData(orderDetailsObject, subOrder, isCod);
+            let orderData = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
             console.log("orderData", orderData)
             const response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
                 headers: { 'Content-Type': 'application/json' }
             });
+            response.data.CODAmount = orderData.AirwayBillData.CODAmount
             responses.push(response.data);
         }
 
@@ -183,10 +184,10 @@ exports.createNewBulkOrder = async (orderDetailsObject) => {
 };
 
 
-exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
+exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse) => {
     try {
         // console.log("orderDetailsObject.shippingAddress", orderDetailsObject.shippingAddress)
-
+        if (isReverse == true) return await this.handleReverseOrderData(orderDetailsObject, subOrder, isCod)
         let originCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
         let destinationCity = subOrder?.address?.cityCode || "DXB"
         let shopId = subOrder.shop?._id?.toString() || subOrder.shop
@@ -269,6 +270,89 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod) => {
         };
     }
 };
+
+
+exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => {
+    try {
+        // console.log("orderDetailsObject.shippingAddress", orderDetailsObject.shippingAddress)
+        console.log("Creating Resverse Order")
+        let originCity = subOrder?.address?.cityCode || "DXB";
+        let destinationCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB"
+        let shopId = subOrder.shop?._id?.toString() || subOrder.shop
+        console.log("shopId", shopId)
+        let shippingCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity)
+        console.log("shippingCost", shippingCost)
+
+        let customerData = {
+            SendersCompany: orderDetailsObject.name,
+            SendersContactPerson: orderDetailsObject.name,
+            SendersAddress1: orderDetailsObject.shippingAddress.address.street,
+            SendersAddress2: orderDetailsObject.shippingAddress.address.remarks,
+            SendersCity: orderDetailsObject.shippingAddress.address.city,
+            SendersCountry: orderDetailsObject.shippingAddress.address.country,
+            SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            SendersPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
+            SendersMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
+        }
+        
+        let shopData = {
+            ReceiversCompany: subOrder.name,
+            ReceiversContactPerson: subOrder.name,
+            ReceiversAddress1: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
+            ReceiversAddress2: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
+            ReceiversCity: subOrder.address.city,
+            ReceiversCountry: subOrder.address.country,
+            ReceiversGeoLocation: `${subOrder.location.coordinates[0]},${subOrder.location.coordinates[0]}`,
+            ReceiversPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
+            ReceiversMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
+        }
+        console.log("971${subOrder.phone}", `971${subOrder.phone}`)
+
+        let productNames = ``
+        productNames = subOrder.items.forEach((item) => {
+            productNames += `${item?.product?.nameEn || "Product - "} `
+        })
+        console.log("productNames", productNames)
+        let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
+            return accumulator + currentItem.quantity;
+        }, 0)
+
+        let weight = subOrder.items.reduce((accumulator, currentItem) => {
+            return accumulator + (currentItem?.variation?.weight || 0.5);
+        }, 0)
+
+        let orderData = {
+            ...authData,
+            AirwayBillData: {
+                ...customerData,
+                ...shopData,
+                AirWayBillCreatedBy: "Sona3",
+                CODCurrency: "AED",
+                ShipmentInvoiceCurrency: "AED",
+                ShipmentInvoiceValue: "0",
+                DutyConsigneePay: "0",
+                ProductType: "XPS",
+                ServiceType: "NOR",
+                CODAmount: isCod ? (subOrder.subOrderTotal + shippingCost.result).toString() : "0",
+                Origin: originCity,
+                Destination: destinationCity,
+                GoodsDescription: productNames || "Product Desc",
+                NumberofPeices: numberOfPieces.toString(),
+                Weight: weight.toString(),
+            }
+        };
+
+        return orderData;
+
+    } catch (err) {
+        console.log('Error processing order data:', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
 
 
 exports.createServiceOrder = async (orderDetailsObject) => {
@@ -364,7 +448,8 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
     try {
         console.log("Saving Shipment data")
         let resultObject
-        let shippingFeesTotal = parseFloat(shippingCost.total)
+        console.log("shippingCost", shippingCost)
+        let shippingFeesTotal = shippingCost?.total ? parseFloat(shippingCost?.total) : parseFloat(shippingCost)
 
         if (orderData.service) {
             let shippingId = arrayOfTrackingObjects.AirwayBillNumber
@@ -374,16 +459,17 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
             return resultObject
         }
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
-
+        
+        console.log("orderData.subOrders", orderData.subOrders)
         let subOrdersArray = orderData.subOrders
         let index = 0
         let shipments = []
-        delete shippingCost["total"]
+        if(shippingCost?.total) delete shippingCost["total"]
 
         subOrdersArray.forEach((subOrderObject) => {
             subOrderObject.shippingId = arrayOfTrackingObjects[index].AirwayBillNumber
-            subOrderObject.shopShippingFees = parseFloat(shippingCost[`${subOrderObject.shop}`])
-            subOrderObject.subOrderTotal += parseFloat(shippingCost[`${subOrderObject.shop}`])
+            subOrderObject.shopShippingFees = shippingCost[`${subOrderObject?.shop}`] ? parseFloat(shippingCost[`${subOrderObject.shop}`]) : shippingCost
+            subOrderObject.subOrderTotal += parseFloat(subOrderObject.shopShippingFees)
             shipments.push(arrayOfTrackingObjects[index].AirwayBillNumber)
             index++
         })
@@ -412,11 +498,11 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
         const response = await axios.post(`${firstFlightBaseUrl}/Tracking`, orderData, {
             headers: { 'Content-Type': 'application/json' }
         });
-        
+
         return {
             success: true,
             code: 201,
-            result: response.data.data[0],
+            result: response.data.AirwayBillTrackList,
             orderData
         };
 
