@@ -294,7 +294,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
             SendersPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             SendersMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
-        
+
         let shopData = {
             ReceiversCompany: subOrder.name,
             ReceiversContactPerson: subOrder.name,
@@ -355,9 +355,10 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
 }
 
 
-exports.createServiceOrder = async (orderDetailsObject) => {
+exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
     try {
         console.log('Creating New Service Order...');
+        if (isReverse == true) return await this.handleReverseServiceData(orderDetailsObject)
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
 
@@ -425,7 +426,7 @@ exports.createServiceOrder = async (orderDetailsObject) => {
             headers: { 'Content-Type': 'application/json' }
         });
 
-
+        response.data.CODAmount = orderData.AirwayBillData.CODAmount
         console.log('Order created successfully:', response.data);
         return {
             success: true,
@@ -444,6 +445,94 @@ exports.createServiceOrder = async (orderDetailsObject) => {
 };
 
 
+exports.handleReverseServiceData = async (orderDetailsObject) => {
+    try {
+        console.log('Creating New Reverse Service Order...');
+        let isCod = true
+        if (orderDetailsObject.paymentMethod == "visa") isCod = false
+
+        let originCity = orderDetailsObject?.shop?.address?.cityCode || "DXB"
+        let destinationCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
+        let shopId = orderDetailsObject?.shop?._id?.toString()
+        console.log("shopId", shopId)
+        let shippingCost = orderDetailsObject.shippingFeesTotal
+        console.log("shippingCost", shippingCost)
+
+        let customerData = {
+            SendersCompany: orderDetailsObject.name,
+            SendersContactPerson: orderDetailsObject.name,
+            SendersAddress1: orderDetailsObject.shippingAddress.address.street,
+            SendersAddress2: orderDetailsObject.shippingAddress.address.remarks,
+            SendersCity: orderDetailsObject.shippingAddress.address.city,
+            SendersCountry: orderDetailsObject.shippingAddress.address.country,
+            SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            SendersPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
+            SendersMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
+        }
+
+        let shopData = {
+            ReceiversCompany: orderDetailsObject.shop.nameEn,
+            ReceiversContactPerson: orderDetailsObject.shop.nameEn,
+            ReceiversAddress1: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city}-${orderDetailsObject.shop.address.street}`,
+            ReceiversAddress2: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city}-${orderDetailsObject.shop.address.street}`,
+            ReceiversCity: orderDetailsObject.shop.address.city,
+            ReceiversCountry: orderDetailsObject.shop.address.country,
+            ReceiversGeoLocation: `${orderDetailsObject.shop.location.coordinates[0]},${orderDetailsObject.shop.location.coordinates[0]}`,
+            ReceiversPhone: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454",
+            ReceiversMobile: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454"
+        }
+
+        let productName = orderDetailsObject.service.nameEn
+        console.log("productName", productName)
+        let numberOfPieces = 1
+        let weight = orderDetailsObject.service.weight || "5"
+        console.log("weight", weight)
+
+
+        let orderData = {
+            ...authData,
+            AirwayBillData: {
+                ...customerData,
+                ...shopData,
+                AirWayBillCreatedBy: "Sona3",
+                CODCurrency: "AED",
+                ShipmentInvoiceCurrency: "AED",
+                ShipmentInvoiceValue: "0",
+                DutyConsigneePay: "0",
+                ProductType: "XPS",
+                ServiceType: "NOR",
+                CODAmount: isCod ? (orderDetailsObject.orderTotal + shippingCost).toString() : "0",
+                Origin: originCity,
+                Destination: destinationCity,
+                GoodsDescription: productName || "Product Desc",
+                NumberofPeices: numberOfPieces.toString(),
+                Weight: weight.toString(),
+            }
+        };
+
+
+        const response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        response.data.CODAmount = orderData.AirwayBillData.CODAmount
+
+        console.log('Reverse Order created successfully:', response.data);
+        return {
+            success: true,
+            code: 201,
+            result: response.data,
+        };
+
+    } catch (err) {
+        console.log('Error processing order data:', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
+
 exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCost) => {
     try {
         console.log("Saving Shipment data")
@@ -459,12 +548,12 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
             return resultObject
         }
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
-        
+
         console.log("orderData.subOrders", orderData.subOrders)
         let subOrdersArray = orderData.subOrders
         let index = 0
         let shipments = []
-        if(shippingCost?.total) delete shippingCost["total"]
+        if (shippingCost?.total) delete shippingCost["total"]
 
         subOrdersArray.forEach((subOrderObject) => {
             subOrderObject.shippingId = arrayOfTrackingObjects[index].AirwayBillNumber
@@ -504,34 +593,6 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
             code: 201,
             result: response.data.AirwayBillTrackList,
             orderData
-        };
-
-    } catch (err) {
-        console.log('Error getting status', err.message);
-        return {
-            success: false,
-            error: err.message,
-            code: 500
-        };
-    }
-}
-
-
-exports.cancelOrderShipment = async (trackingId) => {
-    try {
-        const { token } = await this.getAuthToken();
-        console.log("tracking id", trackingId)
-        console.log("Canceling Shipment!")
-        const response = await axios.get(`${firstFlightBaseUrl}/api/order/DeleteShipment?trackingno=${trackingId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return {
-            success: true,
-            code: 201,
-            result: response.data
         };
 
     } catch (err) {

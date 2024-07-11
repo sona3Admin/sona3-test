@@ -24,7 +24,7 @@ exports.purchaseRequest = async (req, res) => {
         }
         else if (customerRequestObject.result.service.isDeliverable && !customerRequestObject.result.service.isFood) {
             console.log("First Flight")
-            let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject)
+            let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject, false)
 
             if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
@@ -49,15 +49,25 @@ exports.returnRequest = async (req, res) => {
     try {
         let requestObject = await requestRepo.get({ _id: req.query._id })
         if (!requestObject.success) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+
         requestObject = handleReturnService(requestObject.result)
         let operationResultObject = requestRepo.updateDirectly(req.query._id, { ...requestObject.calculations });
 
-        let shippingData = await ifastShipperHelper.createNewBulkOrder(requestObject, true)
-        if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        if (requestObject.service.isFood) {
+            let shippingData = await ifastShipperHelper.createNewBulkOrder(requestObject, true)
+            if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
-        operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, requestObject)
-        if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        operationResultObject["orderData"] = shippingData.orderData
+            operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, requestObject)
+            if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+            operationResultObject["orderData"] = shippingData.orderData
+        }
+        else if (!requestObject.service.isFood) {
+            let shippingData = await firstFlightShipperHelper.createServiceOrder(requestObject, true)
+            if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+            console.log("shippingData.result", shippingData.result)
+            operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, requestObject, shippingData.result.CODAmount)
+            if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        }
 
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -184,7 +194,7 @@ exports.calculateRequestShippingCost = async (req, res) => {
 exports.getOrderShipmentLastStatus = async (req, res) => {
     try {
         let operationResultObject
-        if(req.query.isFood == true) operationResultObject = await ifastShipperHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        if (req.query.isFood == true) operationResultObject = await ifastShipperHelper.getOrderShipmentLastStatus(req.query.shippingId);
         else operationResultObject = await firstFlightShipperHelper.getOrderShipmentLastStatus(req.query.shippingId);
         return res.status(operationResultObject.code).json(operationResultObject);
 
