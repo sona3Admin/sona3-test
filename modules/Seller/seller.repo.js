@@ -241,10 +241,13 @@ exports.remove = async (_id) => {
 }
 
 
-exports.comparePassword = async (emailString, passwordString) => {
+exports.comparePassword = async (emailOrUsernameString, passwordString) => {
     try {
-        emailString = emailString.toLowerCase()
-        let existingObject = await this.find({ email: emailString })
+        emailOrUsernameString = emailOrUsernameString.toLowerCase()
+        let existingObject = await this.find({ $or: [
+            { email: emailOrUsernameString },
+            { userName: emailOrUsernameString }
+        ] })
 
         if (!existingObject.success || !existingObject.result.password) return {
             success: false,
