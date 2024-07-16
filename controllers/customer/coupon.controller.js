@@ -20,7 +20,7 @@ exports.applyCoupon = async (req, res) => {
 
 exports.cancelCoupon = async (req, res) => {
     try {
-        const operationResultObject = await couponRepo.cancel(req.query.cart)
+        const operationResultObject = await couponRepo.cancel(req.query.cart, req.query.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -52,7 +52,7 @@ exports.applyCouponOnBasket = async (req, res) => {
 
 exports.cancelCouponFromBasket = async (req, res) => {
     try {
-        const operationResultObject = await couponRepo.cancelFromBasket(req.query.basket)
+        const operationResultObject = await couponRepo.cancelFromBasket(req.query.basket, req.query.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

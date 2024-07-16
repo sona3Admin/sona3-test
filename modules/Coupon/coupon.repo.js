@@ -258,7 +258,7 @@ exports.apply = async (cartId, couponId, shopId) => {
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
-        let couponShopId = (couponObject?.result?.shop).toString() || shopId
+        let couponShopId = shopId || couponObject?.result?.shop?.toString()
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("couponNotValid") }
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
@@ -271,7 +271,7 @@ exports.apply = async (cartId, couponId, shopId) => {
 
         subCartObject.shopTotal = calculatedTotals.newShopTotal
         subCartObject.coupon = couponId
-        if(!couponObject?.result?.shop) subCartObject.couponShop = shopId
+        if (!couponObject?.result?.shop) subCartObject.couponShop = shopId
 
         cartObject.result.subCarts[isShopInCart?.result] = subCartObject
         let updatedCartResult = await cartRepo.updateDirectly(cartId, { subCarts: cartObject.result.subCarts, cartTotal: calculatedTotals.newCartTotal, coupon: couponId })
@@ -294,13 +294,14 @@ exports.apply = async (cartId, couponId, shopId) => {
 }
 
 
-exports.cancel = async (cartId) => {
+exports.cancel = async (cartId, shopId) => {
     try {
         let cartObject = await cartRepo.get({ _id: cartId })
         if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
 
         let customerId = (cartObject.result.customer._id).toString()
-        let couponShopId = (cartObject?.result?.coupon?.shop).toString() || cartObject?.result?.couponShop
+        let couponShopId = shopId || cartObject?.result?.coupon?.shop?.toString()
+
 
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
@@ -321,7 +322,7 @@ exports.cancel = async (cartId) => {
         })
 
         this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
-
+        // console.log("updatedCartResult", updatedCartResult)
         return {
             success: true,
             result: updatedCartResult.result,
@@ -349,7 +350,7 @@ exports.applyOnBasket = async (basketId, couponId, shopId) => {
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
-        let couponShopId = (couponObject?.result?.shop).toString() || shopId
+        let couponShopId = shopId || couponObject?.result?.shop?.toString()
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("couponNotValid") }
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
@@ -362,7 +363,7 @@ exports.applyOnBasket = async (basketId, couponId, shopId) => {
 
         subCartObject.shopTotal = calculatedTotals.newShopTotal
         subCartObject.coupon = couponId
-        if(!couponObject?.result?.shop) subCartObject.couponShop = shopId
+        if (!couponObject?.result?.shop) subCartObject.couponShop = shopId
 
         cartObject.result.subCarts[isShopInCart?.result] = subCartObject
         let updatedCartResult = await basketRepo.updateDirectly(basketId, { subCarts: cartObject.result.subCarts, cartTotal: calculatedTotals.newCartTotal, coupon: couponId })
@@ -391,7 +392,8 @@ exports.cancelFromBasket = async (basketId) => {
         if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
 
         let customerId = (cartObject.result.customer._id).toString()
-        let couponShopId = (cartObject?.result?.coupon?.shop).toString() || cartObject?.result?.couponShop
+        let couponShopId = shopId || cartObject?.result?.coupon?.shop?.toString()
+
 
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
@@ -412,7 +414,6 @@ exports.cancelFromBasket = async (basketId) => {
         })
 
         this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
-
         return {
             success: true,
             result: updatedCartResult.result,
@@ -431,8 +432,8 @@ exports.cancelFromBasket = async (basketId) => {
 
 
 exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationType) => {
-    let newShopTotal
-    let newCartTotal
+    let newShopTotal = 0
+    let newCartTotal = 0
 
     if (!operationType || operationType == "apply") {
         if (couponObject.result.discountType == "value") {
@@ -447,9 +448,13 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
     }
 
     if (operationType == "cancel") {
+        console.log("Cancel Coupon")
+
         if (couponObject.result.discountType == "value") {
+
             newShopTotal = parseFloat(subCartObject.shopTotal) + parseFloat(couponObject.result.value)
             newCartTotal = parseFloat(cartObject.result.cartTotal) + parseFloat(couponObject.result.value)
+
         }
 
         if (couponObject.result.discountType == "percentage") {
@@ -460,6 +465,7 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
 
     if (newShopTotal < 0) newShopTotal = 0;
     if (newCartTotal < 0) newCartTotal = 0;
+
 
     return { newShopTotal, newCartTotal }
 }
