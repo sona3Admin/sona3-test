@@ -127,7 +127,7 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
 exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
     try {
         let orderData
-        
+
         if (orderDetailsObject.service) orderData = this.handleServiceData(orderDetailsObject, isReverse)
         else orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
@@ -161,22 +161,22 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
 
 exports.handleOrderData = (orderDetailsObject, isReverse) => {
     try {
-
+        console.log("orderDetailsObject.phone", orderDetailsObject.phone)
         let orderData = {
             list: []
         };
         const customerData = {
             RecipientName: orderDetailsObject.name,
-            MobileNumber: orderDetailsObject.phone,
+            MobileNumber: orderDetailsObject.phone.length > 9 ? orderDetailsObject.phone.substring(3) : orderDetailsObject.phone,
             AddressCountry: orderDetailsObject.shippingAddress.address.country,
             City: orderDetailsObject.shippingAddress.address.city,
             Street: orderDetailsObject.shippingAddress.address.street,
-            MobileNumber2: orderDetailsObject.phone,
+            MobileNumber2: orderDetailsObject.phone.length > 9 ? orderDetailsObject.phone.substring(3) : orderDetailsObject.phone,
             Remarks: orderDetailsObject.shippingAddress.address.remarks,
-            latitude: orderDetailsObject.shippingAddress.location.coordinates[0],
-            longitude: orderDetailsObject.shippingAddress.location.coordinates[1],
+            latitude: orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919,
+            longitude: orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885,
         };
-
+        console.log("customerData", orderDetailsObject.shippingAddress.location)
         orderDetailsObject.subOrders.forEach(subOrder => {
             let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
                 return accumulator + currentItem.quantity;
@@ -189,13 +189,14 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
                 TotalCOG: isReverse == true ? -1 * subOrder.subOrderTotal : subOrder.subOrderTotal,
                 pickup: {
                     name: subOrder.name,
-                    mobileNumber: subOrder.phone,
+                    mobileNumber: subOrder.phone.length > 9 ? subOrder.phone.substring(3) : subOrder.phone,
                     address: `${subOrder.address.country}-${subOrder.address.city.name}-${subOrder.address.street}`,
-                    latitude: subOrder.location.coordinates[0],
-                    longitude: subOrder.location.coordinates[1],
+                    latitude: subOrder.location.coordinates[0] || 25.165919,
+                    longitude: subOrder.location.coordinates[1] || 55.241885,
                     date: new Date().toISOString()
                 }
             }
+            console.log("shopData", subOrder.location)
             orderData.list.push(subOrderData);
         });
 
@@ -219,19 +220,19 @@ exports.handleServiceData = (orderDetailsObject, isReverse) => {
         let orderData = {
             list: []
         };
-    
+
         const customerData = {
             RecipientName: orderDetailsObject.name,
-            MobileNumber: orderDetailsObject.phone,
+            MobileNumber: orderDetailsObject.phone.length > 9 ? orderDetailsObject.phone.substring(3) : orderDetailsObject.phone,
             AddressCountry: orderDetailsObject.shippingAddress.address.country,
             City: orderDetailsObject.shippingAddress.address.city,
             Street: orderDetailsObject.shippingAddress.address.street,
-            MobileNumber2: orderDetailsObject.phone,
+            MobileNumber2: orderDetailsObject.phone.length > 9 ? orderDetailsObject.phone.substring(3) : orderDetailsObject.phone,
             Remarks: orderDetailsObject.shippingAddress.address.remarks,
-            latitude: orderDetailsObject.shippingAddress.location.coordinates[0],
-            longitude: orderDetailsObject.shippingAddress.location.coordinates[1],
+            latitude: orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919,
+            longitude: orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885,
         };
-        
+
         let subOrderData = {
             ...customerData,
             ShipperRef: orderDetailsObject.shipperRef.toString(),
@@ -239,7 +240,7 @@ exports.handleServiceData = (orderDetailsObject, isReverse) => {
             TotalCOG: isReverse == true ? -1 * orderDetailsObject.orderTotal : orderDetailsObject.orderTotal,
             pickup: {
                 name: orderDetailsObject.shop.nameEn,
-                mobileNumber: orderDetailsObject.shop.phone,
+                mobileNumber: orderDetailsObject.shop.phone.length > 9 ? orderDetailsObject.shop.phone.substring(3) : orderDetailsObject.shop.phone,
                 address: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city.name}-${orderDetailsObject.shop.address.street}`,
                 latitude: orderDetailsObject.shop.location.coordinates[0],
                 longitude: orderDetailsObject.shop.location.coordinates[1],
@@ -266,10 +267,10 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
         console.log("Saving Shipment data")
         let resultObject
         if (orderData.service) {
-            
+
             let shippingId = arrayOfTrackingObjects[0].tracking_no
             resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
-        
+
             return resultObject
         }
 

@@ -2,7 +2,6 @@ const axios = require('axios');
 const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
-const { getSettings, setSettings } = require("../helpers/settings.helper")
 
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
@@ -205,7 +204,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             ReceiversAddress2: orderDetailsObject.shippingAddress.address.remarks,
             ReceiversCity: orderDetailsObject.shippingAddress.address.city,
             ReceiversCountry: orderDetailsObject.shippingAddress.address.country,
-            ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919},${orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885}`,
             ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
@@ -219,7 +218,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             SendersAddress2: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
             SendersCity: subOrder.address.city,
             SendersCountry: subOrder.address.country,
-            SendersGeoLocation: `${subOrder.location.coordinates[0]},${subOrder.location.coordinates[0]}`,
+            SendersGeoLocation: `${subOrder.location.coordinates[0] || 25.165919},${subOrder.location.coordinates[1] || 55.241885}`,
             SendersPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
             SendersMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
         }
@@ -290,7 +289,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
             SendersAddress2: orderDetailsObject.shippingAddress.address.remarks,
             SendersCity: orderDetailsObject.shippingAddress.address.city,
             SendersCountry: orderDetailsObject.shippingAddress.address.country,
-            SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919},${orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885}`,
             SendersPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             SendersMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
@@ -302,7 +301,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
             ReceiversAddress2: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
             ReceiversCity: subOrder.address.city,
             ReceiversCountry: subOrder.address.country,
-            ReceiversGeoLocation: `${subOrder.location.coordinates[0]},${subOrder.location.coordinates[0]}`,
+            ReceiversGeoLocation: `${subOrder.location.coordinates[0] || 25.165919},${subOrder.location.coordinates[1] || 55.241885}`,
             ReceiversPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
             ReceiversMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
         }
@@ -376,7 +375,7 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
             ReceiversAddress2: orderDetailsObject.shippingAddress.address.remarks,
             ReceiversCity: orderDetailsObject.shippingAddress.address.city,
             ReceiversCountry: orderDetailsObject.shippingAddress.address.country,
-            ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919},${orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885}`,
             ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
@@ -388,7 +387,7 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
             SendersAddress2: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city}-${orderDetailsObject.shop.address.street}`,
             SendersCity: orderDetailsObject.shop.address.city,
             SendersCountry: orderDetailsObject.shop.address.country,
-            SendersGeoLocation: `${orderDetailsObject.shop.location.coordinates[0]},${orderDetailsObject.shop.location.coordinates[0]}`,
+            SendersGeoLocation: `${orderDetailsObject.shop.location.coordinates[0] || 25.165919},${orderDetailsObject.shop.location.coordinates[1] || 55.241885}`,
             SendersPhone: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454",
             SendersMobile: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454"
         }
@@ -465,7 +464,7 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
             SendersAddress2: orderDetailsObject.shippingAddress.address.remarks,
             SendersCity: orderDetailsObject.shippingAddress.address.city,
             SendersCountry: orderDetailsObject.shippingAddress.address.country,
-            SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0]},${orderDetailsObject.shippingAddress.location.coordinates[1]}`,
+            SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919},${orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885}`,
             SendersPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             SendersMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
@@ -477,7 +476,7 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
             ReceiversAddress2: `${orderDetailsObject.shop.address.country}-${orderDetailsObject.shop.address.city}-${orderDetailsObject.shop.address.street}`,
             ReceiversCity: orderDetailsObject.shop.address.city,
             ReceiversCountry: orderDetailsObject.shop.address.country,
-            ReceiversGeoLocation: `${orderDetailsObject.shop.location.coordinates[0]},${orderDetailsObject.shop.location.coordinates[0]}`,
+            ReceiversGeoLocation: `${orderDetailsObject.shop.location.coordinates[0] || 25.165919},${orderDetailsObject.shop.location.coordinates[1] || 55.241885}`,
             ReceiversPhone: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454",
             ReceiversMobile: orderDetailsObject.shop.phone.length == 9 ? `971${orderDetailsObject.shop.phone}` : "971554535454"
         }
