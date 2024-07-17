@@ -3,6 +3,36 @@ const requestRepo = require("../../modules/Request/request.repo");
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
 const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
+const stripeHelper = require("../../utils/stripePayment.util")
+
+
+exports.createOrderPaymentLink = async (req, res) => {
+    try {
+        let customerOrderObject = req.body
+
+        let customerRequestObject = await requestRepo.get({ _id: req.query._id })
+        customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
+
+        let customerDetailsObject = { ...req.body }
+        let costObject = {
+            cartTotal: customerOrderObject.serviceTotal,
+            taxesTotal: customerOrderObject.calculations.taxesTotal,
+            shippingFeesTotal: customerOrderObject.calculations.shippingFeesTotal
+        }
+
+        let orderDetailsObject = { request: customerRequestObject.result._id.toString() }
+        let operationResultObject = await stripeHelper.initiatePayment(costObject, customerDetailsObject, orderDetailsObject)
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
 
 
 exports.purchaseRequest = async (req, res) => {

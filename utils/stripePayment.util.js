@@ -1,17 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 
 
-exports.createConnectedAccount = async () => {
-    try {
-        const account = await stripe.accounts.create({ type: 'express' });
-        return { success: true, code: 201, result: account.id };
-    } catch (err) {
-        console.error("Error creating connected account:", err);
-        return { success: false, code: 500, error: err.message };
-    }
-};
-
-
 exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails) => {
     try {
         const cents = 100
@@ -99,14 +88,30 @@ exports.getPaymentSuccessAck = (req, res, next) => {
 }
 
 
-exports.refundToCustomer = async (amount, paymentIntentId) => {
+exports.refundToCustomer = async (amount, paymentIntentId, sessionId) => {
     try {
+
+        // Retrieve the Checkout Session to get the payment intent ID
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        if (!session.payment_intent) return { success: false, code: 400, error: 'No payment intent found for this session.' };
+
+        const paymentIntentId = session.payment_intent;
+
+        // Fetch the payment intent to get payment details
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+        // Calculate the amount to be refunded, if it's partial or full
+        const refundAmount = amount || paymentIntent.amount_received;
+
+        // Create a refund
         const refund = await stripe.refunds.create({
             payment_intent: paymentIntentId,
-            amount: amount,
+            amount: refundAmount,
+            reason: 'requested_by_customer',
         });
-        return { success: true, code: 201, result: refund }
 
+        return { success: true, code: 201, result: refund }
     } catch (err) {
         console.log("err", err.message)
         return { success: false, code: 500, error: err.message }
