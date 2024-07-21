@@ -1,11 +1,11 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+const paymentRepo = require("../modules/Payment/payment.repo")
 
 
-exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails) => {
+exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails, orderType) => {
     try {
         const cents = 100
-        const customerDetailsObject = {
-            customer: customerDetails?.customer,
+        const customerAddress = {
             country: customerDetails?.shippingAddress?.address?.country,
             city: customerDetails?.shippingAddress?.address?.city,
             cityCode: customerDetails?.shippingAddress?.address?.cityCode,
@@ -13,10 +13,6 @@ exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails)
             remarks: customerDetails?.shippingAddress?.address?.remarks,
             long: customerDetails?.shippingAddress?.location?.coordinates[0],
             lat: customerDetails?.shippingAddress?.location?.coordinates[1],
-        }
-        let orderDetailsObject = {
-            ...orderDetails,
-            ...customerDetailsObject
         }
 
         const session = await stripe.checkout.sessions.create({
@@ -55,36 +51,26 @@ exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails)
                 }
             ],
             success_url: `${process.env.STRIPE_SUCCESS_URL}`,
-            cancel_url: `${process.env.STRIPE_CANCEL_URL}`,
-            metadata: { ...orderDetailsObject }
+            cancel_url: `${process.env.STRIPE_CANCEL_URL}`
         })
+
+        if (!session.id) return { success: false, code: 500, error: err.message }
+
+        const paymentObject = {
+            sessionId: session.id,
+            customer: customerDetails.customer,
+            orderCost: orderCostObject,
+            customerAddress,
+            orderDetails,
+            orderType
+        }
+
+        paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {
         console.log("err", err.message)
         return { success: false, code: 500, error: err.message }
     }
-}
-
-
-exports.getPaymentSuccessAck = (req, res, next) => {
-    try {
-        const sig = req.headers['stripe-signature'];
-        let event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-        if (event.type === 'checkout.session.completed') {
-            const session = event.data.object;
-            const orderDetails = session.metadata;
-            req.body = orderDetails
-            console.log("orderDetails", orderDetails)
-            return next()
-        }
-
-    } catch (err) {
-        console.log("err.message", err.message)
-        return res.status(400).json({ success: false, code: 400, error: err.message })
-    }
-
-
-
 }
 
 

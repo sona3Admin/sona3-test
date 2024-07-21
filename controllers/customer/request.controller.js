@@ -21,7 +21,8 @@ exports.createOrderPaymentLink = async (req, res) => {
         }
 
         let orderDetailsObject = { request: customerRequestObject.result._id.toString() }
-        let operationResultObject = await stripeHelper.initiatePayment(costObject, customerDetailsObject, orderDetailsObject)
+        const orderType = "request"
+        let operationResultObject = await stripeHelper.initiatePayment(costObject, customerDetailsObject, orderDetailsObject, orderType)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -37,7 +38,7 @@ exports.createOrderPaymentLink = async (req, res) => {
 
 exports.purchaseRequest = async (req, res) => {
     try {
-        if(req.body.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
+        if(req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
 
         let customerOrderObject = req.body
 
