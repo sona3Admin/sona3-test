@@ -6,7 +6,7 @@ const paymentSchema = mongoose.Schema({
     customerAddress: { type: Object },
     orderDetails: { type: Object },
     orderCost: { type: Object },
-    orderType: { enum: ["cart", "basket", "request"], default: "cart" }
+    orderType: { type: String, enum: ["cart", "basket", "request"], default: "cart" }
 })
 
 
