@@ -24,7 +24,11 @@ i18n.configure({
 app.use(i18n.init);
 app.use(cors());
 app.use(handleCorsPolicy);
-app.use(express.json());
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf.toString();
+  }
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // app.use(bodyParser.json());

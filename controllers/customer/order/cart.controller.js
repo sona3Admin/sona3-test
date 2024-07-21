@@ -8,6 +8,9 @@ const stripeHelper = require("../../../utils/stripePayment.util")
 
 exports.createOrder = async (req, res) => {
     try {
+        console.log("req.body.paymentMethod", req.body.paymentMethod)
+        if(req.body.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
+
         let customerOrderObject = req.body
         let customerCartObject = await cartRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });

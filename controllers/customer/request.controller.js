@@ -37,6 +37,8 @@ exports.createOrderPaymentLink = async (req, res) => {
 
 exports.purchaseRequest = async (req, res) => {
     try {
+        if(req.body.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
+
         let customerOrderObject = req.body
 
         let customerRequestObject = await requestRepo.get({ _id: req.query._id })
