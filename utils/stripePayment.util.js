@@ -5,16 +5,7 @@ const paymentRepo = require("../modules/Payment/payment.repo")
 exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails, orderType) => {
     try {
         const cents = 100
-        const customerAddress = {
-            country: customerDetails?.shippingAddress?.address?.country,
-            city: customerDetails?.shippingAddress?.address?.city,
-            cityCode: customerDetails?.shippingAddress?.address?.cityCode,
-            street: customerDetails?.shippingAddress?.address?.street,
-            remarks: customerDetails?.shippingAddress?.address?.remarks,
-            long: customerDetails?.shippingAddress?.location?.coordinates[0],
-            lat: customerDetails?.shippingAddress?.location?.coordinates[1],
-        }
-
+    
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
@@ -57,10 +48,11 @@ exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails,
         if (!session.id) return { success: false, code: 500, error: err.message }
 
         const paymentObject = {
-            sessionId: session.id,
+            session: session.id,
             customer: customerDetails.customer,
+            shippingAddress: customerDetails?.shippingAddress,
+            shippingCost: customerDetails?.shippingCost,
             orderCost: orderCostObject,
-            customerAddress,
             orderDetails,
             orderType
         }

@@ -161,7 +161,8 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
 
 exports.handleOrderData = (orderDetailsObject, isReverse) => {
     try {
-        console.log("orderDetailsObject.phone", orderDetailsObject.phone)
+        let isCod = true
+        if (orderDetailsObject.paymentMethod == "visa") isCod = false
         let orderData = {
             list: []
         };
@@ -186,7 +187,7 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
                 ...customerData,
                 ShipperRef: subOrder._id.toString(),
                 NumberOfPieces: numberOfPieces,
-                TotalCOG: isReverse == true ? -1 * subOrder.subOrderTotal : subOrder.subOrderTotal,
+                TotalCOG: isReverse == true ? -1 * subOrder.subOrderTotal : (isCod ? subOrder.subOrderTotal : 0),
                 pickup: {
                     name: subOrder.name,
                     mobileNumber: subOrder.phone.length > 9 ? subOrder.phone.substring(3) : subOrder.phone,
@@ -216,6 +217,8 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
 exports.handleServiceData = (orderDetailsObject, isReverse) => {
     try {
         console.log("handleServiceData")
+        let isCod = true
+        if (orderDetailsObject.paymentMethod == "visa") isCod = false
 
         let orderData = {
             list: []
@@ -237,7 +240,7 @@ exports.handleServiceData = (orderDetailsObject, isReverse) => {
             ...customerData,
             ShipperRef: orderDetailsObject.shipperRef.toString(),
             NumberOfPieces: 1,
-            TotalCOG: isReverse == true ? -1 * orderDetailsObject.orderTotal : orderDetailsObject.orderTotal,
+            TotalCOG: isReverse == true ? -1 * orderDetailsObject.orderTotal : (isCod ? orderDetailsObject.orderTotal : 0),
             pickup: {
                 name: orderDetailsObject.shop.nameEn,
                 mobileNumber: orderDetailsObject.shop.phone.length > 9 ? orderDetailsObject.shop.phone.substring(3) : orderDetailsObject.shop.phone,

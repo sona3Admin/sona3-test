@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 
 const paymentSchema = mongoose.Schema({
-    sessionId: { type: String },
+    session: { type: String },
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
-    customerAddress: { type: Object },
-    orderDetails: { type: Object },
+    shippingAddress: { type: Object },
+    shippingCost: { type: Object },
     orderCost: { type: Object },
+    orderDetails: { type: Object },
     orderType: { type: String, enum: ["cart", "basket", "request"], default: "cart" }
 })
 
