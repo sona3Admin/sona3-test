@@ -54,7 +54,7 @@ const orderSchema = mongoose.Schema({
     taxesTotal: { type: Number, min: 0, default: 0 },
     taxesRate: { type: Number, min: 0, default: 0 },
     orderTotal: { type: Number, min: 0, default: 0 },
-    issueDate: { type: Date },
+    issueDate: { type: Date, default: Date.now() },
 
 })
 

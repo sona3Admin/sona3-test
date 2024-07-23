@@ -2,6 +2,7 @@ const axios = require('axios');
 const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
+const { findObjectInArray } = require("../helpers/cart.helper")
 
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
@@ -215,13 +216,13 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             SendersPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
             SendersMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
         }
-       
+
 
         let productNames = ``
         productNames = subOrder.items.forEach((item) => {
             productNames += `${item?.product?.nameEn || "Product - "} `
         })
-        
+
         let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
             return accumulator + currentItem.quantity;
         }, 0)
@@ -579,7 +580,8 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
         const response = await axios.post(`${firstFlightBaseUrl}/Tracking`, orderData, {
             headers: { 'Content-Type': 'application/json' }
         });
-
+        let latestStatus = response.data.AirwayBillTrackList[0]
+        // this.updateOrderShipmentStatus(trackingId, latestStatus)
         return {
             success: true,
             code: 201,
@@ -618,4 +620,56 @@ exports.listCities = async () => {
             code: 500
         };
     }
+}
+
+
+exports.updateOrderShipmentStatus = async (trackingId, latestStatus) => {
+    try {
+        let status = latestStatus
+
+        let orderObject = await orderRepo.find({ shipments: trackingId })
+        if (!orderObject.success) {
+            let requestObject = await requestRepo.find({ shippingId: trackingId })
+            status = handleStatus(status, "request") || requestObject.result.status
+            console.log("request status", status)
+
+            requestRepo.updateDirectly(requestObject.result._id.toString(), { shippingStatus: status, status })
+            return {
+                success: true,
+                code: 200
+            }
+        }
+
+        let subOrderObject = findObjectInArray(orderObject.result.subOrders, "shippingId", trackingId)
+        if (!subOrderObject.success) return { success: false, code: 404 }
+
+        let subOrders
+        orderObject.result.subOrders[subOrderObject.index].shippingStatus = status
+        orderObject.result.subOrders[subOrderObject.index].status = handleStatus(status, "order") || subOrderObject.result.status
+        console.log("order status", orderObject.result.subOrders[subOrderObject.index].status)
+        orderRepo.updateDirectly(orderObject.result._id.toString(), { subOrders })
+        return {
+            success: true,
+            code: 200
+        }
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            status: false
+        });
+    }
+}
+
+
+function handleStatus(firstFlightStausText, orderType) {
+    let status = undefined
+    if (firstFlightStausText == "Order Placed" && orderType == "order") status = "pending"
+    if (firstFlightStausText == "Order Placed" && orderType == "request") status = "purchased"
+    if (firstFlightStausText == "Delivered") status = "delivered"
+    if (firstFlightStausText == "Cancelled") status = "canceled"
+    if (firstFlightStausText == "Returned to Origin") status = "returned"
+    if (firstFlightStausText == "To be Picked Up" || firstFlightStausText == "Out For Delivery") status = "in progress"
+    if (firstFlightStausText == "Return Attempt" || firstFlightStausText == "Return to Origin") status = "to be returned"
+    return status
 }
