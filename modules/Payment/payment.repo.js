@@ -98,7 +98,6 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.create = async (formObject) => {
     try {
 
-        formObject = this.convertToLowerCase(formObject)
         const resultObject = new paymentModel(formObject);
         await resultObject.save();
 
