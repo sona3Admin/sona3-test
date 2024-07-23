@@ -132,7 +132,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         else orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
         console.log('Creating New Order...');
-        console.log("orderData", orderData.pickup)
+    
         const response = await axios.post(`${ifastBaseUrl}/api/order/placeorderbulkwithpickup`, orderData, {
             headers: {
                 'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
             latitude: orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919,
             longitude: orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885,
         };
-        console.log("customerData", orderDetailsObject.shippingAddress.location)
+
         orderDetailsObject.subOrders.forEach(subOrder => {
             let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
                 return accumulator + currentItem.quantity;
@@ -197,7 +197,6 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
                     date: new Date().toISOString()
                 }
             }
-            console.log("shopData", subOrder.location)
             orderData.list.push(subOrderData);
         });
 

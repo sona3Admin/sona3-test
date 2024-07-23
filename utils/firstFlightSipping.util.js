@@ -157,7 +157,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         for (const subOrder of orderDetailsObject.subOrders) {
 
             let orderData = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
-            console.log("orderData", orderData)
+            // console.log("orderData", orderData)
             const response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
                 headers: { 'Content-Type': 'application/json' }
             });
@@ -185,17 +185,11 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
 
 exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse) => {
     try {
-        // console.log("orderDetailsObject.shippingAddress", orderDetailsObject.shippingAddress)
         if (isReverse == true) return await this.handleReverseOrderData(orderDetailsObject, subOrder, isCod)
         let originCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
         let destinationCity = subOrder?.address?.cityCode || "DXB"
         let shopId = subOrder.shop?._id?.toString() || subOrder.shop
-        console.log("shopId", shopId)
         let shippingCost = orderDetailsObject.shippingCost[`${shopId}`]
-        console.log("shippingCost", shippingCost)
-
-        // console.log("shippingCost", shippingCost)
-        // construct order and send create request
 
         let customerData = {
             ReceiversCompany: orderDetailsObject.name,
@@ -208,7 +202,6 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
             ReceiversMobile: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454"
         }
-        // console.log("customerData", customerData)
 
 
         let shopData = {
@@ -222,13 +215,13 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             SendersPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
             SendersMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
         }
-        console.log("971${subOrder.phone}", `971${subOrder.phone}`)
+       
 
         let productNames = ``
         productNames = subOrder.items.forEach((item) => {
             productNames += `${item?.product?.nameEn || "Product - "} `
         })
-        console.log("productNames", productNames)
+        
         let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
             return accumulator + currentItem.quantity;
         }, 0)
