@@ -165,7 +165,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
             responses.push(response.data);
         }
 
-        console.log('Order created successfully:', responses);
+        console.log('Order created successfully');
         return {
             success: true,
             code: 201,
