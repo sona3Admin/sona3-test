@@ -46,24 +46,24 @@ exports.purchaseRequest = async (req, res) => {
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
 
         let operationResultObject = await requestRepo.updateDirectly(req.query._id, { ...customerOrderObject.calculations });
-        if (customerRequestObject.result.service.isFood && customerRequestObject.result.service.isDeliverable) {
-            console.log("Ifast")
-            let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject, false)
-            operationResultObject["orderData"] = shippingData.orderData
+        // if (customerRequestObject.result.service.isFood && customerRequestObject.result.service.isDeliverable) {
+        //     console.log("Ifast")
+        //     let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject, false)
+        //     operationResultObject["orderData"] = shippingData.orderData
 
-            if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-            operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
-            if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        }
-        else if (customerRequestObject.result.service.isDeliverable && !customerRequestObject.result.service.isFood) {
-            console.log("First Flight")
-            let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject, false)
+        //     if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        //     operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
+        //     if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        // }
+        // else if (customerRequestObject.result.service.isDeliverable && !customerRequestObject.result.service.isFood) {
+        //     console.log("First Flight")
+        //     let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject, false)
 
-            if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        //     if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
-            operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingFeesTotal)
-            if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        }
+        //     operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingFeesTotal)
+        //     if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
+        // }
 
         return res.status(operationResultObject.code).json(operationResultObject);
 
