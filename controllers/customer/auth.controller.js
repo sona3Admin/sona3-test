@@ -1,7 +1,7 @@
 const i18n = require('i18n');
 const customerRepo = require("../../modules/Customer/customer.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
-
+const { verifyAppleToken } = require("../../utils/appleAuth.util")
 
 exports.register = async (req, res) => {
     try {
@@ -39,6 +39,48 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
     try {
         const { fcmToken } = req.body;
         let customerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
+        let operationResultObject = await customerRepo.find({ email: req.body.email })
+
+        if (operationResultObject.success && !operationResultObject.result.isActive) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
+
+        if (operationResultObject.code == 404) operationResultObject = await customerRepo.create(customerObject)
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+
+        payloadObject = {
+            _id: operationResultObject.result._id,
+            name: operationResultObject.result.name,
+            email: operationResultObject.result.email,
+            phone: operationResultObject.result.phone,
+            role: "customer"
+        }
+
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        customerRepo.updateDirectly(operationResultObject.result._id, { token, fcmToken })
+        delete operationResultObject.result["password"]
+        delete operationResultObject.result["token"]
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject })
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.authenticateByAppleAccount = async (req, res) => {
+    try {
+        const { fcmToken } = req.body;
+        let customerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
+        if (!req.body.email) {
+            const payload = await verifyAppleToken(identityToken);
+            console.log("payload", payload)
+            req.body.email = payload.email
+        }
+
         let operationResultObject = await customerRepo.find({ email: req.body.email })
 
         if (operationResultObject.success && !operationResultObject.result.isActive) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })

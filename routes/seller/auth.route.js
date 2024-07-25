@@ -12,6 +12,7 @@ const allowedUsers = ["seller"]
 app.post("/register", validator(createSellerValidation), authController.register);
 app.post("/login", validator(loginValidation), authController.login);
 app.post("/social", validator(authenticateBySocialMediaValidation), authController.authenticateBySocialMediaAccount)
+app.post("/apple", validator(authenticateBySocialMediaValidation), authController.authenticateByAppleAccount)
 app.post("/identity", checkToken(allowedUsers), uploadedFiles.array('image', 2), sellerController.uploadIdentityImages)
 app.delete("/identity", checkToken(allowedUsers), sellerController.deleteIdentityImages)
 app.put("/verify", checkToken(allowedUsers), validator(updateSellerValidation), sellerController.updateSeller)

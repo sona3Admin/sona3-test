@@ -9,6 +9,7 @@ const allowedUsers = ["customer"]
 app.post("/register", validator(createCustomerValidation), authController.register);
 app.post("/login", validator(loginValidation), authController.login);
 app.post("/social", validator(authenticateBySocialMediaValidation), authController.authenticateBySocialMediaAccount)
+app.post("/apple", validator(authenticateBySocialMediaValidation), authController.authenticateByAppleAccount)
 app.post("/guest", authController.loginAsGuest);
 app.put("/verify", checkToken(allowedUsers), validator(updateCustomerValidation), customerController.updateCustomer)
 

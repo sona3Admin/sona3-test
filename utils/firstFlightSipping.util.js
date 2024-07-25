@@ -7,7 +7,7 @@ const { findObjectInArray } = require("../helpers/cart.helper")
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
 const firstFlightUsername = process.env.FIRSTFLIGHT_USER_NAME;
-const firstFlightPassword = process.env.FIRSTFLIGHT_PASSWORD;
+const firstFlightPassword = `Mkiolo#2536`;
 const firstFlightAccountNumber = process.env.FIRSTFLIGHT_ACCOUNT_NUMBER;
 const firstFlightCountry = process.env.FIRSTFLIGHT_COUNTRY;
 
@@ -154,23 +154,27 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         console.log('Creating New Order...');
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
-        const responses = [];
+        let responses = [];
+        let airwayBillNumbers = []
         for (const subOrder of orderDetailsObject.subOrders) {
 
             let orderData = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
-            // console.log("orderData", orderData)
-            const response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
+
+            let response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
                 headers: { 'Content-Type': 'application/json' }
             });
             response.data.CODAmount = orderData.AirwayBillData.CODAmount
-            responses.push(response.data);
+            console.log("response.data", response.data)
+            airwayBillNumbers.push(response.data.AirwayBillNumber);
+
+            // create pickup requests
         }
 
         console.log('Order created successfully');
         return {
             success: true,
             code: 201,
-            result: responses,
+            result: airwayBillNumbers,
         };
 
     } catch (err) {
@@ -182,6 +186,21 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         };
     }
 };
+
+
+exports.createNewPickupRequest = async (orderDetailsObject, isReverse) => {
+    try{
+        
+
+    } catch (err) {
+        console.log('err.message', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
 
 
 exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse) => {
