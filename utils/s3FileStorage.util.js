@@ -98,7 +98,7 @@ exports.uploadPDFtoS3 = async (fileContent) => {
           console.log('File uploaded successfully. URL:', data.Location);
           resolve({
             success: true,
-            record: data
+            result: data
           });
         }
       });

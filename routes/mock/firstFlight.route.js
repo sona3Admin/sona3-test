@@ -4,6 +4,7 @@ const firstFlightController = require("../../mocks/firstFlight.mock")
 
 app.post("/createOrder", firstFlightController.createNewBulkOrder)
 app.post("/pickup", firstFlightController.createNewPickupRequest)
+app.post("/print", firstFlightController.printLabel)
 app.get("/cities", firstFlightController.listCities)
 
 

@@ -3,7 +3,8 @@ const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
 const { findObjectInArray } = require("../helpers/cart.helper")
-
+const { convertBase64StringToPDF } = require("../helpers/convertToFile.helper")
+const s3StorageHelper = require("./s3FileStorage.util")
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
 const firstFlightUsername = process.env.FIRSTFLIGHT_USER_NAME;
@@ -579,6 +580,7 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
     }
 }
 
+
 exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCost) => {
     try {
         console.log("Saving Shipment data", arrayOfTrackingObjects)
@@ -725,4 +727,37 @@ function handleStatus(firstFlightStausText, orderType) {
     if (firstFlightStausText == "To be Picked Up" || firstFlightStausText == "Out For Delivery") status = "in progress"
     if (firstFlightStausText == "Return Attempt" || firstFlightStausText == "Return to Origin") status = "to be returned"
     return status
+}
+
+
+exports.generateOrderLabel = async (airwayBillNumber, printType, requestUser) => {
+    try{
+        let airwayBillData = {
+            ...authData,
+            AirwayBillNumber: airwayBillNumber,
+            PrintType: printType,
+            RequestUser:  requestUser
+        }
+    
+        let response = await axios.post(`${firstFlightBaseUrl}/AirwaybillPDFFormat`, airwayBillData, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+    
+        let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);
+        let result = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
+    
+        return {
+            success: true,
+            code: 201,
+            result
+        }
+
+    } catch(err) {
+        console.log('Error ', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
 }
