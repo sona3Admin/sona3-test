@@ -4,7 +4,8 @@ const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
 const { getSettings, setSettings } = require("../helpers/settings.helper")
-
+const { processPDFContent } = require("../helpers/convertToFile.helper")
+const s3StorageHelper = require("./s3FileStorage.util")
 
 const ifastBaseUrl = process.env.IFAST_API_URL;
 const ifastUsername = process.env.IFAST_USER_NAME;
@@ -376,6 +377,41 @@ exports.listCities = async (countryID) => {
 
     } catch (err) {
         console.log('Error getting status', err.message);
+        return {
+            success: false,
+            error: err.message,
+            code: 500
+        };
+    }
+}
+
+
+exports.generateOrderLabel = async (airwayBillNumber) => {
+    try{
+        const { token } = await this.getAuthToken();
+        console.log('Generating Label...');
+    
+        const response = await axios.get(`${ifastBaseUrl}/api/order/GetAirWayBill?TrackingNos=${airwayBillNumber}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+
+        console.log("response.data", response.data)
+    
+        let generatedPDF = await processPDFContent(response.data);
+        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
+    
+        return {
+            success: true,
+            code: 201,
+            result: response.data
+        }
+
+    } catch(err) {
+        console.log('Error ', err.message);
         return {
             success: false,
             error: err.message,
