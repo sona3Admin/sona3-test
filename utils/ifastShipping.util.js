@@ -407,7 +407,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
         return {
             success: true,
             code: 201,
-            result: response.data
+            result: uploadedFile.data
         }
 
     } catch(err) {
