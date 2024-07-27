@@ -744,12 +744,12 @@ exports.generateOrderLabel = async (airwayBillNumber, printType, requestUser) =>
         });
     
         let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);
-        let result = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
+        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
     
         return {
             success: true,
             code: 201,
-            result
+            result: uploadedFile.result
         }
 
     } catch(err) {

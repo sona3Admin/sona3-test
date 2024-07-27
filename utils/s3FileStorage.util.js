@@ -81,7 +81,7 @@ exports.uploadPDFtoS3 = async (fileContent) => {
   try {
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
-      Key: `public/barcodes/${uuid()}-barcodes.pdf`,
+      Key: `public/labels/${uuid()}-labels.pdf`,
       Body: fileContent,
       ContentType: 'application/pdf'
     };
