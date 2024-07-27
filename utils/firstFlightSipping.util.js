@@ -154,23 +154,23 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         console.log('Creating New Order...');
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
-        let responses = [];
         let airwayBillNumbers = []
+        let pickupRequestNumbers = []
         for (const subOrder of orderDetailsObject.subOrders) {
 
-            let orderData = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
+            let airwayBillInfo = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
 
-            let response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, orderData, {
+            let response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, airwayBillInfo.orderData, {
                 headers: { 'Content-Type': 'application/json' }
             });
-            response.data.CODAmount = orderData.AirwayBillData.CODAmount
-            console.log("response.data", response.data)
+            response.data.CODAmount = airwayBillInfo.orderData.AirwayBillData.CODAmount
             airwayBillNumbers.push(response.data.AirwayBillNumber);
 
-            // create pickup requests
+            let pickupNumber = await this.createNewPickupRequest(airwayBillInfo)
+            pickupRequestNumbers.push(pickupNumber.result)
         }
 
-        console.log('Order created successfully');
+        console.log('Order created successfully', airwayBillNumbers);
         return {
             success: true,
             code: 201,
@@ -188,9 +188,43 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
 };
 
 
-exports.createNewPickupRequest = async (orderDetailsObject, isReverse) => {
-    try{
-        
+exports.createNewPickupRequest = async (orderDetailsObject) => {
+    try {
+        console.log("Creating New Pickup Request")
+        let pickupRequestData = {
+            ...authData,
+            BookingData: {
+                BookingAddress1: "COMPANY ADDRESS",
+                BookingAddress2: "COMPANY ADDRESS",
+                BookingCompanyName: "Sona3",
+                BookingContactPerson: "Mr Rashid",
+                BookingCreatedBy: "Sona3",
+                BookingCity: "DXB",
+                BookingCountry: "AE",
+                BookingEmail: "sona3@gmail.com",
+                BookingMobileNo: "0501111111",
+                BookingPhoneNo: "042222222",
+                ...orderDetailsObject.customerData,
+                ...orderDetailsObject.shopData,
+                Origin: orderDetailsObject.orderData.AirwayBillData.Origin,
+                Destination: orderDetailsObject.orderData.AirwayBillData.Destination,
+                ProductType: orderDetailsObject.orderData.AirwayBillData.ProductType,
+                ServiceType: orderDetailsObject.orderData.AirwayBillData.ServiceType,
+                GoodsDescription: orderDetailsObject.orderData.AirwayBillData.GoodsDescription,
+                NumberofPeices: parseInt(orderDetailsObject.orderData.AirwayBillData.NumberofPeices),
+                AppoximateWeight: parseInt(orderDetailsObject.orderData.AirwayBillData.Weight),
+                NumberofShipments: 1,
+                CODAmount: orderDetailsObject.orderData.AirwayBillData.CODAmount
+            }
+        }
+        let response = await axios.post(`${firstFlightBaseUrl}/SchedulePickup`, pickupRequestData, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        return {
+            success: true,
+            code: 201,
+            result: response.data.PickupRequestNo,
+        };
 
     } catch (err) {
         console.log('err.message', err.message);
@@ -271,7 +305,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             }
         };
 
-        return orderData;
+        return { orderData, customerData, shopData };
 
     } catch (err) {
         console.log('Error processing order data:', err.message);
@@ -354,7 +388,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
             }
         };
 
-        return orderData;
+        return { orderData, customerData, shopData };
 
     } catch (err) {
         console.log('Error processing order data:', err.message);
@@ -547,31 +581,31 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
 
 exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCost) => {
     try {
-        console.log("Saving Shipment data")
+        console.log("Saving Shipment data", arrayOfTrackingObjects)
         let resultObject
         console.log("shippingCost", shippingCost)
         let shippingFeesTotal = shippingCost?.total ? parseFloat(shippingCost?.total) : parseFloat(shippingCost)
 
-        if (orderData.service) {
-            let shippingId = arrayOfTrackingObjects.AirwayBillNumber
+        // if (orderData.service) {
+        //     let shippingId = arrayOfTrackingObjects.AirwayBillNumber
 
-            resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
+        //     resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
 
-            return resultObject
-        }
+        //     return resultObject
+        // }
+
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
 
-        console.log("orderData.subOrders", orderData.subOrders)
         let subOrdersArray = orderData.subOrders
         let index = 0
         let shipments = []
         if (shippingCost?.total) delete shippingCost["total"]
 
         subOrdersArray.forEach((subOrderObject) => {
-            subOrderObject.shippingId = arrayOfTrackingObjects[index].AirwayBillNumber
+            subOrderObject.shippingId = arrayOfTrackingObjects[index]
             subOrderObject.shopShippingFees = shippingCost[`${subOrderObject?.shop}`] ? parseFloat(shippingCost[`${subOrderObject.shop}`]) : shippingCost
             subOrderObject.subOrderTotal += parseFloat(subOrderObject.shopShippingFees)
-            shipments.push(arrayOfTrackingObjects[index].AirwayBillNumber)
+            shipments.push(arrayOfTrackingObjects[index])
             index++
         })
         resultObject = await orderRepo.updateDirectly(orderData._id.toString(), {
