@@ -34,25 +34,30 @@ function isValidBase64(str) {
 
 exports.processPDFContent = async (pdfContent) => {
     try {
-        // Check if pdfContent is a string
+        console.log("Received pdfContent type:", typeof pdfContent);
+        console.log("pdfContent length:", pdfContent.length);
+        console.log("First 100 characters of pdfContent:", pdfContent.slice(0, 100));
+
         if (typeof pdfContent !== 'string') {
             console.log("Invalid input: not a string");
             return { error: "Invalid input: not a string", success: false, code: 400 };
         }
 
-        // Convert the string to a Buffer
         const pdfBuffer = Buffer.from(pdfContent, 'binary');
+        console.log("pdfBuffer length:", pdfBuffer.length);
+        console.log("First 20 bytes of pdfBuffer:", pdfBuffer.slice(0, 20));
 
-        // Check if the buffer starts with the PDF signature
         if (!pdfBuffer.slice(0, 5).toString().startsWith('%PDF-')) {
-            console.log("Invalid PDF content");
+            console.log("Invalid PDF content: doesn't start with %PDF-");
             return { error: "Invalid PDF content", success: false, code: 400 };
         }
 
         const pdfDoc = await PDFDocument.load(pdfBuffer);
+        console.log("PDF loaded successfully. Page count:", pdfDoc.getPageCount());
 
         const pdfBytes = await pdfDoc.save();
-        console.log("pdfBytes", pdfBytes)
+        console.log("Saved PDF size:", pdfBytes.length);
+
         return {
             success: true,
             code: 200,

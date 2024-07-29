@@ -79,6 +79,7 @@ exports.deleteFilesFromS3 = (arrayOfFiles) => {
 
 exports.uploadPDFtoS3 = async (fileContent) => {
   try {
+    console.log("Uploading to S3. PDF size:", fileContent.length);
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Key: `public/labels/${uuid()}-labels.pdf`,

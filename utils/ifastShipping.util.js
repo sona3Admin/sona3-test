@@ -387,7 +387,7 @@ exports.listCities = async (countryID) => {
 
 
 exports.generateOrderLabel = async (airwayBillNumber) => {
-    try{
+    try {
         const { token } = await this.getAuthToken();
         console.log('Generating Label...');
     
@@ -395,15 +395,30 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            }
+            },
+            responseType: 'arraybuffer'  // This is important for binary data
         });
 
+        console.log("Response received. Data type:", typeof response.data);
+        console.log("Response data length:", response.data.length);
 
-        // console.log("response.data", response.data)
+        // Convert arraybuffer to string
+        const pdfContent = Buffer.from(response.data).toString('binary');
     
-        let generatedPDF = await processPDFContent(response.data);
-        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
+        let generatedPDF = await processPDFContent(pdfContent);
+        
+        if (!generatedPDF.success) {
+            console.log("PDF processing failed:", generatedPDF.error);
+            return generatedPDF;
+        }
+
+        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result);
     
+        if (!uploadedFile.success) {
+            console.log("S3 upload failed:", uploadedFile.error);
+            return uploadedFile;
+        }
+
         return {
             success: true,
             code: 201,
@@ -411,7 +426,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
         }
 
     } catch(err) {
-        console.log('Error ', err.message);
+        console.log('Error in generateOrderLabel:', err.message);
         return {
             success: false,
             error: err.message,
