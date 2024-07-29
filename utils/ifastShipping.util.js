@@ -399,7 +399,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
         });
 
 
-        console.log("response.data", response.data)
+        // console.log("response.data", response.data)
     
         let generatedPDF = await processPDFContent(response.data);
         let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)

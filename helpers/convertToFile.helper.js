@@ -1,5 +1,6 @@
 const { PDFDocument } = require('pdf-lib');
 
+
 exports.convertBase64StringToPDF = async (base64String) => {
     try {
 
@@ -33,26 +34,25 @@ function isValidBase64(str) {
 
 exports.processPDFContent = async (pdfContent) => {
     try {
-        console.log("PDF content prefix:", pdfContent.substring(0, 50));
-        console.log("PDF content length:", pdfContent.length);
+        // Check if pdfContent is a string
+        if (typeof pdfContent !== 'string') {
+            console.log("Invalid input: not a string");
+            return { error: "Invalid input: not a string", success: false, code: 400 };
+        }
 
-        if (!pdfContent.startsWith('%PDF-')) {
+        // Convert the string to a Buffer
+        const pdfBuffer = Buffer.from(pdfContent, 'binary');
+
+        // Check if the buffer starts with the PDF signature
+        if (!pdfBuffer.slice(0, 5).toString().startsWith('%PDF-')) {
             console.log("Invalid PDF content");
             return { error: "Invalid PDF content", success: false, code: 400 };
         }
 
-        // Convert the string to a Uint8Array
-        const pdfBuffer = new TextEncoder().encode(pdfContent);
-
-        // Load the existing PDF
         const pdfDoc = await PDFDocument.load(pdfBuffer);
 
-        // If you need to modify the PDF, you can do so here
-        // For example, you could add a new page, add text, etc.
-
-        // Save the PDF to a buffer
         const pdfBytes = await pdfDoc.save();
-
+        console.log("pdfBytes", pdfBytes)
         return {
             success: true,
             code: 200,
