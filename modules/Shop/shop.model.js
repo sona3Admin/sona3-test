@@ -28,7 +28,8 @@ const shopSchema = mongoose.Schema({
     verifyDate: { type: Date },
     policyEn: { type: String },
     policyAr: { type: String },
-    isFood: { type: Boolean, default: false }
+    isFood: { type: Boolean, default: false },
+    type: { type: String, enum: ["product", "service"] }
 })
 
 shopSchema.index({ location: '2dsphere' });

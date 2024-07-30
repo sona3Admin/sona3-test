@@ -64,7 +64,7 @@ exports.updateOrder = async (req, res) => {
 exports.getOrderShipmentLastStatus = async (req, res) => {
     try {
         let operationResultObject
-        if(req.query.isFood == true) operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        if (req.query.isFood == true) operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
         else operationResultObject = await firstFlightHelper.getOrderShipmentLastStatus(req.query.shippingId);
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -82,7 +82,9 @@ exports.getOrderShipmentLastStatus = async (req, res) => {
 
 exports.printLabel = async (req, res) => {
     try {
-        const operationResultObject = await firstFlightHelper.generateOrderLabel(req.body.airwayBillNumber, req.body.printType, req.body.requestUser);
+        let operationResultObject
+        if ((req.body.airwayBillNumber).startsWith("X")) operationResultObject = await ifastHelper.generateOrderLabel(req.body.airwayBillNumber);
+        else operationResultObject = await firstFlightHelper.generateOrderLabel(req.body.airwayBillNumber, req.body.printType, req.body.requestUser);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
