@@ -1,0 +1,88 @@
+{
+    "basicProduct": {
+        "id": 1,
+        "name": "basic",
+        "type": "product",
+        "initialFees": 100,
+        "monthlyFees": 478,
+        "yearlyFees": 4780,
+        "commissionOnOrder": 10,
+        "shippingFeesPerOrder": 25,
+        "numberOfItems": 1
+    },
+    "proProduct": {
+        "id": 2,
+        "name": "pro",
+        "type": "product",
+        "initialFees": 100,
+        "monthlyFees": 794,
+        "yearlyFees": 7940,
+        "commissionOnOrder": 10,
+        "shippingFeesPerOrder": 25,
+        "numberOfItems": 7
+    },
+    "advancedProduct": {
+        "id": 3,
+        "name": "advanced",
+        "type": "product",
+        "initialFees": 100,
+        "monthlyFees": 936,
+        "yearlyFees": 9630,
+        "commissionOnOrder": 10,
+        "shippingFeesPerOrder": 25,
+        "numberOfItems": 100000
+    },
+    "lifeTimeProduct": {
+        "id": 4,
+        "name": "lifetime",
+        "type": "product",
+        "initialFees": 100,
+        "lifeTimeFees": 6000,
+        "commissionOnOrder": 10,
+        "shippingFeesPerOrder": 25,
+        "numberOfItems": 5
+    },
+    "basicService": {
+        "id": 5,
+        "name": "basic",
+        "type": "service",
+        "initialFees": 100,
+        "monthlyFees": 978,
+        "yearlyFees": 9780,
+        "commissionOnOrder": 0,
+        "shippingFeesPerOrder": 0,
+        "numberOfItems": 1
+    },
+    "proService": {
+        "id": 6,
+        "name": "pro",
+        "type": "service",
+        "initialFees": 100,
+        "monthlyFees": 1347,
+        "yearlyFees": 13470,
+        "commissionOnOrder": 0,
+        "shippingFeesPerOrder": 0,
+        "numberOfItems": 7
+    },
+    "advancedService": {
+        "id": 7,
+        "name": "advanced",
+        "type": "service",
+        "initialFees": 100,
+        "monthlyFees": 1499,
+        "yearlyFees": 14990,
+        "commissionOnOrder": 0,
+        "shippingFeesPerOrder": 0,
+        "numberOfItems": 100000
+    },
+    "lifeTimeService": {
+        "id": 8,
+        "name": "lifetime",
+        "type": "service",
+        "initialFees": 100,
+        "lifeTimeFees": 10000,
+        "commissionOnOrder": 0,
+        "shippingFeesPerOrder": 0,
+        "numberOfItems": 5
+    }
+}
