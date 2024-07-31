@@ -1,7 +1,10 @@
 const i18n = require('i18n');
 const orderRepo = require("../../modules/Order/order.repo")
+const cartRepo = require("../../modules/Cart/cart.repo")
+const basketRepo = require("../../modules/Basket/basket.repo")
 const ifastHelper = require("../../utils/ifastShipping.util")
 const firstFlightHelper = require("../../utils/firstFlightSipping.util")
+const { handleOrderCreation } = require("../../helpers/order.helper")
 
 
 exports.listOrders = async (req, res) => {
@@ -58,7 +61,7 @@ exports.updateOrder = async (req, res) => {
 exports.getOrderShipmentLastStatus = async (req, res) => {
     try {
         let operationResultObject
-        if(req.query.isFood == true) operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
+        if (req.query.isFood == true) operationResultObject = await ifastHelper.getOrderShipmentLastStatus(req.query.shippingId);
         else operationResultObject = await firstFlightHelper.getOrderShipmentLastStatus(req.query.shippingId);
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -71,4 +74,33 @@ exports.getOrderShipmentLastStatus = async (req, res) => {
         });
     }
 
+}
+
+
+exports.calculateOrderTotal = async (req, res) => {
+    try {
+        let cartObject
+        if (req.query.cart) cartObject = await cartRepo.get({ _id: req.query.cart });
+        else if (req.query.basket) cartObject = await basketRepo.get({ _id: req.query.basket })
+        let isFood = (req?.query?.basket) ? true : false
+        let operationResultObject = await handleOrderCreation(cartObject.result, {}, isFood)
+        return res.status(200).json({
+            success: true, code: 200,
+            result: {
+                cartTotal: operationResultObject.cartTotal,
+                taxesRate: operationResultObject.taxesRate,
+                taxesTotal: operationResultObject.taxesTotal,
+                shippingFeesTotal: operationResultObject.shippingFeesTotal,
+                orderTotal: operationResultObject.orderTotal
+            }
+        });
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
 }

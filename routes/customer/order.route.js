@@ -17,6 +17,7 @@ app.put("/update", checkIdentity("customer"), orderController.updateOrder);
 app.get("/list", checkIdentity("customer"), orderController.listOrders);
 app.get("/get", checkIdentity("customer"), orderController.getOrder);
 app.get("/status", checkIdentity("customer"), orderController.getOrderShipmentLastStatus);
+app.get("/total", checkIdentity("customer"), orderController.calculateOrderTotal);
 
 
 module.exports = app
