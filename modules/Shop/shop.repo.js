@@ -6,7 +6,6 @@ const serviceRepo = require('../Service/service.repo');
 const couponRepo = require('../Coupon/coupon.repo');
 
 
-
 exports.find = async (filterObject) => {
     try {
         const resultObject = await shopModel.findOne(filterObject).lean();
@@ -37,7 +36,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await shopModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "userName image fcmToken" })
+            .populate({ path: "seller", select: "userName image type tier isSubscribed subscribtionStartDate subscribtionEndDate fcmToken" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })
@@ -74,7 +73,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         let resultArray = await shopModel.find(filterObject).lean()
-            .populate({ path: "seller", select: "userName image" })
+            .populate({ path: "seller", select: "userName image type tier isSubscribed subscribtionStartDate subscribtionEndDate" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })
@@ -280,21 +279,15 @@ exports.remove = async (_id) => {
 
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
-        seller: formObject.seller,
-        $or: [
-            { nameEn: formObject.nameEn },
-            { nameAr: formObject.nameAr },
-        ]
+        seller: formObject.seller
     })
 
-    if (duplicateObject.success) {
-
-        if (duplicateObject.result.nameEn == formObject.nameEn || duplicateObject.result.nameAr == formObject.nameAr) return {
-            success: false,
-            code: 409,
-            error: i18n.__("nameUsed")
-        }
+    if (duplicateObject.success) return {
+        success: false,
+        code: 409,
+        error: i18n.__("shopExists")
     }
+
 
     return {
         success: true,
