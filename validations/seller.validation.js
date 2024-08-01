@@ -65,6 +65,21 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+
+            isSubscribed: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
+
+
+            type: joi.string().optional().messages({
+                "string.base": "validType",
+            }),
+
+
+            tier: joi.string().optional().messages({
+                "string.base": "validTier",
+            }),
+
             session: joi.object().optional().messages({
                 "object.base": "validSession",
             }),
@@ -86,6 +101,17 @@ module.exports = {
             birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
+
+
+            subscribtionStartDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            subscribtionEndDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validPassword",
             }),
@@ -152,6 +178,21 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+
+            isSubscribed: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
+
+
+            type: joi.string().optional().messages({
+                "string.base": "validType",
+            }),
+
+
+            tier: joi.string().optional().messages({
+                "string.base": "validTier",
+            }),
+
             session: joi.object().optional().messages({
                 "object.base": "validSession",
             }),
@@ -172,6 +213,15 @@ module.exports = {
             birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
+
+            subscribtionStartDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
+            subscribtionEndDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validPassword",
             }),
@@ -230,6 +280,11 @@ module.exports = {
             birthDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
+
+            subscribtionStartDate: joi.date().optional().messages({
+                "date.base": "validJoinDate",
+            }),
+
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validPassword",
             }),

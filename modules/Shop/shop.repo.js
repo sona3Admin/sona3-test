@@ -212,6 +212,7 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+
 exports.removeMany = async (filterObject) => {
     try {
         const existingArray = await shopModel.find(filterObject);
@@ -237,6 +238,7 @@ exports.removeMany = async (filterObject) => {
     }
 
 }
+
 
 exports.remove = async (_id) => {
     try {

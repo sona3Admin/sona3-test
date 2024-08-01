@@ -18,6 +18,7 @@ const sellerSchema = mongoose.Schema({
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    isSubscribed: { type: Boolean, default: false },
     
     bankAccountNumber: { type: String },
     type: { type: String, enum: ["product", "service"] },
