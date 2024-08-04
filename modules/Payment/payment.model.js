@@ -7,7 +7,11 @@ const paymentSchema = mongoose.Schema({
     shippingCost: { type: Object },
     orderCost: { type: Object },
     orderDetails: { type: Object },
-    orderType: { type: String, enum: ["cart", "basket", "request"], default: "cart" }
+    orderType: { type: String, enum: ["cart", "basket", "request"], default: "cart" },
+    seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
+    tier: { type: String, enum: ["basic", "pro", "advanced", "lifetime"] },
+    subscriptionFees: { type: Number },
+    timestamp: { type: Date, default: Date.now() }
 })
 
 

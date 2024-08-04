@@ -2,10 +2,10 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const paymentRepo = require("../modules/Payment/payment.repo")
 
 
-exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails, orderType) => {
+exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType) => {
     try {
         const cents = 100
-    
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
@@ -57,6 +57,62 @@ exports.initiatePayment = async (orderCostObject, customerDetails, orderDetails,
             orderType
         }
 
+        paymentRepo.create(paymentObject)
+        return { success: true, code: 201, result: session.url }
+    } catch (err) {
+        console.log("err", err.message)
+        return { success: false, code: 500, error: err.message }
+    }
+}
+
+
+exports.initiateSubscriptionPayment = async (sellerId, tierName, subscriptionFees, initialFees) => {
+    try {
+        const cents = 100
+        if (!initialFees) initialFees = 0
+        let sessionObject = {
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: [
+                {
+                    price_data: {
+                        currency: "aed",
+                        product_data: {
+                            name: `Subscription Fees for ${tierName}`,
+                        },
+                        unit_amount: parseFloat(subscriptionFees) * cents,
+                    },
+                    quantity: 1,
+                }
+            ],
+            success_url: `${process.env.STRIPE_SUCCESS_URL}`,
+            cancel_url: `${process.env.STRIPE_CANCEL_URL}`
+        }
+
+        if (initialFees > 0) {
+            sessionObject.line_items.push({
+                price_data: {
+                    currency: "aed",
+                    product_data: {
+                        name: `Initial Subscription Fees`,
+                    },
+                    unit_amount: parseFloat(initialFees) * cents,
+                },
+                quantity: 1,
+            })
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionObject)
+
+        if (!session.id) return { success: false, code: 500, error: err.message }
+
+        const paymentObject = {
+            session: session.id,
+            seller: sellerId,
+            tier: tierName,
+            subscriptionFees: subscriptionFees + initialFees
+        }
+        
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {

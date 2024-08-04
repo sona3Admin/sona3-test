@@ -1,6 +1,6 @@
 const i18n = require('i18n');
 const paymentModel = require("./payment.model")
-const { prepareQueryObjects } =require("../../helpers/query.helper")
+const { prepareQueryObjects } = require("../../helpers/query.helper")
 
 
 exports.find = async (filterObject) => {
@@ -32,7 +32,13 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        const resultObject = await paymentModel.findOne(filterObject).lean().select(selectionObject)
+        const resultObject = await paymentModel.findOne(filterObject).lean()
+            .select(selectionObject)
+            .populate({
+                path: "seller",
+                select: `userName email type teir teirDuration isSubscribed subscriptionStartDate 
+                subscriptionEndDate payedInitialFees freeTrialApplied`
+            })
 
         if (!resultObject) return {
             success: false,

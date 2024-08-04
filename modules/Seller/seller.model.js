@@ -18,13 +18,18 @@ const sellerSchema = mongoose.Schema({
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    isSubscribed: { type: Boolean, default: false },
-    
+
+
     bankAccountNumber: { type: String },
-    type: { type: String, enum: ["product", "service"] },
-    tier: { type: String, enum: ["basic", "pro", "advanced", "lifetime"] },
-    subscribtionStartDate: { type: Date },
-    subscribtionEndDate: { type: Date },
+    type: { type: String, enum: ["product", "service"], default: "product" },
+    teir: { type: String, enum: ["basic", "pro", "advanced", "lifetime"], default: "basic" },
+    teirDuration: { type: String, enum: ["month", "year"], default: "month" },
+    subscriptionStartDate: { type: Date },
+    subscriptionEndDate: { type: Date },
+    isSubscribed: { type: Boolean, default: false },
+    payedInitialFees: { type: Boolean, default: false },
+    freeTrialApplied: { type: Boolean, default: false },
+
     joinDate: { type: Date },
     verifyDate: { type: Date },
     birthDate: { type: Date },

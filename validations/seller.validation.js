@@ -70,15 +70,29 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+            payedInitialFees: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
 
-            type: joi.string().optional().messages({
+            freeTrialApplied: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
+
+
+            type: joi.string().required().valid("product", "service").messages({
                 "string.base": "validType",
             }),
 
 
-            tier: joi.string().optional().messages({
-                "string.base": "validTier",
+            teir: joi.string().required().valid("basic", "pro", "advanced", "lifetime").messages({
+                "string.base": "validTeir",
             }),
+
+
+            teirDuration: joi.string().required().valid("month", "year").messages({
+                "string.base": "validTeir",
+            }),
+
 
             session: joi.object().optional().messages({
                 "object.base": "validSession",
@@ -103,11 +117,11 @@ module.exports = {
             }),
 
 
-            subscribtionStartDate: joi.date().optional().messages({
+            subscriptionStartDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
-            subscribtionEndDate: joi.date().optional().messages({
+            subscriptionEndDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
@@ -183,14 +197,27 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+            payedInitialFees: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
 
-            type: joi.string().optional().messages({
+            freeTrialApplied: joi.boolean().optional().messages({
+                "boolean.base": "validIsActive",
+            }),
+
+
+            type: joi.string().optional().valid("product", "service").messages({
                 "string.base": "validType",
             }),
 
 
-            tier: joi.string().optional().messages({
-                "string.base": "validTier",
+            teir: joi.string().optional().valid("basic", "pro", "advanced", "lifetime").messages({
+                "string.base": "validTeir",
+            }),
+
+
+            teirDuration: joi.string().required().valid("month", "year").messages({
+                "string.base": "validTeir",
             }),
 
             session: joi.object().optional().messages({
@@ -214,11 +241,11 @@ module.exports = {
                 "date.base": "validJoinDate",
             }),
 
-            subscribtionStartDate: joi.date().optional().messages({
+            subscriptionStartDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
-            subscribtionEndDate: joi.date().optional().messages({
+            subscriptionEndDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
@@ -281,7 +308,7 @@ module.exports = {
                 "date.base": "validJoinDate",
             }),
 
-            subscribtionStartDate: joi.date().optional().messages({
+            subscriptionStartDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 

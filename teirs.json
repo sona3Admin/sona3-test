@@ -1,5 +1,5 @@
 {
-    "basicProduct": {
+    "basic_product": {
         "id": 1,
         "name": "basic",
         "type": "product",
@@ -9,7 +9,7 @@
         "commissionOnOrder": 10,
         "numberOfItems": 1
     },
-    "proProduct": {
+    "pro_product": {
         "id": 2,
         "name": "pro",
         "type": "product",
@@ -19,7 +19,7 @@
         "commissionOnOrder": 10,
         "numberOfItems": 7
     },
-    "advancedProduct": {
+    "advanced_product": {
         "id": 3,
         "name": "advanced",
         "type": "product",
@@ -29,7 +29,7 @@
         "commissionOnOrder": 10,
         "numberOfItems": 100000
     },
-    "lifeTimeProduct": {
+    "lifetime_product": {
         "id": 4,
         "name": "lifetime",
         "type": "product",
@@ -38,7 +38,7 @@
         "commissionOnOrder": 10,
         "numberOfItems": 5
     },
-    "basicService": {
+    "basic_service": {
         "id": 5,
         "name": "basic",
         "type": "service",
@@ -48,7 +48,7 @@
         "commissionOnOrder": 0,
         "numberOfItems": 1
     },
-    "proService": {
+    "pro_service": {
         "id": 6,
         "name": "pro",
         "type": "service",
@@ -58,7 +58,7 @@
         "commissionOnOrder": 0,
         "numberOfItems": 7
     },
-    "advancedService": {
+    "advanced_service": {
         "id": 7,
         "name": "advanced",
         "type": "service",
@@ -68,7 +68,7 @@
         "commissionOnOrder": 0,
         "numberOfItems": 100000
     },
-    "lifeTimeService": {
+    "lifetime_service": {
         "id": 8,
         "name": "lifetime",
         "type": "service",
