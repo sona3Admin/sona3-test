@@ -47,7 +47,7 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
             shippingCost[subOrderCost.shop] = subOrderCost.cost;
             shippingCost.total += subOrderCost.cost;
         });
-        console.log("shippingCost.total", shippingCost.total)
+        console.log("shippingCost", shippingCost)
         return {
             success: true,
             code: 201,
