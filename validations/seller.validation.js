@@ -216,7 +216,7 @@ module.exports = {
             }),
 
 
-            teirDuration: joi.string().required().valid("month", "year").messages({
+            teirDuration: joi.string().optional().valid("month", "year").messages({
                 "string.base": "validTeir",
             }),
 
