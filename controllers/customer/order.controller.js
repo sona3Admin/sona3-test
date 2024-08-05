@@ -86,7 +86,7 @@ exports.calculateOrderTotal = async (req, res) => {
         let operationResultObject = await handleOrderCreation(cartObject.result, {}, isFood)
 
         if (!isFood && req.query?.cityCode) {
-            cartObject.result.cityCode = req.body.cityCode
+            cartObject.result.cityCode = req.query.cityCode
             firstFlightShippingCost = await firstFlightHelper.calculateOrderShippingCost(cartObject.result)
             operationResultObject.shippingFeesTotal = parseFloat(firstFlightShippingCost.result.total)
             operationResultObject.orderTotal += parseFloat(firstFlightShippingCost.result.total)

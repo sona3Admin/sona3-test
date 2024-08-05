@@ -78,7 +78,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, subscriptionFee
                     price_data: {
                         currency: "aed",
                         product_data: {
-                            name: `Subscription Fees for ${tierName}`,
+                            name: `Subscription Fees for ${tierName} plan`,
                         },
                         unit_amount: parseFloat(subscriptionFees) * cents,
                     },

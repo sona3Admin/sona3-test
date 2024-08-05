@@ -26,10 +26,14 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
         console.log('calculateOrderShippingCost...');
         let originCity = orderDetailsObject.cityCode || "DXB";
         let shippingCost = { total: 0 };
-
+        console.log("orderDetailsObject.cityCode", orderDetailsObject.cityCode)
+        console.log("originCity", originCity)
         // Create an array of promises
         let subOrderPromises = orderDetailsObject.subCarts.map(async (subOrder) => {
             let destinationCity = subOrder?.address?.cityCode || "DXB";
+            console.log("subOrder?.address?.cityCode", subOrder?.address?.cityCode)
+            console.log("destinationCity", destinationCity)
+
             let subOrderCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity);
             return { shop: subOrder.shop._id.toString(), cost: subOrderCost.result };
         });
@@ -43,7 +47,7 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
             shippingCost[subOrderCost.shop] = subOrderCost.cost;
             shippingCost.total += subOrderCost.cost;
         });
-
+        console.log("shippingCost.total", shippingCost.total)
         return {
             success: true,
             code: 201,
@@ -731,28 +735,28 @@ function handleStatus(firstFlightStausText, orderType) {
 
 
 exports.generateOrderLabel = async (airwayBillNumber, printType, requestUser) => {
-    try{
+    try {
         let airwayBillData = {
             ...authData,
             AirwayBillNumber: airwayBillNumber,
             PrintType: printType,
-            RequestUser:  requestUser
+            RequestUser: requestUser
         }
-    
+
         let response = await axios.post(`${firstFlightBaseUrl}/AirwaybillPDFFormat`, airwayBillData, {
             headers: { 'Content-Type': 'application/json' }
         });
-    
+
         let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);
         let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
-    
+
         return {
             success: true,
             code: 201,
             result: uploadedFile.result
         }
 
-    } catch(err) {
+    } catch (err) {
         console.log('Error ', err.message);
         return {
             success: false,
