@@ -3,6 +3,7 @@ const paymentRepo = require("../modules/Payment/payment.repo")
 const basketController = require("../controllers/customer/order/basket.controller")
 const cartController = require("../controllers/customer/order/cart.controller")
 const serviceRequestController = require("../controllers/customer/request.controller")
+const subscriptionController = require("../controllers/seller/subscription.controller")
 
 
 exports.getPaymentSuccessAck = async (req, res) => {
@@ -17,10 +18,11 @@ exports.getPaymentSuccessAck = async (req, res) => {
             console.log(`Checkout session completed: ${session.id}`);
             let paymentObject = await paymentRepo.find({ session: session.id })
             req.body = { ...paymentObject.result }
-            
+
             if (paymentObject.result.orderType == "basket") return basketController.createOrder(req, res)
-            if (paymentObject.result.orderType == "cart") return cartController.createOrder(req, res)
-            if (paymentObject.result.orderType == "request") return serviceRequestController.purchaseRequest(req, res)
+            else if (paymentObject.result.orderType == "cart") return cartController.createOrder(req, res)
+            else if (paymentObject.result.orderType == "request") return serviceRequestController.purchaseRequest(req, res)
+            else if (paymentObject.result.orderType == "subscription") return subscriptionController.applySubscription(req, res)
 
             // return res.send()
         }

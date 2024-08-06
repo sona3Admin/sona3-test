@@ -68,8 +68,9 @@ exports.cancelCouponFromBasket = async (req, res) => {
 
 exports.listCoupons = async (req, res) => {
     try {
-        const filterObject = req.query;
+        let filterObject = req.query;
         filterObject["isActive"] = true
+        filterObject["userType"] = "customer"
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await couponRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
@@ -87,8 +88,9 @@ exports.listCoupons = async (req, res) => {
 
 exports.getCoupon = async (req, res) => {
     try {
-        const filterObject = req.query;
+        let filterObject = req.query;
         filterObject["isActive"] = true
+        filterObject["userType"] = "customer"
         const operationResultObject = await couponRepo.get(filterObject, {});
         return res.status(operationResultObject.code).json(operationResultObject);
 

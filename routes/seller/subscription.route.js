@@ -3,7 +3,7 @@ const subscriptionController = require("../../controllers/seller/subscription.co
 const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
-app.get("/subscribe", checkIdentity("_id"), subscriptionController.subscribe);
+app.get("/subscribe", checkIdentity("_id"), subscriptionController.paySubscriptionFees);
 
 
 module.exports = app

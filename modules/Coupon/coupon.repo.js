@@ -471,6 +471,52 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
 }
 
 
+exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees) => {
+    try {
+        console.log("applying coupon on subscription fees...")
+        let couponObject = await this.find({ _id: couponId })
+        let couponValidationResult = this.validateCoupon(couponObject.result)
+        if (!couponValidationResult.success) return couponValidationResult;
+
+        // let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "seller", sellerId)
+        // if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
+
+        let newSubscriptionFees = this.calculateNewSubscriptionFees(couponObject, subscriptionFees)
+        console.log("newSubscriptionFees", newSubscriptionFees)
+
+        this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { seller: sellerId } } })
+        return {
+            success: true,
+            result: newSubscriptionFees,
+            code: 201
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+
+exports.calculateNewSubscriptionFees = (couponObject, subscriptionFees) => {
+    let newSubscriptionFees = 0
+
+    if (couponObject.result.discountType == "value")
+        newSubscriptionFees = parseFloat(subscriptionFees) - parseFloat(couponObject.result.value)
+
+    if (couponObject.result.discountType == "percentage")
+        newSubscriptionFees = parseFloat(subscriptionFees) - (parseFloat(couponObject.result.percentage) * parseFloat(subscriptionFees))
+
+    if (newSubscriptionFees < 0) newSubscriptionFees = 0;
+
+    return newSubscriptionFees
+}
+
+
 exports.validateCoupon = (couponObject) => {
     if (!couponObject.isActive) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
     if (couponObject.quantity < 1) return { success: false, code: 409, error: i18n.__("invalidCoupon") }

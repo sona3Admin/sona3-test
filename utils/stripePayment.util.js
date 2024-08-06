@@ -66,10 +66,11 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 }
 
 
-exports.initiateSubscriptionPayment = async (sellerId, tierName, subscriptionFees, initialFees) => {
+exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, subscriptionFees, initialFees) => {
     try {
         const cents = 100
         if (!initialFees) initialFees = 0
+        console.log("subscriptionFees in stripe", subscriptionFees)
         let sessionObject = {
             payment_method_types: ["card"],
             mode: "payment",
@@ -88,7 +89,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, subscriptionFee
             success_url: `${process.env.STRIPE_SUCCESS_URL}`,
             cancel_url: `${process.env.STRIPE_CANCEL_URL}`
         }
-
+        console.log("Session Object ready")
         if (initialFees > 0) {
             sessionObject.line_items.push({
                 price_data: {
@@ -100,19 +101,23 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, subscriptionFee
                 },
                 quantity: 1,
             })
+            console.log("initialFees ready")
+
         }
 
         const session = await stripe.checkout.sessions.create(sessionObject)
-
+        console.log("Session Created")
         if (!session.id) return { success: false, code: 500, error: err.message }
 
         const paymentObject = {
             session: session.id,
             seller: sellerId,
             tier: tierName,
-            subscriptionFees: subscriptionFees + initialFees
+            teirDuration: teirDuration,
+            subscriptionFees: subscriptionFees + initialFees,
+            orderType: "subscription"
         }
-        
+
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {

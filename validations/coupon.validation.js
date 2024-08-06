@@ -66,6 +66,11 @@ module.exports = {
             expirationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
+
+            userType: joi.string().optional().empty().messages({
+                "string.base": "validCodeString",
+                "string.empty": "emptyCodeString",
+            }),
         }),
     },
 
@@ -132,6 +137,11 @@ module.exports = {
 
             expirationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
+            }),
+
+            userType: joi.string().optional().empty().messages({
+                "string.base": "validCodeString",
+                "string.empty": "emptyCodeString",
             }),
         }),
     },

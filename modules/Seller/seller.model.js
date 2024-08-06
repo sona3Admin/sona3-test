@@ -22,8 +22,8 @@ const sellerSchema = mongoose.Schema({
 
     bankAccountNumber: { type: String },
     type: { type: String, enum: ["product", "service"], default: "product" },
-    teir: { type: String, enum: ["basic", "pro", "advanced", "lifetime"], default: "basic" },
-    teirDuration: { type: String, enum: ["month", "year"], default: "month" },
+    tier: { type: String, enum: ["basic", "pro", "advanced", "lifetime"], default: "basic" },
+    tierDuration: { type: String, enum: ["month", "year"], default: "month" },
     subscriptionStartDate: { type: Date },
     subscriptionEndDate: { type: Date },
     isSubscribed: { type: Boolean, default: false },

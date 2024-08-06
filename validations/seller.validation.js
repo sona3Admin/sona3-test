@@ -84,13 +84,13 @@ module.exports = {
             }),
 
 
-            teir: joi.string().required().valid("basic", "pro", "advanced", "lifetime").messages({
-                "string.base": "validTeir",
+            tier: joi.string().required().valid("basic", "pro", "advanced", "lifetime").messages({
+                "string.base": "validTier",
             }),
 
 
-            teirDuration: joi.string().required().valid("month", "year").messages({
-                "string.base": "validTeir",
+            tierDuration: joi.string().required().valid("month", "year").messages({
+                "string.base": "validTier",
             }),
 
 
@@ -211,13 +211,13 @@ module.exports = {
             }),
 
 
-            teir: joi.string().optional().valid("basic", "pro", "advanced", "lifetime").messages({
-                "string.base": "validTeir",
+            tier: joi.string().optional().valid("basic", "pro", "advanced", "lifetime").messages({
+                "string.base": "validTier",
             }),
 
 
-            teirDuration: joi.string().optional().valid("month", "year").messages({
-                "string.base": "validTeir",
+            tierDuration: joi.string().optional().valid("month", "year").messages({
+                "string.base": "validTier",
             }),
 
             session: joi.object().optional().messages({

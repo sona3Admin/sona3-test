@@ -21,7 +21,7 @@ const reviewRoutes = require("./review.route");
 const couponRoutes = require("./coupon.route");
 const roomRoutes = require("./room.route");
 const notificationRoutes = require("./notification.route");
-const teirsRoutes = require("./subscription.route");
+const tiersRoutes = require("./subscription.route");
 
 
 app.use(authRoutes)
@@ -41,7 +41,7 @@ app.use("/reviews", checkToken(allowedUsers), reviewRoutes);
 app.use("/coupons", checkToken(allowedUsers), couponRoutes);
 app.use("/rooms", checkToken(allowedUsers), roomRoutes);
 app.use("/notifications", checkToken(allowedUsers), notificationRoutes);
-app.use("/teirs", checkToken(allowedUsers), teirsRoutes);
+app.use("/tiers", checkToken(allowedUsers), tiersRoutes);
 
 
 module.exports = app

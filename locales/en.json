@@ -167,5 +167,7 @@
 	"couponNotValid": "you should only apply this coupon on te shop providing it.",
 	"validTeir": "Please select your subscription plan.",
 	"\"payedInitialFees\" is not allowed": "\"payedInitialFees\" is not allowed",
-	"\"freeTrialApplied\" is not allowed": "\"freeTrialApplied\" is not allowed"
+	"\"freeTrialApplied\" is not allowed": "\"freeTrialApplied\" is not allowed",
+	"\"percentage\" must be less than or equal to 1": "\"percentage\" must be less than or equal to 1",
+	"alreadySubscribedToPlan": "alreadySubscribedToPlan"
 }
