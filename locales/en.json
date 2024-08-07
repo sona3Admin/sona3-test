@@ -169,5 +169,6 @@
 	"\"payedInitialFees\" is not allowed": "\"payedInitialFees\" is not allowed",
 	"\"freeTrialApplied\" is not allowed": "\"freeTrialApplied\" is not allowed",
 	"\"percentage\" must be less than or equal to 1": "\"percentage\" must be less than or equal to 1",
-	"alreadySubscribedToPlan": "alreadySubscribedToPlan"
+	"alreadySubscribedToPlan": "alreadySubscribedToPlan",
+	"\"loyaltyPoints\" is not allowed": "\"loyaltyPoints\" is not allowed"
 }

@@ -57,6 +57,7 @@ exports.setSubOrders = (subCartsArray) => {
                 shopTaxes: 0,
                 shopShippingFees: 0,
                 coupon: (subCartsArray[shopCartIndex]?.coupon) || undefined,
+                usedCashback: (subCartsArray[shopCartIndex]?.usedCashback) || 0,
                 subOrderTotal: subCartsArray[shopCartIndex].shopTotal,
             });
         }

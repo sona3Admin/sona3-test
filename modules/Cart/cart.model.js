@@ -15,6 +15,8 @@ const cartSchema = mongoose.Schema({
         shopTotal: { type: Number, min: 0, default: 0 },
         shopOriginalTotal: { type: Number, min: 0, default: 0 },
         coupon: { type: mongoose.Types.ObjectId, ref: "coupons" },
+        usedCashback: { type: Number, default: 0, min: 0 },
+
     }],
     cartTotal: { type: Number, min: 0, default: 0 },
     cartOriginalTotal: { type: Number, min: 0, default: 0 },
@@ -26,6 +28,5 @@ const cartSchema = mongoose.Schema({
 cartSchema.index({ customer: 1 });
 
 const cartModel = mongoose.model("carts", cartSchema)
-
 
 module.exports = cartModel;

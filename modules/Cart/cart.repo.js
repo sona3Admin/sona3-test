@@ -126,7 +126,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         let variationResultObject = await variationRepo.get({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
         if (variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("isNotFoodCart") }
-        
+
         variationResultObject.result.seller = variationResultObject.result.seller._id
         variationResultObject.result.shop = variationResultObject.result.shop._id
         variationResultObject.result.product = variationResultObject.result.product._id
@@ -409,9 +409,9 @@ exports.flush = async (filterObject) => {
 }
 
 
-exports.useCashback = async (customerId, cashbackToUse) => {
+exports.useCashback = async (customerId, shopId, cashbackToUse) => {
     try {
-        cashbackToUse = parseInt(cashbackToUse)
+        cashbackToUse = parseFloat(cashbackToUse)
         let cartResultObject = await this.get({ customer: customerId });
         if (!cartResultObject.success) return cartResultObject;
 
@@ -419,7 +419,22 @@ exports.useCashback = async (customerId, cashbackToUse) => {
         if (cashbackToUse > currentCustomerCashback)
             return { success: false, code: 409, error: i18n.__("noPoints") }
 
-        let updatedCartResult = await this.updateDirectly(cartResultObject.result._id, { $inc: { usedCashback: cashbackToUse } });
+        let isShopInSubCarts = isIdInArray(cartResultObject.result.subCarts, "shop", shopId)
+        if (!isShopInSubCarts || !isShopInSubCarts.success) return { success: false, code: 404, error: i18n.__("notFound") };
+        let shopCartIndex = parseInt(isShopInSubCarts.result)
+        let shopCartObject = cartResultObject.result.subCarts[shopCartIndex]
+
+        shopCartObject.usedCashback += parseFloat(cashbackToUse)
+        shopCartObject.shopTotal -= parseFloat(cashbackToUse)
+        cartResultObject.result.cartTotal -= parseFloat(cashbackToUse)
+        cartResultObject.result.usedCashback += parseFloat(cashbackToUse)
+
+        let updatedCartResult = await this.updateDirectly(cartResultObject.result._id, {
+            subCarts: cartResultObject.result.subCarts,
+            cartTotal: cartResultObject.result.cartTotal,
+            usedCashback: cartResultObject.result.usedCashback
+        });
+
         customerRepo.updateDirectly(cartResultObject?.result?.customer?._id.toString(), { $inc: { cashback: -cashbackToUse } })
         return updatedCartResult
 

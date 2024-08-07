@@ -80,6 +80,14 @@ module.exports = {
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validPassword",
             }),
+
+            loyaltyPoints: joi.number().optional().empty().messages({
+                "number.base": "validLoyaltyPoints",
+            }),
+
+            cashback: joi.number().optional().empty().messages({
+                "number.base": "validLoyaltyPoints",
+            }),
         })
     },
 
@@ -160,6 +168,14 @@ module.exports = {
             }),
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validPassword",
+            }),
+
+            loyaltyPoints: joi.number().optional().empty().messages({
+                "number.base": "validLoyaltyPoints",
+            }),
+
+            cashback: joi.number().optional().empty().messages({
+                "number.base": "validLoyaltyPoints",
             }),
         }),
     },

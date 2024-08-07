@@ -20,6 +20,7 @@ const orderSchema = mongoose.Schema({
             itemTotal: { type: Number, min: 0 }
         }],
         coupon: { type: Object },
+        usedCashback: { type: Number, default: 0, min: 0 },
         shopTotal: { type: Number, min: 0, default: 0 },
         shopOriginalTotal: { type: Number, min: 0, default: 0 },
         shopTaxes: { type: Number, min: 0, default: 0 },
