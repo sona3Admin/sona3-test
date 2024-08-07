@@ -2,9 +2,9 @@ const i18n = require('i18n');
 const couponRepo = require("../../modules/Coupon/coupon.repo");
 
 
-exports.applyCoupon = async (req, res) => {
+exports.applyCouponOnCart = async (req, res) => {
     try {
-        const operationResultObject = await couponRepo.apply(req.query.cart, req.query.coupon, req.query.shop)
+        const operationResultObject = await couponRepo.applyOnCart(req.query.cart, req.query.coupon, req.query.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -18,9 +18,9 @@ exports.applyCoupon = async (req, res) => {
 }
 
 
-exports.cancelCoupon = async (req, res) => {
+exports.cancelCouponFromCart = async (req, res) => {
     try {
-        const operationResultObject = await couponRepo.cancel(req.query.cart, req.query.shop)
+        const operationResultObject = await couponRepo.cancelFromCart(req.query.cart, req.query.shop)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
