@@ -2,7 +2,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const paymentRepo = require("../modules/Payment/payment.repo")
 
 
-exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType) => {
+exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType, timestamp) => {
     try {
         const cents = 100
 
@@ -54,7 +54,8 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
             shippingCost: customerDetails?.shippingCost,
             orderCost: orderCostObject,
             orderDetails,
-            orderType
+            orderType,
+            timestamp
         }
 
         paymentRepo.create(paymentObject)
@@ -66,7 +67,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 }
 
 
-exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, subscriptionFees, initialFees) => {
+exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, subscriptionFees, initialFees, timestamp) => {
     try {
         const cents = 100
         let paymentObject;
@@ -118,7 +119,8 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, s
             teirDuration: teirDuration,
             subscriptionFees: subscriptionFees + initialFees,
             freeTrialApplied: ((subscriptionFees == 0) ? true : false),
-            orderType: "subscription"
+            orderType: "subscription",
+            timestamp
         }
 
         paymentRepo.create(paymentObject)

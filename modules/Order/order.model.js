@@ -46,7 +46,7 @@ const orderSchema = mongoose.Schema({
         },
         address: { type: Object }
     },
-    paymentMethod: { type: String, enum: ["cashOnDelivery", "visa"], default: "cashOnDelivery" },
+    paymentMethod: { type: String, enum: ["cashOnDelivery", "visa"], default: "visa" },
     coupon: { type: Object },
     usedCashback: { type: Number, default: 0, min: 0 },
     cartTotal: { type: Number, min: 0, default: 0 },

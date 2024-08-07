@@ -122,7 +122,8 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject, is
         customerOrderObject.shippingFeesTotal = 0
         customerOrderObject.name = customerCartObject.customer.name
         customerOrderObject.phone = customerCartObject.customer.phone
-
+        customerOrderObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
+        customerOrderObject.issueDate = customerOrderObject?.issueDate || customerOrderObject.timestamp
         let subOrders = customerOrderObject.subOrders
         subOrders.forEach((shopObject) => this.addOrderTaxes(shopObject, customerOrderObject, isFood))
         // subOrders.forEach((shopObject) => this.addOrderShippingFees(shopObject, customerOrderObject))

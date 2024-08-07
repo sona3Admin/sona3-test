@@ -100,7 +100,7 @@ exports.createOrderPaymentLink = async (req, res) => {
         let orderDetailsObject = { basket: customerCartObject.result._id.toString() }
         let customerDetailsObject = { ...req.body }
         const orderType = "basket"
-        let operationResultObject = await stripeHelper.initiateOrderPayment(costObject, customerDetailsObject, orderDetailsObject, orderType)
+        let operationResultObject = await stripeHelper.initiateOrderPayment(costObject, customerDetailsObject, orderDetailsObject, orderType, req.body.issueDate)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

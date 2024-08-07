@@ -27,7 +27,9 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
         customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal)
         customerRequestObject.shipperRef = generateSubCartId()
         // customerRequestObject.shippingAddress = customerOrderObject.shippingAddress
-        customerRequestObject.paymentMethod = customerOrderObject?.paymentMethod
+        // customerRequestObject.paymentMethod = customerOrderObject?.paymentMethod
+        customerRequestObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
+        customerRequestObject.issueDate = customerOrderObject?.issueDate || customerOrderObject.timestamp
         customerRequestObject.calculations = {
             taxesTotal: customerRequestObject.taxesTotal,
             taxesRate: customerRequestObject.taxesRate,
