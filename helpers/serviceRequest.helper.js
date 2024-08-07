@@ -25,11 +25,11 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
         customerRequestObject.taxesRate = parseFloat(getSettings("vatRate"))
         // customerRequestObject.shippingFeesTotal = customerRequestObject?.service?.isFood ? ifastShippingCost : customerOrderObject.shippingFeesTotal
         customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal)
-        customerRequestObject.shipperRef = generateSubCartId()
+        // customerRequestObject.shipperRef = generateSubCartId()
         // customerRequestObject.shippingAddress = customerOrderObject.shippingAddress
         // customerRequestObject.paymentMethod = customerOrderObject?.paymentMethod
         customerRequestObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
-        customerRequestObject.issueDate = customerOrderObject?.issueDate || customerOrderObject.timestamp
+        customerRequestObject.requestDate = customerOrderObject?.requestDate || customerOrderObject.timestamp
         customerRequestObject.calculations = {
             taxesTotal: customerRequestObject.taxesTotal,
             taxesRate: customerRequestObject.taxesRate,
