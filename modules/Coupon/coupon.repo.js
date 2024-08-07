@@ -254,7 +254,7 @@ exports.apply = async (cartId, couponId, shopId) => {
         if (!cartObject.success || cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("hasCoupon") }
         if (cartObject.result.subCarts.length < 1) return { success: false, code: 409, error: i18n.__("emptyCart") }
 
-        let couponObject = await this.find({ _id: couponId })
+        let couponObject = await this.find({ code: couponId })
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
@@ -346,7 +346,7 @@ exports.applyOnBasket = async (basketId, couponId, shopId) => {
         if (!cartObject.success || cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("hasCoupon") }
         if (cartObject.result.subCarts.length < 1) return { success: false, code: 409, error: i18n.__("emptyCart") }
 
-        let couponObject = await this.find({ _id: couponId })
+        let couponObject = await this.find({ code: couponId })
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
@@ -474,7 +474,7 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
 exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees) => {
     try {
         console.log("applying coupon on subscription fees...")
-        let couponObject = await this.find({ _id: couponId })
+        let couponObject = await this.find({ code: couponId })
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
