@@ -105,6 +105,10 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
+
+        const uniqueObjectResult = await this.isObjectUninque(formObject);
+        if (!uniqueObjectResult.success) return uniqueObjectResult
+
         const resultObject = new couponModel(formObject);
         await resultObject.save();
 
@@ -524,4 +528,24 @@ exports.validateCoupon = (couponObject) => {
     if (couponObject.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
 
     return { success: true }
+}
+
+
+
+exports.isObjectUninque = async (formObject) => {
+    const duplicateObject = await this.find({
+        code: formObject.code
+    })
+
+    if (duplicateObject.success) return {
+        success: false,
+        code: 409,
+        error: i18n.__("nameUsed")
+    }
+
+
+    return {
+        success: true,
+        code: 200
+    }
 }

@@ -1,9 +1,12 @@
 const i18n = require('i18n');
 const couponRepo = require("../../modules/Coupon/coupon.repo");
+const uniqueCode = require("short-unique-id");
+const couponCode = new uniqueCode()
 
 
 exports.createCoupon = async (req, res) => {
     try {
+        if (!req.body?.code) req.body.code = await couponCode.randomUUID(10)
         const operationResultObject = await couponRepo.create(req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
