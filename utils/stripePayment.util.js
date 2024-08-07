@@ -69,6 +69,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, subscriptionFees, initialFees) => {
     try {
         const cents = 100
+        let paymentObject;
         if (!initialFees) initialFees = 0
         console.log("subscriptionFees in stripe", subscriptionFees)
         let sessionObject = {
@@ -101,6 +102,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, s
                 },
                 quantity: 1,
             })
+            paymentObject.payedInitialFees = true
             console.log("initialFees ready")
 
         }
@@ -109,12 +111,13 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, s
         console.log("Session Created")
         if (!session.id) return { success: false, code: 500, error: err.message }
 
-        const paymentObject = {
+        paymentObject = {
             session: session.id,
             seller: sellerId,
             tier: tierName,
             teirDuration: teirDuration,
             subscriptionFees: subscriptionFees + initialFees,
+            freeTrialApplied: ((subscriptionFees == 0) ? true : false),
             orderType: "subscription"
         }
 

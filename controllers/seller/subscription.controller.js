@@ -1,5 +1,8 @@
 const i18n = require('i18n');
 const sellerRepo = require("../../modules/Seller/seller.repo")
+const shopRepo = require("../../modules/Shop/shop.repo")
+const serviceRepo = require("../../modules/Service/service.repo")
+const productRepo = require("../../modules/Product/product.repo")
 const couponRepo = require("../../modules/Coupon/coupon.repo")
 const stripeHelper = require("../../utils/stripePayment.util")
 const { getTiers } = require("../../helpers/tiers.helper")
@@ -162,7 +165,38 @@ exports.upgradeTier = async (sellerObject, newTierObject) => {
 
 exports.applySubscription = async (req, res) => {
     try {
-        // isSubscribed = true, sart date, end date,
+        console.log("Applying subscription...");
+
+        const subscriptionStartDate = new Date(req.body.timestamp);
+        const subscriptionEndDate = new Date(subscriptionStartDate);
+
+        if (req.body.tierDuration === 'month') subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
+        else if (req.body.tierDuration === 'year') subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
+
+        let updatedSellerData = {
+            tier: req.body.tier,
+            tierDuration: req.body.tierDuration,
+            subscriptionStartDate: req.body.subscriptionStartDate,
+            subscriptionEndDate: req.body.subscriptionEndDate,
+            isSubscribed: true,
+            payedInitialFees: req.body?.payedInitialFees == true ? true : false,
+        };
+        if (req.body?.freeTrialApplied) updatedSellerData.freeTrialApplied = true;
+
+        const updatedSellerResult = await sellerRepo.updateDirectly(req.body.seller.toString(), updatedSellerData);
+        if (!updatedSellerResult.success) return res.status(updatedSellerResult.code).json(updatedSellerResult);
+
+        shopRepo.updateMany({ seller: req.body.seller.toString() }, { isActive: true })
+        if (updatedSellerResult.result.type == "product") productRepo.updateMany({ seller: req.body.seller.toString() }, { isActive: true })
+        if (updatedSellerResult.result.type == "service") serviceRepo.updateMany({ seller: req.body.seller.toString() }, { isActive: true })
+
+        console.log("Subscription applied successfully");
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: updatedSellerResult.result
+        });
+
     } catch (err) {
         console.log(`err.message`, err.message);
         return res.status(500).json({
@@ -171,5 +205,5 @@ exports.applySubscription = async (req, res) => {
             error: i18n.__("internalServerError")
         });
     }
-}
+};
 

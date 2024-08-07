@@ -207,6 +207,28 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+
+exports.updateMany = async (filterObject, formObject) => {
+    try {
+        const resultObject = await serviceModel.updateMany(filterObject, formObject)
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.removeMany = async (filterObject) => {
     try {
         const resultObject = await serviceModel.updateMany(filterObject, { isActive: false });
