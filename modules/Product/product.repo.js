@@ -2,7 +2,9 @@ const i18n = require('i18n');
 const productModel = require("./product.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require("../Shop/shop.repo")
+const sellerRepo = require("../Seller/seller.repo")
 const variationRepo = require("../Variation/variation.repo")
+const { getTiers } = require("../../helpers/tiers.helper")
 
 
 exports.find = async (filterObject) => {
@@ -111,9 +113,46 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
+exports.count = async (filterObject, sortObject) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        const count = await productModel.count(filterObject);
+        return {
+            success: true,
+            code: 200,
+            result: count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
+        let sellerObject = await sellerRepo.find({ _id: formObject.seller })
+        if (sellerObject.result.type !== "product") return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+        const tierDetails = await getTiers(`${sellerObject.result.tier}_${sellerObject.result.type}`)
+        const productCount = await this.count({ seller: formObject.seller })
+        if (productCount.result >= parseInt(tierDetails.numberOfItems)) return {
+            success: false,
+            code: 500,
+            error: i18n.__("productLimitExceeded")
+        }
+
         const uniqueObjectResult = await this.isObjectUninque(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
 

@@ -106,9 +106,45 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
+exports.count = async (filterObject, sortObject) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        const count = await serviceModel.count(filterObject);
+        return {
+            success: true,
+            code: 200,
+            result: count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
+        let shopObject = await shopRepo.find({ _id: formObject.shop })
+        if (shopObject.result.type !== "service") return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+        const tierDetails = await getTiers(`${sellerObject.result.tier}_${sellerObject.result.type}`)
+        const serviceCount = await this.count({ seller: formObject.seller })
+        if (serviceCount.result >= parseInt(tierDetails.numberOfItems)) return {
+            success: false,
+            code: 500,
+            error: i18n.__("serviceLimitExceeded")
+        }
         const uniqueObjectResult = await this.isObjectUninque(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
 

@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 let shopModel = require("./shop.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper");
+const sellerRepo = require('../Seller/seller.repo');
 const productRepo = require('../Product/product.repo');
 const serviceRepo = require('../Service/service.repo');
 const couponRepo = require('../Coupon/coupon.repo');
@@ -113,7 +114,8 @@ exports.create = async (formObject) => {
         formObject = this.convertToLowerCase(formObject)
         const uniqueObjectResult = await this.isObjectUninque(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
-
+        const sellerObject = await sellerRepo.find({ _id: formObject.seller })
+        formObject.type = sellerObject.result?.type
         const resultObject = new shopModel(formObject);
         await resultObject.save();
 
