@@ -36,7 +36,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
                         product_data: {
                             name: "Shipping Fee",
                         },
-                        unit_amount: (orderCostObject.shippingFeesTotal) * cents,
+                        unit_amount: (orderCostObject?.shippingFeesTotal) * cents || 0,
                     },
                     quantity: 1,
                 }
