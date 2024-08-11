@@ -284,7 +284,7 @@ exports.applyOnCart = async (cartId, couponId, shopId) => {
             coupon: couponObject.result._id.toString(),
             couponShop: shopId
         })
-        this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
+        this.updateDirectly(couponObject.result._id.toString(), { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
         return {
             success: true,
             result: updatedCartResult.result,
@@ -326,7 +326,7 @@ exports.cancelFromCart = async (cartId, shopId) => {
 
         let updatedCartResult = await cartRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
             $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
-            $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1 }
+            $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1, couponShop: 1 }
         })
 
         this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
@@ -380,7 +380,7 @@ exports.applyOnBasket = async (cartId, couponId, shopId) => {
             coupon: couponObject.result._id.toString(),
             couponShop: shopId
         })
-        this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
+        this.updateDirectly(couponObject.result._id.toString(), { $inc: { quantity: -1 }, $addToSet: { usedBy: { customer: customerId } } })
         return {
             success: true,
             result: updatedCartResult.result,
@@ -422,7 +422,7 @@ exports.cancelFromBasket = async (cartId) => {
 
         let updatedCartResult = await basketRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
             $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
-            $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1 }
+            $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1, couponShop: 1 }
         })
 
         this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })

@@ -17,7 +17,7 @@ exports.createOrderPaymentLink = async (req, res) => {
         let costObject = {
             cartTotal: customerOrderObject.serviceTotal,
             taxesTotal: customerOrderObject.calculations.taxesTotal,
-            shippingFeesTotal: customerOrderObject.calculations.shippingFeesTotal
+            shippingFeesTotal: 0
         }
 
         let orderDetailsObject = { request: customerRequestObject.result._id.toString() }
