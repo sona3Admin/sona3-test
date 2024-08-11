@@ -70,7 +70,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, timestamp) => {
     try {
         const cents = 100
-        let paymentObject;
+        let paymentObject = {};
         if (!initialFees) initialFees = 0
         console.log("subscriptionFees in stripe", subscriptionFees)
         let sessionObject = {
@@ -103,7 +103,6 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                 },
                 quantity: 1,
             })
-            paymentObject.payedInitialFees = true
             console.log("initialFees ready")
 
         }
@@ -122,6 +121,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             orderType: "subscription",
             timestamp
         }
+        if(initialFees > 0) paymentObject["payedInitialFees"] = true
 
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }

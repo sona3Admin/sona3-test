@@ -189,10 +189,10 @@ exports.applySubscription = async (req, res) => {
             tierDuration: req.body.tierDuration,
             subscriptionStartDate: subscriptionStartDate,
             subscriptionEndDate: subscriptionEndDate,
-            isSubscribed: true,
-            payedInitialFees: req.body?.payedInitialFees == true ? true : false,
+            isSubscribed: true
         };
-
+        
+        if(req.body?.payedInitialFees == true) updatedSellerData.payedInitialFees = true
         console.log("updatedSellerData", updatedSellerData);
 
         const updatedSellerResult = await sellerRepo.updateDirectly(req.body.seller.toString(), updatedSellerData);
