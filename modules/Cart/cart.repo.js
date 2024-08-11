@@ -424,11 +424,15 @@ exports.useCashback = async (customerId, shopId, cashbackToUse) => {
         let shopCartIndex = parseInt(isShopInSubCarts.result)
         let shopCartObject = cartResultObject.result.subCarts[shopCartIndex]
 
+        if(!cartResultObject.result.usedCashback) cartResultObject.result.usedCashback = 0
         shopCartObject.usedCashback += parseFloat(cashbackToUse)
         shopCartObject.shopTotal -= parseFloat(cashbackToUse)
         cartResultObject.result.cartTotal -= parseFloat(cashbackToUse)
         cartResultObject.result.usedCashback += parseFloat(cashbackToUse)
 
+        if(shopCartObject.shopTotal < 0) shopCartObject.shopTotal = 0 
+        if(cartResultObject.result.cartTotal < 0) cartResultObject.result.cartTotal = 0 
+        
         let updatedCartResult = await this.updateDirectly(cartResultObject.result._id, {
             subCarts: cartResultObject.result.subCarts,
             cartTotal: cartResultObject.result.cartTotal,

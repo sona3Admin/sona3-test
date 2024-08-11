@@ -68,7 +68,7 @@ exports.flushBasket = async (req, res) => {
 
 exports.applyCashback = async (req, res) => {
     try {
-        const operationResultObject = await basketRepo.useCashback(req.query.customer, req.query.cashback)
+        const operationResultObject = await basketRepo.useCashback(req.query.customer, req.query.shop, req.query.cashback)
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);
