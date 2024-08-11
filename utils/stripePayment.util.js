@@ -67,7 +67,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 }
 
 
-exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, subscriptionFees, initialFees, timestamp) => {
+exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, timestamp) => {
     try {
         const cents = 100
         let paymentObject;
@@ -116,7 +116,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, teirDuration, s
             session: session.id,
             seller: sellerId,
             tier: tierName,
-            teirDuration: teirDuration,
+            tierDuration: tierDuration,
             subscriptionFees: subscriptionFees + initialFees,
             freeTrialApplied: ((subscriptionFees == 0) ? true : false),
             orderType: "subscription",

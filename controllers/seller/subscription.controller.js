@@ -11,7 +11,7 @@ const { getSettings } = require("../../helpers/settings.helper")
 
 exports.paySubscriptionFees = async (req, res) => {
     try {
-        console.log("Intiating Subscription Flow...")
+        console.log("Initiating Subscription Flow...")
         const todayDate = new Date();
         const freeTrialEndDate = new Date('2025-01-01');
         let initialFees = 0
@@ -166,22 +166,34 @@ exports.upgradeTier = async (sellerObject, newTierObject) => {
 exports.applySubscription = async (req, res) => {
     try {
         console.log("Applying subscription...");
-
+        console.log("req.body", req.body);
+        let updatedSellerData
         const subscriptionStartDate = new Date(req.body.timestamp);
-        const subscriptionEndDate = new Date(subscriptionStartDate);
+        console.log("subscriptionStartDate", subscriptionStartDate);
+
+        let subscriptionEndDate = new Date(subscriptionStartDate);
 
         if (req.body.tierDuration === 'month') subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
         else if (req.body.tierDuration === 'year') subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
 
-        let updatedSellerData = {
+        
+        if (req.body?.freeTrialApplied) {
+            updatedSellerData.freeTrialApplied = true;
+            subscriptionEndDate = new Date("2025-01-01");
+        }
+
+        console.log("subscriptionEndDate", subscriptionEndDate);
+
+        updatedSellerData = {
             tier: req.body.tier,
             tierDuration: req.body.tierDuration,
-            subscriptionStartDate: req.body.subscriptionStartDate,
-            subscriptionEndDate: req.body.subscriptionEndDate,
+            subscriptionStartDate: subscriptionStartDate,
+            subscriptionEndDate: subscriptionEndDate,
             isSubscribed: true,
             payedInitialFees: req.body?.payedInitialFees == true ? true : false,
         };
-        if (req.body?.freeTrialApplied) updatedSellerData.freeTrialApplied = true;
+
+        console.log("updatedSellerData", updatedSellerData);
 
         const updatedSellerResult = await sellerRepo.updateDirectly(req.body.seller.toString(), updatedSellerData);
         if (!updatedSellerResult.success) return res.status(updatedSellerResult.code).json(updatedSellerResult);
