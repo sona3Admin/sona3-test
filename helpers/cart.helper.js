@@ -191,11 +191,11 @@ exports.calculateCartTotal = (cartObject) => {
 
 exports.applyCoupon = (cartObject) => {
     console.log("Cart has coupon!")
-    let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", cartObject?.couponShop.toString())
+    let isShopInSubCarts = this.isIdInArray(cartObject.subCarts, "shop", cartObject?.couponShop.toString())
     let subCartObject = cartObject.subCarts[isShopInSubCarts.result]
     if (!isShopInSubCarts || !isShopInSubCarts.success) {
-        delete cartObject.coupon
-        delete cartObject.couponShop
+        delete cartObject["coupon"]
+        delete cartObject["couponShop"]
         return cartObject
     }
 
