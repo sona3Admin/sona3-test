@@ -29,7 +29,7 @@ exports.isIdInArray = (arrayOfObjects, targetField, targetId) => {
 
 exports.findObjectInArray = (arrayOfObjects, targetField, targetId) => {
     try {
-        
+
         for (let i = 0; i < arrayOfObjects.length; i++) {
             if (arrayOfObjects[i][targetField] == targetId) return {
                 success: true,
@@ -183,7 +183,34 @@ exports.calculateCartTotal = (cartObject) => {
     let cartTotal = cartObject.subCarts.reduce((total, subCart) => parseFloat(total) + parseFloat(subCart.shopTotal), 0);
     cartObject.cartTotal = cartTotal;
     cartObject.cartOriginalTotal = cartTotal;
+    if (cartObject?.coupon) cartObject = this.applyCoupon(cartObject)
     console.log("calculated cart total");
+    return cartObject
+}
+
+
+exports.applyCoupon = (cartObject) => {
+    console.log("Cart has coupon!")
+    let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", cartObject?.couponShop.toString())
+    let subCartObject = cartObject.subCarts[isShopInSubCarts.result]
+    if (!isShopInSubCarts || !isShopInSubCarts.success) {
+        delete cartObject.coupon
+        delete cartObject.couponShop
+        return cartObject
+    }
+
+    if (cartObject?.coupon?.discountType == "value") {
+        subCartObject.shopTotal = parseFloat(subCartObject.shopTotal) - parseFloat(cartObject?.coupon?.value)
+        cartObject.cartTotal = parseFloat(cartObject.cartTotal) - parseFloat(cartObject?.coupon?.value)
+    }
+
+    if (cartObject?.coupon?.discountType == "percentage") {
+        subCartObject.shopTotal = parseFloat(subCartObject.shopTotal) - (parseFloat(cartObject?.coupon?.percentage) * parseFloat(subCartObject.shopTotal))
+        cartObject.cartTotal = parseFloat(cartObject.result.cartTotal) - (parseFloat(cartObject?.coupon?.percentage) * parseFloat(subCartObject.shopTotal))
+    }
+    if (subCartObject.shopTotal < 0) subCartObject.shopTotal = 0;
+    if (cartObject.cartTotal < 0) cartObject.cartTotal = 0;
+
     return cartObject
 }
 

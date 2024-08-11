@@ -163,51 +163,77 @@ exports.handleReverseOrderCreation = (orderObject, subOrderId) => {
 exports.calculateCashback = async (customerCartObject) => {
     try {
         const cashbackPercentage = await getSettings('cashbackPercentage');
-        const cashbackThreshold = await getSettings('cashbackThreshold');
-        const orderTotal = parseInt(customerCartObject?.cartOriginalTotal)
-        const hasPurchasedBefore = customerCartObject?.customer?.hasPurchased || false
-        const isCustomerBirthday = this.isDateEqualToToday(customerCartObject?.customer?.birthDate)
-        let customerPoints = parseInt(customerCartObject?.customer?.loyaltyPoints) || 0
-        let customerCashback = parseInt(customerCartObject?.customer?.cashback) || 0
-        let updateForm = { hasPurchased: hasPurchasedBefore, cashback: customerCashback, loyaltyPoints: customerPoints }
+        console.log("cashbackPercentage", cashbackPercentage)
 
-        let newPoints = customerPoints + orderTotal
+        const cashbackThreshold = await getSettings('cashbackThreshold');
+        console.log("cashbackThreshold", cashbackThreshold)
+
+        const orderTotal = parseInt(customerCartObject?.cartOriginalTotal);
+        console.log("orderTotal", orderTotal)
+
+        const hasPurchasedBefore = customerCartObject?.customer?.hasPurchased || false;
+        console.log("hasPurchasedBefore", hasPurchasedBefore)
+
+        const isCustomerBirthday = this.isDateEqualToToday(customerCartObject?.customer?.birthDate);
+        console.log("isCustomerBirthday", isCustomerBirthday)
+
+        let customerPoints = parseInt(customerCartObject?.customer?.loyaltyPoints) || 0;
+        console.log("customerPoints", customerPoints)
+
+        let customerCashback = parseInt(customerCartObject?.customer?.cashback) || 0;
+        console.log("customerCashback", customerCashback)
+
+        let updateForm = { hasPurchased: hasPurchasedBefore, cashback: customerCashback, loyaltyPoints: customerPoints };
+        let newPoints = customerPoints + orderTotal;
+        console.log("newPoints to be added", newPoints)
 
         if (!hasPurchasedBefore) {
             // First-time purchaser: Apply welcome cashback
-            const welcomePercentage = 0.01
-            const welcomeCashback = orderTotal * welcomePercentage
-            customerCashback += parseInt(welcomeCashback)
+            const welcomePercentage = 0.01;
+            const welcomeCashback = Math.floor(orderTotal * welcomePercentage);
+            console.log("welcomeCashback", welcomeCashback)
+
+            customerCashback += welcomeCashback;
+            console.log("welcome customerCashback", customerCashback)
+
             updateForm.hasPurchased = true;
-            updateForm.cashback = customerCashback
         }
-
-        // Update loyalty points if below the cashback threshold
-        if (newPoints < parseInt(cashbackThreshold) && hasPurchasedBefore) updateForm.loyaltyPoints += newPoints
-
 
         if (isCustomerBirthday && (newPoints >= parseInt(cashbackThreshold))) {
             // Birthday cashback for eligible customers
-            const birthdayPercentage = 0.02
-            const birthdayCashback = cashbackThreshold * birthdayPercentage
-            customerCashback += parseInt(birthdayCashback);
-            updateForm.cashback = customerCashback
+            const birthdayPercentage = 0.02;
+            const birthdayCashback = Math.floor(parseInt(cashbackThreshold) * birthdayPercentage);
+            console.log("birthdayCashback", birthdayCashback)
+
+            customerCashback += birthdayCashback;
+            console.log("birthday customerCashback", customerCashback)
+
         }
 
+        // Calculate cashback and update points
         while (newPoints >= parseInt(cashbackThreshold)) {
-            // normal case
-            customerCashback += (parseInt(cashbackThreshold) * parseFloat(cashbackPercentage))
-            newPoints -= cashbackThreshold
-            updateForm.cashback = customerCashback
-            updateForm.loyaltyPoints = newPoints
+            console.log("customerCashback before", customerCashback)
+            customerCashback += Math.floor(parseInt(cashbackThreshold) * parseFloat(cashbackPercentage));
+            console.log("customerCashback after", customerCashback)
+
+            console.log("newPoints before", newPoints)
+            newPoints -= parseInt(cashbackThreshold);
+            console.log("newPoints after", newPoints)
+
         }
 
-        customerRepo.updateDirectly((customerCartObject?.customer?._id).toString(), updateForm)
+        updateForm.cashback = customerCashback;
+        console.log("updateForm.cashback", updateForm.cashback)
 
-        return
+        updateForm.loyaltyPoints = newPoints;
+        console.log("updateForm.loyaltyPoints", updateForm.loyaltyPoints)
+
+
+        await customerRepo.updateDirectly(customerCartObject?.customer?._id.toString(), updateForm);
+        return updateForm;
     } catch (err) {
-        console.log("err.message", err.message);
-        return
+        console.error("Error in calculateCashback:", err.message);
+        throw err;
     }
 }
 
