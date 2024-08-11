@@ -165,10 +165,10 @@ exports.calculateCashback = async (customerCartObject) => {
         const cashbackPercentage = await getSettings('cashbackPercentage');
         const cashbackThreshold = await getSettings('cashbackThreshold');
         const orderTotal = parseInt(customerCartObject?.cartOriginalTotal)
-        const hasPurchasedBefore = customerCartObject?.customer?.hasPurchased
+        const hasPurchasedBefore = customerCartObject?.customer?.hasPurchased || false
         const isCustomerBirthday = this.isDateEqualToToday(customerCartObject?.customer?.birthDate)
-        let customerPoints = parseInt(customerCartObject?.customer?.loyaltyPoints)
-        let customerCashback = parseInt(customerCartObject?.customer?.cashback)
+        let customerPoints = parseInt(customerCartObject?.customer?.loyaltyPoints) || 0
+        let customerCashback = parseInt(customerCartObject?.customer?.cashback) || 0
         let updateForm = { hasPurchased: hasPurchasedBefore, cashback: customerCashback, loyaltyPoints: customerPoints }
 
         let newPoints = customerPoints + orderTotal
@@ -183,7 +183,7 @@ exports.calculateCashback = async (customerCartObject) => {
         }
 
         // Update loyalty points if below the cashback threshold
-        if (newPoints < parseInt(cashbackThreshold) && hasPurchasedBefore) updateForm.loyaltyPoints = newPoints
+        if (newPoints < parseInt(cashbackThreshold) && hasPurchasedBefore) updateForm.loyaltyPoints += newPoints
 
 
         if (isCustomerBirthday && (newPoints >= parseInt(cashbackThreshold))) {
@@ -194,7 +194,7 @@ exports.calculateCashback = async (customerCartObject) => {
             updateForm.cashback = customerCashback
         }
 
-        if (newPoints >= parseInt(cashbackThreshold)) {
+        while (newPoints >= parseInt(cashbackThreshold)) {
             // normal case
             customerCashback += (parseInt(cashbackThreshold) * parseFloat(cashbackPercentage))
             newPoints -= cashbackThreshold
