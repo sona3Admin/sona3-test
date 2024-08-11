@@ -210,10 +210,12 @@ exports.calculateCashback = async (customerCartObject) => {
 
         }
 
+
         // Calculate cashback and update points
         while (newPoints >= parseInt(cashbackThreshold)) {
+
             console.log("customerCashback before", customerCashback)
-            customerCashback += Math.floor(parseInt(cashbackThreshold) * parseFloat(cashbackPercentage));
+            customerCashback += (Math.floor(parseInt(cashbackThreshold) * parseFloat(cashbackPercentage)) / 1000);
             console.log("customerCashback after", customerCashback)
 
             console.log("newPoints before", newPoints)
