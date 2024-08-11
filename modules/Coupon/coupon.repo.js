@@ -497,7 +497,7 @@ exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees) =
         let newSubscriptionFees = this.calculateNewSubscriptionFees(couponObject, subscriptionFees)
         console.log("newSubscriptionFees", newSubscriptionFees)
 
-        this.updateDirectly(couponId, { $inc: { quantity: -1 }, $addToSet: { usedBy: { seller: sellerId } } })
+        this.updateDirectly(couponObject.result._id.toString(), { $inc: { quantity: -1 }, $addToSet: { usedBy: { seller: sellerId } } })
         return {
             success: true,
             result: newSubscriptionFees,
