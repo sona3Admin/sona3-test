@@ -106,7 +106,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.create = async (formObject) => {
     try {
 
-        const uniqueObjectResult = await this.isObjectUninque(formObject);
+        const uniqueObjectResult = await this.isObjectUnique(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
 
         const resultObject = new couponModel(formObject);
@@ -398,7 +398,7 @@ exports.applyOnBasket = async (cartId, couponId, shopId) => {
 }
 
 
-exports.cancelFromBasket = async (cartId) => {
+exports.cancelFromBasket = async (cartId, shopId) => {
     try {
         let cartObject = await basketRepo.get({ _id: cartId })
         if (!cartObject?.success || !cartObject?.result?.coupon) return { success: false, code: 409, error: i18n.__("notFound") }
@@ -541,7 +541,7 @@ exports.validateCoupon = (couponObject) => {
 
 
 
-exports.isObjectUninque = async (formObject) => {
+exports.isObjectUnique = async (formObject) => {
     const duplicateObject = await this.find({
         code: formObject.code
     })

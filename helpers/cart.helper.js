@@ -206,7 +206,7 @@ exports.applyCoupon = (cartObject) => {
 
     if (cartObject?.coupon?.discountType == "percentage") {
         subCartObject.shopTotal = parseFloat(subCartObject.shopTotal) - (parseFloat(cartObject?.coupon?.percentage) * parseFloat(subCartObject.shopTotal))
-        cartObject.cartTotal = parseFloat(cartObject.result.cartTotal) - (parseFloat(cartObject?.coupon?.percentage) * parseFloat(subCartObject.shopTotal))
+        cartObject.cartTotal = parseFloat(cartObject.cartTotal) - (parseFloat(cartObject?.coupon?.percentage) * parseFloat(subCartObject.shopTotal))
     }
     if (subCartObject.shopTotal < 0) subCartObject.shopTotal = 0;
     if (cartObject.cartTotal < 0) cartObject.cartTotal = 0;
