@@ -17,6 +17,7 @@ exports.getPaymentSuccessAck = async (req, res) => {
             const session = event.data.object;
             console.log(`Checkout session completed: ${session.id}`);
             let paymentObject = await paymentRepo.find({ session: session.id })
+            console.log("paymentObject in payment ack", paymentObject)
             req.body = { ...paymentObject.result }
 
             if (paymentObject.result.orderType == "basket") return basketController.createOrder(req, res)

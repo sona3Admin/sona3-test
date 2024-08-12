@@ -202,7 +202,7 @@ exports.calculateCashback = async (customerCartObject) => {
         if (isCustomerBirthday && (newPoints >= parseInt(cashbackThreshold))) {
             // Birthday cashback for eligible customers
             const birthdayPercentage = 0.02;
-            const birthdayCashback = Math.floor(parseInt(cashbackThreshold) * birthdayPercentage);
+            const birthdayCashback = Math.floor(orderTotal * birthdayPercentage);
             console.log("birthdayCashback", birthdayCashback)
 
             customerCashback += birthdayCashback;
@@ -215,7 +215,7 @@ exports.calculateCashback = async (customerCartObject) => {
         while (newPoints >= parseInt(cashbackThreshold)) {
 
             console.log("customerCashback before", customerCashback)
-            customerCashback += (Math.floor(parseInt(cashbackThreshold) * parseFloat(cashbackPercentage)) / 1000);
+            customerCashback += (Math.floor(parseInt(cashbackThreshold) * parseFloat(cashbackPercentage)) / parseInt(cashbackThreshold));
             console.log("customerCashback after", customerCashback)
 
             console.log("newPoints before", newPoints)

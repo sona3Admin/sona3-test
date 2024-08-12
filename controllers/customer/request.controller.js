@@ -10,6 +10,7 @@ exports.purchaseRequest = async (req, res) => {
     try {
 
         let customerOrderObject = req.body
+        console.log("customerOrderObject", customerOrderObject)
 
         let customerRequestObject = await requestRepo.get({ _id: req.query._id })
         console.log("customerRequestObject", customerRequestObject.result.status)
