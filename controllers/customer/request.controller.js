@@ -12,7 +12,7 @@ exports.purchaseRequest = async (req, res) => {
         let customerOrderObject = req.body
         console.log("customerOrderObject", customerOrderObject)
 
-        let customerRequestObject = await requestRepo.get({ _id: req.query._id })
+        let customerRequestObject = await requestRepo.get({ _id: req.query._id || customerOrderObject?.orderDetails?.request.toString() })
         console.log("customerRequestObject", customerRequestObject?.result?.status)
         if (customerRequestObject?.result?.status !== "pending" && customerRequestObject?.result?.status !== "accepted") return res.status(409).json({
             success: false,

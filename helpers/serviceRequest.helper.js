@@ -18,16 +18,11 @@ exports.calculateValueAddedTax = (serviceTotal) => {
 
 exports.handleRequestPurchase = async (customerRequestObject, customerOrderObject) => {
     try {
-        // const ifastShippingCost = 15
         customerRequestObject.name = customerRequestObject.customer.name
         customerRequestObject.phone = customerRequestObject.customer.phone
         customerRequestObject.taxesTotal = this.calculateValueAddedTax(customerRequestObject.serviceTotal)
         customerRequestObject.taxesRate = parseFloat(getSettings("vatRate"))
-        // customerRequestObject.shippingFeesTotal = customerRequestObject?.service?.isFood ? ifastShippingCost : customerOrderObject.shippingFeesTotal
         customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal)
-        // customerRequestObject.shipperRef = generateSubCartId()
-        // customerRequestObject.shippingAddress = customerOrderObject.shippingAddress
-        // customerRequestObject.paymentMethod = customerOrderObject?.paymentMethod
         customerRequestObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
         customerRequestObject.requestDate = customerOrderObject?.requestDate || customerOrderObject.timestamp
         customerRequestObject.calculations = {
