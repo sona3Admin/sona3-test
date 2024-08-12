@@ -17,7 +17,7 @@ const requestSchema = mongoose.Schema({
     //     },
     //     address: { type: Object }
     // },
-    
+
     status: {
         type: String,
         enum: ["pending", "canceled", "accepted", "rejected", "purchased", "in progress", "delivered", "to be returned", "returned"],
@@ -28,7 +28,7 @@ const requestSchema = mongoose.Schema({
     taxesTotal: { type: Number, min: 0 },
     taxesRate: { type: Number, min: 0 },
     orderTotal: { type: Number, min: 0 },
-    paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
+    paymentMethod: { type: String, enum: ["cashOnDelivery", "visa"], default: "visa" },
     requestDate: { type: Date },
     deliveryDate: { type: Date },
     requestNotes: { type: String }
