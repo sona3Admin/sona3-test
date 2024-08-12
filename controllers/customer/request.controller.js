@@ -23,7 +23,7 @@ exports.purchaseRequest = async (req, res) => {
         if (req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
 
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
-        console.log("customerOrderObject", customerOrderObject)
+        console.log("customerOrderObject.paymentMethod", customerOrderObject.paymentMethod)
         let operationResultObject = await requestRepo.updateDirectly(requestId, { ...customerOrderObject.calculations });
         return res.status(operationResultObject.code).json(operationResultObject);
 

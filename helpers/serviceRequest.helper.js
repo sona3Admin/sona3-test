@@ -24,15 +24,14 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
         customerRequestObject.taxesRate = parseFloat(getSettings("vatRate"))
         customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal)
         customerRequestObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
+        console.log("customerRequestObject.paymentMethod", customerRequestObject.paymentMethod)
         customerRequestObject.requestDate = customerOrderObject?.requestDate || customerOrderObject.timestamp
         customerRequestObject.calculations = {
             taxesTotal: customerRequestObject.taxesTotal,
             taxesRate: customerRequestObject.taxesRate,
-            // shippingFeesTotal: customerRequestObject.shippingFeesTotal,
             orderTotal: customerRequestObject.orderTotal,
-            // shipperRef: customerRequestObject.shipperRef,
-            // shippingAddress: customerRequestObject.shippingAddress,
-            status: "purchased"
+            status: "purchased",
+            paymentMethod: customerRequestObject.paymentMethod
         }
         return customerRequestObject
     } catch (err) {
