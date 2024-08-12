@@ -58,6 +58,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
             timestamp
         }
 
+        console.log("paymentObject", paymentObject)
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {

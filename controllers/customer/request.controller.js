@@ -6,6 +6,37 @@ const { handleRequestPurchase, handleReturnService } = require("../../helpers/se
 const stripeHelper = require("../../utils/stripePayment.util")
 
 
+exports.purchaseRequest = async (req, res) => {
+    try {
+
+        let customerOrderObject = req.body
+
+        let customerRequestObject = await requestRepo.get({ _id: req.query._id })
+        console.log("customerRequestObject", customerRequestObject.result.status)
+        if (customerRequestObject.result.status !== "pending" && customerRequestObject.result.status !== "accepted") return res.status(409).json({
+            success: false,
+            code: 409,
+            error: i18n.__("invalidPurchaseRequest")
+        });
+
+        if (req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
+
+        customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
+        console.log("customerOrderObject", customerOrderObject)
+        let operationResultObject = await requestRepo.updateDirectly(req.query._id, { ...customerOrderObject.calculations });
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.createOrderPaymentLink = async (req, res) => {
     try {
         let customerOrderObject = req.body
@@ -27,48 +58,6 @@ exports.createOrderPaymentLink = async (req, res) => {
 
     } catch (err) {
         console.log(`err.message controller`, err.message);
-        return res.status(500).json({
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        });
-    }
-}
-
-
-exports.purchaseRequest = async (req, res) => {
-    try {
-        if(req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
-
-        let customerOrderObject = req.body
-
-        let customerRequestObject = await requestRepo.get({ _id: req.query._id })
-        customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
-
-        let operationResultObject = await requestRepo.updateDirectly(req.query._id, { ...customerOrderObject.calculations });
-        // if (customerRequestObject.result.service.isFood && customerRequestObject.result.service.isDeliverable) {
-        //     console.log("Ifast")
-        //     let shippingData = await ifastShipperHelper.createNewBulkOrder(customerOrderObject, false)
-        //     operationResultObject["orderData"] = shippingData.orderData
-
-        //     if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        //     operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
-        //     if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        // }
-        // else if (customerRequestObject.result.service.isDeliverable && !customerRequestObject.result.service.isFood) {
-        //     console.log("First Flight")
-        //     let shippingData = await firstFlightShipperHelper.createServiceOrder(customerOrderObject, false)
-
-        //     if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-
-        //     operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingFeesTotal)
-        //     if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        // }
-
-        return res.status(operationResultObject.code).json(operationResultObject);
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

@@ -5,8 +5,6 @@ const requestSchema = mongoose.Schema({
     shop: { type: mongoose.Types.ObjectId, ref: "shops" },
     seller: { type: mongoose.Types.ObjectId, ref: "sellers" },
     service: { type: mongoose.Types.ObjectId, ref: "services" },
-    // shipperRef: { type: String },
-    // shippingId: { type: String },
     fields: [{
         _id: { type: mongoose.Types.ObjectId, ref: "fields" },
         field: { type: Object },
@@ -25,12 +23,10 @@ const requestSchema = mongoose.Schema({
         enum: ["pending", "canceled", "accepted", "rejected", "purchased", "in progress", "delivered", "to be returned", "returned"],
         default: "pending"
     },
-    // shippingStatus: { type: String, default: "pending" },
 
     serviceTotal: { type: Number, min: 0 },
     taxesTotal: { type: Number, min: 0 },
     taxesRate: { type: Number, min: 0 },
-    // shippingFeesTotal: { type: Number, min: 0 },
     orderTotal: { type: Number, min: 0 },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa", "others"], default: "cashOnDelivery" },
     requestDate: { type: Date },
