@@ -11,8 +11,8 @@ exports.purchaseRequest = async (req, res) => {
 
         let customerOrderObject = req.body
         console.log("customerOrderObject", customerOrderObject)
-
-        let customerRequestObject = await requestRepo.get({ _id: req.query._id || customerOrderObject?.orderDetails?.request.toString() })
+        let requestId = req.query._id || customerOrderObject?.orderDetails?.request.toString()
+        let customerRequestObject = await requestRepo.get({ _id: requestId })
         console.log("customerRequestObject", customerRequestObject?.result?.status)
         if (customerRequestObject?.result?.status !== "pending" && customerRequestObject?.result?.status !== "accepted") return res.status(409).json({
             success: false,
@@ -24,7 +24,7 @@ exports.purchaseRequest = async (req, res) => {
 
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
         console.log("customerOrderObject", customerOrderObject)
-        let operationResultObject = await requestRepo.updateDirectly(req.query._id, { ...customerOrderObject.calculations });
+        let operationResultObject = await requestRepo.updateDirectly(requestId, { ...customerOrderObject.calculations });
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
