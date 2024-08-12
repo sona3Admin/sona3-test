@@ -35,7 +35,7 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
             taxesRate: customerRequestObject.taxesRate,
             // shippingFeesTotal: customerRequestObject.shippingFeesTotal,
             orderTotal: customerRequestObject.orderTotal,
-            shipperRef: customerRequestObject.shipperRef,
+            // shipperRef: customerRequestObject.shipperRef,
             // shippingAddress: customerRequestObject.shippingAddress,
             status: "purchased"
         }

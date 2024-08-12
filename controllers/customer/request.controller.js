@@ -13,8 +13,8 @@ exports.purchaseRequest = async (req, res) => {
         console.log("customerOrderObject", customerOrderObject)
 
         let customerRequestObject = await requestRepo.get({ _id: req.query._id })
-        console.log("customerRequestObject", customerRequestObject.result.status)
-        if (customerRequestObject.result.status !== "pending" && customerRequestObject.result.status !== "accepted") return res.status(409).json({
+        console.log("customerRequestObject", customerRequestObject?.result?.status)
+        if (customerRequestObject?.result?.status !== "pending" && customerRequestObject?.result?.status !== "accepted") return res.status(409).json({
             success: false,
             code: 409,
             error: i18n.__("invalidPurchaseRequest")
