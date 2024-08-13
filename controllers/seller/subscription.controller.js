@@ -86,7 +86,14 @@ exports.paySubscriptionFees = async (req, res) => {
 
 exports.upgradeTier = async (sellerObject, newTierObject) => {
     console.log("Upgrading Tier...")
-    const tiers = ['basic', 'pro', 'advanced', 'lifetime'];
+
+    if (newTierObject.tier == "lifetime") return {
+        success: false,
+        code: 400,
+        error: i18n.__("cannotDowngradeTier")
+    };
+
+    const tiers = ['basic', 'pro', 'advanced'];
     const currentTierIndex = tiers.indexOf(sellerObject.result.tier);
     const newTierIndex = tiers.indexOf(newTierObject.tier);
     const todayDate = new Date();
@@ -176,7 +183,7 @@ exports.applySubscription = async (req, res) => {
         if (req.body.tierDuration === 'month') subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
         else if (req.body.tierDuration === 'year') subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
 
-        
+
         if (req.body?.freeTrialApplied) {
             updatedSellerData.freeTrialApplied = true;
             subscriptionEndDate = new Date("2025-01-01");
@@ -191,8 +198,8 @@ exports.applySubscription = async (req, res) => {
             subscriptionEndDate: subscriptionEndDate,
             isSubscribed: true
         };
-        
-        if(req.body?.payedInitialFees == true) updatedSellerData.payedInitialFees = true
+
+        if (req.body?.payedInitialFees == true) updatedSellerData.payedInitialFees = true
         console.log("updatedSellerData", updatedSellerData);
 
         const updatedSellerResult = await sellerRepo.updateDirectly(req.body.seller.toString(), updatedSellerData);
