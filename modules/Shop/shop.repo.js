@@ -37,7 +37,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         let resultObject = await shopModel.findOne(filterObject).lean()
-            .populate({ path: "seller", select: "userName image type tier isSubscribed subscribtionStartDate subscribtionEndDate fcmToken" })
+            .populate({ path: "seller", select: "userName image type tier tierDuration isSubscribed subscriptionStartDate subscriptionEndDate fcmToken" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })
@@ -74,7 +74,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         let resultArray = await shopModel.find(filterObject).lean()
-            .populate({ path: "seller", select: "userName image type tier isSubscribed subscribtionStartDate subscribtionEndDate" })
+            .populate({ path: "seller", select: "userName image type tier tierDuration isSubscribed subscriptionStartDate subscriptionEndDate" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "productCategories", select: "nameEn nameAr image subCategories" })
             .populate({ path: "serviceCategories", select: "nameEn nameAr image subCategories" })
@@ -109,10 +109,81 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
+exports.listFeatured = async (filterObject) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, {})
+        filterObject = normalizedQueryObjects.filterObject
+
+        filterObject['seller.isSubscribed'] = true;
+
+        let resultArray = await shopModel.aggregate([
+            { $match: filterObject },
+            {
+                $lookup: {
+                    from: 'sellers',
+                    localField: 'seller',
+                    foreignField: '_id',
+                    as: 'seller'
+                }
+            },
+            { $unwind: '$seller' },
+            {
+                $addFields: {
+                    tierOrder: {
+                        $switch: {
+                            branches: [
+                                { case: { $eq: ['$seller.tier', 'advanced'] }, then: 0 },
+                                { case: { $eq: ['$seller.tier', 'lifetime'] }, then: 1 },
+                                { case: { $eq: ['$seller.tier', 'pro'] }, then: 2 },
+                                { case: { $eq: ['$seller.tier', 'basic'] }, then: 3 }
+                            ],
+                            default: 4
+                        }
+                    }
+                }
+            },
+            { $sort: { tierOrder: 1 } }
+        ]);
+
+        if (!resultArray || resultArray.length === 0) return {
+            success: true,
+            code: 200,
+            result: [],
+            count: resultArray.length
+        }
+
+        let finalResult = resultArray.slice(0, 10); // Take at most 10 shops
+
+        // Shuffle the array
+        for (let i = finalResult.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [finalResult[i], finalResult[j]] = [finalResult[j], finalResult[i]];
+        }
+
+        console.log("finalResult", finalResult)
+
+        return {
+            success: true,
+            code: 200,
+            result: finalResult,
+            count: finalResult.length
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        const uniqueObjectResult = await this.isObjectUninque(formObject);
+        const uniqueObjectResult = await this.isObjectUnique(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
         const sellerObject = await sellerRepo.find({ _id: formObject.seller })
         formObject.type = sellerObject.result?.type
@@ -300,7 +371,7 @@ exports.remove = async (_id) => {
 }
 
 
-exports.isObjectUninque = async (formObject) => {
+exports.isObjectUnique = async (formObject) => {
     const duplicateObject = await this.find({
         seller: formObject.seller
     })
