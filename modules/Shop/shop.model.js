@@ -14,6 +14,7 @@ const shopSchema = mongoose.Schema({
     image: { type: Object },
     covers: [{ type: Object }],
     banners: [{ type: Object }],
+    defaultBanner: { type: Object },
     shopLicense: [{ type: Object }],
     location: {
         type: { type: String, default: "Point" },

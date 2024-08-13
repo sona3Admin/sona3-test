@@ -107,6 +107,10 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
+            defaultBanner: joi.object().optional().messages({
+                "object.base": "validDefaultBanner",
+            }),
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
@@ -220,6 +224,10 @@ module.exports = {
 
             banners: joi.array().items(joi.object()).optional().messages({
                 "array.base": "validArray",
+            }),
+
+            defaultBanner: joi.object().optional().messages({
+                "object.base": "validDefaultBanner",
             }),
 
             joinDate: joi.date().optional().messages({
