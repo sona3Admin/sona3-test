@@ -173,6 +173,8 @@ exports.calculateShopTotal = (shopCartObject) => {
     let shopTotal = shopCartObject.items.reduce((total, item) => parseFloat(total) + parseFloat(item.itemTotal), 0);
     shopCartObject.shopTotal = shopTotal;
     shopCartObject.shopOriginalTotal = shopTotal;
+    if (shopCartObject?.usedCashback) shopCartObject.shopTotal -= shopCartObject?.usedCashback
+    if (shopCartObject.shopTotal < 0) shopCartObject.shopTotal = 0
     console.log("calculated shop total");
 
     return shopCartObject
@@ -184,6 +186,9 @@ exports.calculateCartTotal = (cartObject) => {
     cartObject.cartTotal = cartTotal;
     cartObject.cartOriginalTotal = cartTotal;
     if (cartObject?.coupon) cartObject = this.applyCoupon(cartObject)
+    if (cartObject?.usedCashback) cartObject.cartTotal -= cartObject?.usedCashback
+    if (cartObject.cartTotal < 0) cartObject.cartTotal = 0
+
     console.log("calculated cart total");
     return cartObject
 }
