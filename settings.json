@@ -1,6 +1,6 @@
 {
     "isLifeTimePlanOn": true,
-    "isFreeTrialOn": false,
+    "isFreeTrialOn": true,
     "vatRate": 10,
     "cashbackPercentage": 1,
     "cashbackThreshold": 1000,
