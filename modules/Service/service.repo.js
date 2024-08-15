@@ -151,6 +151,7 @@ exports.create = async (formObject) => {
         const resultObject = new serviceModel(formObject);
         await resultObject.save();
 
+        console.log("resultObject", resultObject)
         if (!resultObject) return {
             success: false,
             code: 500,

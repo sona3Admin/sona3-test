@@ -171,5 +171,7 @@
 	"\"percentage\" must be less than or equal to 1": "\"percentage\" must be less than or equal to 1",
 	"alreadySubscribedToPlan": "alreadySubscribedToPlan",
 	"\"loyaltyPoints\" is not allowed": "\"loyaltyPoints\" is not allowed",
-	"invalidPurchaseRequest": "invalidPurchaseRequest"
+	"invalidPurchaseRequest": "invalidPurchaseRequest",
+	"shopExists": "shopExists",
+	"\"type\" is not allowed": "\"type\" is not allowed"
 }

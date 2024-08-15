@@ -123,6 +123,10 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+            type: joi.string().optional().messages({
+                "string.base": "validType",
+            }),
+
         }),
     },
 
@@ -240,6 +244,10 @@ module.exports = {
 
             isFood: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
+            }),
+
+            type: joi.string().optional().messages({
+                "string.base": "validType",
             }),
         }),
     },
