@@ -8,7 +8,12 @@ exports.listServices = async (req, res) => {
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
-        const operationResultObject = await serviceRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        let operationResultObject = await serviceRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        if (operationResultObject.success) {
+            operationResultObject.result = operationResultObject?.result.filter((service) => {
+                return service.shop.isActive && service.shop.isVerified
+            })
+        }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -28,6 +33,10 @@ exports.getService = async (req, res) => {
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
         const operationResultObject = await serviceRepo.get(filterObject, {});
+        if (operationResultObject.success) {
+            if (!operationResultObject.result.shop.isActive || !operationResultObject.result.shop.isVerified)
+                return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

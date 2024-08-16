@@ -38,7 +38,7 @@ exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await variationModel.findOne(filterObject).lean()
             .populate({ path: "seller", select: "userName image fcmToken" })
-            .populate({ path: "shop", select: "nameEn nameAr image" })
+            .populate({ path: "shop", select: "nameEn nameAr image isVerified isActive" })
             .populate({ path: "product", select: "-variations -defaultVariation -shop" })
             .select(selectionObject)
 
@@ -74,7 +74,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         sortObject = normalizedQueryObjects.sortObject
         const resultArray = await variationModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
-            .populate({ path: "shop", select: "nameEn nameAr image" })
+            .populate({ path: "shop", select: "nameEn nameAr image isVerified isActive" })
             .populate({ path: "product", select: "-variations -defaultVariation -shop" })
             .sort(sortObject)
             .select(selectionObject)

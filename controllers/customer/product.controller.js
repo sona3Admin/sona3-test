@@ -13,11 +13,11 @@ exports.listProducts = async (req, res) => {
 
         let operationResultObject = await productRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
 
-        // if (operationResultObject.success) {
-        //     operationResultObject.result = operationResultObject?.result.filter((product) => {
-        //         if (product?.defaultVariation?.isActive) return product.variations.filter(variation => variation.isActive)
-        //     })
-        // }
+        if (operationResultObject.success) {
+            operationResultObject.result = operationResultObject?.result.filter((product) => {
+                return product.shop.isActive && product.shop.isVerified
+            })
+        }
 
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -41,12 +41,10 @@ exports.getProduct = async (req, res) => {
         filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
         const operationResultObject = await productRepo.get(filterObject, {});
 
-        // if (operationResultObject.success) {
-        //     if (operationResultObject.result?.defaultVariation?.isActive)
-        //         operationResultObject.result.variations = operationResultObject.result.variations.filter(variation => variation.isActive)
-        //     if (operationResultObject.result.variations.length == 0)
-        //         return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
-        // }
+        if (operationResultObject.success) {
+            if (!operationResultObject.result.shop.isActive || !operationResultObject.result.shop.isVerified)
+                return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

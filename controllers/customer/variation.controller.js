@@ -10,6 +10,11 @@ exports.listVariations = async (req, res) => {
         filterObject["stock"].$gte = 1
         // filterObject["isVerified"] = true
         const operationResultObject = await variationRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
+        if (operationResultObject.success) {
+            operationResultObject.result = operationResultObject?.result.filter((variation) => {
+                return variation.shop.isActive && variation.shop.isVerified
+            })
+        }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -30,6 +35,10 @@ exports.getVariation = async (req, res) => {
         filterObject["stock"].$gte = 1
         // filterObject["isVerified"] = true
         const operationResultObject = await variationRepo.get(filterObject, {});
+        if (operationResultObject.success) {
+            if (!operationResultObject.result.shop.isActive || !operationResultObject.result.shop.isVerified)
+                return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
