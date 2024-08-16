@@ -19,8 +19,6 @@ const sellerSchema = mongoose.Schema({
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
 
-
-    bankAccountNumber: { type: String },
     type: { type: String, enum: ["product", "service"], default: "product" },
     tier: { type: String, enum: ["basic", "pro", "advanced", "lifetime"], default: "basic" },
     tierDuration: { type: String, enum: ["month", "year"], default: "month" },

@@ -10,14 +10,7 @@ const requestSchema = mongoose.Schema({
         field: { type: Object },
         value: {}
     }],
-    // shippingAddress: {
-    //     location: {
-    //         type: { type: String, default: "Point" },
-    //         coordinates: { type: Array, default: [0, 0] }
-    //     },
-    //     address: { type: Object }
-    // },
-
+    
     status: {
         type: String,
         enum: ["pending", "canceled", "accepted", "rejected", "purchased", "in progress", "delivered", "to be returned", "returned"],

@@ -11,15 +11,14 @@ module.exports = {
             }),
 
             shop: joi.string().required().messages({
-                "string.base": "validSeller",
-                "any.required": "requiredSeller",
+                "string.base": "validShop",
+                "any.required": "requiredShop",
             }),
 
             product: joi.string().required().messages({
                 "string.base": "validProduct",
                 "any.required": "requiredProduct",
             }),
-
 
             descriptionEn: joi.string().required().messages({
                 "string.base": "validDescriptionEn",
@@ -35,15 +34,13 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-
             images: joi.array().items(joi.object()).optional().messages({
                 "array.base": "validArray",
             }),
 
-
             stock: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validStock",
+                "number.min": "minStock",
             }),
 
             packages: joi.array().items({
@@ -58,8 +55,8 @@ module.exports = {
                 }),
 
                 originalPrice: joi.number().min(0).optional().messages({
-                    "number.base": "validSalePrice",
-                    "number.min": "minSalePrice",
+                    "number.base": "validOriginalPrice",
+                    "number.min": "minOriginalPrice",
                 }),
             }).optional().messages(),
 
@@ -75,8 +72,8 @@ module.exports = {
                 }),
 
                 originalPrice: joi.number().min(0).optional().messages({
-                    "number.base": "validSalePrice",
-                    "number.min": "minSalePrice",
+                    "number.base": "validOriginalPrice",
+                    "number.min": "minOriginalPrice",
                 }),
             }),
 
@@ -92,43 +89,42 @@ module.exports = {
                 }),
 
                 originalPrice: joi.number().min(0).optional().messages({
-                    "number.base": "validSalePrice",
-                    "number.min": "minSalePrice",
+                    "number.base": "validOriginalPrice",
+                    "number.min": "minOriginalPrice",
                 }),
             }).optional().messages(),
 
         
             isDefault: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsDefault",
             }),
 
             isActive: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsActive",
             }),
 
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
             width: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validWidth",
+                "number.min": "minWidth",
             }),
 
             height: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validHeight",
+                "number.min": "minHeight",
             }),
 
             length: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validLength",
+                "number.min": "minLength",
             }),
 
-
             weight: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validWeight",
+                "number.min": "minWeight",
             }),
 
         }),
@@ -143,13 +139,12 @@ module.exports = {
             }),
 
             shop: joi.string().messages({
-                "string.base": "validSeller",
+                "string.base": "validShop",
             }),
 
             product: joi.string().messages({
                 "string.base": "validProduct",
             }),
-
 
             descriptionEn: joi.string().messages({
                 "string.base": "validDescriptionEn",
@@ -163,15 +158,13 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-
             images: joi.array().items(joi.string()).optional().messages({
                 "array.base": "validArray",
             }),
 
-
             stock: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validStock",
+                "number.min": "minStock",
             }),
 
             packages: joi.array().items({
@@ -186,8 +179,8 @@ module.exports = {
                 }),
 
                 originalPrice: joi.number().min(0).optional().messages({
-                    "number.base": "validSalePrice",
-                    "number.min": "minSalePrice",
+                    "number.base": "validOriginalPrice",
+                    "number.min": "minOriginalPrice",
                 }),
             }).optional().messages(),
 
@@ -203,8 +196,8 @@ module.exports = {
                 }),
 
                 originalPrice: joi.number().min(0).optional().messages({
-                    "number.base": "validSalePrice",
-                    "number.min": "minSalePrice",
+                    "number.base": "validOriginalPrice",
+                    "number.min": "minOriginalPrice",
                 }),
             }),
 
@@ -220,48 +213,41 @@ module.exports = {
                 }),
 
                 originalPrice: joi.number().min(0).optional().messages({
-                    "number.base": "validSalePrice",
-                    "number.min": "minSalePrice",
+                    "number.base": "validOriginalPrice",
+                    "number.min": "minOriginalPrice",
                 }),
             }).optional().messages(),
 
-            originalPrice: joi.number().min(0).optional().messages({
-                "number.base": "validOriginalPrice",
-                "number.min": "minOriginalPrice",
-            }),
-
-
             isDefault: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsDefault",
             }),
 
             isActive: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsActive",
             }),
 
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
             width: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validWidth",
+                "number.min": "minWidth",
             }),
 
             height: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validHeight",
+                "number.min": "minHeight",
             }),
 
             length: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validLength",
+                "number.min": "minLength",
             }),
 
-
             weight: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validWeight",
+                "number.min": "minWeight",
             }),
 
         }),

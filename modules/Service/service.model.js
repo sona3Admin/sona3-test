@@ -18,7 +18,7 @@ const serviceSchema = mongoose.Schema({
     images: [{ type: Object }],
     rating: { type: Number, min: 1, default: 1 },
     reviewCount: { type: Number, min: 0, default: 0 },
-    isTrending: { type: Boolean, default: false },
+
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
     creationDate: { type: Date },

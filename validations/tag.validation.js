@@ -15,24 +15,24 @@ module.exports = {
                 "any.required": "requiredNameAr",
             }),
 
-            isRequested: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isRequested: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
+            // requestedBy: joi.string().optional().messages({
+            //     "string.base": "validSeller",
+            // }),
 
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
             
             isVerified: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsVerified",
             }),
 
             isActive: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsActive",
             }),
         })
     },
@@ -49,24 +49,24 @@ module.exports = {
                 "string.base": "validNameAr",
             }),
 
-            isRequested: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isRequested: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
+            // requestedBy: joi.string().optional().messages({
+            //     "string.base": "validSeller",
+            // }),
 
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
             isVerified: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsVerified",
             }),
 
             isActive: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsActive",
             }),
         })
     }

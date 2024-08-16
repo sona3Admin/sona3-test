@@ -33,7 +33,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await tagModel.findOne(filterObject).lean()
-            .populate({ path: "requestedBy", select: "userName image" })
+            // .populate({ path: "requestedBy", select: "userName image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -66,7 +66,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         const resultArray = await tagModel.find(filterObject).lean()
-            .populate({ path: "requestedBy", select: "userName image" })
+            // .populate({ path: "requestedBy", select: "userName image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

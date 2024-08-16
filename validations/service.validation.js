@@ -10,10 +10,9 @@ module.exports = {
             }),
 
             shop: joi.string().required().messages({
-                "string.base": "validSeller",
-                "any.required": "requiredSeller",
+                "string.base": "validShop",
+                "any.required": "requiredShop",
             }),
-
 
             nameEn: joi.string().required().messages({
                 "string.base": "validNameEn",
@@ -47,18 +46,15 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-
             images: joi.array().items(joi.object()).optional().messages({
                 "array.base": "validArray",
             }),
-
 
             basePrice: joi.number().min(0).required().messages({
                 "number.base": "validItemsTotal",
                 "number.min": "minItemsTotal",
                 "any.required": "requiredItemsTotal",
             }),
-
 
             rating: joi.number().min(1).optional().messages({
                 "number.base": "validRating",
@@ -70,25 +66,20 @@ module.exports = {
                 "number.min": "minReviewCount",
             }),
 
-            isTrending: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
-        
             isVerified: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsVerified",
             }),
 
             isActive: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsActive",
             }),
 
-
             isDeliverable: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsDeliverable",
             }),
 
             isFood: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsFood",
             }),
 
             creationDate: joi.date().optional().messages({
@@ -96,32 +87,36 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             lastUpdateDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validUpdateDate",
             }),
 
-
             preparationTime: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validPreparationTime",
+                "number.min": "minPreparationTime",
             }),
 
             width: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validWidth",
+                "number.min": "minWidth",
             }),
 
             height: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validHeight",
+                "number.min": "minHeight",
             }),
 
             length: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validLength",
+                "number.min": "minLength",
+            }),
+
+            weight: joi.number().min(0).optional().messages({
+                "number.base": "validWeight",
+                "number.min": "minWeight",
             }),
         }),
     },
@@ -134,7 +129,7 @@ module.exports = {
             }),
 
             shop: joi.string().optional().messages({
-                "string.base": "validSeller",
+                "string.base": "validShop",
             }),
 
             nameEn: joi.string().optional().messages({
@@ -165,11 +160,9 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-
             images: joi.array().items(joi.object()).optional().messages({
                 "array.base": "validArray",
             }),
-
 
             basePrice: joi.number().min(0).optional().messages({
                 "number.base": "validItemsTotal",
@@ -187,25 +180,20 @@ module.exports = {
                 "number.min": "minReviewCount",
             }),
 
-            isTrending: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
-
             isVerified: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsVerified",
             }),
 
             isActive: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsActive",
             }),
 
-
             isDeliverable: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsDeliverable",
             }),
 
             isFood: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsFood",
             }),
 
             creationDate: joi.date().optional().messages({
@@ -213,32 +201,36 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             lastUpdateDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validUpdateDate",
             }),
 
-
             preparationTime: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validPreparationTime",
+                "number.min": "minPreparationTime",
             }),
 
             width: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validWidth",
+                "number.min": "minWidth",
             }),
 
             height: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validHeight",
+                "number.min": "minHeight",
             }),
 
             length: joi.number().min(0).optional().messages({
-                "number.base": "validQuantity",
-                "number.min": "minQuantity",
+                "number.base": "validLength",
+                "number.min": "minLength",
+            }),
+
+            weight: joi.number().min(0).optional().messages({
+                "number.base": "validWeight",
+                "number.min": "minWeight",
             }),
         })
     }

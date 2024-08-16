@@ -46,13 +46,11 @@ module.exports = {
             }),
 
             policyEn: joi.string().optional().messages({
-                "string.base": "validDescriptionEn",
-                "any.required": "requiredDescriptionEn",
+                "string.base": "validPolicyEn",
             }),
 
             policyAr: joi.string().optional().messages({
-                "string.base": "validDescriptionAr",
-                "any.required": "requiredDescriptionAr",
+                "string.base": "validPolicyAr",
             }),
 
             phone: joi.string().optional().messages({
@@ -111,16 +109,20 @@ module.exports = {
                 "object.base": "validDefaultBanner",
             }),
 
+            shopLicense: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             isFood: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsFood",
             }),
 
             type: joi.string().optional().messages({
@@ -169,13 +171,11 @@ module.exports = {
             }),
 
             policyEn: joi.string().optional().messages({
-                "string.base": "validDescriptionEn",
-                "any.required": "requiredDescriptionEn",
+                "string.base": "validPolicyEn",
             }),
 
             policyAr: joi.string().optional().messages({
-                "string.base": "validDescriptionAr",
-                "any.required": "requiredDescriptionAr",
+                "string.base": "validPolicyAr",
             }),
 
             phone: joi.string().optional().messages({
@@ -234,6 +234,10 @@ module.exports = {
                 "object.base": "validDefaultBanner",
             }),
 
+            shopLicense: joi.array().items(joi.object()).optional().messages({
+                "array.base": "validArray",
+            }),
+
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
@@ -243,7 +247,7 @@ module.exports = {
             }),
 
             isFood: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsFood",
             }),
 
             type: joi.string().optional().messages({

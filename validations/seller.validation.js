@@ -10,7 +10,6 @@ module.exports = {
                 "any.required": "requiredNameEn",
             }),
 
-
             email: joi.string()
                 .email({ minDomainSegments: 2 })
                 .required().messages({
@@ -65,69 +64,56 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
-
             isSubscribed: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+                "boolean.base": "validIsSubscribed",
             }),
 
             payedInitialFees: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+                "boolean.base": "validPayedInitialFees",
             }),
 
             freeTrialApplied: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+                "boolean.base": "validFreeTrialApplied",
             }),
-
 
             type: joi.string().required().valid("product", "service").messages({
                 "string.base": "validType",
             }),
 
-
-            tier: joi.string().required().valid("basic", "pro", "advanced", "lifetime").messages({
+            tier: joi.string().optional().valid("basic", "pro", "advanced", "lifetime").messages({
                 "string.base": "validTier",
             }),
 
-
-            tierDuration: joi.string().required().valid("month", "year").messages({
-                "string.base": "validTier",
+            tierDuration: joi.string().optional().valid("month", "year").messages({
+                "string.base": "validTierDuration",
             }),
-
 
             session: joi.object().optional().messages({
                 "object.base": "validSession",
             }),
 
-            bankAccountNumber: joi.string().optional().messages({
-                "object.base": "validSession",
-            }),
-
-
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
-
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             birthDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validBirthDate",
             }),
 
-
             subscriptionStartDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validSubscriptionStartDate",
             }),
 
             subscriptionEndDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validSubscriptionEndDate",
             }),
 
-
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
         }),
     },
@@ -192,65 +178,56 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
-
             isSubscribed: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+                "boolean.base": "validIsSubscribed",
             }),
 
             payedInitialFees: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+                "boolean.base": "validPayedInitialFees",
             }),
 
             freeTrialApplied: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+                "boolean.base": "validFreeTrialApplied",
             }),
-
 
             type: joi.string().optional().valid("product", "service").messages({
                 "string.base": "validType",
             }),
 
-
             tier: joi.string().optional().valid("basic", "pro", "advanced", "lifetime").messages({
                 "string.base": "validTier",
             }),
 
-
             tierDuration: joi.string().optional().valid("month", "year").messages({
-                "string.base": "validTier",
+                "string.base": "validTierDuration",
             }),
 
             session: joi.object().optional().messages({
                 "object.base": "validSession",
             }),
 
-            bankAccountNumber: joi.string().optional().messages({
-                "object.base": "validSession",
-            }),
-
-
             joinDate: joi.date().optional().messages({
                 "date.base": "validJoinDate",
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             birthDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validBirthDate",
             }),
 
             subscriptionStartDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validSubscriptionStartDate",
             }),
 
             subscriptionEndDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validSubscriptionEndDate",
             }),
 
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
         }),
     },
@@ -277,6 +254,7 @@ module.exports = {
             }),
         }),
     },
+
 
     authenticateBySocialMediaValidation: {
         body: joi.object().required().keys({
@@ -305,18 +283,23 @@ module.exports = {
             }),
 
             birthDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validBirthDate",
             }),
 
             subscriptionStartDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validSubscriptionStartDate",
+            }),
+
+            subscriptionEndDate: joi.date().optional().messages({
+                "date.base": "validSubscriptionEndDate",
             }),
 
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
+            
             socialToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validSocialToken",
             }),
 
         }),
