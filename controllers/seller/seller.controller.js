@@ -54,7 +54,7 @@ exports.removeSeller = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
-        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
         const existingObject = await sellerRepo.find({ _id: req.query._id })
         let oldImageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
@@ -119,7 +119,7 @@ exports.resetPassword = async (req, res) => {
 
 exports.uploadIdentityImages = async (req, res) => {
     try {
-        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
         const existingObject = await sellerRepo.find({ _id: req.query._id })
         let imagesArray = (existingObject.success && existingObject.result.identity) ? (existingObject.result.identity) : 0

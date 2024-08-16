@@ -89,7 +89,7 @@ exports.removeShop = async (req, res) => {
 
 exports.uploadImage = async (req, res) => {
     try {
-        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
         const existingObject = await shopRepo.find({ _id: req.query._id })
         let oldImageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
@@ -137,7 +137,7 @@ exports.deleteImage = async (req, res) => {
 
 exports.uploadCovers = async (req, res) => {
     try {
-        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
         const existingObject = await shopRepo.find({ _id: req.query._id })
         let coversArray = (existingObject.success && existingObject.result.covers) ? (existingObject.result.covers) : 0
@@ -204,7 +204,7 @@ exports.deleteCovers = async (req, res) => {
 
 exports.uploadBanners = async (req, res) => {
     try {
-        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
+        if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
         const existingObject = await shopRepo.find({ _id: req.query._id })
         let bannersArray = (existingObject.success && existingObject.result.banners) ? (existingObject.result.banners) : 0
