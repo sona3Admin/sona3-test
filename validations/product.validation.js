@@ -10,8 +10,8 @@ module.exports = {
             }),
 
             shop: joi.string().required().messages({
-                "string.base": "validSeller",
-                "any.required": "requiredSeller",
+                "string.base": "validShop",
+                "any.required": "requiredShop",
             }),
 
 
@@ -53,7 +53,7 @@ module.exports = {
             }),
 
             defaultVariation: joi.string().optional().messages({
-                "string.base": "validProduct",
+                "string.base": "validVariation",
             }),
 
             rating: joi.number().min(1).optional().messages({
@@ -66,13 +66,13 @@ module.exports = {
                 "number.min": "minReviewCount",
             }),
 
-            isTopDeal: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isTopDeal: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
-            isInStock: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isInStock: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
             isSustainable: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
@@ -87,8 +87,9 @@ module.exports = {
             }),
 
 
-            isFood: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+            isFood: joi.boolean().required().messages({
+                "boolean.base": "validIsFood",
+                "any.required": "validIsFood",
             }),
 
             preparationTime: joi.number().min(0).optional().messages({
@@ -101,12 +102,13 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             lastUpdateDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validUpdateDate",
             }),
+
             discountValue: joi.number().optional().messages({
                 "number.base": "validDiscountValue"
             }),
@@ -123,7 +125,7 @@ module.exports = {
             }),
 
             shop: joi.string().optional().messages({
-                "string.base": "validSeller",
+                "string.base": "validShop",
             }),
 
             nameEn: joi.string().optional().messages({
@@ -173,13 +175,13 @@ module.exports = {
                 "number.min": "minReviewCount",
             }),
 
-            isTopDeal: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isTopDeal: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
-            isInStock: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isInStock: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
             isSustainable: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
@@ -195,7 +197,7 @@ module.exports = {
 
 
             isFood: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
+                "boolean.base": "validIsFood",
             }),
 
             preparationTime: joi.number().min(0).optional().messages({
@@ -208,11 +210,11 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             lastUpdateDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validUpdateDate",
             }),
 
             discountValue: joi.number().optional().messages({

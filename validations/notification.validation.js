@@ -17,15 +17,15 @@ module.exports = {
             }),
 
             toAll: joi.boolean().optional().messages({
-                "boolean.base": "validToAdmin",
+                "boolean.base": "validToAll",
             }),
 
             toAllCustomers: joi.boolean().optional().messages({
-                "boolean.base": "validToAdmin",
+                "boolean.base": "validToAllCustomers",
             }),
 
             toAllSellers: joi.boolean().optional().messages({
-                "boolean.base": "validToAdmin",
+                "boolean.base": "validToAllSellers",
             }),
 
             seller: joi.string().optional().messages({
@@ -77,7 +77,7 @@ module.exports = {
             }),
 
             redirectId: joi.string().optional().messages({
-                "string.base": "redirectId",
+                "string.base": "validRedirectId",
             }),
 
             redirectType: joi.string().optional().messages({

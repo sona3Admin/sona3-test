@@ -18,7 +18,7 @@ const couponSchema = mongoose.Schema({
     }],
     isActive: { type: Boolean, default: true },
     creationDate: { type: Date, default: Date.now() },
-    expirationDate: { type: Date, default: Date.now() },
+    expirationDate: { type: Date },
     userType: { type: String, enum: ["customer", "seller"], default: "customer" }
 })
 

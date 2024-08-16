@@ -31,14 +31,14 @@ module.exports = {
             isRequired: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
-            isRequested: joi.boolean().messages({
-                "boolean.base": "validStatus",
-            }),
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
+            // isRequested: joi.boolean().messages({
+            //     "boolean.base": "validStatus",
+            // }),
+            // requestedBy: joi.string().optional().messages({
+            //     "string.base": "validSeller",
+            // }),
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
             isVerified: joi.boolean().optional().messages({
@@ -77,14 +77,14 @@ module.exports = {
             isRequired: joi.boolean().messages({
                 "boolean.base": "validStatus",
             }),
-            isRequested: joi.boolean().messages({
-                "boolean.base": "validStatus",
-            }),
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
+            // isRequested: joi.boolean().messages({
+            //     "boolean.base": "validStatus",
+            // }),
+            // requestedBy: joi.string().optional().messages({
+            //     "string.base": "validSeller",
+            // }),
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
             isVerified: joi.boolean().optional().messages({

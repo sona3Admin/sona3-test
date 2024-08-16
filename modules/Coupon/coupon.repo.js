@@ -534,7 +534,7 @@ exports.validateCoupon = (couponObject) => {
     if (!couponObject?.isActive) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
     if (couponObject.quantity < 1) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
     let todayDate = new Date(Date.now())
-    if (couponObject.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
+    if (couponObject?.expirationDate && couponObject?.expirationDate < todayDate) return { success: false, code: 409, error: i18n.__("invalidCoupon") }
 
     return { success: true }
 }

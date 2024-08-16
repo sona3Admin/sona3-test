@@ -34,17 +34,17 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-            isRequested: joi.boolean().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isRequested: joi.boolean().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
-            requestDate: joi.date().messages({
-                "date.base": "validRequestDate",
-            }),
+            // requestDate: joi.date().messages({
+            //     "date.base": "validRequestDate",
+            // }),
 
             isVerified: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
@@ -92,17 +92,17 @@ module.exports = {
                 "array.base": "validArray",
             }),
 
-            isRequested: joi.boolean().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isRequested: joi.boolean().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
             creationDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
+                "date.base": "validCreationDate",
             }),
 
-            requestDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
-            }),
+            // requestDate: joi.date().optional().messages({
+            //     "date.base": "validRequestDate",
+            // }),
             
             isVerified: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",

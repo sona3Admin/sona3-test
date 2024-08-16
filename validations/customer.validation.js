@@ -46,10 +46,6 @@ module.exports = {
                 "object.base": "validAddress",
             }),
 
-            savedLocations: joi.array().items(joi.object()).optional().messages({
-                "array.base": "validArray",
-            }),
-
             isPhoneVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
@@ -71,14 +67,15 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             birthDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validBirthDate",
             }),
+
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
 
             loyaltyPoints: joi.number().optional().empty().messages({
@@ -86,7 +83,7 @@ module.exports = {
             }),
 
             cashback: joi.number().optional().empty().messages({
-                "number.base": "validLoyaltyPoints",
+                "number.base": "validCashback",
             }),
         })
     },
@@ -135,10 +132,6 @@ module.exports = {
                 "object.base": "validAddress",
             }),
 
-            savedLocations: joi.array().items(joi.object()).optional().messages({
-                "array.base": "validArray",
-            }),
-
             isPhoneVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
@@ -160,14 +153,14 @@ module.exports = {
             }),
 
             verifyDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validVerifyDate",
             }),
 
             birthDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validBirthDate",
             }),
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
 
             loyaltyPoints: joi.number().optional().empty().messages({
@@ -175,7 +168,7 @@ module.exports = {
             }),
 
             cashback: joi.number().optional().empty().messages({
-                "number.base": "validLoyaltyPoints",
+                "number.base": "validCashback",
             }),
         }),
     },
@@ -198,7 +191,7 @@ module.exports = {
             }),
             
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
         }),
     },
@@ -230,13 +223,13 @@ module.exports = {
             }),
 
             birthDate: joi.date().optional().messages({
-                "date.base": "validJoinDate",
+                "date.base": "validBirthDate",
             }),
             fcmToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validFcmToken",
             }),
             socialToken: joi.string().optional().empty().messages({
-                "string.base": "validPassword",
+                "string.base": "validSocialToken",
             }),
 
         }),

@@ -35,7 +35,7 @@ exports.get = async (filterObject, selectionObject) => {
         const resultObject = await formModel.findOne(filterObject).lean()
             .populate({ path: "fields" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
-            .populate({ path: "requestedBy", select: "userName image" })
+            // .populate({ path: "requestedBy", select: "userName image" })
             .select(selectionObject)
 
         if (!resultObject) return {
@@ -70,7 +70,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await formModel.find(filterObject).lean()
             .populate({ path: "fields" })
             .populate({ path: "categories", select: "nameEn nameAr image" })
-            .populate({ path: "requestedBy", select: "userName image" })
+            // .populate({ path: "requestedBy", select: "userName image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)

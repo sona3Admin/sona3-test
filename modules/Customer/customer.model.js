@@ -13,26 +13,18 @@ const customerSchema = mongoose.Schema({
         coordinates: { type: Array, default: [0, 0] }
     },
     address: { type: Object },
-    savedLocations: [{
-        name: { type: String },
-        location: {
-            type: { type: String, default: "Point" },
-            coordinates: { type: Array, default: [0, 0] }
-        },
-        address: { type: Object }
-    }],
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     joinDate: { type: Date },
     verifyDate: { type: Date },
-    token: { type: String },
-    session: { type: Object },
     loyaltyPoints: { type: Number, default: 0, min: 0 },
     cashback: { type: Number, default: 0, min: 0 },
     hasPurchased: { type: Boolean, default: false },
     birthDate: { type: Date },
-    fcmToken: { type: String }
+    fcmToken: { type: String },
+    token: { type: String },
+    session: { type: Object }
 })
 
 customerSchema.pre("save", async function (next) {

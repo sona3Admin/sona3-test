@@ -68,8 +68,8 @@ module.exports = {
             }),
 
             userType: joi.string().optional().empty().messages({
-                "string.base": "validCodeString",
-                "string.empty": "emptyCodeString",
+                "string.base": "validUserType",
+                "string.empty": "emptyUserType",
             }),
         }),
     },
@@ -140,8 +140,8 @@ module.exports = {
             }),
 
             userType: joi.string().optional().empty().messages({
-                "string.base": "validCodeString",
-                "string.empty": "emptyCodeString",
+                "string.base": "validUserType",
+                "string.empty": "emptyUserType",
             }),
         }),
     },

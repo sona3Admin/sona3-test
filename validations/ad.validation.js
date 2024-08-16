@@ -6,23 +6,14 @@ module.exports = {
     createAdValidation: {
         body: joi.object().required().keys({
 
-            shop: joi.string().required().messages({
-                "string.base": "validSeller",
-                "any.required": "requiredSeller",
-            }),
-
-            description: joi.string().required().messages({
-                "string.base": "validDescription",
-                "any.required": "requiredDescription",
+            name: joi.string().optional().messages({
+                "string.base": "validName",
+                "any.required": "requiredName",
             }),
 
             image: joi.object().optional().messages({
                 "object.base": "validImage",
             }),
-
-            requestDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
-            })
 
         }),
     },
@@ -31,20 +22,13 @@ module.exports = {
     updateAdValidation: {
         body: joi.object().optional().keys({
 
-            shop: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
 
-            description: joi.string().optional().messages({
-                "string.base": "validDescription",
+            name: joi.string().optional().messages({
+                "string.base": "validName",
             }),
 
             image: joi.object().optional().messages({
                 "object.base": "validImage",
-            }),
-
-            requestDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
             })
 
         })

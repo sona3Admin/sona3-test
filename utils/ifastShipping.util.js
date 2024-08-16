@@ -21,52 +21,6 @@ const authData = {
     grant_type: grantType,
 }
 
-// let orderData = {
-//     list: [
-//         {
-//             RecipientName: "JT",
-//             TotalCOG: "41.50", // order total
-//             MobileNumber: "554545454",
-//             AddressCountry: "United Arab Emirates",
-//             City: "Dubai",
-//             Street: "123 Jumeirah St - JumeirahJumeirah 1 - Dubai",
-//             MobileNumber2: "554545454",
-//             Remarks: "abc",
-//             NumberOfPieces: "1",
-//             latitude: 25.165919,
-//             longitude: 55.241885,
-//             pickup: {
-//                 name: "test",
-//                 mobileNumber: "563798893",
-//                 address: "test123",
-//                 latitude: 25.165919,
-//                 longitude: 55.241885,
-//                 date: "2024-05-20T10:29:05.592Z"
-//             }
-//         },
-//         {
-//             RecipientName: "JT test",
-//             TotalCOG: "11.50",
-//             MobileNumber: "563798893",
-//             AddressCountry: "United Arab Emirates",
-//             City: "Dubai",
-//             Street: "152 - Dubai - United Arab Emirates 123",
-//             MobileNumber2: "563798893",
-//             Remarks: "",
-//             NumberOfPieces: "1",
-//             latitude: 25.165919,
-//             longitude: 55.241885,
-//             pickup: {
-//                 name: "test",
-//                 mobileNumber: "563798893",
-//                 address: "test123",
-//                 latitude: 25.165919,
-//                 longitude: 55.241885,
-//                 date: "2024-05-20T10:29:05.592Z"
-//             }
-//         }
-//     ]
-// }
 
 exports.getAuthToken = async () => {
     try {

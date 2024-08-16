@@ -49,17 +49,17 @@ module.exports = {
                 "boolean.base": "validCategory",
             }),
 
-            isRequested: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isRequested: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
+            // requestedBy: joi.string().optional().messages({
+            //     "string.base": "validSeller",
+            // }),
 
-            requestDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
-            }),
+            // requestDate: joi.date().optional().messages({
+            //     "date.base": "validRequestDate",
+            // }),
 
             creationDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
@@ -121,17 +121,17 @@ module.exports = {
                 "boolean.base": "validCategory",
             }),
 
-            isRequested: joi.boolean().optional().messages({
-                "boolean.base": "validStatus",
-            }),
+            // isRequested: joi.boolean().optional().messages({
+            //     "boolean.base": "validStatus",
+            // }),
 
-            requestedBy: joi.string().optional().messages({
-                "string.base": "validSeller",
-            }),
+            // requestedBy: joi.string().optional().messages({
+            //     "string.base": "validSeller",
+            // }),
 
-            requestDate: joi.date().optional().messages({
-                "date.base": "validRequestDate",
-            }),
+            // requestDate: joi.date().optional().messages({
+            //     "date.base": "validRequestDate",
+            // }),
 
             creationDate: joi.date().optional().messages({
                 "date.base": "validRequestDate",
