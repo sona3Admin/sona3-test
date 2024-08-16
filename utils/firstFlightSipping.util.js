@@ -164,8 +164,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         for (const subOrder of orderDetailsObject.subOrders) {
 
             let airwayBillInfo = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
-            console.log("firstFlightBaseUrl", firstFlightBaseUrl)
-            console.log("authData", authData)
+            console.log("airwayBillInfo", airwayBillInfo)
             let response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, airwayBillInfo.orderData, {
                 headers: { 'Content-Type': 'application/json' }
             });
