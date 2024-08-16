@@ -2,7 +2,7 @@ const i18n = require('i18n');
 const orderRepo = require("../../../modules/Order/order.repo")
 const cartRepo = require("../../../modules/Cart/cart.repo");
 const { handleOrderCreation, handleReverseOrderCreation } = require("../../../helpers/order.helper")
-const fisrtFlightShipperHelper = require("../../../utils/firstFlightSipping.util")
+const firstFlightShipperHelper = require("../../../utils/firstFlightSipping.util")
 const stripeHelper = require("../../../utils/stripePayment.util")
 
 
@@ -19,9 +19,9 @@ exports.createOrder = async (req, res) => {
         let operationResultObject = await orderRepo.create(customerOrderObject);
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
-        let shippingData = await fisrtFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
+        let shippingData = await firstFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        operationResultObject = await fisrtFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
+        operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
         cartRepo.flush({ customer: req.body.customer })
@@ -44,10 +44,10 @@ exports.returnSubOrder = async (req, res) => {
         if (!orderObject.success) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
         orderObject = handleReverseOrderCreation(orderObject.result, req.query.subOrder)
 
-        let shippingData = await fisrtFlightShipperHelper.createNewBulkOrder(orderObject, true)
+        let shippingData = await firstFlightShipperHelper.createNewBulkOrder(orderObject, true)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         console.log("shippingData", shippingData)
-        let operationResultObject = await fisrtFlightShipperHelper.saveShipmentData(shippingData.result, orderObject, shippingData.result[0].CODAmount)
+        let operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, orderObject, shippingData.result[0].CODAmount)
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
         return res.status(operationResultObject.code).json(operationResultObject);

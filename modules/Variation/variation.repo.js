@@ -72,6 +72,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+        console.log("filterObject", filterObject)
         const resultArray = await variationModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image isVerified isActive" })
