@@ -174,7 +174,7 @@ exports.applySubscription = async (req, res) => {
     try {
         console.log("Applying subscription...");
         console.log("req.body", req.body);
-        let updatedSellerData
+        let updatedSellerData = {}
         const subscriptionStartDate = new Date(req.body.timestamp);
         console.log("subscriptionStartDate", subscriptionStartDate);
 
@@ -185,13 +185,14 @@ exports.applySubscription = async (req, res) => {
 
 
         if (req.body?.freeTrialApplied) {
-            updatedSellerData.freeTrialApplied = true;
+            updatedSellerData = { freeTrialApplied: true };
             subscriptionEndDate = new Date("2025-01-01");
         }
 
         console.log("subscriptionEndDate", subscriptionEndDate);
 
         updatedSellerData = {
+            ...updatedSellerData,
             tier: req.body.tier,
             tierDuration: req.body.tierDuration,
             subscriptionStartDate: subscriptionStartDate,
