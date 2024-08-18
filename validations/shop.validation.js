@@ -53,8 +53,9 @@ module.exports = {
                 "string.base": "validPolicyAr",
             }),
 
-            phone: joi.string().optional().messages({
+            phone: joi.string().required().messages({
                 "string.base": "validPhone",
+                "any.required": "validPhone",
             }),
 
             image: joi.object().optional().messages({
@@ -75,8 +76,9 @@ module.exports = {
                 "object.base": "validLocation",
             }),
 
-            address: joi.object().optional().messages({
+            address: joi.object().required().messages({
                 "object.base": "validAddress",
+                "any.required": "validAddress",
             }),
 
             isVerified: joi.boolean().optional().messages({
@@ -121,12 +123,14 @@ module.exports = {
                 "date.base": "validVerifyDate",
             }),
 
-            isFood: joi.boolean().optional().messages({
+            isFood: joi.boolean().required().messages({
                 "boolean.base": "validIsFood",
+                "any.required": "validIsFood",
             }),
 
-            type: joi.string().optional().messages({
+            type: joi.string().required().messages({
                 "string.base": "validType",
+                "any.required": "validType",
             }),
 
         }),
