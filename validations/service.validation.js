@@ -78,8 +78,10 @@ module.exports = {
                 "boolean.base": "validIsDeliverable",
             }),
 
-            isFood: joi.boolean().optional().messages({
+            isFood: joi.boolean().required().messages({
                 "boolean.base": "validIsFood",
+                "any.required": "validIsFood",
+
             }),
 
             creationDate: joi.date().optional().messages({

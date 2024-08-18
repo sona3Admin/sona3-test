@@ -2,6 +2,8 @@ const i18n = require('i18n');
 const serviceModel = require("./service.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require("../Shop/shop.repo")
+const sellerRepo = require("../Seller/seller.repo")
+const { getTiers } = require("../../helpers/tiers.helper")
 
 
 exports.find = async (filterObject) => {
@@ -132,8 +134,8 @@ exports.count = async (filterObject, sortObject) => {
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        let shopObject = await shopRepo.find({ _id: formObject.shop })
-        if (shopObject.result.type !== "service") return {
+        let sellerObject = await sellerRepo.find({ _id: formObject.seller })
+        if (sellerObject.result.type !== "service") return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
