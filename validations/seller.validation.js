@@ -235,9 +235,15 @@ module.exports = {
 
     loginValidation: {
         body: joi.object().required().keys({
+
+            userName: joi.string().optional().messages({
+                "string.base": "validNameEn",
+                "any.required": "requiredNameEn",
+            }),
+
             email: joi.string()
                 .email({ minDomainSegments: 2 })
-                .empty().required()
+                .empty().optional()
                 .messages({
                     "string.email": "validEmail",
                     "any.required": "requiredEmail",
