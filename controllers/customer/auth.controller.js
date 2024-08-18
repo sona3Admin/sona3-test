@@ -2,6 +2,8 @@ const i18n = require('i18n');
 const customerRepo = require("../../modules/Customer/customer.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
 const { verifyAppleToken } = require("../../utils/appleAuth.util")
+const { getSettings } = require("../../helpers/settings.helper")
+
 
 exports.register = async (req, res) => {
     try {
@@ -158,7 +160,8 @@ exports.login = async (req, res) => {
 
 exports.loginAsGuest = async (req, res) => {
     try {
-        let payload = { _id: "guest", nameEn: "Guest", nameAr: "زائر", role: "customer" }
+        const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
+        let payload = { _id: "guest", nameEn: "Guest", nameAr: "زائر", role: "customer", isLifeTimePlanOn }
         const token = jwtHelper.generateToken(payload);
         return res.status(200).json({ token, success: true, code: 200, result: { ...payload } })
 

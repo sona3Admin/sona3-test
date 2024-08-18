@@ -59,6 +59,7 @@ exports.checkExpiredSubscriptionsOfSellers = async () => {
 
     // Find sellers whose subscriptions have expired
     const expiredSellers = await sellerRepo.list({
+      tier: { $ne: "lifetime" },
       subscriptionEndDate: { $lt: today },
       isSubscribed: true
     });

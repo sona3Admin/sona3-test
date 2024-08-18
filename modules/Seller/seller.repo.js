@@ -4,6 +4,8 @@ let sellerModel = require("./seller.model")
 let saltrounds = 5;
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require('../Shop/shop.repo');
+const productRepo = require('../Product/product.repo');
+const serviceRepo = require('../Service/service.repo');
 
 
 exports.find = async (filterObject) => {
@@ -160,6 +162,12 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("internalServerError")
         }
 
+        if (formObject.isSubscribed == false) {
+            shopRepo.updateMany({ seller: existingObject.result._id.toString() }, { isActive: false });
+            if (existingObject.result.type === "product") productRepo.updateMany({ seller: existingObject.result._id.toString() }, { isActive: false });
+            else if (existingObject.result.type === "service") serviceRepo.updateMany({ seller: existingObject.result._id.toString() }, { isActive: false });
+        }
+
         return {
             success: true,
             code: 200,
@@ -244,10 +252,12 @@ exports.remove = async (_id) => {
 exports.comparePassword = async (emailOrUsernameString, passwordString) => {
     try {
         emailOrUsernameString = emailOrUsernameString.toLowerCase()
-        let existingObject = await this.find({ $or: [
-            { email: emailOrUsernameString },
-            { userName: emailOrUsernameString }
-        ] })
+        let existingObject = await this.find({
+            $or: [
+                { email: emailOrUsernameString },
+                { userName: emailOrUsernameString }
+            ]
+        })
 
         if (!existingObject.success || !existingObject.result.password) return {
             success: false,
