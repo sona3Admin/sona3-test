@@ -8,6 +8,7 @@ app.put("/update", validator(updateProductValidation), productController.updateP
 app.delete("/remove", productController.removeProduct);
 
 app.get("/list", productController.listProducts);
+app.get("/count", productController.countProducts);
 app.get("/get", productController.getProduct);
 app.get("/export", productController.exportListOfProducts);
 

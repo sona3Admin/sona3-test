@@ -39,6 +39,23 @@ exports.listServices = async (req, res) => {
 }
 
 
+exports.countServices = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const operationResultObject = await serviceRepo.count(filterObject, {});
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.getService = async (req, res) => {
     try {
         const filterObject = req.query;

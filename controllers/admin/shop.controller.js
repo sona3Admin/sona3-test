@@ -56,6 +56,23 @@ exports.listShops = async (req, res) => {
 }
 
 
+exports.countShops = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const operationResultObject = await shopRepo.count(filterObject, {});
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.updateShop = async (req, res) => {
     try {
         const operationResultObject = await shopRepo.update(req.query._id, req.body);

@@ -7,6 +7,7 @@ const uploadedFiles = uploadImagesToMemory()
 
 
 app.get("/list", serviceController.listServices);
+app.get("/count", serviceController.countServices);
 app.get("/get", serviceController.getService);
 
 app.post("/create", validator(createServiceValidation), serviceController.createService);

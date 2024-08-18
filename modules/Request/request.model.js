@@ -13,7 +13,7 @@ const requestSchema = mongoose.Schema({
     
     status: {
         type: String,
-        enum: ["pending", "canceled", "accepted", "rejected", "purchased", "in progress", "delivered", "to be returned", "returned"],
+        enum: ["pending", "canceled", "accepted", "rejected", "purchased", "to be returned", "returned"],
         default: "pending"
     },
 

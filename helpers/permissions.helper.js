@@ -26,7 +26,7 @@ let sellerEndPoints = [
 
 
 let shopEndPoints = [
-    "/admin/shops/create", "/admin/shops/list", "/admin/shops/get", "/admin/shops/update", "/admin/shops/remove",
+    "/admin/shops/create", "/admin/shops/list", "/admin/shops/count", "/admin/shops/get", "/admin/shops/update", "/admin/shops/remove",
     "/admin/shops/image", "/admin/shops/cover"
 ]
 
@@ -57,7 +57,7 @@ let formEndPoints = [
 
 let productEndPoints = [
     "/admin/products/create", "/admin/products/update", "/admin/products/remove",
-    "/admin/products/list", "/admin/products/get", "/admin/products/export"
+    "/admin/products/list", "/admin/products/count", "/admin/products/get", "/admin/products/export"
 ]
 
 
@@ -69,7 +69,7 @@ let variationEndPoints = [
 
 let serviceEndPoints = [
     "/admin/services/create", "/admin/services/update", "/admin/services/remove",
-    "/admin/services/list", "/admin/services/get", "/admin/services/image"
+    "/admin/services/list", "/admin/services/count", "/admin/services/get", "/admin/services/image"
 ]
 
 
@@ -133,6 +133,7 @@ let notificationEndPoints = [
 let settingEndPoints = [
     "/admin/settings/update",
     "/admin/settings/list",
+    "/admin/settings/tiers",
 ]
 
 

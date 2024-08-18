@@ -13,6 +13,7 @@ app.delete("/remove", shopController.removeShop);
 
 app.get("/get", shopController.getShop);
 app.get("/list", shopController.listShops);
+app.get("/count", shopController.countShops);
 
 app.post("/image", uploadedFiles.array('image', 1), shopController.uploadImage)
 app.delete("/image", shopController.deleteImage)
