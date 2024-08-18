@@ -37,9 +37,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password, fcmToken } = req.body;
-        const operationResultObject = await sellerRepo.comparePassword(email, password);
-
+        const { password, fcmToken } = req.body;
+        const operationResultObject = await sellerRepo.comparePassword(req.body.email || req.body.userName, password);
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
         payloadObject = {
