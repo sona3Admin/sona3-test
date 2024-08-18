@@ -46,6 +46,14 @@ exports.paySubscriptionFees = async (req, res) => {
         if (!sellerObject.result.payedInitialFees) initialFees += parseFloat(tierDetails.initialFees)
         console.log("initialFees", initialFees)
 
+        let isDowngrade = await this.checkIfDowngrade(sellerObject, req.query)
+        if (isDowngrade.success) return res.status(409).json({
+            success: false,
+            code: 409,
+            error: i18n.__("cannotDowngradeTier")
+        })
+
+
         // changing tiers within an active subscription period.
         if (sellerObject.result.isSubscribed &&
             sellerObject.result.subscriptionEndDate > todayDate &&
@@ -226,4 +234,18 @@ exports.applySubscription = async (req, res) => {
         });
     }
 };
+
+
+exports.checkIfDowngrade = (sellerObject, newTierObject) => {
+    if (newTierObject.tier == "lifetime") return { success: true };
+
+    const tiers = ['basic', 'pro', 'advanced'];
+    const currentTierIndex = tiers.indexOf(sellerObject.result.tier);
+    const newTierIndex = tiers.indexOf(newTierObject.tier);
+
+    // Check if it's a downgrade
+    if (newTierIndex < currentTierIndex) return { success: true };
+
+    return { success: false }
+}
 
