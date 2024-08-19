@@ -16,6 +16,7 @@ exports.createOrder = async (req, res) => {
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
 
         customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject)
+        customerOrderObject["orderType"] = "cart";
         let operationResultObject = await orderRepo.create(customerOrderObject);
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 

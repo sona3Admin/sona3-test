@@ -51,7 +51,7 @@ const orderSchema = mongoose.Schema({
     taxesRate: { type: Number, min: 0, default: 0 },
     orderTotal: { type: Number, min: 0, default: 0 },
     issueDate: { type: Date, default: Date.now() },
-
+    orderType: { type: String, enum: ["cart", "basket"] }
 })
 
 
