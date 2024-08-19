@@ -74,16 +74,6 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
-            isDeliverable: joi.boolean().optional().messages({
-                "boolean.base": "validIsDeliverable",
-            }),
-
-            isFood: joi.boolean().required().messages({
-                "boolean.base": "validIsFood",
-                "any.required": "validIsFood",
-
-            }),
-
             creationDate: joi.date().optional().messages({
                 "date.base": "validCreationDate",
             }),
@@ -188,14 +178,6 @@ module.exports = {
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
-            }),
-
-            isDeliverable: joi.boolean().optional().messages({
-                "boolean.base": "validIsDeliverable",
-            }),
-
-            isFood: joi.boolean().optional().messages({
-                "boolean.base": "validIsFood",
             }),
 
             creationDate: joi.date().optional().messages({
