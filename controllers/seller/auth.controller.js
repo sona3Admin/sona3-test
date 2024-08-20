@@ -1,7 +1,8 @@
 const i18n = require('i18n');
 const sellerRepo = require("../../modules/Seller/seller.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
-
+const { getSettings } = require("../../helpers/settings.helper")
+const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
 
 exports.register = async (req, res) => {
     try {
@@ -40,7 +41,7 @@ exports.login = async (req, res) => {
         const { password, fcmToken } = req.body;
         const operationResultObject = await sellerRepo.comparePassword(req.body.email || req.body.userName, password);
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
-
+        
         payloadObject = {
             _id: operationResultObject.result._id,
             userName: operationResultObject.result.userName,
@@ -58,14 +59,14 @@ exports.login = async (req, res) => {
             sellerRepo.updateDirectly(operationResultObject.result._id, { token })
             delete operationResultObject.result["password"]
             delete operationResultObject.result["token"]
-            return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result, token })
+            return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result, token, isLifeTimePlanOn })
         }
 
         const token = jwtHelper.generateToken(payloadObject, "1d")
         sellerRepo.updateDirectly(operationResultObject.result._id, { token, fcmToken })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
-        return res.status(operationResultObject.code).json({ token, ...operationResultObject })
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject, isLifeTimePlanOn })
 
     } catch (err) {
         console.log(`err.message`, err.message);
@@ -83,11 +84,11 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         const { fcmToken } = req.body;
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
-        
+
         if (operationResultObject.success &&
             (!operationResultObject.result.isVerified || !operationResultObject.result.isActive)
         ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
-        
+
         if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create(sellerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
@@ -103,7 +104,7 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         sellerRepo.updateDirectly(operationResultObject.result._id, { token, fcmToken })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
-        return res.status(operationResultObject.code).json({ token, ...operationResultObject })
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject, isLifeTimePlanOn })
 
     } catch (err) {
         console.log(`err.message controller`, err.message);
@@ -120,13 +121,13 @@ exports.authenticateByAppleAccount = async (req, res) => {
     try {
         const { fcmToken } = req.body;
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
-        if(!req.body.email) {}
+        if (!req.body.email) { }
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
-        
+
         if (operationResultObject.success &&
             (!operationResultObject.result.isVerified || !operationResultObject.result.isActive)
         ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
-        
+
         if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create(sellerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
@@ -142,7 +143,7 @@ exports.authenticateByAppleAccount = async (req, res) => {
         sellerRepo.updateDirectly(operationResultObject.result._id, { token, fcmToken })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
-        return res.status(operationResultObject.code).json({ token, ...operationResultObject })
+        return res.status(operationResultObject.code).json({ token, ...operationResultObject, isLifeTimePlanOn })
 
     } catch (err) {
         console.log(`err.message controller`, err.message);
