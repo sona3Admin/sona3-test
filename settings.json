@@ -1,5 +1,7 @@
 {
     "isLifeTimePlanOn": true,
+    "mostPopularPlanInProducts": "pro",
+    "mostPopularPlanInServices": "advanced",
     "isFreeTrialOn": true,
     "vatRate": 10,
     "cashbackPercentage": 1,
