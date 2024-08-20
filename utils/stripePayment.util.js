@@ -16,7 +16,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
                         product_data: {
                             name: "Items Total",
                         },
-                        unit_amount: (orderCostObject.cartTotal) * cents,
+                        unit_amount: parseInt((orderCostObject.cartTotal) * cents),
                     },
                     quantity: 1,
                 },
@@ -26,7 +26,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
                         product_data: {
                             name: "Tax",
                         },
-                        unit_amount: (orderCostObject.taxesTotal) * cents,
+                        unit_amount: parseInt((orderCostObject.taxesTotal) * cents),
                     },
                     quantity: 1,
                 },
@@ -36,7 +36,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
                         product_data: {
                             name: "Shipping Fee",
                         },
-                        unit_amount: (orderCostObject?.shippingFeesTotal) * cents || 0,
+                        unit_amount: parseInt((orderCostObject?.shippingFeesTotal) * cents) || 0,
                     },
                     quantity: 1,
                 }
@@ -84,7 +84,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                         product_data: {
                             name: `Subscription Fees for ${tierName} plan`,
                         },
-                        unit_amount: parseFloat(subscriptionFees) * cents,
+                        unit_amount: parseInt(parseFloat(subscriptionFees) * cents),
                     },
                     quantity: 1,
                 }
@@ -100,7 +100,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                     product_data: {
                         name: `Initial Subscription Fees`,
                     },
-                    unit_amount: parseFloat(initialFees) * cents,
+                    unit_amount: parseInt(parseFloat(initialFees) * cents),
                 },
                 quantity: 1,
             })
