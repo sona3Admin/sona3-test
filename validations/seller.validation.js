@@ -26,6 +26,11 @@ module.exports = {
                 "string.base": "validPhone",
             }),
 
+
+            bankAccountNumber: joi.string().optional().messages({
+                "string.base": "validBankAccountNumber",
+            }),
+
             image: joi.object().optional().messages({
                 "object.base": "validImage",
             }),
@@ -138,6 +143,11 @@ module.exports = {
 
             phone: joi.string().optional().messages({
                 "string.base": "validPhone",
+            }),
+
+
+            bankAccountNumber: joi.string().optional().messages({
+                "string.base": "validBankAccountNumber",
             }),
 
             image: joi.object().optional().messages({

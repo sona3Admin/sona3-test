@@ -14,6 +14,7 @@ const sellerSchema = mongoose.Schema({
         coordinates: { type: Array, default: [0, 0] }
     },
     address: { type: Object },
+    bankAccountNumber: { type: String },
     isVerified: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
