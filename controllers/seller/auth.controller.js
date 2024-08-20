@@ -2,7 +2,6 @@ const i18n = require('i18n');
 const sellerRepo = require("../../modules/Seller/seller.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
 const { getSettings } = require("../../helpers/settings.helper")
-const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
 
 exports.register = async (req, res) => {
     try {
@@ -39,9 +38,11 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const { password, fcmToken } = req.body;
+        const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
+
         const operationResultObject = await sellerRepo.comparePassword(req.body.email || req.body.userName, password);
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
-        
+
         payloadObject = {
             _id: operationResultObject.result._id,
             userName: operationResultObject.result.userName,
@@ -82,6 +83,8 @@ exports.login = async (req, res) => {
 exports.authenticateBySocialMediaAccount = async (req, res) => {
     try {
         const { fcmToken } = req.body;
+        const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
+
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
 
@@ -120,6 +123,8 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
 exports.authenticateByAppleAccount = async (req, res) => {
     try {
         const { fcmToken } = req.body;
+        const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
+
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         if (!req.body.email) { }
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
