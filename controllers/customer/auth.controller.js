@@ -161,7 +161,9 @@ exports.login = async (req, res) => {
 exports.loginAsGuest = async (req, res) => {
     try {
         const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
-        let payload = { _id: "guest", nameEn: "Guest", nameAr: "زائر", role: "customer", isLifeTimePlanOn }
+        const mostPopularPlanInProducts = await getSettings("mostPopularPlanInProducts")
+        const mostPopularPlanInServices = await getSettings("mostPopularPlanInServices")
+        let payload = { _id: "guest", nameEn: "Guest", nameAr: "زائر", role: "customer", isLifeTimePlanOn, mostPopularPlanInProducts, mostPopularPlanInServices }
         const token = jwtHelper.generateToken(payload);
         return res.status(200).json({ token, success: true, code: 200, result: { ...payload } })
 
