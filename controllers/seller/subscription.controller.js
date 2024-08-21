@@ -73,7 +73,7 @@ exports.paySubscriptionFees = async (req, res) => {
             subscriptionFees = (applyingCouponResult.result).toFixed(2)
         }
 
-        if ((todayDate < freeTrialEndDate) && freeTrialOn) subscriptionFees = 0
+        if ((todayDate < freeTrialEndDate) && freeTrialOn && req.query.tier != "lifetime") subscriptionFees = 0
 
         console.log("Final Subscription Fees", subscriptionFees)
         console.log("Calculation done, Redirecting to stripe...")
