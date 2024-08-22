@@ -37,10 +37,18 @@ exports.paySubscriptionFees = async (req, res) => {
                 error: i18n.__("alreadySubscribedToPlan")
             })
 
+        if (sellerObject.result.isSubscribed &&
+            sellerObject.result.tier == "lifetime") return res.status(409).json({
+                success: false,
+                code: 409,
+                error: i18n.__("alreadySubscribedToPlan")
+            })
 
         const tierDetails = await getTiers(`${req.query.tier}_${sellerObject.result.type}`)
 
         let subscriptionFees = req.query.tierDuration == "month" ? parseFloat(tierDetails.monthlyFees) : parseFloat(tierDetails.yearlyFees)
+
+        if (tierDetails.name == "lifetime") subscriptionFees = parseFloat(tierDetails.lifeTimeFees)
         console.log("subscriptionFees", subscriptionFees)
 
         if (!sellerObject.result.payedInitialFees) initialFees += parseFloat(tierDetails.initialFees)
@@ -237,7 +245,10 @@ exports.applySubscription = async (req, res) => {
 
 
 exports.checkIfDowngrade = (sellerObject, newTierObject) => {
-    if (newTierObject.tier == "lifetime") return { success: true };
+    const todayDate = new Date();
+
+    if (newTierObject.tier !== "lifetime" && sellerObject.result.tier == "lifetime") return { success: true };
+    if (newTierObject.tier == "lifetime" && sellerObject.result.tier != "lifetime") return { success: true };
 
     const tiers = ['basic', 'pro', 'advanced'];
     const currentTierIndex = tiers.indexOf(sellerObject.result.tier);
@@ -245,6 +256,11 @@ exports.checkIfDowngrade = (sellerObject, newTierObject) => {
 
     // Check if it's a downgrade
     if (newTierIndex < currentTierIndex) return { success: true };
+    if (newTierIndex == currentTierIndex && 
+        newTierObject.tierDuration == "month" && 
+        sellerObject.result.tierDuration == "year" &&
+        sellerObject.result.subscriptionEndDate > todayDate
+    ) return { success: true };
 
     return { success: false }
 }
