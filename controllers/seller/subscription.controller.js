@@ -191,6 +191,7 @@ exports.applySubscription = async (req, res) => {
         console.log("Applying subscription...");
         console.log("req.body", req.body);
         let updatedSellerData = {}
+        const freeTrialOn = await getSettings("isFreeTrialOn")
         const subscriptionStartDate = new Date(req.body.timestamp);
         console.log("subscriptionStartDate", subscriptionStartDate);
 
@@ -200,7 +201,7 @@ exports.applySubscription = async (req, res) => {
         else if (req.body.tierDuration === 'year') subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
 
 
-        if (req.body?.freeTrialApplied) {
+        if (req.body?.freeTrialApplied && freeTrialOn) {
             updatedSellerData = { freeTrialApplied: true };
             subscriptionEndDate = new Date("2025-01-01");
         }

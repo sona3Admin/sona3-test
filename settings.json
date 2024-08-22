@@ -2,7 +2,7 @@
     "isLifeTimePlanOn": true,
     "mostPopularPlanInProducts": "pro",
     "mostPopularPlanInServices": "advanced",
-    "isFreeTrialOn": true,
+    "isFreeTrialOn": false,
     "vatRate": 10,
     "cashbackPercentage": 1,
     "cashbackThreshold": 1000,
