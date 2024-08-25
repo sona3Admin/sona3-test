@@ -6,6 +6,7 @@ const productRepo = require("../../modules/Product/product.repo");
 const serviceRepo = require("../../modules/Service/service.repo");
 const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
+const paymentRepo = require("../../modules/Payment/payment.repo");
 const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper")
 
 
@@ -200,6 +201,56 @@ exports.countOrders = async (req, res) => {
         countingResult.result.total = parseInt(allOrderDocuments.result.length) + parseInt(allServiceRequests.count);;
 
         return res.status(countingResult.code).json(countingResult);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.calculateRevenue = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        let orderTotal = 0
+        let subscriptionFees = 0
+        const orderSelectionObject = {
+            orderType: 1,
+            paymentMethod: 1,
+        }
+        let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject)
+        console.log("allOrderDocuments", allOrderDocuments)
+        if (allOrderDocuments.success) {
+            allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
+                order?.subOrders?.map(subOrder => ({
+                    paymentMethod: order.paymentMethod,
+                    ...subOrder
+                }))
+            );
+            allOrderDocuments.result = allOrderDocuments?.result?.filter((order) => {
+                return order.status == "pending" || order.status == "in progress" || order.status == "delivered"
+            })
+            orderTotal = allOrderDocuments.result.reduce((total, order) => parseFloat(total) + parseFloat(order.shopTotal), 0);
+
+        }
+
+        const commissions = parseInt(orderTotal * 0.10) || 0
+
+        if (filterObject.dateField) filterObject.dateField = "timestamp"
+
+        const allSubscriptionPayments = await paymentRepo.list({ ...filterObject, orderType: "subscription" }, { subscriptionFees: 1 }, {}, pageNumber, limitNumber);
+        if (allSubscriptionPayments.success) subscriptionFees = allSubscriptionPayments.result.reduce((total, payment) => parseFloat(total) + parseFloat(payment.subscriptionFees), 0);
+
+        return res.status(200).json({
+            total: parseInt(commissions + subscriptionFees),
+            subscriptionFees: parseInt(subscriptionFees),
+            commissions
+        });
 
     } catch (err) {
         console.log(`err.message`, err.message);

@@ -169,14 +169,10 @@ exports.aggregate = async (filterObject, selectionObject) => {
             };
         }
 
-        // Get the total count of documents matching the filter
-        const count = await orderModel.countDocuments(filterObject).exec();
-
         return {
             success: true,
             code: 200,
-            result: resultArray,
-            count
+            result: resultArray
         };
 
     } catch (err) {

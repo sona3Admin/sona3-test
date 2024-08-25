@@ -83,6 +83,9 @@ function handleRangeParams(filterObject, finalFilterObject) {
             finalFilterObject[`${dateField}`].$lte = new Date(filterObject.dateTo);
             delete filterObject["dateTo"];
         }
+        delete finalFilterObject["dateField"]
+        delete filterObject["dateField"]
+
     }
 
 
@@ -101,7 +104,6 @@ function handleRangeParams(filterObject, finalFilterObject) {
 
         finalFilterObject['minPackage.price'] = priceFilter;
     }
-
     return finalFilterObject
 
 }
@@ -137,7 +139,7 @@ function handleSearchProperty(property, filterObject, finalFilterObject) {
 
 
 function handleSortProperty(property, filterObject, finalSortObject, sortOrder) {
-    
+
     if (filterObject?.[property]) {
         finalSortObject[property] = sortOrder;
 

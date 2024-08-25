@@ -143,6 +143,7 @@ let reportEndPoints = [
     "/admin/reports/shop",
     "/admin/reports/item",
     "/admin/reports/order",
+    "/admin/reports/revenue",
 ]
 
 adminEndPoints = new Set(adminEndPoints);

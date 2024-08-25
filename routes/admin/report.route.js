@@ -7,6 +7,7 @@ app.get("/seller", reportController.countSellers);
 app.get("/shop", reportController.countShops);
 app.get("/item", reportController.countItems);
 app.get("/order", reportController.countOrders);
+app.get("/revenue", reportController.calculateRevenue);
 
 
 module.exports = app
