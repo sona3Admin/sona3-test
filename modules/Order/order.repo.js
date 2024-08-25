@@ -101,6 +101,118 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
+exports.aggregate = async (filterObject, selectionObject) => {
+    try {
+        // Normalize filterObject using the prepareQueryObjects function
+        const normalizedQueryObjects = await prepareQueryObjects(filterObject, {});
+        filterObject = normalizedQueryObjects.filterObject;
+
+        // Helper function to create a projection object based on the selection object
+        const createProjection = (selectionObj) => {
+            return Object.entries(selectionObj).reduce((projection, [key, value]) => {
+                if (typeof value === 'object') {
+                    projection[key] = {
+                        $map: {
+                            input: `$${key}`,
+                            as: "item",
+                            in: createProjection(value)
+                        }
+                    };
+                } else if (value) {
+                    projection[key] = value;
+                }
+                return projection;
+            }, {});
+        };
+
+        // Projection for the subOrders array to include only `status` and `shippingStatus`
+        const subOrdersProjection = {
+            subOrders: {
+                $map: {
+                    input: "$subOrders",
+                    as: "subOrder",
+                    in: {
+                        shopTotal: "$$subOrder.shopTotal",
+                        shopOriginalTotal: "$$subOrder.shopOriginalTotal",
+                        shopTaxes: "$$subOrder.shopTaxes",
+                        shopShippingFees: "$$subOrder.shopShippingFees",
+                        subOrderTotal: "$$subOrder.subOrderTotal",
+                        status: "$$subOrder.status",
+                        shippingStatus: "$$subOrder.shippingStatus"
+                    }
+                }
+            }
+        };
+
+        // Build the aggregation pipeline
+        const pipeline = [];
+        if (filterObject) {
+            pipeline.push({ $match: filterObject });
+        }
+
+        if (selectionObject) {
+            const projection = { ...createProjection(selectionObject), ...subOrdersProjection };
+            pipeline.push({ $project: projection });
+        } else {
+            pipeline.push({ $project: subOrdersProjection });
+        }
+        // Add sorting by issueDate
+        pipeline.push({ $sort: { issueDate: -1 } });
+        // Execute the aggregation pipeline
+        const resultArray = await orderModel.aggregate(pipeline).exec();
+
+        if (!resultArray || resultArray.length === 0) {
+            return {
+                success: false,
+                code: 404,
+                error: i18n.__("notFound")
+            };
+        }
+
+        // Get the total count of documents matching the filter
+        const count = await orderModel.countDocuments(filterObject).exec();
+
+        return {
+            success: true,
+            code: 200,
+            result: resultArray,
+            count
+        };
+
+    } catch (err) {
+        console.error(`Error: ${err.message}`);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+};
+
+
+exports.count = async (filterObject, sortObject) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        const count = await orderModel.count(filterObject);
+        return {
+            success: true,
+            code: 200,
+            result: count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.create = async (formObject) => {
     try {
 

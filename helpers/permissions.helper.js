@@ -137,6 +137,14 @@ let settingEndPoints = [
 ]
 
 
+let reportEndPoints = [
+    "/admin/reports/summary",
+    "/admin/reports/customer",
+    "/admin/reports/seller",
+    "/admin/reports/shop",
+    "/admin/reports/item",
+]
+
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
 permissionEndPoints = new Set(permissionEndPoints);
@@ -161,6 +169,7 @@ couponEndPoints = new Set(couponEndPoints);
 roomEndPoints = new Set(roomEndPoints);
 notificationEndPoints = new Set(notificationEndPoints);
 settingEndPoints = new Set(settingEndPoints);
+reportEndPoints = new Set(reportEndPoints);
 
 
 let permissions = new Map();
@@ -189,6 +198,7 @@ permissions.set("coupons", couponEndPoints)
 permissions.set("rooms", roomEndPoints)
 permissions.set("notifications", notificationEndPoints)
 permissions.set("settings", settingEndPoints)
+permissions.set("reports", reportEndPoints)
 
 
 module.exports = { permissions }

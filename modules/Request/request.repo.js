@@ -69,6 +69,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+        console.log(sortObject)
         const resultArray = await requestModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
@@ -91,6 +92,29 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             code: 200,
             result: resultArray,
             count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
+exports.count = async (filterObject, sortObject) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        const count = await requestModel.count(filterObject);
+        return {
+            success: true,
+            code: 200,
+            result: count
         };
 
     } catch (err) {

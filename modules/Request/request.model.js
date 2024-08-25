@@ -22,7 +22,7 @@ const requestSchema = mongoose.Schema({
     taxesRate: { type: Number, min: 0 },
     orderTotal: { type: Number, min: 0 },
     paymentMethod: { type: String, enum: ["cashOnDelivery", "visa"], default: "visa" },
-    requestDate: { type: Date },
+    issueDate: { type: Date },
     deliveryDate: { type: Date },
     requestNotes: { type: String }
 })

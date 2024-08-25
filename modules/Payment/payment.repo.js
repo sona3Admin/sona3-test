@@ -101,6 +101,29 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
+exports.count = async (filterObject, sortObject) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        const count = await paymentModel.count(filterObject);
+        return {
+            success: true,
+            code: 200,
+            result: count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.create = async (formObject) => {
     try {
 

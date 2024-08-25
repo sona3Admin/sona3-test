@@ -29,7 +29,7 @@ const shopSchema = mongoose.Schema({
     verifyDate: { type: Date },
     policyEn: { type: String },
     policyAr: { type: String },
-    isFood: { type: Boolean, default: false },
+    isFood: { type: Boolean },
     type: { type: String, enum: ["product", "service"] }
 })
 
