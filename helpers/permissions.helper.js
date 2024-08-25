@@ -138,11 +138,11 @@ let settingEndPoints = [
 
 
 let reportEndPoints = [
-    "/admin/reports/summary",
     "/admin/reports/customer",
     "/admin/reports/seller",
     "/admin/reports/shop",
     "/admin/reports/item",
+    "/admin/reports/order",
 ]
 
 adminEndPoints = new Set(adminEndPoints);

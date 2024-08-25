@@ -9,22 +9,6 @@ const requestRepo = require("../../modules/Request/request.repo");
 const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper")
 
 
-exports.listSummary = async (req, res) => {
-    try {
-        const operationResultObject = await customerRepo.list(filterObject, { password: 0 }, {}, pageNumber, limitNumber);
-        return res.status(operationResultObject.code).json(operationResultObject);
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return res.status(500).json({
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        });
-    }
-}
-
-
 exports.countCustomers = async (req, res) => {
     try {
         const filterObject = req.query;
