@@ -325,7 +325,6 @@ async function getFilteredOrders(filterObject, orderSelectionObject) {
 }
 
 
-// Utility function to determine the aggregation period and period count
 function getAggregationPeriodAndCount(daysDiff, sumByRange) {
     let aggregationPeriod, periodCount;
     if (sumByRange) {
@@ -350,7 +349,6 @@ function getAggregationPeriodAndCount(daysDiff, sumByRange) {
 }
 
 
-// Utility function to get the period end date based on the aggregation period
 function getPeriodEnd(currentPeriodStart, aggregationPeriod) {
     switch (aggregationPeriod) {
         case 'day':
@@ -367,7 +365,6 @@ function getPeriodEnd(currentPeriodStart, aggregationPeriod) {
 }
 
 
-// Utility function to filter and count orders by conditions
 function filterAndCountOrders(orders, serviceRequests, currentPeriodStart, periodEnd, orderCountingFilters) {
     const periodOrders = orders.filter(order =>
         moment(order.issueDate).isBetween(currentPeriodStart, periodEnd, null, '[]')
@@ -382,7 +379,6 @@ function filterAndCountOrders(orders, serviceRequests, currentPeriodStart, perio
 }
 
 
-// Utility function to calculate sales
 function calculateSales(periodOrders, periodServiceRequests) {
     const salesFromFoodProducts = periodOrders.reduce((total, order) => {
         return order.orderType === "basket" ? total + parseInt(order.orderTotal) : total;
