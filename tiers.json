@@ -25,7 +25,7 @@
         "type": "product",
         "initialFees": 100,
         "monthlyFees": 936,
-        "yearlyFees": 9630,
+        "yearlyFees": 9360,
         "commissionOnOrder": 10,
         "numberOfItems": 100000
     },
