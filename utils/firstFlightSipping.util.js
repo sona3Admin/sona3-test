@@ -247,8 +247,8 @@ exports.createNewPickupRequest = async (orderDetailsObject) => {
 exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse) => {
     try {
         if (isReverse == true) return await this.handleReverseOrderData(orderDetailsObject, subOrder, isCod)
-        let originCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
-        let destinationCity = subOrder?.address?.cityCode || "DXB"
+        let originCity = orderDetailsObject.shippingAddress.address.city.CityCode || "DXB";
+        let destinationCity = subOrder?.address?.city.CityCode || "DXB"
         let shopId = subOrder.shop?._id?.toString() || subOrder.shop
         let shippingCost = orderDetailsObject.shippingCost[`${shopId}`]
 
@@ -257,7 +257,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
             ReceiversContactPerson: orderDetailsObject.name,
             ReceiversAddress1: orderDetailsObject.shippingAddress.address.street,
             ReceiversAddress2: orderDetailsObject.shippingAddress.address.remarks,
-            ReceiversCity: orderDetailsObject.shippingAddress.address.city,
+            ReceiversCity: orderDetailsObject.shippingAddress.address.city.CityName,
             ReceiversCountry: orderDetailsObject.shippingAddress.address.country,
             ReceiversGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919},${orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885}`,
             ReceiversPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
@@ -268,9 +268,9 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
         let shopData = {
             SendersCompany: subOrder.name,
             SendersContactPerson: subOrder.name,
-            SendersAddress1: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
-            SendersAddress2: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
-            SendersCity: subOrder.address.city,
+            SendersAddress1: `${subOrder.address.country}-${subOrder.address.city.CityName}-${subOrder.address.street}`,
+            SendersAddress2: `${subOrder.address.country}-${subOrder.address.city.CityName}-${subOrder.address.street}`,
+            SendersCity: subOrder.address.city.CityName,
             SendersCountry: subOrder.address.country,
             SendersGeoLocation: `${subOrder.location.coordinates[0] || 25.165919},${subOrder.location.coordinates[1] || 55.241885}`,
             SendersPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
@@ -329,8 +329,8 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
     try {
         // console.log("orderDetailsObject.shippingAddress", orderDetailsObject.shippingAddress)
         console.log("Creating Resverse Order")
-        let originCity = subOrder?.address?.cityCode || "DXB";
-        let destinationCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB"
+        let originCity = subOrder?.address?.city.CityCode || "DXB";
+        let destinationCity = orderDetailsObject.shippingAddress.address.city.CityCode || "DXB"
         let shopId = subOrder.shop?._id?.toString() || subOrder.shop
         console.log("shopId", shopId)
         let shippingCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity)
@@ -341,7 +341,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
             SendersContactPerson: orderDetailsObject.name,
             SendersAddress1: orderDetailsObject.shippingAddress.address.street,
             SendersAddress2: orderDetailsObject.shippingAddress.address.remarks,
-            SendersCity: orderDetailsObject.shippingAddress.address.city,
+            SendersCity: orderDetailsObject.shippingAddress.address.city.CityName,
             SendersCountry: orderDetailsObject.shippingAddress.address.country,
             SendersGeoLocation: `${orderDetailsObject.shippingAddress.location.coordinates[0] || 25.165919},${orderDetailsObject.shippingAddress.location.coordinates[1] || 55.241885}`,
             SendersPhone: orderDetailsObject.phone.length == 9 ? `971${orderDetailsObject.phone}` : "971554535454",
@@ -351,9 +351,9 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
         let shopData = {
             ReceiversCompany: subOrder.name,
             ReceiversContactPerson: subOrder.name,
-            ReceiversAddress1: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
-            ReceiversAddress2: `${subOrder.address.country}-${subOrder.address.city}-${subOrder.address.street}`,
-            ReceiversCity: subOrder.address.city,
+            ReceiversAddress1: `${subOrder.address.country}-${subOrder.address.city.CityName}-${subOrder.address.street}`,
+            ReceiversAddress2: `${subOrder.address.country}-${subOrder.address.city.CityName}-${subOrder.address.street}`,
+            ReceiversCity: subOrder.address.city.CityName,
             ReceiversCountry: subOrder.address.country,
             ReceiversGeoLocation: `${subOrder.location.coordinates[0] || 25.165919},${subOrder.location.coordinates[1] || 55.241885}`,
             ReceiversPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",

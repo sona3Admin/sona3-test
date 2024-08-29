@@ -125,7 +125,7 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
             RecipientName: orderDetailsObject.name,
             MobileNumber: orderDetailsObject.phone.length > 9 ? orderDetailsObject.phone.substring(3) : orderDetailsObject.phone,
             AddressCountry: orderDetailsObject.shippingAddress.address.country,
-            City: orderDetailsObject.shippingAddress.address.city,
+            City: orderDetailsObject.shippingAddress.address.city.name,
             Street: orderDetailsObject.shippingAddress.address.street,
             MobileNumber2: orderDetailsObject.phone.length > 9 ? orderDetailsObject.phone.substring(3) : orderDetailsObject.phone,
             Remarks: orderDetailsObject.shippingAddress.address.remarks,
