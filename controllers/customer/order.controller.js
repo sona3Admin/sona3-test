@@ -83,7 +83,7 @@ exports.calculateOrderTotal = async (req, res) => {
         if (req.query.cart) cartObject = await cartRepo.get({ _id: req.query.cart });
         else if (req.query.basket) cartObject = await basketRepo.get({ _id: req.query.basket })
         let isFood = (req?.query?.basket) ? true : false
-        let operationResultObject = await handleOrderCreation(cartObject.result, {}, isFood)
+        let operationResultObject = await handleOrderCreation(cartObject.result, {}, isFood, false)
 
         if (!isFood && req.query?.cityCode) {
             cartObject.result.cityCode = req.query.cityCode

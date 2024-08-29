@@ -103,7 +103,7 @@ exports.addOrderShippingFees = (shopObject, customerOrderObject) => {
 }
 
 
-exports.handleOrderCreation = async (customerCartObject, customerOrderObject, isFood) => {
+exports.handleOrderCreation = async (customerCartObject, customerOrderObject, isFood, isPurchasing) => {
     try {
         let resultObject = this.setSubOrders(customerCartObject.subCarts)
         customerOrderObject.subOrders = resultObject.subOrders
@@ -128,7 +128,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject, is
         subOrders.forEach((shopObject) => this.addOrderTaxes(shopObject, customerOrderObject, isFood))
         // subOrders.forEach((shopObject) => this.addOrderShippingFees(shopObject, customerOrderObject))
 
-        this.calculateCashback(customerCartObject);
+        if (isPurchasing == true) this.calculateCashback(customerCartObject);
         return customerOrderObject
 
     } catch (err) {

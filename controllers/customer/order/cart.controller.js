@@ -15,7 +15,7 @@ exports.createOrder = async (req, res) => {
         let customerCartObject = await cartRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
 
-        customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject)
+        customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject, false, true)
         customerOrderObject["orderType"] = "cart";
         let operationResultObject = await orderRepo.create(customerOrderObject);
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
@@ -70,7 +70,7 @@ exports.createOrderPaymentLink = async (req, res) => {
         let customerOrderObject = req.body
         let customerCartObject = await cartRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
-        customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject, true)
+        customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject, false, false)
         let customerDetailsObject = { ...req.body }
         let costObject = { cartTotal: customerOrderObject.cartTotal, taxesTotal: customerOrderObject.taxesTotal, shippingFeesTotal: customerDetailsObject.shippingCost.total }
         let orderDetailsObject = { cart: customerCartObject.result._id.toString() }
