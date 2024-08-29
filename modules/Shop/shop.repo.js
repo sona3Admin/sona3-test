@@ -136,8 +136,7 @@ exports.listFeatured = async (filterObject) => {
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, {})
         filterObject = normalizedQueryObjects.filterObject
 
-        filterObject['seller.isSubscribed'] = true;
-
+        // console.log("filterObject", filterObject)
         let resultArray = await shopModel.aggregate([
             { $match: filterObject },
             {
@@ -149,6 +148,7 @@ exports.listFeatured = async (filterObject) => {
                 }
             },
             { $unwind: '$seller' },
+            { $match: { 'seller.isSubscribed': true } },
             {
                 $addFields: {
                     tierOrder: {
@@ -166,23 +166,35 @@ exports.listFeatured = async (filterObject) => {
             },
             { $sort: { tierOrder: 1 } }
         ]);
-
+        // console.log("resultArray", resultArray)
         if (!resultArray || resultArray.length === 0) return {
             success: true,
             code: 200,
             result: [],
-            count: resultArray.length
+            count: 0
         }
 
         let finalResult = resultArray.slice(0, 10); // Take at most 10 shops
+
+        finalResult.forEach((shopObject) => {
+            shopObject.seller = {
+                tier: shopObject.seller.tier,
+                tierDuration: shopObject.seller.tierDuration,
+                type: shopObject.seller.type,
+            }
+            delete shopObject.shopLicense
+            delete shopObject.location
+            delete shopObject.address
+            delete shopObject.tierOrder
+            delete shopObject.verifyDate
+            delete shopObject.joinDate
+        })
 
         // Shuffle the array
         for (let i = finalResult.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [finalResult[i], finalResult[j]] = [finalResult[j], finalResult[i]];
         }
-
-        console.log("finalResult", finalResult)
 
         return {
             success: true,
@@ -192,7 +204,8 @@ exports.listFeatured = async (filterObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        console.error(`Error in listFeatured: ${err.message}`);
+        console.error(err.stack);
         return {
             success: false,
             code: 500,
