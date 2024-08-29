@@ -80,13 +80,13 @@ exports.getOrderShipmentLastStatus = async (req, res) => {
 exports.calculateOrderTotal = async (req, res) => {
     try {
         let cartObject, firstFlightShippingCost
-        if (req.query.cart) cartObject = await cartRepo.get({ _id: req.query.cart });
+        if (req.query.cart && req.query.CityCode) cartObject = await cartRepo.get({ _id: req.query.cart });
         else if (req.query.basket) cartObject = await basketRepo.get({ _id: req.query.basket })
         let isFood = (req?.query?.basket) ? true : false
         let operationResultObject = await handleOrderCreation(cartObject.result, {}, isFood, false)
 
-        if (!isFood && req.query?.cityCode) {
-            cartObject.result.cityCode = req.query.cityCode
+        if (!isFood && req.query?.CityCode) {
+            cartObject.result.CityCode = req.query.CityCode
             firstFlightShippingCost = await firstFlightHelper.calculateOrderShippingCost(cartObject.result)
             operationResultObject.shippingFeesTotal = firstFlightShippingCost.result
             operationResultObject.orderTotal += parseFloat(firstFlightShippingCost.result.total)
@@ -95,7 +95,6 @@ exports.calculateOrderTotal = async (req, res) => {
             success: true, code: 200,
             result: {
                 cartTotal: operationResultObject.cartTotal,
-                // taxesRate: operationResultObject.taxesRate,
                 taxesTotal: operationResultObject.taxesTotal,
                 shippingFeesTotal: operationResultObject.shippingFeesTotal,
                 orderTotal: operationResultObject.orderTotal

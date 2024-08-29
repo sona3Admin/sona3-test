@@ -30,8 +30,8 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
         console.log("originCity", originCity)
         // Create an array of promises
         let subOrderPromises = orderDetailsObject.subCarts.map(async (subOrder) => {
-            let destinationCity = subOrder?.address?.cityCode || "DXB";
-            console.log("subOrder?.address?.cityCode", subOrder?.address?.cityCode)
+            let destinationCity = subOrder?.address?.city.CityCode || "DXB";
+            console.log("subOrder?.address?.cityCode", subOrder?.address?.city.CityCode)
             console.log("destinationCity", destinationCity)
 
             let subOrderCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity);
