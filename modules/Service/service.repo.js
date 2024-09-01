@@ -141,7 +141,7 @@ exports.create = async (formObject) => {
             error: i18n.__("internalServerError")
         }
         const tierDetails = await getTiers(`${sellerObject.result.tier}_${sellerObject.result.type}`)
-        const serviceCount = await this.count({ seller: formObject.seller })
+        const serviceCount = await this.count({ seller: formObject.seller, isActive: true })
         if (serviceCount.result >= parseInt(tierDetails.numberOfItems)) return {
             success: false,
             code: 500,
@@ -326,6 +326,7 @@ exports.remove = async (_id) => {
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
         shop: formObject.shop,
+        isActive: true,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     })
 

@@ -108,6 +108,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 }
 
+
 exports.count = async (filterObject, sortObject) => {
     try {
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
@@ -408,7 +409,8 @@ exports.remove = async (_id) => {
 
 exports.isObjectUnique = async (formObject) => {
     const duplicateObject = await this.find({
-        seller: formObject.seller
+        seller: formObject.seller,
+        isActive: true
     })
 
     if (duplicateObject.success) return {

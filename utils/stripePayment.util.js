@@ -2,9 +2,68 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const paymentRepo = require("../modules/Payment/payment.repo")
 
 
-exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType, timestamp) => {
+const URLS = {
+    test: {
+        seller: {
+            web: {
+                success: "https://sonna3-seller.vercel.app/payment_succeed",
+                cancel: "https://sonna3-seller.vercel.app/payment_failed"
+            },
+            mobile: {
+                success: "https://sonna3-seller.vercel.app/mobile_payment_succeed",
+                cancel: "https://sonna3-seller.vercel.app/mobile_payment_failed"
+            }
+        },
+        customer: {
+            web: {
+                success: "https://customer-web-flame.vercel.app/payment_succeed",
+                cancel: "https://customer-web-flame.vercel.app/payment_failed"
+            },
+            mobile: {
+                success: "https://customer-web-flame.vercel.app/mobile_payment_succeed",
+                cancel: "https://customer-web-flame.vercel.app/mobile_payment_failed"
+            }
+        }
+    },
+    development: {
+        seller: {
+            web: {
+                success: "https://seller.sona3.ae/payment_succeed",
+                cancel: "https://seller.sona3.ae/payment_failed"
+            },
+            mobile: {
+                success: "https://seller.sona3.ae/mobile_payment_succeed",
+                cancel: "https://seller.sona3.ae/mobile_payment_failed"
+            }
+        },
+        customer: {
+            web: {
+                success: "https://shop.sona3.ae/payment_succeed",
+                cancel: "https://shop.sona3.ae/payment_failed"
+            },
+            mobile: {
+                success: "https://shop.sona3.ae/mobile_payment_succeed",
+                cancel: "https://shop.sona3.ae/mobile_payment_failed"
+            }
+        }
+    }
+}
+
+
+function getUrls(userType, agent = 'web') {
+    const env = process.env.CURRENT_ENV === 'test' ? 'test' : 'development'
+    const deviceType = agent === 'mobile' ? 'mobile' : 'web'
+    return URLS[env][userType][deviceType]
+}
+
+
+exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType, timestamp, agent) => {
     try {
         const cents = 100
+
+        const urls = getUrls('customer', agent)
+        const successUrl = urls.success
+        const cancelUrl = urls.cancel
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
@@ -41,11 +100,11 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
                     quantity: 1,
                 }
             ],
-            success_url: `${process.env.STRIPE_SUCCESS_URL}`,
-            cancel_url: `${process.env.STRIPE_CANCEL_URL}`
+            success_url: successUrl,
+            cancel_url: cancelUrl
         })
 
-        if (!session.id) return { success: false, code: 500, error: err.message }
+        if (!session.id) return { success: false, code: 500, error: "Failed to create session" }
 
         const paymentObject = {
             session: session.id,
@@ -68,12 +127,17 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 }
 
 
-exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, timestamp) => {
+exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, timestamp, agent) => {
     try {
         const cents = 100
         let paymentObject = {};
         if (!initialFees) initialFees = 0
         console.log("subscriptionFees in stripe", subscriptionFees)
+
+        const urls = getUrls('seller', agent)
+        const successUrl = urls.success
+        const cancelUrl = urls.cancel
+
         let sessionObject = {
             payment_method_types: ["card"],
             mode: "payment",
@@ -89,9 +153,10 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                     quantity: 1,
                 }
             ],
-            success_url: `${process.env.STRIPE_SUCCESS_URL}`,
-            cancel_url: `${process.env.STRIPE_CANCEL_URL}`
+            success_url: successUrl,
+            cancel_url: cancelUrl
         }
+
         console.log("Session Object ready")
         if (initialFees > 0) {
             sessionObject.line_items.push({
@@ -105,12 +170,11 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                 quantity: 1,
             })
             console.log("initialFees ready")
-
         }
 
         const session = await stripe.checkout.sessions.create(sessionObject)
         console.log("Session Created")
-        if (!session.id) return { success: false, code: 500, error: err.message }
+        if (!session.id) return { success: false, code: 500, error: "Failed to create session" }
 
         paymentObject = {
             session: session.id,
@@ -122,7 +186,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             orderType: "subscription",
             timestamp
         }
-        if(initialFees > 0) paymentObject["payedInitialFees"] = true
+        if (initialFees > 0) paymentObject["payedInitialFees"] = true
 
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
@@ -135,7 +199,6 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
 
 exports.refundToCustomer = async (amount, paymentIntentId, sessionId) => {
     try {
-
         // Retrieve the Checkout Session to get the payment intent ID
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
