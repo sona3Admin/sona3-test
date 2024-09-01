@@ -57,7 +57,7 @@ exports.getProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         req.body.isVerified = false
-        const operationResultObject = await productRepo.update(req.query._id, req.body);
+        const operationResultObject = await productRepo.update({ _id: req.query._id, seller: req.query.seller }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -73,7 +73,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.removeProduct = async (req, res) => {
     try {
-        const operationResultObject = await productRepo.remove(req.query._id);
+        const operationResultObject = await productRepo.remove({ _id: req.query._id, seller: req.query.seller });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);

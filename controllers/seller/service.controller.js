@@ -59,7 +59,7 @@ exports.getService = async (req, res) => {
 exports.updateService = async (req, res) => {
     try {
         req.body.isVerified = false
-        const operationResultObject = await serviceRepo.update(req.query._id, req.body);
+        const operationResultObject = await serviceRepo.update({ _id: req.query._id, seller: req.query.seller }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -75,7 +75,7 @@ exports.updateService = async (req, res) => {
 
 exports.removeService = async (req, res) => {
     try {
-        const operationResultObject = await serviceRepo.remove(req.query._id);
+        const operationResultObject = await serviceRepo.remove({ _id: req.query._id, seller: req.query.seller });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);
@@ -92,7 +92,7 @@ exports.uploadImages = async (req, res) => {
     try {
         console.log(`req.files`, req.files);
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
-        const existingObject = await serviceRepo.find({ _id: req.query._id })
+        const existingObject = await serviceRepo.find({ _id: req.query._id, seller: req.query.seller })
         let imagesArray = (existingObject.success && existingObject.result.images) ? (existingObject.result.images) : 0
         let numberOfImages = imagesArray.length + req.files.length
         if (numberOfImages > 10) return res.status(409).json({
@@ -128,10 +128,9 @@ exports.uploadImages = async (req, res) => {
 
 exports.deleteImages = async (req, res) => {
     try {
-        const { _id } = req.query;
         const { keys } = req.body;
 
-        const existingObject = await serviceRepo.find({ _id });
+        const existingObject = await serviceRepo.find({ _id: req.query._id, seller: req.query.seller });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
         const pullQuery = { $pull: { images: { key: { $in: keys } } } };

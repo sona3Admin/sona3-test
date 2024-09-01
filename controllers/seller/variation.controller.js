@@ -58,7 +58,7 @@ exports.getVariation = async (req, res) => {
 
 exports.updateVariation = async (req, res) => {
     try {
-        const operationResultObject = await variationRepo.update(req.query._id, req.body);
+        const operationResultObject = await variationRepo.update({ _id: req.query._id, seller: req.query.seller }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -74,7 +74,7 @@ exports.updateVariation = async (req, res) => {
 
 exports.removeVariation = async (req, res) => {
     try {
-        const operationResultObject = await variationRepo.remove(req.query._id);
+        const operationResultObject = await variationRepo.remove({ _id: req.query._id, seller: req.query.seller });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);
@@ -91,7 +91,7 @@ exports.uploadImages = async (req, res) => {
     try {
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
-        const existingObject = await variationRepo.find({ _id: req.query._id })
+        const existingObject = await variationRepo.find({ _id: req.query._id, seller: req.query.seller })
         let imagesArray = (existingObject.success && existingObject.result.images) ? (existingObject.result.images) : 0
         let numberOfImages = imagesArray.length + req.files.length
         if (numberOfImages > 10) return res.status(409).json({
@@ -126,10 +126,9 @@ exports.uploadImages = async (req, res) => {
 
 exports.deleteImages = async (req, res) => {
     try {
-        const { _id } = req.query;
         const { keys } = req.body;
 
-        const existingObject = await variationRepo.find({ _id });
+        const existingObject = await variationRepo.find({ _id: req.query._id, seller: req.query.seller });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
         const pullQuery = { $pull: { images: { key: { $in: keys } } } };

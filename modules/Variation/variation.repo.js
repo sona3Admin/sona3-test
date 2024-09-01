@@ -111,6 +111,12 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.create = async (formObject) => {
     try {
 
+        const productObject = await productRepo.find({ _id: formObject.product, seller: formObject.seller, shop: formObject.shop })
+        if (!productObject.success) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
         const resultObject = new variationModel(formObject);
         await resultObject.save();
         if (!resultObject) return {
@@ -143,16 +149,16 @@ exports.create = async (formObject) => {
 }
 
 
-exports.update = async (_id, formObject) => {
+exports.update = async (filterObject, formObject) => {
     try {
-        const existingObject = await this.find({ _id });
+        const existingObject = await this.find(filterObject);
         if (!existingObject.success) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         };
 
-        const resultObject = await variationModel.findByIdAndUpdate({ _id }, formObject, { new: true });
+        const resultObject = await variationModel.findByIdAndUpdate({ _id: filterObject._id }, formObject, { new: true });
 
         if (!resultObject) return {
             success: false,
@@ -164,16 +170,16 @@ exports.update = async (_id, formObject) => {
 
         if (formObject.isDefault) {
             let discountValue = resultObject.minPackage.originalPrice - resultObject.minPackage.price
-            productRepo.updateDirectly(resultObject.product, { ...productFormObject, discountValue, defaultVariation: _id })
+            productRepo.updateDirectly(resultObject.product.toString(), { ...productFormObject, discountValue, defaultVariation: _id })
         }
 
-        if (!resultObject?.isActive && formObject?.isActive) productRepo.updateDirectly(resultObject.product, { ...productFormObject, $inc: { stock: resultObject.stock } })
+        if (!resultObject?.isActive && formObject?.isActive) productRepo.updateDirectly(resultObject.product.toString(), { ...productFormObject, $inc: { stock: resultObject.stock } })
 
         if (formObject?.isActive == false) {
             let productUpdateObject = { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } }
-            let defaultVariationOfProduct = await productRepo.find({ defaultVariation: _id })
+            let defaultVariationOfProduct = await productRepo.find({ defaultVariation: filterObject._id })
             if (defaultVariationOfProduct.success) productUpdateObject.$unset = { defaultVariation: true }
-            productRepo.updateDirectly(resultObject.product, productUpdateObject)
+            productRepo.updateDirectly(resultObject.product.toString(), productUpdateObject)
         }
 
         return {
@@ -224,6 +230,7 @@ exports.updateDirectly = async (_id, formObject) => {
 
 }
 
+
 exports.removeMany = async (filterObject) => {
     try {
         const existingArray = await variationModel.find(filterObject);
@@ -234,7 +241,7 @@ exports.removeMany = async (filterObject) => {
             cartRepo.updateManyCarts(variation.shop, variation._id)
             basketRepo.updateManyCarts(variation.shop, variation._id)
         });
-        
+
         return {
             success: true,
             code: 200,
@@ -252,16 +259,17 @@ exports.removeMany = async (filterObject) => {
 
 }
 
-exports.remove = async (_id) => {
+
+exports.remove = async (filterObject) => {
     try {
-        const existingObject = await this.find({ _id });
+        const existingObject = await this.find(filterObject);
         if (!existingObject.success) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         };
 
-        const resultObject = await variationModel.findByIdAndUpdate({ _id }, { isActive: false, stock: 0 });
+        const resultObject = await variationModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false, stock: 0 });
         if (!resultObject) return {
             success: false,
             code: 500,
@@ -276,9 +284,9 @@ exports.remove = async (_id) => {
 
         productRepo.updateDirectly(resultObject.product, productUpdateObject)
 
-        wishlistRepo.updateMany({}, { $pull: { items: _id } })
-        cartRepo.updateManyCarts(resultObject.shop, _id)
-        basketRepo.updateManyCarts(resultObject.shop, _id)
+        wishlistRepo.updateMany({}, { $pull: { items: filterObject._id } })
+        cartRepo.updateManyCarts(resultObject.shop, filterObject._id)
+        basketRepo.updateManyCarts(resultObject.shop, filterObject._id)
 
         return {
             success: true,

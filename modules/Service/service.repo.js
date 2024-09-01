@@ -134,13 +134,13 @@ exports.count = async (filterObject, sortObject) => {
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        let sellerObject = await sellerRepo.find({ _id: formObject.seller })
-        if (sellerObject.result.type !== "service") return {
+        let shopObject = await shopRepo.get({ _id: formObject.shop, seller: formObject.seller })
+        if (shopObject.result.seller.type !== "service") return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         }
-        const tierDetails = await getTiers(`${sellerObject.result.tier}_${sellerObject.result.type}`)
+        const tierDetails = await getTiers(`${shopObject.result.seller.tier}_${shopObject.result.seller.type}`)
         const serviceCount = await this.count({ seller: formObject.seller, isActive: true })
         if (serviceCount.result >= parseInt(tierDetails.numberOfItems)) return {
             success: false,
@@ -179,9 +179,9 @@ exports.create = async (formObject) => {
 }
 
 
-exports.update = async (_id, formObject) => {
+exports.update = async (filterObject, formObject) => {
     try {
-        const existingObject = await this.find({ _id });
+        const existingObject = await this.find(filterObject);
         if (!existingObject.success) return {
             success: false,
             code: 404,
@@ -195,7 +195,7 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
-        const resultObject = await serviceModel.findByIdAndUpdate({ _id }, formObject, { new: true });
+        const resultObject = await serviceModel.findByIdAndUpdate({ _id: filterObject._id }, formObject, { new: true });
 
         if (!resultObject) return {
             success: false,
@@ -289,16 +289,16 @@ exports.removeMany = async (filterObject) => {
 
 }
 
-exports.remove = async (_id) => {
+exports.remove = async (filterObject) => {
     try {
-        const existingObject = await this.find({ _id });
+        const existingObject = await this.find(filterObject);
         if (!existingObject.success) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         };
 
-        const resultObject = await serviceModel.findByIdAndUpdate({ _id }, { isActive: false });
+        const resultObject = await serviceModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false });
         if (!resultObject) return {
             success: false,
             code: 500,
