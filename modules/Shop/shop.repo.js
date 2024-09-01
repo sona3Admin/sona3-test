@@ -250,10 +250,10 @@ exports.create = async (formObject) => {
 }
 
 
-exports.update = async (_id, formObject) => {
+exports.update = async (filterObject, formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        let existingObject = await this.find({ _id })
+        let existingObject = await this.find(filter)
         if (!existingObject.success) return {
             success: false,
             code: 404,
@@ -268,7 +268,7 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
-        let resultObject = await shopModel.findByIdAndUpdate({ _id }, formObject, { new: true })
+        let resultObject = await shopModel.findByIdAndUpdate({ _id: filterObject._id }, formObject, { new: true })
 
         if (!resultObject) return {
             success: false,
@@ -369,25 +369,25 @@ exports.removeMany = async (filterObject) => {
 }
 
 
-exports.remove = async (_id) => {
+exports.remove = async (filterObject) => {
     try {
-        let existingObject = await this.find({ _id })
+        let existingObject = await this.find(filterObject)
         if (!existingObject.success) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         }
 
-        let resultObject = await shopModel.findByIdAndUpdate({ _id }, { isActive: false })
+        let resultObject = await shopModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false })
 
         if (!resultObject) return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         }
-        productRepo.removeMany({ shop: _id });
-        serviceRepo.removeMany({ shop: _id });
-        couponRepo.removeMany({ shop: _id });
+        productRepo.removeMany(filterObject);
+        serviceRepo.removeMany(filterObject);
+        couponRepo.removeMany(filterObject);
 
         return {
             success: true,

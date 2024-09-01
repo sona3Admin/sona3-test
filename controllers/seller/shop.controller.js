@@ -59,7 +59,7 @@ exports.listShops = async (req, res) => {
 exports.updateShop = async (req, res) => {
     try {
         req.body.isVerified = false
-        const operationResultObject = await shopRepo.update(req.query._id, req.body);
+        const operationResultObject = await shopRepo.update({ _id: req.query._id, seller: req.query.seller }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -75,7 +75,7 @@ exports.updateShop = async (req, res) => {
 
 exports.removeShop = async (req, res) => {
     try {
-        const operationResultObject = await shopRepo.remove(req.query._id);
+        const operationResultObject = await shopRepo.remove({ _id: req.query._id, seller: req.query.seller });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);
@@ -92,7 +92,7 @@ exports.uploadImage = async (req, res) => {
     try {
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller })
         let oldImageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
 
         if (oldImageObject) await batchRepo.create({ filesToDelete: [oldImageObject.key] })
@@ -119,7 +119,7 @@ exports.uploadImage = async (req, res) => {
 
 exports.deleteImage = async (req, res) => {
     try {
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller })
         let imageObject = (existingObject.success && existingObject.result.image) ? (existingObject.result.image) : false
         if (imageObject) await batchRepo.create({ filesToDelete: [imageObject.key] })
         const operationResultObject = await shopRepo.updateDirectly(req.query._id, { $unset: { image: 1 } });
@@ -140,7 +140,7 @@ exports.uploadCovers = async (req, res) => {
     try {
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller })
         let coversArray = (existingObject.success && existingObject.result.covers) ? (existingObject.result.covers) : 0
         let numberOfCovers = coversArray.length + req.files.length
         if (numberOfCovers > 10) return res.status(409).json({
@@ -175,10 +175,9 @@ exports.uploadCovers = async (req, res) => {
 
 exports.deleteCovers = async (req, res) => {
     try {
-        const { _id } = req.query;
         const { keys } = req.body;
 
-        const existingObject = await shopRepo.find({ _id });
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
         const pullQuery = { $pull: { covers: { key: { $in: keys } } } };
@@ -206,10 +205,10 @@ exports.uploadBanners = async (req, res) => {
     try {
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller })
         let bannersArray = (existingObject.success && existingObject.result.banners) ? (existingObject.result.banners) : 0
-        let numberOfbanners = bannersArray.length + req.files.length
-        if (numberOfbanners > 10) return res.status(409).json({
+        let numberOfBanners = bannersArray.length + req.files.length
+        if (numberOfBanners > 10) return res.status(409).json({
             success: false,
             code: 409,
             error: i18n.__("limitExceeded")
@@ -236,10 +235,9 @@ exports.uploadBanners = async (req, res) => {
 
 exports.deleteBanners = async (req, res) => {
     try {
-        const { _id } = req.query;
         const { keys } = req.body;
 
-        const existingObject = await shopRepo.find({ _id });
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
         const pullQuery = { $pull: { banners: { key: { $in: keys } } } };
@@ -267,7 +265,7 @@ exports.uploadShopLicense = async (req, res) => {
     try {
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
 
-        const existingObject = await shopRepo.find({ _id: req.query._id })
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller })
         let images = (existingObject.success && existingObject.result.shopLicense) ? (existingObject.result.shopLicense) : 0
         let numberOfCovers = images.length + req.files.length
         if (numberOfCovers > 10) return res.status(409).json({
@@ -302,10 +300,9 @@ exports.uploadShopLicense = async (req, res) => {
 
 exports.deleteShopLicense = async (req, res) => {
     try {
-        const { _id } = req.query;
         const { keys } = req.body;
 
-        const existingObject = await shopRepo.find({ _id });
+        const existingObject = await shopRepo.find({ _id: req.query._id, seller: req.query.seller });
         if (!existingObject.success) return res.status(existingObject.code).json(existingObject);
 
         const pullQuery = { $pull: { shopLicense: { key: { $in: keys } } } };
