@@ -253,7 +253,7 @@ exports.create = async (formObject) => {
 exports.update = async (filterObject, formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        let existingObject = await this.find(filter)
+        let existingObject = await this.find(filterObject)
         if (!existingObject.success) return {
             success: false,
             code: 404,
