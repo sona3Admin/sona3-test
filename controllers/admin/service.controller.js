@@ -75,7 +75,7 @@ exports.getService = async (req, res) => {
 
 exports.updateService = async (req, res) => {
     try {
-        const operationResultObject = await serviceRepo.update(req.query._id, req.body);
+        const operationResultObject = await serviceRepo.update({ _id: req.query._id }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -91,7 +91,7 @@ exports.updateService = async (req, res) => {
 
 exports.removeService = async (req, res) => {
     try {
-        const operationResultObject = await serviceRepo.remove(req.query._id);
+        const operationResultObject = await serviceRepo.remove({ _id: req.query._id });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);

@@ -58,7 +58,7 @@ exports.getVariation = async (req, res) => {
 
 exports.updateVariation = async (req, res) => {
     try {
-        const operationResultObject = await variationRepo.update(req.query._id, req.body);
+        const operationResultObject = await variationRepo.update({ _id: req.query._id }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -74,7 +74,7 @@ exports.updateVariation = async (req, res) => {
 
 exports.removeVariation = async (req, res) => {
     try {
-        const operationResultObject = await variationRepo.remove(req.query._id);
+        const operationResultObject = await variationRepo.remove({ _id: req.query._id });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);

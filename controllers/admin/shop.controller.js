@@ -75,7 +75,7 @@ exports.countShops = async (req, res) => {
 
 exports.updateShop = async (req, res) => {
     try {
-        const operationResultObject = await shopRepo.update(req.query._id, req.body);
+        const operationResultObject = await shopRepo.update({ _id: req.query._id }, req.body);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -91,7 +91,7 @@ exports.updateShop = async (req, res) => {
 
 exports.removeShop = async (req, res) => {
     try {
-        const operationResultObject = await shopRepo.remove(req.query._id);
+        const operationResultObject = await shopRepo.remove({ _id: req.query._id });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
         console.log(`err.message`, err.message);
