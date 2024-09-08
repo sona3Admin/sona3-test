@@ -6,7 +6,7 @@ exports.listVariations = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
-        filterObject["isActive"] = true
+        filterObject["isDeleted"] = false
         filterObject["stock"] = { $gte: 1 }
 
         const operationResultObject = await variationRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
@@ -31,7 +31,7 @@ exports.listVariations = async (req, res) => {
 exports.getVariation = async (req, res) => {
     try {
         const filterObject = req.query;
-        filterObject["isActive"] = true
+        filterObject["isDeleted"] = false
         filterObject["stock"] = { $gte: 1 }
 
         const operationResultObject = await variationRepo.get(filterObject, {});

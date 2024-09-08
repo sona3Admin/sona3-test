@@ -89,6 +89,10 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
+            }),
+
             rating: joi.number().min(1).optional().messages({
                 "number.base": "validRating",
                 "number.min": "minRating",
@@ -214,6 +218,10 @@ module.exports = {
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
+            }),
+
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
             }),
 
             rating: joi.number().min(1).optional().messages({

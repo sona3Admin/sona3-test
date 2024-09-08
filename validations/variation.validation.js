@@ -99,8 +99,8 @@ module.exports = {
                 "boolean.base": "validIsDefault",
             }),
 
-            isActive: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
             }),
 
             creationDate: joi.date().optional().messages({
@@ -222,8 +222,8 @@ module.exports = {
                 "boolean.base": "validIsDefault",
             }),
 
-            isActive: joi.boolean().optional().messages({
-                "boolean.base": "validIsActive",
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
             }),
 
             creationDate: joi.date().optional().messages({

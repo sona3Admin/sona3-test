@@ -16,6 +16,7 @@ const customerSchema = mongoose.Schema({
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     joinDate: { type: Date },
     verifyDate: { type: Date },
     loyaltyPoints: { type: Number, default: 0, min: 0 },

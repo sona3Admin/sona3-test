@@ -8,6 +8,7 @@ const uploadedFiles = uploadImagesToMemory()
 
 app.put("/update", validator(updateCustomerValidation), customerController.updateCustomer);
 app.put("/password", validator(resetPasswordValidation), customerController.resetPassword);
+app.patch("/updateIsActive", customerController.updateCustomerBlockSate);
 app.delete("/remove", customerController.removeCustomer);
 
 app.get("/get", customerController.getCustomer);

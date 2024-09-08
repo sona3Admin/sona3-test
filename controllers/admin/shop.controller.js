@@ -89,6 +89,23 @@ exports.updateShop = async (req, res) => {
 }
 
 
+exports.updateShopBlockSate = async (req, res) => {
+    try {
+        if (!req.query.isActive) req.query.isActive = false
+        const operationResultObject = await shopRepo.updateBlockState({ _id: req.query._id }, req.query.isActive);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.removeShop = async (req, res) => {
     try {
         const operationResultObject = await shopRepo.remove({ _id: req.query._id });

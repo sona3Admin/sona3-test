@@ -9,6 +9,7 @@ const uploadedFiles = uploadImagesToMemory()
 app.post("/create", validator(createSellerValidation), sellerController.createSeller)
 app.put("/update", validator(updateSellerValidation), sellerController.updateSeller);
 app.put("/password", validator(resetPasswordValidation), sellerController.resetPassword);
+app.patch("/updateIsActive", sellerController.updateSellerBlockSate);
 app.delete("/remove", sellerController.removeSeller);
 
 app.get("/get", sellerController.getSeller);

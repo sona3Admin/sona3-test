@@ -231,10 +231,43 @@ exports.updateDirectly = async (_id, formObject) => {
 }
 
 
+exports.updateBlockState = async (filterObject, newState) => {
+    try {
+        const resultObject = await variationModel.updateMany(filterObject, { isActive: newState })
+
+        if (newState == false) {
+            const existingArray = await variationModel.find(filterObject);
+            existingArray.forEach(async (variation) => {
+                wishlistRepo.updateMany({}, { $pull: { items: variation._id } })
+                cartRepo.updateManyCarts(variation.shop, variation._id)
+                basketRepo.updateManyCarts(variation.shop, variation._id)
+            });
+
+        }
+
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.removeMany = async (filterObject) => {
     try {
         const existingArray = await variationModel.find(filterObject);
-        const resultObject = await variationModel.updateMany(filterObject, { isActive: false, stock: 0 })
+        const resultObject = await variationModel.updateMany(filterObject, { isDeleted: true, stock: 0 })
 
         existingArray.forEach(async (variation) => {
             wishlistRepo.updateMany({}, { $pull: { items: variation._id } })
@@ -269,7 +302,7 @@ exports.remove = async (filterObject) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await variationModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false, stock: 0 });
+        const resultObject = await variationModel.findByIdAndUpdate({ _id: filterObject._id }, { isDeleted: true, stock: 0 });
         if (!resultObject) return {
             success: false,
             code: 500,
@@ -303,87 +336,4 @@ exports.remove = async (filterObject) => {
         };
     }
 
-}
-
-
-exports.isObjectUninque = async (formObject) => {
-    try {
-        const similarObjects = await variationModel.find({
-            product: formObject.product,
-            quantity: formObject.quantity,
-            price: formObject.price
-        });
-
-        if (similarObjects && similarObjects.length > 0) {
-            const newVariationValues = formObject.fields.map(field => field.value);
-
-            for (const similarObject of similarObjects) {
-                const existingVariationValues = similarObject.fields.map(field => field.value);
-                if (arraysEqual(newVariationValues, existingVariationValues)) return {
-                    success: false,
-                    code: 409,
-                    error: i18n.__("variationExists"),
-                };
-
-            }
-        }
-
-        return {
-            success: true,
-            code: 200
-        };
-
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-}
-
-
-exports.isVariationUnique = async (formObject) => {
-    try {
-        const similarObjects = await variationModel.find({
-            product: formObject.product,
-            quantity: formObject.quantity,
-            price: formObject.price
-        });
-
-        if (similarObjects && similarObjects.length > 0) {
-            const newVariationValues = formObject.fields.map(field => field.value);
-
-            for (let index = 0; index < similarObjects.length; index++) {
-                const existingVariationValues = similarObjects[index].fields.map(field => field.value);
-                if (arraysEqual(newVariationValues, existingVariationValues) &&
-                    formObject._id.toString() !== similarObjects[index]._id.toString()) {
-                    return {
-                        success: false,
-                        code: 409,
-                        error: i18n.__("variationExists"),
-                    };
-                }
-            }
-        }
-
-        return {
-            success: true,
-            code: 200
-        };
-    } catch (err) {
-        console.log(`err.message`, err.message);
-        return {
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        };
-    }
-};
-
-
-function arraysEqual(firstArray, secondArray) {
-    return (firstArray.length === secondArray.length
-        && firstArray.every((value, index) => value === secondArray[index]));
 }

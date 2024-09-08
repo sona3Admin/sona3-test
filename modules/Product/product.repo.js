@@ -272,10 +272,35 @@ exports.updateMany = async (filterObject, formObject) => {
 }
 
 
+exports.updateBlockState = async (filterObject, newState) => {
+    try {
+        const existingArray = await productModel.find(filterObject);
+        const resultObject = await productModel.updateMany(filterObject, { isActive: newState })
+        existingArray.forEach(async (product) => {
+            variationRepo.updateBlockState({ product: product._id }, newState);
+        });
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.removeMany = async (filterObject) => {
     try {
         const existingArray = await productModel.find(filterObject);
-        const resultObject = await productModel.updateMany(filterObject, { isActive: false, stock: 0 })
+        const resultObject = await productModel.updateMany(filterObject, { isDeleted: true, stock: 0 })
         existingArray.forEach(async (product) => {
             variationRepo.removeMany({ product: product._id });
         });
@@ -306,7 +331,7 @@ exports.remove = async (filterObject) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await productModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false, stock: 0 });
+        const resultObject = await productModel.findByIdAndUpdate({ _id: filterObject._id }, { isDeleted: true, stock: 0 });
         if (!resultObject) return {
             success: false,
             code: 500,
@@ -335,7 +360,7 @@ exports.remove = async (filterObject) => {
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
         shop: formObject.shop,
-        isActive: true,
+        isDeleted: false,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     })
 

@@ -8,6 +8,7 @@ exports.listServices = async (req, res) => {
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
+        filterObject["isDeleted"] = false
         let operationResultObject = await serviceRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         if (operationResultObject.success) {
             operationResultObject.result = operationResultObject?.result.filter((service) => {
@@ -32,6 +33,7 @@ exports.getService = async (req, res) => {
         const filterObject = req.query;
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
+        filterObject["isDeleted"] = false
         const operationResultObject = await serviceRepo.get(filterObject, {});
         if (operationResultObject.success) {
             if (!operationResultObject.result.shop.isActive || !operationResultObject.result.shop.isVerified)

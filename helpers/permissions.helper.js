@@ -14,19 +14,19 @@ let permissionEndPoints = ["/admin/permissions/list"]
 
 
 let customerEndPoints = [
-    "/admin/customers/list", "/admin/customers/get", "/admin/customers/update", "/admin/customers/remove",
+    "/admin/customers/list", "/admin/customers/get", "/admin/customers/update", "/admin/customers/updateIsActive", "/admin/customers/remove",
     "/admin/customers/image", "/admin/customers/password"
 ]
 
 
 let sellerEndPoints = [
-    "/admin/sellers/list", "/admin/sellers/get", "/admin/sellers/create", "/admin/sellers/update", "/admin/sellers/remove",
+    "/admin/sellers/list", "/admin/sellers/get", "/admin/sellers/create", "/admin/sellers/update", "/admin/sellers/updateIsActive", "/admin/sellers/remove",
     "/admin/sellers/image", "/admin/sellers/password", "/admin/sellers/identity"
 ]
 
 
 let shopEndPoints = [
-    "/admin/shops/create", "/admin/shops/list", "/admin/shops/count", "/admin/shops/get", "/admin/shops/update", "/admin/shops/remove",
+    "/admin/shops/create", "/admin/shops/list", "/admin/shops/count", "/admin/shops/get", "/admin/shops/update", "/admin/shops/updateIsActive", "/admin/shops/remove",
     "/admin/shops/image", "/admin/shops/cover"
 ]
 
@@ -56,7 +56,7 @@ let formEndPoints = [
 
 
 let productEndPoints = [
-    "/admin/products/create", "/admin/products/update", "/admin/products/remove",
+    "/admin/products/create", "/admin/products/update", "/admin/products/updateIsActive", "/admin/products/remove",
     "/admin/products/list", "/admin/products/count", "/admin/products/get", "/admin/products/export"
 ]
 
@@ -68,7 +68,7 @@ let variationEndPoints = [
 
 
 let serviceEndPoints = [
-    "/admin/services/create", "/admin/services/update", "/admin/services/remove",
+    "/admin/services/create", "/admin/services/update", "/admin/services/updateIsActive", "/admin/services/remove",
     "/admin/services/list", "/admin/services/count", "/admin/services/get", "/admin/services/image"
 ]
 

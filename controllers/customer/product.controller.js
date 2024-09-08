@@ -8,6 +8,7 @@ exports.listProducts = async (req, res) => {
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
+        filterObject["isDeleted"] = false
         filterObject["defaultVariation"] = { $exists: true }
         filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
 
@@ -37,6 +38,7 @@ exports.getProduct = async (req, res) => {
         const filterObject = req.query;
         filterObject["isActive"] = true
         filterObject["isVerified"] = true
+        filterObject["isDeleted"] = false
         filterObject["defaultVariation"] = { $exists: true }
         filterObject.$expr = { $gt: [{ $size: '$variations' }, 0] }
         const operationResultObject = await productRepo.get(filterObject, {});

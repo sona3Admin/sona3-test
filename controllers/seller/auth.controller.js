@@ -54,7 +54,9 @@ exports.login = async (req, res) => {
         if (!operationResultObject.result.isEmailVerified ||
             !operationResultObject.result.isPhoneVerified ||
             !operationResultObject.result.isVerified ||
-            !operationResultObject.result.isActive) {
+            !operationResultObject.result.isActive ||
+            operationResultObject.result.isDeleted
+        ) {
             payloadObject.tokenType = "temp"
             const token = jwtHelper.generateToken(payloadObject, "1d")
             sellerRepo.updateDirectly(operationResultObject.result._id, { token })
@@ -89,7 +91,12 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
 
         if (operationResultObject.success &&
-            (!operationResultObject.result.isVerified || !operationResultObject.result.isActive)
+            (!operationResultObject.result.isEmailVerified ||
+                !operationResultObject.result.isPhoneVerified ||
+                !operationResultObject.result.isVerified ||
+                !operationResultObject.result.isActive ||
+                operationResultObject.result.isDeleted
+            )
         ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
 
         if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create(sellerObject)
@@ -130,7 +137,12 @@ exports.authenticateByAppleAccount = async (req, res) => {
         let operationResultObject = await sellerRepo.find({ email: req.body.email })
 
         if (operationResultObject.success &&
-            (!operationResultObject.result.isVerified || !operationResultObject.result.isActive)
+            (!operationResultObject.result.isEmailVerified ||
+                !operationResultObject.result.isPhoneVerified ||
+                !operationResultObject.result.isVerified ||
+                !operationResultObject.result.isActive ||
+                operationResultObject.result.isDeleted
+            )
         ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
 
         if (operationResultObject.code == 404) operationResultObject = await sellerRepo.create(sellerObject)

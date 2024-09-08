@@ -58,6 +58,11 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
+            }),
+
             session: joi.object().optional().messages({
                 "object.base": "validSession",
             }),
@@ -142,6 +147,11 @@ module.exports = {
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
+            }),
+
+
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
             }),
 
             session: joi.object().optional().messages({

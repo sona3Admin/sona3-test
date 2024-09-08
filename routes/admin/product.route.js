@@ -5,6 +5,7 @@ const validator = require("../../helpers/validation.helper")
 
 app.post("/create", validator(createProductValidation), productController.createProduct);
 app.put("/update", validator(updateProductValidation), productController.updateProduct);
+app.patch("/updateIsActive", productController.updateProductBlockSate);
 app.delete("/remove", productController.removeProduct);
 
 app.get("/list", productController.listProducts);

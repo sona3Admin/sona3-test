@@ -87,6 +87,11 @@ module.exports = {
             }),
 
 
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
+            }),
+
+
             isFood: joi.boolean().required().messages({
                 "boolean.base": "validIsFood",
                 "any.required": "validIsFood",
@@ -193,6 +198,11 @@ module.exports = {
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
+            }),
+
+
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
             }),
 
 

@@ -24,6 +24,7 @@ exports.createShop = async (req, res) => {
 exports.getShop = async (req, res) => {
     try {
         const filterObject = req.query;
+        filterObject["isDeleted"] = false
         const operationResultObject = await shopRepo.get(filterObject, {});
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -41,6 +42,7 @@ exports.getShop = async (req, res) => {
 exports.listShops = async (req, res) => {
     try {
         const filterObject = req.query;
+        filterObject["isDeleted"] = false
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await shopRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);

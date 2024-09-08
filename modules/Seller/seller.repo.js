@@ -245,7 +245,7 @@ exports.remove = async (_id) => {
             error: i18n.__("notFound")
         }
 
-        let resultObject = await sellerModel.findByIdAndUpdate({ _id }, { isActive: false })
+        let resultObject = await sellerModel.findByIdAndUpdate({ _id }, { isDeleted: true })
 
         if (!resultObject) return {
             success: false,
@@ -253,6 +253,42 @@ exports.remove = async (_id) => {
             error: i18n.__("internalServerError")
         }
         shopRepo.removeMany({ seller: _id });
+
+        return {
+            success: true,
+            code: 200,
+            result: { message: i18n.__("recordDeleted") }
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
+exports.updateBlockState = async (_id, newState) => {
+    try {
+        let existingObject = await this.find({ _id })
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        let resultObject = await sellerModel.findByIdAndUpdate({ _id }, { isActive: newState })
+
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+        shopRepo.updateBlockState({ seller: _id }, newState);
 
         return {
             success: true,
@@ -353,6 +389,7 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
+        isDeleted: false,
         $or: [
             { email: formObject.email },
             { userName: formObject.userName }
@@ -384,7 +421,7 @@ exports.isObjectUninque = async (formObject) => {
 exports.isEmailUnique = async (formObject, existingObject) => {
 
     if (formObject.email !== existingObject.result.email) {
-        const duplicateObject = await this.find({ email: formObject.email })
+        const duplicateObject = await this.find({ email: formObject.email, isDeleted: false })
         if (duplicateObject.success &&
             duplicateObject.result._id.toString() !== existingObject.result._id.toString()) return {
                 success: false,
@@ -402,7 +439,7 @@ exports.isEmailUnique = async (formObject, existingObject) => {
 
 exports.isNameUnique = async (formObject, existingObject) => {
 
-    const duplicateObject = await this.find({ userName: formObject.userName });
+    const duplicateObject = await this.find({ userName: formObject.userName, isDeleted: false });
 
     if (duplicateObject.success &&
         duplicateObject.result._id.toString() !== existingObject.result._id.toString()) {

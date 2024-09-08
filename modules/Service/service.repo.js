@@ -270,7 +270,7 @@ exports.updateMany = async (filterObject, formObject) => {
 
 exports.removeMany = async (filterObject) => {
     try {
-        const resultObject = await serviceModel.updateMany(filterObject, { isActive: false });
+        const resultObject = await serviceModel.updateMany(filterObject, { isDeleted: true });
         console.log(resultObject);
         return {
             success: true,
@@ -298,7 +298,7 @@ exports.remove = async (filterObject) => {
             error: i18n.__("notFound")
         };
 
-        const resultObject = await serviceModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false });
+        const resultObject = await serviceModel.findByIdAndUpdate({ _id: filterObject._id }, { isDeleted: true });
         if (!resultObject) return {
             success: false,
             code: 500,
@@ -326,7 +326,7 @@ exports.remove = async (filterObject) => {
 exports.isObjectUninque = async (formObject) => {
     const duplicateObject = await this.find({
         shop: formObject.shop,
-        isActive: true,
+        isDeleted: false,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     })
 
@@ -350,6 +350,7 @@ exports.isNameUnique = async (formObject, existingObject) => {
 
     const duplicateObject = await this.find({
         shop: formObject.shop,
+        isDeleted: false,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     });
 

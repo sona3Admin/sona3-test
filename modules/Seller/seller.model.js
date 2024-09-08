@@ -19,7 +19,8 @@ const sellerSchema = mongoose.Schema({
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-
+    isDeleted: { type: Boolean, default: false },
+    
     type: { type: String, enum: ["product", "service"], default: "product" },
     tier: { type: String, enum: ["basic", "pro", "advanced", "lifetime"], default: "basic" },
     tierDuration: { type: String, enum: ["month", "year"], default: "month" },

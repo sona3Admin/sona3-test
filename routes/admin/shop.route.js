@@ -9,6 +9,7 @@ const uploadedFiles = uploadImagesToMemory()
 
 app.post("/create", validator(createShopValidation), shopController.createShop);
 app.put("/update", validator(updateShopValidation), shopController.updateShop);
+app.patch("/updateIsActive", shopController.updateShopBlockSate);
 app.delete("/remove", shopController.removeShop);
 
 app.get("/get", shopController.getShop);

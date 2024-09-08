@@ -229,7 +229,7 @@ exports.remove = async (_id) => {
             error: i18n.__("notFound")
         }
 
-        const resultObject = await customerModel.findByIdAndUpdate({ _id }, { isActive: false })
+        const resultObject = await customerModel.findByIdAndUpdate({ _id }, { isDeleted: true })
 
         if (!resultObject) return {
             success: false,
@@ -330,7 +330,7 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 
 
 exports.isObjectUnique = async (formObject) => {
-    const duplicateObject = await this.find({ email: formObject.email })
+    const duplicateObject = await this.find({ email: formObject.email, isDeleted: false })
 
     if (duplicateObject.success) {
         if (duplicateObject.result.email == formObject.email) return {
@@ -350,7 +350,7 @@ exports.isObjectUnique = async (formObject) => {
 exports.isEmailUnique = async (formObject, existingObject) => {
 
     if (formObject.email !== existingObject.result.email) {
-        const duplicateObject = await this.find({ email: formObject.email })
+        const duplicateObject = await this.find({ email: formObject.email, isDeleted: false })
         if (duplicateObject.success &&
             duplicateObject.result._id.toString() !== existingObject.result._id.toString()) return {
                 success: false,

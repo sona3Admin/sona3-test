@@ -69,6 +69,11 @@ module.exports = {
                 "boolean.base": "validIsActive",
             }),
 
+
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
+            }),
+
             isSubscribed: joi.boolean().optional().messages({
                 "boolean.base": "validIsSubscribed",
             }),
@@ -186,6 +191,11 @@ module.exports = {
 
             isActive: joi.boolean().optional().messages({
                 "boolean.base": "validIsActive",
+            }),
+
+
+            isDeleted: joi.boolean().optional().messages({
+                "boolean.base": "validIsDeleted",
             }),
 
             isSubscribed: joi.boolean().optional().messages({

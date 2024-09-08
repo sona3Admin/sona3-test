@@ -55,6 +55,23 @@ exports.updateCustomer = async (req, res) => {
 }
 
 
+exports.updateCustomerBlockSate = async (req, res) => {
+    try {
+        if (!req.query.isActive) req.query.isActive = false
+        const operationResultObject = await customerRepo.update(req.query._id , { isActive: req.query.isActive });
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
 exports.removeCustomer = async (req, res) => {
     try {
         const operationResultObject = await customerRepo.remove(req.query._id);

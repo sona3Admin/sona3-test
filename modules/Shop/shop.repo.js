@@ -345,7 +345,7 @@ exports.updateMany = async (filterObject, formObject) => {
 exports.removeMany = async (filterObject) => {
     try {
         const existingArray = await shopModel.find(filterObject);
-        const resultObject = await shopModel.updateMany(filterObject, { isActive: false })
+        const resultObject = await shopModel.updateMany(filterObject, { isDeleted: true })
         existingArray.forEach(async (shop) => {
             productRepo.removeMany({ shop: shop._id });
             serviceRepo.removeMany({ shop: shop._id });
@@ -378,7 +378,7 @@ exports.remove = async (filterObject) => {
             error: i18n.__("notFound")
         }
 
-        let resultObject = await shopModel.findByIdAndUpdate({ _id: filterObject._id }, { isActive: false })
+        let resultObject = await shopModel.findByIdAndUpdate({ _id: filterObject._id }, { isDeleted: true })
 
         if (!resultObject) return {
             success: false,
@@ -407,10 +407,37 @@ exports.remove = async (filterObject) => {
 }
 
 
+exports.updateBlockState = async (filterObject, newState) => {
+    try {
+        const existingArray = await shopModel.find(filterObject);
+        const resultObject = await shopModel.updateMany(filterObject, { isActive: newState })
+        existingArray.forEach(async (shop) => {
+            productRepo.updateBlockState({ shop: shop._id }, newState);
+            serviceRepo.updateMany({ shop: shop._id }, { isActive: newState });
+            couponRepo.removeMany({ shop: shop._id }, newState);
+        });
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.isObjectUnique = async (formObject) => {
     const duplicateObject = await this.find({
         seller: formObject.seller,
-        isActive: true
+        isDeleted: false
     })
 
     if (duplicateObject.success) return {
@@ -431,6 +458,7 @@ exports.isNameUnique = async (formObject, existingObject) => {
 
     const duplicateObject = await this.find({
         seller: formObject.seller,
+        isDeleted: false,
         $or: [{ nameEn: formObject.nameEn }, { nameAr: formObject.nameAr }]
     });
 

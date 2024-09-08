@@ -43,7 +43,13 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         let customerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         let operationResultObject = await customerRepo.find({ email: req.body.email })
 
-        if (operationResultObject.success && !operationResultObject.result.isActive) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
+        if (operationResultObject.success &&
+            (!operationResultObject.result.isEmailVerified ||
+                !operationResultObject.result.isPhoneVerified ||
+                !operationResultObject.result.isActive ||
+                operationResultObject.result.isDeleted
+            )
+        ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
 
         if (operationResultObject.code == 404) operationResultObject = await customerRepo.create(customerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
@@ -85,7 +91,13 @@ exports.authenticateByAppleAccount = async (req, res) => {
 
         let operationResultObject = await customerRepo.find({ email: req.body.email })
 
-        if (operationResultObject.success && !operationResultObject.result.isActive) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
+        if (operationResultObject.success &&
+            (!operationResultObject.result.isEmailVerified ||
+                !operationResultObject.result.isPhoneVerified ||
+                !operationResultObject.result.isActive ||
+                operationResultObject.result.isDeleted
+            )
+        ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
 
         if (operationResultObject.code == 404) operationResultObject = await customerRepo.create(customerObject)
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
@@ -130,9 +142,13 @@ exports.login = async (req, res) => {
             role: "customer"
         }
 
-        if (!operationResultObject.result.isEmailVerified ||
-            !operationResultObject.result.isPhoneVerified ||
-            !operationResultObject.result.isActive) {
+        if (operationResultObject.success &&
+            (!operationResultObject.result.isActive || operationResultObject.result.isDeleted)
+        ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
+
+        if (operationResultObject.success && 
+            (!operationResultObject.result.isEmailVerified || !operationResultObject.result.isPhoneVerified)
+        ) {
             payloadObject.tokenType = "temp"
             const token = jwtHelper.generateToken(payloadObject, "1d")
             customerRepo.updateDirectly(operationResultObject.result._id, { token })

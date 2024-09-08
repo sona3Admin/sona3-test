@@ -20,7 +20,8 @@ const serviceSchema = mongoose.Schema({
     reviewCount: { type: Number, min: 0, default: 0 },
 
     isVerified: { type: Boolean, default: false },
-    isActive: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     creationDate: { type: Date },
     verifyDate: { type: Date },
     lastUpdateDate: { type: Date },

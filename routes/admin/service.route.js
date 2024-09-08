@@ -12,6 +12,7 @@ app.get("/get", serviceController.getService);
 
 app.post("/create", validator(createServiceValidation), serviceController.createService);
 app.put("/update", validator(updateServiceValidation), serviceController.updateService);
+app.patch("/updateIsActive", serviceController.updateServiceBlockSate);
 app.delete("/remove", serviceController.removeService);
 
 app.post("/image", uploadedFiles.array('images', 10), serviceController.uploadImages)
