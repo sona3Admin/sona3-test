@@ -337,7 +337,7 @@ exports.remove = async (filterObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         };
-        variationRepo.removeMany({ product: _id });
+        variationRepo.removeMany({ product: filterObject._id });
 
         return {
             success: true,
