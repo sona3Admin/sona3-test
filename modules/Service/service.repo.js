@@ -141,7 +141,7 @@ exports.create = async (formObject) => {
             error: i18n.__("internalServerError")
         }
         const tierDetails = await getTiers(`${shopObject.result.seller.tier}_${shopObject.result.seller.type}`)
-        const serviceCount = await this.count({ seller: formObject.seller, isActive: true })
+        const serviceCount = await this.count({ seller: formObject.seller, isDeleted: false })
         if (serviceCount.result >= parseInt(tierDetails.numberOfItems)) return {
             success: false,
             code: 500,

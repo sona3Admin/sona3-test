@@ -312,7 +312,7 @@ exports.remove = async (filterObject) => {
         let productUpdateObject = { $pull: { variations: resultObject._id, $inc: { stock: -(resultObject.stock) } } }
 
 
-        let defaultVariationOfProduct = await productRepo.find({ defaultVariation: _id })
+        let defaultVariationOfProduct = await productRepo.find({ defaultVariation: filterObject._id })
         if (defaultVariationOfProduct.success) productUpdateObject.$unset = { defaultVariation: true }
 
         productRepo.updateDirectly(resultObject.product, productUpdateObject)
