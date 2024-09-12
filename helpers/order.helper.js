@@ -1,4 +1,4 @@
-const { getSettings } = require("./settings.helper")
+const { getSettings, listSettings } = require("./settings.helper")
 const customerRepo = require("../modules/Customer/customer.repo")
 const { findObjectInArray, generateSubCartId } = require("./cart.helper")
 
@@ -117,7 +117,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject, is
         customerOrderObject.cartOriginalTotal = parseFloat(customerCartObject.cartOriginalTotal)
         customerOrderObject.coupon = customerCartObject?.coupon || undefined
         customerOrderObject.usedCashback = parseInt(customerCartObject?.usedCashback) || 0
-        customerOrderObject.taxesRate = parseFloat(getSettings("vatRate"))
+        customerOrderObject.taxesRate = parseFloat(await getSettings("vatRate"))
         customerOrderObject.taxesTotal = 0
         customerOrderObject.shippingFeesTotal = 0
         customerOrderObject.name = customerCartObject.customer.name
@@ -162,10 +162,11 @@ exports.handleReverseOrderCreation = (orderObject, subOrderId) => {
 
 exports.calculateCashback = async (customerCartObject) => {
     try {
-        const cashbackPercentage = await getSettings('cashbackPercentage');
+        const settings = await listSettings();
+        const cashbackPercentage = settings.result.cashbackPercentage
         console.log("cashbackPercentage", cashbackPercentage)
 
-        const cashbackThreshold = await getSettings('cashbackThreshold');
+        const cashbackThreshold = settings.result.cashbackThreshold
         console.log("cashbackThreshold", cashbackThreshold)
 
         const orderTotal = parseInt(customerCartObject?.cartOriginalTotal);

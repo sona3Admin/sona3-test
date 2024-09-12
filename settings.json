@@ -6,9 +6,6 @@
     "vatRate": 10,
     "cashbackPercentage": 1,
     "cashbackThreshold": 1000,
-    "adminsRoomId": "Sona3AdminsRoom",
-    "customersRoomId": "Sona3CustomersRoom",
-    "sellersRoomId": "Sona3SellersRoom",
     "ifastToken": "zzPaGgDsJsJHCV5VXiuUop46JmTvY-EXRzeC2Wrqq836UvmJzd3mtDgpc44Gdq60ZSIvYzLPGk8sC6UawxY72v-QYuMcE_Uq_ckUPMRgwLcWcouRX2MFYcGy9OkHzAnJwNZ6X6TTgOksbU2bMlODhFGsFR-SmKp6ryJBSMUgfkSpz4YmQSgrm7vadbMNjkfUP5_ZBG5IvfS7cT7fi_l-vkZW_jA0VcOKUrlTqknkTgXMlN9DPbMCCOEbBje48sjo1bvMYShJP3xnNuvd3ohxgBTQRBfOaqLfWqDdy0acMo-UN3M_f8_yIGFr2y3oHUCnja9fAk5ZKMjvGmnMgS0sIuf1f5TbpTxnJwfo7unGZ3s",
     "tokenExpiry": 1723440138084
 }

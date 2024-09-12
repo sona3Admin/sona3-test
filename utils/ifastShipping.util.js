@@ -3,7 +3,7 @@ const qs = require('qs');
 const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
-const { getSettings, setSettings } = require("../helpers/settings.helper")
+const { getSettings, setSettings, listSettings } = require("../helpers/settings.helper")
 const { processPDFContent } = require("../helpers/convertToFile.helper")
 const s3StorageHelper = require("./s3FileStorage.util")
 
@@ -24,8 +24,9 @@ const authData = {
 
 exports.getAuthToken = async () => {
     try {
-        let ifastToken = getSettings("ifastToken") || null;
-        let tokenExpiry = getSettings("tokenExpiry") || null;
+        const settings = await listSettings()
+        let ifastToken = settings.result.ifastToken || null;
+        let tokenExpiry = settings.result.tokenExpiry || null;
 
         if (!ifastToken || !tokenExpiry || Date.now() >= tokenExpiry) {
             console.log("Ifast Token Expired or Not Found!")
@@ -58,7 +59,7 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
 
         let ifastToken = response.data.access_token;
         let tokenExpiry = Date.now() + response.data.expires_in * 1000;
-        let newSettings = setSettings({ ifastToken, tokenExpiry })
+        let newSettings = await setSettings({ ifastToken, tokenExpiry })
 
         console.log('New Token Acquired from Ifast');
         return {

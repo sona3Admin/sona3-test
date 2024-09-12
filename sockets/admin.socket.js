@@ -1,8 +1,10 @@
 const notificationHelper = require("../helpers/notification.helper")
 const notificationRepo = require("../modules/Notification/notification.repo")
-const { getSettings } = require("../helpers/settings.helper")
 const { createNotificationValidation } = require("../validations/notification.validation")
 const { socketValidator } = require("../helpers/socketValidation.helper")
+const ADMIN_ROOM_ID = "Sona3AdminsRoom"
+const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
+const SELLER_ROOM_ID = "Sona3SellersRoom"
 
 
 exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) => {
@@ -12,7 +14,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (!sendAck) return socket.disconnect(true)
             if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
-            const adminsRoomId = getSettings("adminsRoomId")
+            const adminsRoomId = ADMIN_ROOM_ID
             socket.join(adminsRoomId.toString())
             return sendAck({ success: true, code: 200 })
         } catch (err) {
@@ -66,7 +68,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (dataObject.toAll) io.emit("newNotification", { success: true, code: 201, result: resultObject.result })
 
             if (dataObject.toAllCustomers) {
-                const customersRoomId = getSettings("customersRoomId")
+                const customersRoomId = CUSTOMER_ROOM_ID
                 io.to(customersRoomId.toString()).emit("newNotification", {
                     success: true,
                     code: 201,
@@ -75,7 +77,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             }
 
             if (dataObject.toAllSellers) {
-                const sellersRoomId = getSettings("sellersRoomId")
+                const sellersRoomId = SELLER_ROOM_ID
                 io.to(sellersRoomId.toString()).emit("newNotification", {
                     success: true,
                     code: 201,

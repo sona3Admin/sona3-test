@@ -7,8 +7,10 @@ const productRepo = require("../modules/Product/product.repo")
 const variationRepo = require("../modules/Variation/variation.repo")
 const shopRepo = require("../modules/Shop/shop.repo")
 const sellerRepo = require("../modules/Seller/seller.repo")
-const { getSettings } = require("../helpers/settings.helper")
 
+const ADMIN_ROOM_ID = "Sona3AdminsRoom"
+const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
+const SELLER_ROOM_ID = "Sona3SellersRoom"
 
 exports.notificationSocketHandler = (socket, io, socketId, localeMessages, language) => {
 
@@ -17,7 +19,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (!sendAck) return socket.disconnect(true)
             if (socket.socketTokenData.role != "customer")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
-            const customersRoomId = getSettings("customersRoomId")
+            const customersRoomId = CUSTOMER_ROOM_ID
             socket.join(customersRoomId.toString())
             return sendAck({ success: true, code: 200 })
         } catch (err) {
@@ -32,7 +34,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (!sendAck) return socket.disconnect(true)
             if (socket.socketTokenData.role != "seller")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
-            const sellersRoomId = getSettings("sellersRoomId")
+            const sellersRoomId = SELLER_ROOM_ID
             socket.join(sellersRoomId.toString())
             return sendAck({ success: true, code: 200 })
         } catch (err) {
@@ -372,7 +374,7 @@ async function handleCreationBySeller(sender, dataObject, localeMessages) {
             code: 200,
             success: true,
             notificationObject: notificationObject,
-            receivers: [getSettings("adminsRoomId").toString()]
+            receivers: [ADMIN_ROOM_ID]
         }
 
     } catch (err) {
@@ -517,7 +519,7 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
             code: 200,
             success: true,
             notificationObject: notificationObject,
-            receivers: [getSettings("adminsRoomId").toString()]
+            receivers: [ADMIN_ROOM_ID]
         }
 
     } catch (err) {

@@ -1,9 +1,11 @@
 const roomRepo = require("../modules/Room/room.repo")
 const notificationHelper = require("../helpers/notification.helper")
 const notificationRepo = require("../modules/Notification/notification.repo")
-const { getSettings } = require("../helpers/settings.helper")
 const { sendMessageValidation } = require("../validations/room.validation")
 const { socketValidator } = require("../helpers/socketValidation.helper")
+const ADMIN_ROOM_ID = "Sona3AdminsRoom"
+const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
+const SELLER_ROOM_ID = "Sona3SellersRoom"
 
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => {
@@ -88,11 +90,11 @@ async function sendMessageNotification(io, roomObject, messageObject) {
         console.log("Sending notification");
         let sender = {}, receiver = {}, notificationObject = {}, textFile = {}, receiverRole
 
-        let adminsRoomId = { _id: getSettings("adminsRoomId") }
+        let adminsRoomId = { _id: ADMIN_ROOM_ID }
 
         if (messageObject.admin) {
             sender["name"] = "Sona3"
-            sender["_id"] = getSettings("adminsRoomId")
+            sender["_id"] = ADMIN_ROOM_ID
 
             notificationObject.admin = messageObject.admin
             receiver = roomObject?.seller ? roomObject.seller : roomObject?.customer

@@ -2,8 +2,8 @@ const { getSettings } = require("./settings.helper")
 const { generateSubCartId } = require("./cart.helper")
 
 
-exports.calculateValueAddedTax = (serviceTotal) => {
-    let vatRateNumber = parseFloat(getSettings("vatRate"))
+exports.calculateValueAddedTax = async (serviceTotal) => {
+    let vatRateNumber = parseFloat(await getSettings("vatRate"))
     const vatValue = parseFloat(vatRateNumber / 100)
     if (typeof vatRateNumber !== 'number' || vatRateNumber < 0 || typeof vatValue !== 'number') return 'Invalid input. Please provide a valid array of items and a non-negative VAT rate.'
 
@@ -21,7 +21,7 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
         customerRequestObject.name = customerRequestObject.customer.name
         customerRequestObject.phone = customerRequestObject.customer.phone
         customerRequestObject.taxesTotal = this.calculateValueAddedTax(customerRequestObject.serviceTotal)
-        customerRequestObject.taxesRate = parseFloat(getSettings("vatRate"))
+        customerRequestObject.taxesRate = parseFloat(await getSettings("vatRate"))
         customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal)
         customerRequestObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
         console.log("customerRequestObject.paymentMethod", customerRequestObject.paymentMethod)
