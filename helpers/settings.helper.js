@@ -1,65 +1,86 @@
-const path = require('path');
-const fs = require('fs');
-let settingsFile = path.join(__dirname, '../settings.json');
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+
+// Ensure AWS credentials are set
+AWS.config.update({
+    accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY,
+    region: process.env.BUCKETEER_AWS_REGION
+});
+
+const BUCKET_NAME = process.env.BUCKETEER_BUCKET_NAME;
+const SETTINGS_KEY = 'settings.json';
 
 
-exports.getSettings = (key) => {
+exports.getSettings = async (key) => {
     try {
-        const data = fs.readFileSync(settingsFile);
-        const settings = JSON.parse(data);
-        return (key ? settings[key] : settings);
-    } catch (err) {
-        console.error('Error reading settings file:', err.message);
-        return null;
-    }
-}
-
-
-exports.setSettings = (newSettings) => {
-    try {
-        const data = fs.readFileSync(settingsFile);
-        let settings = JSON.parse(data);
-        for (let key in newSettings) {
-            if (settings.hasOwnProperty(key)) settings[key] = newSettings[key];
-            else settings[key] = newSettings[key];
-        }
-
-        fs.writeFileSync(settingsFile, JSON.stringify(settings));
-        return {
-            code: 200,
-            result: settings,
-            success: true
+        const params = {
+            Bucket: BUCKET_NAME,
+            Key: SETTINGS_KEY
         };
 
+        const data = await s3.getObject(params).promise();
+        const settings = JSON.parse(data.Body.toString());
+        return (key ? settings[key] : settings);
     } catch (err) {
-        console.log('Error setting settings file:', err);
+        console.error('Error reading settings from S3:', err.message);
+        return null;
+    }
+};
+
+
+exports.setSettings = async (newSettings) => {
+    try {
+        // First, get the current settings
+        const currentSettings = await this.getSettings();
+        console.log("currentSettings", currentSettings)
+        // Merge the new settings with the current settings
+        for (const key in newSettings) {
+            if (currentSettings.hasOwnProperty(key)) {
+              currentSettings[key] = newSettings[key];
+            }
+          }
+
+        const params = {
+            Bucket: BUCKET_NAME,
+            Key: SETTINGS_KEY,
+            Body: JSON.stringify(currentSettings),
+            ContentType: 'application/json'
+        };
+
+        await s3.putObject(params).promise();
+
+        return {
+            code: 200,
+            result: currentSettings,
+            success: true
+        };
+    } catch (err) {
+        console.log('Error setting settings in S3:', err);
         return {
             code: 500,
             error: err.message,
             success: false
         };
     }
-}
+};
 
 
 exports.listSettings = async () => {
     try {
-        const data = fs.readFileSync(settingsFile);
-        const settings = JSON.parse(data);
-        console.log("settings", settings)
+        const settings = await this.getSettings();
+        console.log("settings", settings);
         return {
             code: 200,
             result: settings,
             success: true
         };
-
     } catch (err) {
-        console.log('Error reading settings file:', err);
+        console.log('Error reading settings from S3:', err);
         return {
             code: 500,
             error: err.message,
             success: false
         };
     }
-}
-
+};
