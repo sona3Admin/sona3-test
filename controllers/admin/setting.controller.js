@@ -6,6 +6,7 @@ const i18n = require('i18n');
 exports.listSettings = async (req, res) => {
     try {
         const operationResultObject = await settingsRepo.listSettings()
+        console.log("operationResultObject", operationResultObject.result)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

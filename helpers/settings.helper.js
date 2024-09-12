@@ -46,6 +46,7 @@ exports.listSettings = async () => {
     try {
         const data = fs.readFileSync(settingsFile);
         const settings = JSON.parse(data);
+        console.log("settings", settings)
         return {
             code: 200,
             result: settings,
