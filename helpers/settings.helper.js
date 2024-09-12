@@ -1,7 +1,6 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 
-// Ensure AWS credentials are set
 AWS.config.update({
     accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY,
@@ -31,10 +30,8 @@ exports.getSettings = async (key) => {
 
 exports.setSettings = async (newSettings) => {
     try {
-        // First, get the current settings
         const currentSettings = await this.getSettings();
-        console.log("currentSettings", currentSettings)
-        // Merge the new settings with the current settings
+        // console.log("currentSettings", currentSettings)
         for (const key in newSettings) {
             if (currentSettings.hasOwnProperty(key)) {
               currentSettings[key] = newSettings[key];
@@ -69,7 +66,6 @@ exports.setSettings = async (newSettings) => {
 exports.listSettings = async () => {
     try {
         const settings = await this.getSettings();
-        console.log("settings", settings);
         return {
             code: 200,
             result: settings,
