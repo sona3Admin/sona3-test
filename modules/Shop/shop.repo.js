@@ -385,9 +385,9 @@ exports.remove = async (filterObject) => {
             code: 500,
             error: i18n.__("internalServerError")
         }
-        productRepo.removeMany(filterObject);
-        serviceRepo.removeMany(filterObject);
-        couponRepo.removeMany(filterObject);
+        productRepo.removeMany({ shop: filterObject._id });
+        serviceRepo.removeMany({ shop: filterObject._id });
+        couponRepo.removeMany({ shop: filterObject._id });
 
         return {
             success: true,

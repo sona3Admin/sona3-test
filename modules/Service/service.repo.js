@@ -271,7 +271,6 @@ exports.updateMany = async (filterObject, formObject) => {
 exports.removeMany = async (filterObject) => {
     try {
         const resultObject = await serviceModel.updateMany(filterObject, { isDeleted: true });
-        console.log(resultObject);
         return {
             success: true,
             code: 200,
