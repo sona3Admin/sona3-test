@@ -1,34 +1,35 @@
-const { SendMailClient } = require("zeptomail");
+const nodemailer = require('nodemailer');
 
-exports.sendEmail = async (receiver, subject, text, html) => {
-  const url = "api.zeptomail.com/";
-  const token = "Zoho-enczapikey wSsVR60j+B+lCPx8zzysde4wylpcBln+QBh/3Qfw73T0HfjL9Mc8n0PKDQTySvQeGWZuE2MQpu8tnxkC22Vcj4t8zAwIXiiF9mqRe1U4J3x17qnvhDzNWmlUlhqOJYoLwgVqkmVmG8gh+g==";
+// Replace with your SMTP configuration
+const transporter = nodemailer.createTransport({
+  host: "smtp.zeptomail.com",
+  port: 587,
+  auth: {
+    user: "emailapikey",
+    pass: "wSsVR610+hLwXfsrnGGqJ7xpzVtSBg6iR0t52QOp43KvGa3L8sdtw0DKVgHyHPdKRGI/HDZG8L8rnRwJhmJc2owrmFkBWSiF9mqRe1U4J3x17qnvhDzIX21VkBuNKI0AwgRpmWNgFcEl+g=="
+  }
+});
 
-  let client = new SendMailClient({ url, token });
 
+exports.sendEmail = async (receivers, subject, text, html, lang) => {
   try {
-    await client.sendMail({
-      bounce_address: "password.reset@support.vipcardsshop.com",
+    const recipientList = Array.isArray(receivers) ? receivers.join(', ') : receivers;
+
+    const info = await transporter.sendMail({
       from: {
-        address: "support@vipcardsshop.com",
-        name: "SONA3",
+        address: 'support@sona3.ae',
+        name: (!lang || lang == "en") ? "SONA3" : "صناع",
       },
-      to: [
-        {
-          email_address: {
-            address: receiver,
-          },
-        },
-      ],
+      to: recipientList,
       subject: subject,
-      htmlbody: html,
-      textbody: text,
+      text: text,
+      html: html,
     });
 
-    console.log("Email sent successfully.");
+    console.log('Email sent: %s', info.messageId);
     return { success: true, code: 201 };
   } catch (error) {
-    console.log("Error sending email:", error);
-    return { error: error, success: false, code: 500 };
+    console.log('Error sending email:', error);
+    return { error: error.message, success: false, code: 500 };
   }
 };

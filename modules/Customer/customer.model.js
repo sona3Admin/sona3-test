@@ -4,7 +4,7 @@ const saltrounds = 5;
 
 const customerSchema = mongoose.Schema({
     name: { type: String, default: "No Name" },
-    email: { type: String, unique: true, drobDups: true },
+    email: { type: String, unique: true },
     password: { type: String },
     phone: { type: String },
     image: { type: Object },

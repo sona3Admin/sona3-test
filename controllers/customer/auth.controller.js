@@ -3,6 +3,7 @@ const customerRepo = require("../../modules/Customer/customer.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
 const { verifyAppleToken } = require("../../utils/appleAuth.util")
 const { getSettings } = require("../../helpers/settings.helper")
+const emailHelper = require("../../helpers/email.helper")
 
 
 exports.register = async (req, res) => {
@@ -20,9 +21,10 @@ exports.register = async (req, res) => {
         }
 
         const token = jwtHelper.generateToken(payloadObject, "1d")
-        customerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
+        let otpCode = await emailHelper.sendEmailVerificationCode(payloadObject, req.lang)
+        if (otpCode.success) customerRepo.updateDirectly(operationResultObject.result._id, { token, session: { otpCode: otpCode.result } })
         return res.status(operationResultObject.code).json({ token, ...operationResultObject });
 
     } catch (err) {
@@ -146,7 +148,7 @@ exports.login = async (req, res) => {
             (!operationResultObject.result.isActive || operationResultObject.result.isDeleted)
         ) return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result })
 
-        if (operationResultObject.success && 
+        if (operationResultObject.success &&
             (!operationResultObject.result.isEmailVerified || !operationResultObject.result.isPhoneVerified)
         ) {
             payloadObject.tokenType = "temp"
@@ -154,6 +156,7 @@ exports.login = async (req, res) => {
             customerRepo.updateDirectly(operationResultObject.result._id, { token })
             delete operationResultObject.result["password"]
             delete operationResultObject.result["token"]
+            delete operationResultObject.result["session"]
             return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result, token })
         }
 
@@ -191,4 +194,19 @@ exports.loginAsGuest = async (req, res) => {
             error: i18n.__("internalServerError")
         });
     }
+}
+
+
+exports.sendEmailVerificationCode = async (req, res) => {
+    const operationResultObject = await customerRepo.find({ email: req.body.email })
+    if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+    payloadObject = {
+        _id: operationResultObject.result._id,
+        name: operationResultObject.result.name,
+        email: operationResultObject.result.email,
+    }
+
+    let otpCode = await emailHelper.sendEmailVerificationCode(payloadObject, req.lang)
+    if (otpCode.success) customerRepo.updateDirectly(payloadObject._id, { session: { otpCode: otpCode.result } })
+    return res.status(otpCode.code).json({ success: true, code: 200 });
 }
