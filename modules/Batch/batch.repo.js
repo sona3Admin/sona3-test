@@ -178,7 +178,7 @@ exports.remove = async (_id) => {
 
 exports.removeMany = async (filterObject) => {
   try {
-    const resultObject = await batchModel.remove(filterObject)
+    const resultObject = await batchModel.deleteMany(filterObject)
 
     if (!resultObject) return {
       success: false,
