@@ -2,11 +2,11 @@ const nodemailer = require('nodemailer');
 
 // Replace with your SMTP configuration
 const transporter = nodemailer.createTransport({
-  host: "smtp.zeptomail.com",
-  port: 587,
+  host: SMTP_HOST,
+  port: SMTP_PORT,
   auth: {
-    user: "emailapikey",
-    pass: "wSsVR610+hLwXfsrnGGqJ7xpzVtSBg6iR0t52QOp43KvGa3L8sdtw0DKVgHyHPdKRGI/HDZG8L8rnRwJhmJc2owrmFkBWSiF9mqRe1U4J3x17qnvhDzIX21VkBuNKI0AwgRpmWNgFcEl+g=="
+    user: process.env.SMTP_API_KEY,
+    pass: process.env.SMTP_PASS_KEY
   }
 });
 
