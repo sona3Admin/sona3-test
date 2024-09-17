@@ -1,6 +1,5 @@
 const nodemailer = require('nodemailer');
 
-// Replace with your SMTP configuration
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
