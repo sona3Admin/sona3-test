@@ -107,7 +107,7 @@ exports.aggregate = async (filterObject, selectionObject) => {
         }
 
 
-        pipeline.push({ $sort: { timestamp: -1 } });
+        pipeline.push({ $sort: { creationDate: -1 } });
         const resultArray = await reportModel.aggregate(pipeline).exec();
 
         if (!resultArray || resultArray.length === 0) {
