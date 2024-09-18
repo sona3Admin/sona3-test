@@ -7,11 +7,12 @@ let checkToken = require("../../helpers/jwt.helper").verifyToken;
 const allowedUsers = ["customer"]
 
 app.post("/register", validator(createCustomerValidation), authController.register);
-app.post("/otp", validator(sendEmailValidation), authController.sendEmailVerificationCode);
 app.post("/login", validator(loginValidation), authController.login);
 app.post("/social", validator(authenticateBySocialMediaValidation), authController.authenticateBySocialMediaAccount)
 app.post("/apple", validator(authenticateBySocialMediaValidation), authController.authenticateByAppleAccount)
 app.post("/guest", authController.loginAsGuest);
+app.post("/otp", validator(sendEmailValidation), authController.sendEmailVerificationCode);
+app.post("/verify", authController.verifyEmailOTP);
 app.put("/verify", checkToken(allowedUsers), validator(updateCustomerValidation), customerController.updateCustomer)
 
 

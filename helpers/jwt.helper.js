@@ -33,7 +33,7 @@ exports.verifyToken = (roleString) => {
 
                 if (tokenData?.tokenType && tokenData?.tokenType == "temp") {
                     const endPoint = req.originalUrl.split("?").shift().slice(7);
-                    const allowedAPIs = ["/seller/identity", "/seller/verify", "/customer/verify"]
+                    const allowedAPIs = ["/seller/identity", "/seller/verify", "/customer/verify", "/customer/otp"]
                    
                     if (!allowedAPIs.includes(endPoint)) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
                 }

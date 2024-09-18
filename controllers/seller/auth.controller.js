@@ -2,6 +2,8 @@ const i18n = require('i18n');
 const sellerRepo = require("../../modules/Seller/seller.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
 const { getSettings } = require("../../helpers/settings.helper")
+const emailHelper = require("../../helpers/email.helper")
+
 
 exports.register = async (req, res) => {
     try {
@@ -21,6 +23,9 @@ exports.register = async (req, res) => {
         if (operationResultObject?.result?._id) sellerRepo.updateDirectly(operationResultObject.result._id, { token })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
+        delete operationResultObject.result["session"]
+        let otpCode = await emailHelper.sendEmailVerificationCode(payloadObject, req.lang)
+        if (otpCode.success) sellerRepo.updateDirectly(operationResultObject.result._id, { token, session: { otpCode: otpCode.result } })
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 
     } catch (err) {
@@ -62,6 +67,7 @@ exports.login = async (req, res) => {
             sellerRepo.updateDirectly(operationResultObject.result._id, { token })
             delete operationResultObject.result["password"]
             delete operationResultObject.result["token"]
+            delete operationResultObject.result["session"]
             return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized"), result: operationResultObject.result, token, isLifeTimePlanOn })
         }
 
@@ -69,6 +75,7 @@ exports.login = async (req, res) => {
         sellerRepo.updateDirectly(operationResultObject.result._id, { token, fcmToken })
         delete operationResultObject.result["password"]
         delete operationResultObject.result["token"]
+        delete operationResultObject.result["session"]
         return res.status(operationResultObject.code).json({ token, ...operationResultObject, isLifeTimePlanOn })
 
     } catch (err) {
@@ -164,6 +171,65 @@ exports.authenticateByAppleAccount = async (req, res) => {
 
     } catch (err) {
         console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.sendEmailVerificationCode = async (req, res) => {
+    try {
+        const operationResultObject = await sellerRepo.find({ email: req.body.email })
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+        payloadObject = {
+            _id: operationResultObject.result._id,
+            name: operationResultObject.result.name,
+            email: operationResultObject.result.email,
+        }
+
+        let otpCode = await emailHelper.sendEmailVerificationCode(payloadObject, req.lang, req.body.type)
+        if (otpCode.success) sellerRepo.updateDirectly(payloadObject._id, { session: { otpCode: otpCode.result } })
+        return res.status(otpCode.code).json({ success: true, code: 200 });
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.verifyEmailOTP = async (req, res) => {
+    try {
+        const providedCode = req.body.otpCode.toString()
+        const operationResultObject = await sellerRepo.find({ _id: req.query._id })
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+        if (operationResultObject.success && operationResultObject.result.session.otpCode.toString() !== providedCode) return res.status(401).json({
+            success: false,
+            code: 401,
+            error: i18n.__("invalidOTP")
+        })
+        payloadObject = {
+            _id: operationResultObject.result._id,
+            name: operationResultObject.result.name,
+            email: operationResultObject.result.email,
+            phone: operationResultObject.result.phone,
+            role: "seller"
+        }
+
+        const token = jwtHelper.generateToken(payloadObject, "1d")
+        delete operationResultObject.result["password"]
+        delete operationResultObject.result["token"]
+        delete operationResultObject.result["session"]
+        sellerRepo.updateDirectly(operationResultObject.result._id, { token, isEmailVerified: true })
+        return res.status(operationResultObject.code).json({ success: true, code: 200, token });
+    } catch (err) {
+        console.log(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

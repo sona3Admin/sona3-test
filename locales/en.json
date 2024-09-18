@@ -171,5 +171,7 @@
 	"shopExists": "Shop already exists",
 	"userType": "Invalid user type",
 	"\"useName\" is not allowed": "\"useName\" is not allowed",
-	"cannotDowngradeTier": "cannotDowngradeTier"
+	"cannotDowngradeTier": "cannotDowngradeTier",
+	"invalidOTP": "Invalid OTP!"
+
 }

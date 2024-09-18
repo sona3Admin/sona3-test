@@ -323,7 +323,7 @@ module.exports = {
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validFcmToken",
             }),
-            
+
             socialToken: joi.string().optional().empty().messages({
                 "string.base": "validSocialToken",
             }),
@@ -341,6 +341,11 @@ module.exports = {
                     "any.required": "requiredEmail",
                     "string.empty": "emptyEmail"
                 }),
+            type: joi.string().empty().optional().messages({
+                "string.base": "validType",
+                "any.required": "requiredType",
+                "string.empty": "emptyType",
+            }),
         })
     },
 

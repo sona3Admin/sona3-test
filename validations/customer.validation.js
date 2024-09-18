@@ -199,7 +199,7 @@ module.exports = {
                 "any.required": "requiredPassword",
                 "string.empty": "emptyPassword",
             }),
-            
+
             fcmToken: joi.string().optional().empty().messages({
                 "string.base": "validFcmToken",
             }),
@@ -252,6 +252,11 @@ module.exports = {
                 "string.email": "validEmail",
                 "any.required": "requiredEmail",
                 "string.empty": "emptyEmail"
+            }),
+            type: joi.string().empty().optional().messages({
+                "string.base": "validType",
+                "any.required": "requiredType",
+                "string.empty": "emptyType",
             }),
         })
     },
