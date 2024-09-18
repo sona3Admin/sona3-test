@@ -133,6 +133,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
         let paymentObject = {};
         if (!initialFees) initialFees = 0
         console.log("subscriptionFees in stripe", subscriptionFees)
+        console.log("initialFees in stripe", initialFees)
 
         const urls = getUrls('seller', agent)
         const successUrl = urls.success

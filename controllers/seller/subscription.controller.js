@@ -75,13 +75,22 @@ exports.paySubscriptionFees = async (req, res) => {
             subscriptionFees = (upgradeResult.result).toFixed(2)
         }
 
+        if ((todayDate < freeTrialEndDate) &&
+            freeTrialOn &&
+            req.query.tier != "lifetime" &&
+            !sellerObject.result.freeTrialApplied) subscriptionFees = 0
+
         if (req.query.coupon) {
-            let applyingCouponResult = await couponRepo.applyOnSubscriptionFees(req.query.coupon, req.query._id, subscriptionFees)
+            console.log("Subscription Fees before applying coupon: ", subscriptionFees)
+            console.log("Initial Fees before applying coupon: ", initialFees)
+            let applyingCouponResult = await couponRepo.applyOnSubscriptionFees(req.query.coupon, req.query._id, subscriptionFees, initialFees)
             if (!applyingCouponResult.success) return res.status(applyingCouponResult.code).json(applyingCouponResult);
-            subscriptionFees = (applyingCouponResult.result).toFixed(2)
+            subscriptionFees = (applyingCouponResult.result.newSubscriptionFees).toFixed(2)
+            initialFees = (applyingCouponResult.result.newInitialFees).toFixed(2)
+            console.log("Subscription Fees after applying coupon: ", subscriptionFees)
+            console.log("Initial Fees after applying coupon: ", initialFees)
         }
 
-        if ((todayDate < freeTrialEndDate) && freeTrialOn && req.query.tier != "lifetime") subscriptionFees = 0
 
         console.log("Final Subscription Fees", subscriptionFees)
         console.log("Calculation done, Redirecting to stripe...")
@@ -258,8 +267,8 @@ exports.checkIfDowngrade = (sellerObject, newTierObject) => {
 
     // Check if it's a downgrade
     if (newTierIndex < currentTierIndex) return { success: true };
-    if (newTierIndex == currentTierIndex && 
-        newTierObject.tierDuration == "month" && 
+    if (newTierIndex == currentTierIndex &&
+        newTierObject.tierDuration == "month" &&
         sellerObject.result.tierDuration == "year" &&
         sellerObject.result.subscriptionEndDate > todayDate
     ) return { success: true };

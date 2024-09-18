@@ -484,7 +484,7 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
 }
 
 
-exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees) => {
+exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees, initialFees) => {
     try {
         console.log("applying coupon on subscription fees...")
         let couponObject = await this.find({ code: couponId })
@@ -494,13 +494,13 @@ exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees) =
         // let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "seller", sellerId)
         // if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
 
-        let newSubscriptionFees = this.calculateNewSubscriptionFees(couponObject, subscriptionFees)
-        console.log("newSubscriptionFees", newSubscriptionFees)
+        let newFees = this.calculateNewSubscriptionFees(couponObject, subscriptionFees, initialFees)
+        console.log("newFees", newFees)
 
         this.updateDirectly(couponObject.result._id.toString(), { $inc: { quantity: -1 }, $addToSet: { usedBy: { seller: sellerId } } })
         return {
             success: true,
-            result: newSubscriptionFees,
+            result: newFees,
             code: 201
         };
 
@@ -515,18 +515,24 @@ exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees) =
 }
 
 
-exports.calculateNewSubscriptionFees = (couponObject, subscriptionFees) => {
+exports.calculateNewSubscriptionFees = (couponObject, subscriptionFees, initialFees) => {
     let newSubscriptionFees = 0
-
-    if (couponObject.result.discountType == "value")
+    let newInitialFees = initialFees
+    if (couponObject.result.discountType == "value") {
         newSubscriptionFees = parseFloat(subscriptionFees) - parseFloat(couponObject.result.value)
+        if(newSubscriptionFees < 0) newInitialFees += newSubscriptionFees
+    }
 
-    if (couponObject.result.discountType == "percentage")
+    if (couponObject.result.discountType == "percentage") {
         newSubscriptionFees = parseFloat(subscriptionFees) - (parseFloat(couponObject.result.percentage) * parseFloat(subscriptionFees))
+        newInitialFees = parseFloat(newInitialFees) - (parseFloat(couponObject.result.percentage) * parseFloat(newInitialFees))
+    }
+
 
     if (newSubscriptionFees < 0) newSubscriptionFees = 0;
+    if (newInitialFees < 0) newInitialFees = 0;
 
-    return newSubscriptionFees
+    return { newSubscriptionFees, newInitialFees }
 }
 
 
