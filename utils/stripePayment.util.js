@@ -127,7 +127,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 }
 
 
-exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, timestamp, agent) => {
+exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, payedInitialFees, timestamp, agent) => {
     try {
         const cents = 100
         let paymentObject = {};
@@ -185,9 +185,10 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             subscriptionFees: parseFloat(subscriptionFees) + parseFloat(initialFees),
             freeTrialApplied: ((subscriptionFees == 0) ? true : false),
             orderType: "subscription",
-            timestamp
+            timestamp,
+            payedInitialFees
         }
-        if (initialFees > 0) paymentObject["payedInitialFees"] = true
+        // if (initialFees > 0) paymentObject["payedInitialFees"] = true
         console.log("paymentObject", paymentObject)
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }

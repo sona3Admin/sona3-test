@@ -15,6 +15,7 @@ exports.paySubscriptionFees = async (req, res) => {
         const todayDate = new Date();
         const freeTrialEndDate = new Date('2025-01-01');
         let initialFees = 0
+        let payedInitialFees = true
         const freeTrialOn = await getSettings("isFreeTrialOn")
         console.log("req.query.tier", req.query.tier)
         console.log("req.query.tierDuration", req.query.tierDuration)
@@ -51,7 +52,10 @@ exports.paySubscriptionFees = async (req, res) => {
         if (tierDetails.name == "lifetime") subscriptionFees = parseFloat(tierDetails.lifeTimeFees)
         console.log("subscriptionFees", subscriptionFees)
 
-        if (!sellerObject.result.payedInitialFees) initialFees += parseFloat(tierDetails.initialFees)
+        if (!sellerObject.result.payedInitialFees) {
+            initialFees += parseFloat(tierDetails.initialFees)
+            payedInitialFees = true
+        }
         console.log("initialFees", initialFees)
 
         let isDowngrade = await this.checkIfDowngrade(sellerObject, req.query)
@@ -95,7 +99,7 @@ exports.paySubscriptionFees = async (req, res) => {
         console.log("Final Subscription Fees", subscriptionFees)
         console.log("Calculation done, Redirecting to stripe...")
         let agent = req.query.agent || "web"
-        let operationResultObject = await stripeHelper.initiateSubscriptionPayment(req.query._id, req.query.tier, req.query.tierDuration, subscriptionFees, initialFees, req.query.timestamp, agent)
+        let operationResultObject = await stripeHelper.initiateSubscriptionPayment(req.query._id, req.query.tier, req.query.tierDuration, subscriptionFees, initialFees, payedInitialFees, req.query.timestamp, agent)
         return res.status(operationResultObject.code).json(operationResultObject);
 
 
