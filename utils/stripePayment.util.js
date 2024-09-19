@@ -182,13 +182,13 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             seller: sellerId,
             tier: tierName,
             tierDuration: tierDuration,
-            subscriptionFees: subscriptionFees + initialFees,
+            subscriptionFees: parseFloat(subscriptionFees) + parseFloat(initialFees),
             freeTrialApplied: ((subscriptionFees == 0) ? true : false),
             orderType: "subscription",
             timestamp
         }
         if (initialFees > 0) paymentObject["payedInitialFees"] = true
-
+        console.log("paymentObject", paymentObject)
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {
