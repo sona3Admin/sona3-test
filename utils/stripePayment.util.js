@@ -53,15 +53,18 @@ const URLS = {
 function getUrls(userType, agent = 'web', lang) {
     const env = process.env.CURRENT_ENV === 'test' ? 'test' : 'development'
     const deviceType = agent === 'mobile' ? 'mobile' : 'web'
-    return `${URLS[env][userType][deviceType]}?lang=${lang}`
+    let url = URLS[env][userType][deviceType]
+    url.success = `${url.success}?lang=${lang}`
+    url.cancel = `${url.cancel}?lang=${lang}`
+    return url
 }
 
 
 exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType, timestamp, agent, lang) => {
     try {
         const cents = 100
-        const lang = lang || "en"
-        const urls = getUrls('customer', agent, lang)
+        const reqLang = lang || "en"
+        const urls = getUrls('customer', agent, reqLang)
         console.log("urls", urls)
         const successUrl = urls.success
         const cancelUrl = urls.cancel
@@ -135,8 +138,8 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
         if (!initialFees) initialFees = 0
         console.log("subscriptionFees in stripe", subscriptionFees)
         console.log("initialFees in stripe", initialFees)
-        const lang = lang || "en"
-        const urls = getUrls('seller', agent, lang)
+        const reqLang = lang || "en"
+        const urls = getUrls('seller', agent, reqLang)
         console.log("urls", urls)
 
         const successUrl = urls.success
