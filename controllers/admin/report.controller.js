@@ -12,6 +12,7 @@ const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper")
 
 const UAE_MAIN_CITIES = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
 
+
 exports.countSellers = async (req, res) => {
     try {
         const { query: filterObject, body: { filters: queryObject } } = req;
@@ -29,12 +30,10 @@ exports.countSellers = async (req, res) => {
         const countingResults = {};
         const filterCategories = ['isSubscribed', 'isVerified', 'hasSold', 'isActive'];
 
-
-
         if (queryObject.cities) {
             for (const city of UAE_MAIN_CITIES) {
                 const cityDocuments = allDocuments.result.filter(doc =>
-                    doc.address.city.name && doc.address.city.name.toLowerCase() === city.toLowerCase()
+                    doc.address?.city?.name && doc.address?.city?.name?.toLowerCase() === city.toLowerCase()
                 );
                 const cityStats = {};
                 for (const category of filterCategories) {
@@ -45,7 +44,7 @@ exports.countSellers = async (req, res) => {
                 countingResults[city] = cityStats;
                 countingResults[city].total = cityDocuments.length;
             }
-            
+
         } else {
             for (const category of filterCategories) {
                 if (queryObject[category]) {
@@ -60,6 +59,59 @@ exports.countSellers = async (req, res) => {
             success: true,
             code: 200,
             result: countingResults
+        });
+
+    } catch (err) {
+        console.error(`Error in countSellers: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
+exports.countSellersBasedOnTiers = async (req, res) => {
+    try {
+        const { query: filterObject, body: { filters: queryObject } } = req;
+        const pageNumber = req.query.page || 1;
+        const limitNumber = req.query.limit || 0;
+
+        const allDocuments = await sellerRepo.list(
+            { ...filterObject, isSubscribed: true },
+            { joinDate: 1, type: 1, tier: 1, tierDuration: 1 },
+            {},
+            pageNumber,
+            limitNumber
+        );
+
+        const countingFilters = [
+            { label: "basic", conditions: [{ fieldName: "tier", fieldValue: "basic" }] },
+            { label: "basicYearly", conditions: [{ fieldName: "tier", fieldValue: "basic" }, { fieldName: "tierDuration", fieldValue: "year" }] },
+            { label: "basicMonthly", conditions: [{ fieldName: "tier", fieldValue: "basic" }, { fieldName: "tierDuration", fieldValue: "month" }] },
+            { label: "pro", conditions: [{ fieldName: "tier", fieldValue: "pro" }] },
+            { label: "proYearly", conditions: [{ fieldName: "tier", fieldValue: "pro" }, { fieldName: "tierDuration", fieldValue: "year" }] },
+            { label: "proMonthly", conditions: [{ fieldName: "tier", fieldValue: "pro" }, { fieldName: "tierDuration", fieldValue: "month" }] },
+            { label: "advanced", conditions: [{ fieldName: "tier", fieldValue: "advanced" }] },
+            { label: "advancedYearly", conditions: [{ fieldName: "tier", fieldValue: "advanced" }, { fieldName: "tierDuration", fieldValue: "year" }] },
+            { label: "advancedMonthly", conditions: [{ fieldName: "tier", fieldValue: "advanced" }, { fieldName: "tierDuration", fieldValue: "month" }] },
+            { label: "lifetime", conditions: [{ fieldName: "tier", fieldValue: "lifetime" }] }
+        ];
+
+        let countingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters);
+        countingResult.result.accumulations = {}
+        countingResult.result.accumulations.basic = structureTierResult(countingResult, "basic");
+        countingResult.result.accumulations.pro = structureTierResult(countingResult, "pro");
+        countingResult.result.accumulations.advanced = structureTierResult(countingResult, "advanced");
+        countingResult.result.accumulations.lifetime = { total: countingResult.result.lifetime };
+
+        ["basic", "pro", "advanced", "lifetime", "basicYearly", "basicMonthly", "proYearly", "proMonthly", "advancedYearly", "advancedMonthly"].forEach(key => { delete countingResult.result[key] });
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: countingResult.result
         });
 
     } catch (err) {
@@ -107,3 +159,10 @@ function generateFilters(category) {
 
     return filters;
 }
+
+
+const structureTierResult = (countingResult, tier) => ({
+    year: countingResult.result[`${tier}Yearly`],
+    month: countingResult.result[`${tier}Monthly`],
+    total: countingResult.result[tier]
+});
