@@ -62,6 +62,7 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
         const cents = 100
         const lang = lang || "en"
         const urls = getUrls('customer', agent, lang)
+        console.log("urls", urls)
         const successUrl = urls.success
         const cancelUrl = urls.cancel
 
@@ -136,6 +137,8 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
         console.log("initialFees in stripe", initialFees)
         const lang = lang || "en"
         const urls = getUrls('seller', agent, lang)
+        console.log("urls", urls)
+
         const successUrl = urls.success
         const cancelUrl = urls.cancel
 
