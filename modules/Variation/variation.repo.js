@@ -153,6 +153,7 @@ exports.create = async (formObject) => {
 exports.update = async (filterObject, formObject) => {
     try {
         console.log("filterObject", filterObject)
+        console.log("formObject", formObject)
         const existingObject = await this.find(filterObject);
         if (!existingObject.success) return {
             success: false,
@@ -183,6 +184,7 @@ exports.update = async (filterObject, formObject) => {
             if (defaultVariationOfProduct.success) productUpdateObject.$unset = { defaultVariation: true }
             productRepo.updateDirectly(resultObject.product.toString(), productUpdateObject)
         }
+        console.log("resultObject", resultObject)
 
         return {
             success: true,
