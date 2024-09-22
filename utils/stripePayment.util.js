@@ -50,18 +50,18 @@ const URLS = {
 }
 
 
-function getUrls(userType, agent = 'web') {
+function getUrls(userType, agent = 'web', lang) {
     const env = process.env.CURRENT_ENV === 'test' ? 'test' : 'development'
     const deviceType = agent === 'mobile' ? 'mobile' : 'web'
-    return URLS[env][userType][deviceType]
+    return `${URLS[env][userType][deviceType]}?lang=${lang}`
 }
 
 
-exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType, timestamp, agent) => {
+exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDetails, orderType, timestamp, agent, lang) => {
     try {
         const cents = 100
-
-        const urls = getUrls('customer', agent)
+        const lang = lang || "en"
+        const urls = getUrls('customer', agent, lang)
         const successUrl = urls.success
         const cancelUrl = urls.cancel
 
@@ -127,15 +127,15 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
 }
 
 
-exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, payedInitialFees, timestamp, agent) => {
+exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, subscriptionFees, initialFees, payedInitialFees, timestamp, agent, lang) => {
     try {
         const cents = 100
         let paymentObject = {};
         if (!initialFees) initialFees = 0
         console.log("subscriptionFees in stripe", subscriptionFees)
         console.log("initialFees in stripe", initialFees)
-
-        const urls = getUrls('seller', agent)
+        const lang = lang || "en"
+        const urls = getUrls('seller', agent, lang)
         const successUrl = urls.success
         const cancelUrl = urls.cancel
 

@@ -99,7 +99,7 @@ exports.paySubscriptionFees = async (req, res) => {
         console.log("Final Subscription Fees", subscriptionFees)
         console.log("Calculation done, Redirecting to stripe...")
         let agent = req.query.agent || "web"
-        let operationResultObject = await stripeHelper.initiateSubscriptionPayment(req.query._id, req.query.tier, req.query.tierDuration, subscriptionFees, initialFees, payedInitialFees, req.query.timestamp, agent)
+        let operationResultObject = await stripeHelper.initiateSubscriptionPayment(req.query._id, req.query.tier, req.query.tierDuration, subscriptionFees, initialFees, payedInitialFees, req.query.timestamp, agent, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
 
 

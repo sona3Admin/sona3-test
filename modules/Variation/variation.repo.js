@@ -9,13 +9,14 @@ const cartRepo = require("../Cart/cart.repo")
 
 exports.find = async (filterObject) => {
     try {
+        console.log("filterObject", filterObject)
         const resultObject = await variationModel.findOne(filterObject).lean();
         if (!resultObject) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         }
-
+        console.log("resultObject", resultObject)
         return {
             success: true,
             code: 200,
@@ -151,6 +152,7 @@ exports.create = async (formObject) => {
 
 exports.update = async (filterObject, formObject) => {
     try {
+        console.log("filterObject", filterObject)
         const existingObject = await this.find(filterObject);
         if (!existingObject.success) return {
             success: false,
