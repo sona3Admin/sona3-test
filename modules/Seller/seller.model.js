@@ -30,6 +30,7 @@ const sellerSchema = mongoose.Schema({
     payedInitialFees: { type: Boolean, default: false },
     freeTrialApplied: { type: Boolean, default: false },
 
+    hasSold: { type: Boolean, default: false },
     joinDate: { type: Date },
     verifyDate: { type: Date },
     birthDate: { type: Date },

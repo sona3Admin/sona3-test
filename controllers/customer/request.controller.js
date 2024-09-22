@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
+const sellerRepo = require("../../modules/Seller/seller.repo");
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
 const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
@@ -25,6 +26,7 @@ exports.purchaseRequest = async (req, res) => {
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
         console.log("customerOrderObject.paymentMethod", customerOrderObject.paymentMethod)
         let operationResultObject = await requestRepo.updateDirectly(requestId, { ...customerOrderObject.calculations });
+        sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString, { hasSold: true })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

@@ -1,4 +1,5 @@
 const i18n = require('i18n');
+const sellerRepo = require("../../../modules/Seller/seller.repo")
 const orderRepo = require("../../../modules/Order/order.repo")
 const basketRepo = require("../../../modules/Basket/basket.repo");
 const { handleOrderCreation, handleReverseOrderCreation } = require("../../../helpers/order.helper")
@@ -8,7 +9,7 @@ const stripeHelper = require("../../../utils/stripePayment.util")
 
 exports.createOrder = async (req, res) => {
     try {
-        if(req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
+        if (req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
         let customerOrderObject = req.body
         let customerCartObject = await basketRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
@@ -23,8 +24,9 @@ exports.createOrder = async (req, res) => {
         operationResultObject = await ifastShipperHelper.saveShipmentData(shippingData.result.trackingnos, operationResultObject.result)
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
-        operationResultObject["orderData"] = shippingData.orderData
+        // operationResultObject["orderData"] = shippingData.orderData
         basketRepo.flush({ customer: req.body.customer })
+        sellerRepo.updateManyById(operationResultObject.result.sellers, { hasSold: true })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

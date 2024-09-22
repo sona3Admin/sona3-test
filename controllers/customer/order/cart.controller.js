@@ -1,4 +1,5 @@
 const i18n = require('i18n');
+const sellerRepo = require("../../../modules/Seller/seller.repo")
 const orderRepo = require("../../../modules/Order/order.repo")
 const cartRepo = require("../../../modules/Cart/cart.repo");
 const { handleOrderCreation, handleReverseOrderCreation } = require("../../../helpers/order.helper")
@@ -19,13 +20,14 @@ exports.createOrder = async (req, res) => {
         customerOrderObject["orderType"] = "cart";
         let operationResultObject = await orderRepo.create(customerOrderObject);
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-
+        console.log("passed")
         let shippingData = await firstFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
         cartRepo.flush({ customer: req.body.customer })
+        sellerRepo.updateManyById(operationResultObject.result.sellers, { hasSold: true })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

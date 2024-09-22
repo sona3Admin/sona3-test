@@ -1,4 +1,5 @@
 let bcrypt = require("bcrypt");
+const mongoose = require("mongoose");
 const i18n = require('i18n');
 let sellerModel = require("./seller.model")
 let saltrounds = 5;
@@ -222,6 +223,27 @@ exports.updateDirectly = async (_id, formObject) => {
             success: true,
             code: 200,
             result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
+exports.updateManyById = async (arrayOfIds, formObject) => {
+    try {
+        const objectIds = arrayOfIds.map(id => mongoose.Types.ObjectId(id));
+        await sellerModel.updateMany({ _id: { $in: objectIds } }, { $set: formObject });
+        return {
+            success: true,
+            code: 200
         };
 
     } catch (err) {
