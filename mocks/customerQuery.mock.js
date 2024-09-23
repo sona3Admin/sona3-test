@@ -1,10 +1,11 @@
 const i18n = require('i18n');
 const sellerModel = require("../modules/Seller/seller.model")
+const customerModel = require("../modules/Customer/customer.model")
 
 
 exports.executeQuery = async (req, res) => {
     try {
-        const operationResultObject = await sellerModel.updateMany({}, req.body)
+        const operationResultObject = await customerModel.updateMany({}, req.body)
         return res.status(200).json({ success: true, ...operationResultObject });
 
     } catch (err) {
