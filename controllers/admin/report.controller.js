@@ -18,48 +18,15 @@ exports.countCustomers = async (req, res) => {
         const pageNumber = req.query.page || 1;
         const limitNumber = req.query.limit || 0;
 
-        const allDocuments = await customerRepo.list(
-            filterObject,
-            { isActive: 1, isDeleted: 1, hasPurchased: 1, address: 1 },
-            {},
-            pageNumber,
-            limitNumber
-        );
+        const allDocuments = await customerRepo.list(filterObject, { isActive: 1, isDeleted: 1, hasPurchased: 1, address: 1 }, {}, pageNumber, limitNumber);
 
-        const countingResults = {};
+        let countingResults = {};
         const filterCategories = ['hasPurchased', 'isActive', "isDeleted"];
-        const categoryMap = {
-            hasPurchased: 'purchasing',
-            isActive: 'active',
-            isDeleted: 'deleted'
-        };
+        const categoryMap = { hasPurchased: 'purchasing', isActive: 'active', isDeleted: 'deleted' };
 
-        if (queryObject.cities) {
-            for (const city of UAE_MAIN_CITIES) {
-                const cityDocuments = allDocuments.result.filter((doc) => {
-                    customerCity = doc.address?.city?.name || doc.address?.city?.CityName
-                    return customerCity && customerCity?.toLowerCase() === city.toLowerCase()
-                });
-                const cityStats = {};
-                for (const category of filterCategories) {
-                    const filters = generateFilters(category, categoryMap);
-                    const result = countObjectsByArrayOfFilters(cityDocuments, filters);
-                    cityStats[category] = result.result;
-                }
-                countingResults[city] = cityStats;
-                countingResults[city].total = cityDocuments.length;
-            }
+        if (queryObject.cities) countingResults = groupByCities(allDocuments, filterCategories, categoryMap)
+        else countingResults = iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments)
 
-        } else {
-            for (const category of filterCategories) {
-                if (queryObject[category]) {
-                    const filters = generateFilters(category, categoryMap);
-                    const result = countObjectsByArrayOfFilters(allDocuments.result, filters);
-                    countingResults[category] = result.result;
-                }
-            }
-
-        }
         return res.status(200).json({
             success: true,
             code: 200,
@@ -83,49 +50,15 @@ exports.countSellers = async (req, res) => {
         const pageNumber = req.query.page || 1;
         const limitNumber = req.query.limit || 0;
 
-        const allDocuments = await sellerRepo.list(
-            filterObject,
-            { isSubscribed: 1, isActive: 1, isVerified: 1, hasSold: 1, address: 1 },
-            {},
-            pageNumber,
-            limitNumber
-        );
+        const allDocuments = await sellerRepo.list(filterObject, { isSubscribed: 1, isActive: 1, isVerified: 1, hasSold: 1, address: 1 }, {}, pageNumber, limitNumber);
 
-        const countingResults = {};
+        let countingResults = {};
         const filterCategories = ['isSubscribed', 'isVerified', 'hasSold', 'isActive'];
-        const categoryMap = {
-            isSubscribed: 'subscribed',
-            isVerified: 'verified',
-            hasSold: 'selling',
-            isActive: 'active'
-        };
+        const categoryMap = { isSubscribed: 'subscribed', isVerified: 'verified', hasSold: 'selling', isActive: 'active' };
 
-        if (queryObject.cities) {
-            for (const city of UAE_MAIN_CITIES) {
-                const cityDocuments = allDocuments.result.filter((doc) => {
-                    customerCity = doc.address?.city?.name || doc.address?.city?.CityName
-                    return customerCity && customerCity?.toLowerCase() === city.toLowerCase()
-                });
-                const cityStats = {};
-                for (const category of filterCategories) {
-                    const filters = generateFilters(category, categoryMap);
-                    const result = countObjectsByArrayOfFilters(cityDocuments, filters);
-                    cityStats[category] = result.result;
-                }
-                countingResults[city] = cityStats;
-                countingResults[city].total = cityDocuments.length;
-            }
+        if (queryObject.cities) countingResults = groupByCities(allDocuments, filterCategories, categoryMap)
+        else countingResults = iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments)
 
-        } else {
-            for (const category of filterCategories) {
-                if (queryObject[category]) {
-                    const filters = generateFilters(category, categoryMap);
-                    const result = countObjectsByArrayOfFilters(allDocuments.result, filters);
-                    countingResults[category] = result.result;
-                }
-            }
-
-        }
         return res.status(200).json({
             success: true,
             code: 200,
@@ -143,59 +76,6 @@ exports.countSellers = async (req, res) => {
 };
 
 
-// exports.countSellersBasedOnTiers = async (req, res) => {
-//     try {
-//         const { query: filterObject, body: { filters: queryObject } } = req;
-//         const pageNumber = req.query.page || 1;
-//         const limitNumber = req.query.limit || 0;
-
-//         const allDocuments = await sellerRepo.list(
-//             { ...filterObject, isSubscribed: true },
-//             { joinDate: 1, type: 1, tier: 1, tierDuration: 1 },
-//             {},
-//             pageNumber,
-//             limitNumber
-//         );
-
-//         const countingFilters = [
-//             { label: "basic", conditions: [{ fieldName: "tier", fieldValue: "basic" }] },
-//             { label: "basicYearly", conditions: [{ fieldName: "tier", fieldValue: "basic" }, { fieldName: "tierDuration", fieldValue: "year" }] },
-//             { label: "basicMonthly", conditions: [{ fieldName: "tier", fieldValue: "basic" }, { fieldName: "tierDuration", fieldValue: "month" }] },
-//             { label: "pro", conditions: [{ fieldName: "tier", fieldValue: "pro" }] },
-//             { label: "proYearly", conditions: [{ fieldName: "tier", fieldValue: "pro" }, { fieldName: "tierDuration", fieldValue: "year" }] },
-//             { label: "proMonthly", conditions: [{ fieldName: "tier", fieldValue: "pro" }, { fieldName: "tierDuration", fieldValue: "month" }] },
-//             { label: "advanced", conditions: [{ fieldName: "tier", fieldValue: "advanced" }] },
-//             { label: "advancedYearly", conditions: [{ fieldName: "tier", fieldValue: "advanced" }, { fieldName: "tierDuration", fieldValue: "year" }] },
-//             { label: "advancedMonthly", conditions: [{ fieldName: "tier", fieldValue: "advanced" }, { fieldName: "tierDuration", fieldValue: "month" }] },
-//             { label: "lifetime", conditions: [{ fieldName: "tier", fieldValue: "lifetime" }] }
-//         ];
-
-//         let countingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters);
-//         countingResult.result.accumulations = {}
-//         countingResult.result.accumulations.basic = structureTierResult(countingResult, "basic");
-//         countingResult.result.accumulations.pro = structureTierResult(countingResult, "pro");
-//         countingResult.result.accumulations.advanced = structureTierResult(countingResult, "advanced");
-//         countingResult.result.accumulations.lifetime = { total: countingResult.result.lifetime };
-
-//         ["basic", "pro", "advanced", "lifetime", "basicYearly", "basicMonthly", "proYearly", "proMonthly", "advancedYearly", "advancedMonthly"].forEach(key => { delete countingResult.result[key] });
-
-//         return res.status(200).json({
-//             success: true,
-//             code: 200,
-//             result: countingResult.result
-//         });
-
-//     } catch (err) {
-//         console.error(`Error in countSellers: ${err.message}`);
-//         return res.status(500).json({
-//             success: false,
-//             code: 500,
-//             error: i18n.__("internalServerError")
-//         });
-//     }
-// };
-
-
 exports.countSellersBasedOnTiers = async (req, res) => {
     try {
         const filterObject = req.query;
@@ -210,9 +90,7 @@ exports.countSellersBasedOnTiers = async (req, res) => {
         const allDocuments = await sellerRepo.list(
             { ...filterObject, isSubscribed: true },
             { joinDate: 1, tier: 1, tierDuration: 1 },
-            {},
-            pageNumber,
-            limitNumber
+            {}, pageNumber, limitNumber
         );
 
         const countingFilters = [
@@ -235,16 +113,14 @@ exports.countSellersBasedOnTiers = async (req, res) => {
         ["basic", "pro", "advanced", "lifetime", "basicYearly", "basicMonthly", "proYearly", "proMonthly", "advancedYearly", "advancedMonthly"].forEach(key => { delete countingResult.result[key] });
 
 
-        // Filter sellers by joinDate
         const sellersInRange = allDocuments.result.filter(seller =>
             moment(seller.joinDate).isBetween(startDate, endDate, null, '[]')
         );
 
-        // Calculate time difference to determine the aggregation period
         const daysDiff = endDate.diff(startDate, 'days');
         const { aggregationPeriod, periodCount } = getAggregationPeriodAndCount(daysDiff);
 
-        // Aggregating sellers based on the date range and tiers
+
         const aggregations = {};
         countingResult.result.aggregations = {}
         let currentPeriodStart = moment(startDate);
@@ -296,6 +172,73 @@ exports.countSellersBasedOnTiers = async (req, res) => {
 };
 
 
+exports.countShops = async (req, res) => {
+    try {
+        const { query: filterObject, body: { filters: queryObject } } = req;
+        const pageNumber = req.query.page || 1;
+        const limitNumber = req.query.limit || 0;
+        const unselectedFields = { seller: 0, categories: 0, productCategories: 0, serviceCategories: 0 }
+        const allDocuments = await shopRepo.list(
+            filterObject,
+            { isActive: 1, isVerified: 1, isFood: 1, type: 1, ...unselectedFields },
+            {}, pageNumber, limitNumber
+        );
+
+        let countingResults = {};
+        const filterCategories = ['isActive', 'isVerified'];
+        const categoryMap = { isActive: 'active', isVerified: 'verified' };
+
+        countingResults = iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments)
+        if (queryObject.type) {
+            const countingFilters = [
+                { label: "productShops", conditions: [{ fieldName: "type", fieldValue: "product" }] },
+                { label: "foodShops", conditions: [{ fieldName: "isFood", fieldValue: true }, { fieldName: "type", fieldValue: "product" }] },
+                { label: "nonFoodShops", conditions: [{ fieldName: "isFood", fieldValue: false }, { fieldName: "type", fieldValue: "product" }] },
+                { label: "serviceShops", conditions: [{ fieldName: "type", fieldValue: "service" }] },
+
+            ];
+            const typeCountingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters)
+            let allFoodShops = { result: [] }
+            let allNonFoodShops = { result: [] }
+            let allServiceShops = { result: [] }
+            allFoodShops.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == true);
+            // console.log("allFoodShops", allFoodShops)
+            allFoodShops = iterateOnCategories(queryObject, filterCategories, categoryMap, allFoodShops)
+
+            allNonFoodShops.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == false);
+            allNonFoodShops = iterateOnCategories(queryObject, filterCategories, categoryMap, allNonFoodShops)
+
+            allServiceShops.result = allDocuments.result.filter(shop => shop.type == "service");
+            allServiceShops = iterateOnCategories(queryObject, filterCategories, categoryMap, allServiceShops)
+
+            countingResults.type = {}
+            countingResults.type.productShops = {
+                foodShops: { ...allFoodShops, total: typeCountingResult.result.foodShops },
+                nonFoodShops: { ...allNonFoodShops, total: typeCountingResult.result.nonFoodShops },
+                total: typeCountingResult.result.productShops
+            };
+            countingResults.type.serviceShops = { ...allServiceShops, total: typeCountingResult.result.serviceShops }
+            countingResults.type.total = parseInt(countingResults.type.productShops.total) + parseInt(typeCountingResult.result.serviceShops)
+        }
+
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: countingResults
+        });
+
+    } catch (err) {
+        console.error(`Error in countShops: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
 function getAggregationPeriodAndCount(daysDiff) {
     let aggregationPeriod, periodCount;
     if (daysDiff <= 7) {
@@ -328,6 +271,40 @@ function getPeriodEnd(currentPeriodStart, aggregationPeriod) {
         default:
             return moment(currentPeriodStart).endOf(aggregationPeriod);
     }
+}
+
+
+function iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments) {
+    let countingResults = {}
+    for (const category of filterCategories) {
+        if (queryObject[category]) {
+            let filters = generateFilters(category, categoryMap);
+            let result = countObjectsByArrayOfFilters(allDocuments.result, filters);
+            countingResults[category] = result.result;
+        }
+    }
+    return countingResults
+}
+
+
+function groupByCities(allDocuments, filterCategories, categoryMap) {
+    let countingResults = {}
+
+    for (const city of UAE_MAIN_CITIES) {
+        const cityDocuments = allDocuments.result.filter((doc) => {
+            customerCity = doc.address?.city?.name || doc.address?.city?.CityName
+            return customerCity && customerCity?.toLowerCase() === city.toLowerCase()
+        });
+        const cityStats = {};
+        for (const category of filterCategories) {
+            const filters = generateFilters(category, categoryMap);
+            const result = countObjectsByArrayOfFilters(cityDocuments, filters);
+            cityStats[category] = result.result;
+        }
+        countingResults[city] = cityStats;
+        countingResults[city].total = cityDocuments.length;
+    }
+    return countingResults
 }
 
 
