@@ -25,7 +25,7 @@ exports.countCustomers = async (req, res) => {
         const categoryMap = { hasPurchased: 'purchasing', isActive: 'active', isDeleted: 'deleted' };
 
         if (queryObject.cities) countingResults = groupByCities(allDocuments, filterCategories, categoryMap)
-        else countingResults = iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments)
+        else countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
 
         return res.status(200).json({
             success: true,
@@ -50,14 +50,14 @@ exports.countSellers = async (req, res) => {
         const pageNumber = req.query.page || 1;
         const limitNumber = req.query.limit || 0;
 
-        const allDocuments = await sellerRepo.list(filterObject, { isSubscribed: 1, isActive: 1, isVerified: 1, hasSold: 1, address: 1 }, {}, pageNumber, limitNumber);
+        const allDocuments = await sellerRepo.list(filterObject, { isSubscribed: 1, isActive: 1, isVerified: 1, hasSold: 1, isDeleted: 1, address: 1 }, {}, pageNumber, limitNumber);
 
         let countingResults = {};
-        const filterCategories = ['isSubscribed', 'isVerified', 'hasSold', 'isActive'];
-        const categoryMap = { isSubscribed: 'subscribed', isVerified: 'verified', hasSold: 'selling', isActive: 'active' };
+        const filterCategories = ['isSubscribed', 'isVerified', 'hasSold', 'isActive', "isDeleted"];
+        const categoryMap = { isSubscribed: 'subscribed', isVerified: 'verified', hasSold: 'selling', isActive: 'active', isDeleted: "deleted" };
 
         if (queryObject.cities) countingResults = groupByCities(allDocuments, filterCategories, categoryMap)
-        else countingResults = iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments)
+        else countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
 
         return res.status(200).json({
             success: true,
@@ -88,7 +88,7 @@ exports.countSellersBasedOnTiers = async (req, res) => {
         }
 
         const allDocuments = await sellerRepo.list(
-            { ...filterObject, isSubscribed: true },
+            { ...filterObject, isSubscribed: true, isDeleted: false },
             { joinDate: 1, tier: 1, tierDuration: 1 },
             {}, pageNumber, limitNumber
         );
@@ -154,7 +154,6 @@ exports.countSellersBasedOnTiers = async (req, res) => {
             aggregationPeriod
         }
 
-        // Return the result with aggregations
         return res.status(200).json({
             success: true,
             code: 200,
@@ -179,8 +178,8 @@ exports.countShops = async (req, res) => {
         const limitNumber = req.query.limit || 0;
         const unselectedFields = { seller: 0, categories: 0, productCategories: 0, serviceCategories: 0 }
         const allDocuments = await shopRepo.list(
-            filterObject,
-            { isActive: 1, isVerified: 1, isFood: 1, type: 1, ...unselectedFields },
+            { ...filterObject, isDeleted: false },
+            { isActive: 1, isVerified: 1, isFood: 1, type: 1, joinDate: 1, ...unselectedFields },
             {}, pageNumber, limitNumber
         );
 
@@ -188,39 +187,16 @@ exports.countShops = async (req, res) => {
         const filterCategories = ['isActive', 'isVerified'];
         const categoryMap = { isActive: 'active', isVerified: 'verified' };
 
-        countingResults = iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments)
-        if (queryObject.type) {
-            const countingFilters = [
-                { label: "productShops", conditions: [{ fieldName: "type", fieldValue: "product" }] },
-                { label: "foodShops", conditions: [{ fieldName: "isFood", fieldValue: true }, { fieldName: "type", fieldValue: "product" }] },
-                { label: "nonFoodShops", conditions: [{ fieldName: "isFood", fieldValue: false }, { fieldName: "type", fieldValue: "product" }] },
-                { label: "serviceShops", conditions: [{ fieldName: "type", fieldValue: "service" }] },
-
-            ];
-            const typeCountingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters)
-            let allFoodShops = { result: [] }
-            let allNonFoodShops = { result: [] }
-            let allServiceShops = { result: [] }
-            allFoodShops.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == true);
-            // console.log("allFoodShops", allFoodShops)
-            allFoodShops = iterateOnCategories(queryObject, filterCategories, categoryMap, allFoodShops)
-
-            allNonFoodShops.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == false);
-            allNonFoodShops = iterateOnCategories(queryObject, filterCategories, categoryMap, allNonFoodShops)
-
-            allServiceShops.result = allDocuments.result.filter(shop => shop.type == "service");
-            allServiceShops = iterateOnCategories(queryObject, filterCategories, categoryMap, allServiceShops)
-
-            countingResults.type = {}
-            countingResults.type.productShops = {
-                foodShops: { ...allFoodShops, total: typeCountingResult.result.foodShops },
-                nonFoodShops: { ...allNonFoodShops, total: typeCountingResult.result.nonFoodShops },
-                total: typeCountingResult.result.productShops
-            };
-            countingResults.type.serviceShops = { ...allServiceShops, total: typeCountingResult.result.serviceShops }
-            countingResults.type.total = parseInt(countingResults.type.productShops.total) + parseInt(typeCountingResult.result.serviceShops)
+        countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
+        if (queryObject.type) countingResults = groupShopsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults)
+        if (queryObject.groupByDate && queryObject.type) {
+            let typeCountingResult = groupShopsByDateRange(filterObject, queryObject, filterCategories, categoryMap, allDocuments, countingResults)
+            return res.status(200).json({
+                success: true,
+                code: 200,
+                result: typeCountingResult
+            });
         }
-
 
         return res.status(200).json({
             success: true,
@@ -237,6 +213,105 @@ exports.countShops = async (req, res) => {
         });
     }
 };
+
+
+function groupShopsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults) {
+    const countingFilters = [
+        { label: "productShops", conditions: [{ fieldName: "type", fieldValue: "product" }] },
+        { label: "foodShops", conditions: [{ fieldName: "isFood", fieldValue: true }, { fieldName: "type", fieldValue: "product" }] },
+        { label: "nonFoodShops", conditions: [{ fieldName: "isFood", fieldValue: false }, { fieldName: "type", fieldValue: "product" }] },
+        { label: "serviceShops", conditions: [{ fieldName: "type", fieldValue: "service" }] },
+
+    ];
+    const typeCountingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters)
+    let allFoodShops = { result: [] }
+    let allNonFoodShops = { result: [] }
+    let allServiceShops = { result: [] }
+    allFoodShops.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == true);
+    allFoodShops = groupByCategories(queryObject, filterCategories, categoryMap, allFoodShops)
+
+    allNonFoodShops.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == false);
+    allNonFoodShops = groupByCategories(queryObject, filterCategories, categoryMap, allNonFoodShops)
+
+    allServiceShops.result = allDocuments.result.filter(shop => shop.type == "service");
+    allServiceShops = groupByCategories(queryObject, filterCategories, categoryMap, allServiceShops)
+
+    countingResults.type = {}
+    countingResults.type.productShops = {
+        foodShops: { ...allFoodShops, total: typeCountingResult.result.foodShops },
+        nonFoodShops: { ...allNonFoodShops, total: typeCountingResult.result.nonFoodShops },
+        total: typeCountingResult.result.productShops
+    };
+    countingResults.type.serviceShops = { ...allServiceShops, total: typeCountingResult.result.serviceShops }
+    countingResults.type.total = parseInt(countingResults.type.productShops.total) + parseInt(typeCountingResult.result.serviceShops)
+    return countingResults
+}
+
+
+function groupShopsByDateRange(filterObject, queryObject, filterCategories, categoryMap, allDocuments, countingResults) {
+    let startDate, endDate;
+
+    if (filterObject.dateFrom && filterObject.dateTo) {
+        startDate = moment(filterObject.dateFrom).startOf('day');
+        endDate = moment(filterObject.dateTo).endOf('day');
+    }
+
+    let typeCountingResult = {}
+    let accumulationResults = {}
+    accumulationResults = groupShopsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults)
+    typeCountingResult.accumulations = accumulationResults
+
+    const shopsInRange = allDocuments.result.filter(seller =>
+        moment(seller.joinDate).isBetween(startDate, endDate, null, '[]')
+    );
+
+    const daysDiff = endDate.diff(startDate, 'days');
+    const { aggregationPeriod, periodCount } = getAggregationPeriodAndCount(daysDiff);
+
+
+    const aggregations = {};
+    typeCountingResult.aggregations = {}
+    let currentPeriodStart = moment(startDate);
+
+    for (let i = 0; i < periodCount; i++) {
+        let periodEnd = getPeriodEnd(currentPeriodStart, aggregationPeriod);
+        if (periodEnd.isAfter(endDate)) {
+            periodEnd = moment(endDate);
+        }
+
+        const shopsInPeriod = shopsInRange.filter(shop =>
+            moment(shop.joinDate).isBetween(currentPeriodStart, periodEnd, null, '[]')
+        );
+
+        const countingFilters = [
+            { label: "productShops", conditions: [{ fieldName: "type", fieldValue: "product" }] },
+            { label: "foodShops", conditions: [{ fieldName: "isFood", fieldValue: true }, { fieldName: "type", fieldValue: "product" }] },
+            { label: "nonFoodShops", conditions: [{ fieldName: "isFood", fieldValue: false }, { fieldName: "type", fieldValue: "product" }] },
+            { label: "serviceShops", conditions: [{ fieldName: "type", fieldValue: "service" }] },
+
+        ];
+        const periodCounts = countObjectsByArrayOfFilters(shopsInPeriod, countingFilters);
+        periodCounts.result.productShops = {
+            foodShops: periodCounts.result.foodShops,
+            nonFoodShops: periodCounts.result.nonFoodShops,
+            total: parseInt(periodCounts.result.foodShops) + parseInt(periodCounts.result.nonFoodShops)
+        }
+        delete periodCounts.result.foodShops; delete periodCounts.result.nonFoodShops
+        aggregations[currentPeriodStart.format('YYYY-MM-DD')] = {
+            ...periodCounts.result,
+        };
+
+        currentPeriodStart.add(1, aggregationPeriod);
+    }
+
+    typeCountingResult.aggregations = aggregations
+    typeCountingResult.dateRange = {
+        startDate: startDate.format('YYYY-MM-DD'),
+        endDate: endDate.format('YYYY-MM-DD'),
+        aggregationPeriod
+    }
+    return typeCountingResult
+}
 
 
 function getAggregationPeriodAndCount(daysDiff) {
@@ -274,7 +349,7 @@ function getPeriodEnd(currentPeriodStart, aggregationPeriod) {
 }
 
 
-function iterateOnCategories(queryObject, filterCategories, categoryMap, allDocuments) {
+function groupByCategories(queryObject, filterCategories, categoryMap, allDocuments) {
     let countingResults = {}
     for (const category of filterCategories) {
         if (queryObject[category]) {
