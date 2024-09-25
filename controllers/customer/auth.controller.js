@@ -232,7 +232,7 @@ exports.verifyEmailOTP = async (req, res) => {
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
         if (operationResultObject.success && operationResultObject.result.session.otpCode.toString() !== providedCode) return res.status(401).json({
             success: false,
-            code: 401,
+            code: 403,
             error: i18n.__("invalidOTP")
         })
         payloadObject = {
