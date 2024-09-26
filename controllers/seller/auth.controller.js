@@ -186,7 +186,7 @@ exports.sendEmailVerificationCode = async (req, res) => {
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
         payloadObject = {
             _id: operationResultObject.result._id,
-            name: operationResultObject.result.name,
+            name: operationResultObject.result.userName,
             email: operationResultObject.result.email,
         }
 
