@@ -192,7 +192,7 @@ exports.sendEmailVerificationCode = async (req, res) => {
 
         let otpCode = await emailHelper.sendEmailVerificationCode(payloadObject, req.lang, req.body.type)
         if (otpCode.success) sellerRepo.updateDirectly(payloadObject._id, { session: { otpCode: otpCode.result } })
-        return res.status(otpCode.code).json({ success: true, code: 200 });
+        return res.status(otpCode.code).json({ success: true, code: 200, result: payloadObject._id });
     } catch (err) {
         console.log(`err.message`, err.message);
         return res.status(500).json({
@@ -211,7 +211,7 @@ exports.verifyEmailOTP = async (req, res) => {
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
         if (operationResultObject.success && operationResultObject.result.session.otpCode.toString() !== providedCode) return res.status(401).json({
             success: false,
-            code: 403,
+            code: 409,
             error: i18n.__("invalidOTP")
         })
         payloadObject = {
