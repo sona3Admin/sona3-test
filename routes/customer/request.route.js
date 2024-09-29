@@ -11,6 +11,8 @@ app.patch("/cancel", checkIdentity("customer"), requestController.cancelRequest)
 app.put("/update", checkIdentity("customer"), requestController.updateRequest);
 
 app.get("/list", checkIdentity("customer"), requestController.listRequests);
+app.get("/listCart", checkIdentity("customer"), requestController.listPendingAndAcceptedRequests);
+app.get("/listProfile", checkIdentity("customer"), requestController.listCanceledAndRejectedRequests);
 app.get("/get", checkIdentity("customer"), requestController.getRequest);
 
 app.post("/shipping", checkIdentity("customer"), requestController.calculateRequestShippingCost)
