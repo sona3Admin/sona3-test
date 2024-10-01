@@ -38,8 +38,8 @@ exports.get = async (filterObject, selectionObject) => {
             .populate({
                 path: "items",
                 populate: [
-                    { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn name isFood" }
+                    { path: "shop", select: "nameEn nameAr image isVerified" },
+                    { path: "product", select: "nameEn name isFood isVerified" }
                 ]
             })
             .select(selectionObject)
@@ -77,8 +77,8 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             .populate({
                 path: "items",
                 populate: [
-                    { path: "shop", select: "nameEn nameAr image" },
-                    { path: "product", select: "nameEn nameAr isFood" }
+                    { path: "shop", select: "nameEn nameAr image isVerified" },
+                    { path: "product", select: "nameEn nameAr isFood isVerified" }
                 ]
             })
             .sort(sortObject)
