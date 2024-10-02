@@ -30,7 +30,7 @@ exports.getPurchasedOrder = async (reviewObject, itemToReview) => {
 
     }
     if (itemToReview?.service) {
-        existingItemObject = await requestRepo.find({ customer: reviewObject.customer, ...itemToReview })
+        existingItemObject = await requestRepo.find({ customer: reviewObject.customer, ...itemToReview, status: "purchased" })
         console.log(`existingItemObject in service`, existingItemObject);
 
     }
