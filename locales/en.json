@@ -166,12 +166,12 @@
 	"validImageFile": "validImageFile",
 	"couponNotValid": "you should only apply this coupon on te shop providing it.",
 	"validTier": "Please select your subscription plan.",
-	"alreadySubscribedToPlan": "alreadySubscribedToPlan",
+	"alreadySubscribedToPlan": "Already Subscribed To Plan",
 	"invalidPurchaseRequest": "invalidPurchaseRequest",
 	"shopExists": "Shop already exists",
 	"userType": "Invalid user type",
 	"\"useName\" is not allowed": "\"useName\" is not allowed",
-	"cannotDowngradeTier": "cannotDowngradeTier",
+	"cannotDowngradeTier": "Can't Downgrade Tier",
 	"invalidOTP": "Invalid OTP!"
 
 }
