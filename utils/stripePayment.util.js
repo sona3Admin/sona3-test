@@ -65,10 +65,8 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
         const cents = 100
         const reqLang = lang || "en"
         const urls = getUrls('customer', agent, reqLang)
-        console.log("urls", urls)
         const successUrl = urls.success
         const cancelUrl = urls.cancel
-
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",

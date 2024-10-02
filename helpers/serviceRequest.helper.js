@@ -20,11 +20,10 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
     try {
         customerRequestObject.name = customerRequestObject.customer.name
         customerRequestObject.phone = customerRequestObject.customer.phone
-        customerRequestObject.taxesTotal = this.calculateValueAddedTax(customerRequestObject.serviceTotal)
+        customerRequestObject.taxesTotal = await this.calculateValueAddedTax(customerRequestObject.serviceTotal)
         customerRequestObject.taxesRate = parseFloat(await getSettings("vatRate"))
         customerRequestObject.orderTotal = parseFloat(customerRequestObject.serviceTotal) + parseFloat(customerRequestObject.taxesTotal)
         customerRequestObject.paymentMethod = customerOrderObject.paymentMethod ? customerOrderObject.paymentMethod : "visa"
-        console.log("customerRequestObject.paymentMethod", customerRequestObject.paymentMethod)
         customerRequestObject.requestDate = customerOrderObject?.requestDate || customerOrderObject.timestamp
         customerRequestObject.calculations = {
             taxesTotal: customerRequestObject.taxesTotal,

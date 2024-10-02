@@ -11,10 +11,8 @@ exports.purchaseRequest = async (req, res) => {
     try {
 
         let customerOrderObject = req.body
-        console.log("customerOrderObject", customerOrderObject)
         let requestId = req.query._id || customerOrderObject?.orderDetails?.request.toString()
         let customerRequestObject = await requestRepo.get({ _id: requestId })
-        console.log("customerRequestObject", customerRequestObject?.result?.status)
         if (customerRequestObject?.result?.status !== "pending" && customerRequestObject?.result?.status !== "accepted") return res.status(409).json({
             success: false,
             code: 409,
@@ -24,7 +22,6 @@ exports.purchaseRequest = async (req, res) => {
         if (req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
 
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
-        console.log("customerOrderObject.paymentMethod", customerOrderObject.paymentMethod)
         let operationResultObject = await requestRepo.updateDirectly(requestId, { ...customerOrderObject.calculations });
         sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString, { hasSold: true })
         return res.status(operationResultObject.code).json(operationResultObject);
