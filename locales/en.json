@@ -172,7 +172,5 @@
 	"userType": "Invalid user type",
 	"\"useName\" is not allowed": "\"useName\" is not allowed",
 	"cannotDowngradeTier": "Can't Downgrade Tier",
-	"invalidOTP": "Invalid OTP!",
-	"validFcmToken": "fcmToken is not allowed to be empty",
-	"\"fcmToken\" is not allowed to be empty": "\"fcmToken\" is not allowed to be empty"
+	"invalidOTP": "Invalid OTP!"
 }
