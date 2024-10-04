@@ -48,7 +48,7 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
 
         if (operationResultObject.success &&
             (!operationResultObject.result.isEmailVerified ||
-                !operationResultObject.result.isPhoneVerified ||
+                // !operationResultObject.result.isPhoneVerified ||
                 !operationResultObject.result.isActive ||
                 operationResultObject.result.isDeleted
             )

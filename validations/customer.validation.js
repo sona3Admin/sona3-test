@@ -200,7 +200,7 @@ module.exports = {
                 "string.empty": "emptyPassword",
             }),
 
-            fcmToken: joi.string().optional().empty().messages({
+            fcmToken: joi.string().optional().messages({
                 "string.base": "validFcmToken",
             }),
         }),
@@ -235,7 +235,7 @@ module.exports = {
             birthDate: joi.date().optional().messages({
                 "date.base": "validBirthDate",
             }),
-            fcmToken: joi.string().optional().empty().messages({
+            fcmToken: joi.string().optional().messages({
                 "string.base": "validFcmToken",
             }),
             socialToken: joi.string().optional().empty().messages({

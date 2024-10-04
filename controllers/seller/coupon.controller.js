@@ -6,7 +6,7 @@ exports.listCoupons = async (req, res) => {
     try {
         let filterObject = req.query;
         filterObject["isActive"] = true
-        filterObject["userType"] = "seller"
+        // filterObject["userType"] = "seller"
 
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         const operationResultObject = await couponRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
