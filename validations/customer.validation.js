@@ -235,11 +235,13 @@ module.exports = {
             birthDate: joi.date().optional().messages({
                 "date.base": "validBirthDate",
             }),
-            fcmToken: joi.string().optional().messages({
-                "string.base": "validFcmToken",
-            }),
+            
             socialToken: joi.string().optional().empty().messages({
                 "string.base": "validSocialToken",
+            }),
+
+            fcmToken: joi.string().optional().messages({
+                "string.base": "validFcmToken",
             }),
 
         }),
