@@ -306,6 +306,7 @@ exports.countOrders = async (req, res) => {
 
 async function getFilteredOrders(filterObject, orderSelectionObject) {
     let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
+    if (!allOrderDocuments.result) return { success: true, code: 200, result: [] }
     allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
         order.subOrders.map(subOrder => ({
             paymentMethod: order.paymentMethod,
