@@ -24,15 +24,16 @@ const authData = {
 exports.calculateOrderShippingCost = async (orderDetailsObject) => {
     try {
         console.log('calculateOrderShippingCost...');
-        let originCity = orderDetailsObject.cityCode || "DXB";
+        let originCity = orderDetailsObject.CityCode || "DXB";
         let shippingCost = { total: 0 };
-        console.log("orderDetailsObject.cityCode", orderDetailsObject.cityCode)
-        console.log("originCity", originCity)
+        // console.log("orderDetailsObject.CityCode", orderDetailsObject.CityCode)
+        // console.log("originCity", originCity)
         // Create an array of promises
         let subOrderPromises = orderDetailsObject.subCarts.map(async (subOrder) => {
             let destinationCity = subOrder?.address?.city.CityCode || "DXB";
-            console.log("subOrder?.address?.cityCode", subOrder?.address?.city.CityCode)
-            console.log("destinationCity", destinationCity)
+            // console.log("subOrder?.address", subOrder?.address)
+            // console.log("subOrder?.address?.CityCode", subOrder?.address?.city.CityCode)
+            // console.log("destinationCity", destinationCity)
 
             let subOrderCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity);
             return { shop: subOrder.shop._id.toString(), cost: subOrderCost.result };
@@ -47,7 +48,7 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
             shippingCost[subOrderCost.shop] = subOrderCost.cost;
             shippingCost.total += subOrderCost.cost;
         });
-        console.log("shippingCost", shippingCost)
+        // console.log("shippingCost", shippingCost)
         return {
             success: true,
             code: 201,

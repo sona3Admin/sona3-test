@@ -88,8 +88,7 @@ exports.addOrderTaxes = (shopObject, customerOrderObject, isFood) => {
     shopObject.shopTaxes = this.calculateValueAddedTax(shopObject.items, customerOrderObject.taxesRate)
     shopObject.subOrderTotal = parseFloat(shopObject.shopTaxes) + parseFloat(shopObject.shopTotal)
     customerOrderObject.taxesTotal += parseFloat(shopObject.shopTaxes)
-    customerOrderObject.orderTotal += parseFloat(customerOrderObject.taxesTotal)
-
+    customerOrderObject.orderTotal += parseFloat(shopObject.shopTaxes)
     if (isFood) this.addOrderShippingFees(shopObject, customerOrderObject)
 }
 
