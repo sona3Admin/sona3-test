@@ -5,10 +5,11 @@ const requestRepo = require("../../modules/Request/request.repo");
 
 exports.countOrders = async (req, res) => {
     try {
+        const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
         const overallCounts = { orders: 0, grossSales: 0, netSales: 0 }
         let allOrderDocuments = await orderRepo.list(
-            { sellers: req.query.seller },
+            { sellers: req.query.seller, ...filterObject },
             { customer: 1, subOrders: 1, shippingAddress: 1, paymentMethod: 1, issueDate: 1 },
             {}, pageNumber, limitNumber
         )
@@ -40,11 +41,12 @@ exports.countOrders = async (req, res) => {
 
 exports.countRequests = async (req, res) => {
     try {
+        const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
         const overallCounts = { requests: 0, grossSales: 0, netSales: 0 }
         
         let allRequestDocuments = await requestRepo.list(
-            { seller: req.query.seller, status: "purchased" },
+            { seller: req.query.seller, status: "purchased", ...filterObject },
             { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1 },
             {}, pageNumber, limitNumber
         )
