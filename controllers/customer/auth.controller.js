@@ -230,7 +230,7 @@ exports.verifyEmailOTP = async (req, res) => {
         const providedCode = req.body.otpCode.toString()
         const operationResultObject = await customerRepo.find({ _id: req.query._id })
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
-        if (operationResultObject.success && operationResultObject.result.session.otpCode.toString() !== providedCode) return res.status(401).json({
+        if (operationResultObject.success && operationResultObject.result.session.otpCode.toString() !== providedCode) return res.status(400).json({
             success: false,
             code: 409,
             error: i18n.__("invalidOTP")
