@@ -138,13 +138,22 @@ let settingEndPoints = [
 
 
 let dashboardEndPoints = [
-    "/admin/dashboard/customer",
-    "/admin/dashboard/seller",
-    "/admin/dashboard/shop",
-    "/admin/dashboard/item",
-    "/admin/dashboard/order",
-    "/admin/dashboard/revenue",
+    "/admin/dashboards/customer",
+    "/admin/dashboards/seller",
+    "/admin/dashboards/shop",
+    "/admin/dashboards/item",
+    "/admin/dashboards/order",
+    "/admin/dashboards/revenue",
 ]
+
+
+let reportEndPoints = [
+    "/admin/reports/countCustomers",
+    "/admin/reports/countSellers",
+    "/admin/reports/countShops",
+    "/admin/reports/countTiers"
+]
+
 
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
@@ -171,6 +180,7 @@ roomEndPoints = new Set(roomEndPoints);
 notificationEndPoints = new Set(notificationEndPoints);
 settingEndPoints = new Set(settingEndPoints);
 dashboardEndPoints = new Set(dashboardEndPoints);
+reportEndPoints = new Set(reportEndPoints);
 
 
 let permissions = new Map();
@@ -199,7 +209,8 @@ permissions.set("coupons", couponEndPoints)
 permissions.set("rooms", roomEndPoints)
 permissions.set("notifications", notificationEndPoints)
 permissions.set("settings", settingEndPoints)
-permissions.set("dashboard", dashboardEndPoints)
+permissions.set("dashboards", dashboardEndPoints)
+permissions.set("reports", reportEndPoints)
 
 
 module.exports = { permissions }
