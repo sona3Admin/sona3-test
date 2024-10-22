@@ -3,7 +3,7 @@ const couponModel = require("./coupon.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const cartRepo = require("../Cart/cart.repo")
 const basketRepo = require("../Basket/basket.repo")
-const { isIdInArray } = require("../../helpers/cart.helper")
+const { isIdInArray, findObjectInArray } = require("../../helpers/cart.helper")
 
 exports.find = async (filterObject) => {
     try {
@@ -37,6 +37,7 @@ exports.get = async (filterObject, selectionObject) => {
         const resultObject = await couponModel.findOne(filterObject).lean()
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "usedBy.customer", select: "name image" })
+            .populate({ path: "usedBy.seller", select: "userName image" })
             .select(selectionObject)
 
 
@@ -72,6 +73,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await couponModel.find(filterObject).lean()
             .populate({ path: "shop", select: "nameEn nameAr image" })
             .populate({ path: "usedBy.customer", select: "name image" })
+            .populate({ path: "usedBy.seller", select: "userName image" })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
@@ -268,7 +270,7 @@ exports.applyOnCart = async (cartId, couponId, shopId) => {
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
         let customerId = (cartObject.result.customer).toString()
-        let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "customer", customerId)
+        let didCustomerUseCoupon = findObjectInArray(couponObject.result.usedBy, "customer", customerId)
         if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
 
         let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "apply")
@@ -364,7 +366,7 @@ exports.applyOnBasket = async (cartId, couponId, shopId) => {
         let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
         let customerId = (cartObject.result.customer).toString()
-        let didCustomerUseCoupon = isIdInArray(couponObject.result.usedBy, "customer", customerId)
+        let didCustomerUseCoupon = findObjectInArray(couponObject.result.usedBy, "customer", customerId)
         if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
 
         let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "apply")
