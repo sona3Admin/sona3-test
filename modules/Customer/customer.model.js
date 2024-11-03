@@ -4,7 +4,7 @@ const saltrounds = 5;
 
 const customerSchema = mongoose.Schema({
     name: { type: String, default: "No Name" },
-    email: { type: String, unique: true },
+    email: { type: String },
     password: { type: String },
     phone: { type: String },
     image: { type: Object },
@@ -34,6 +34,7 @@ customerSchema.pre("save", async function (next) {
 })
 
 customerSchema.index({ location: '2dsphere' });
+customerSchema.index({ email: 1 });
 
 const customerModel = mongoose.model("customers", customerSchema)
 
