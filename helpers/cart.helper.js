@@ -52,7 +52,7 @@ exports.findObjectInArray = (arrayOfObjects, targetField, targetId) => {
 exports.increaseItemQuantity = (cartItemsArray, itemIndex, quantityToAdd, itemObject) => {
     let existingQuantity = cartItemsArray[itemIndex].quantity;
     let newQuantity = parseInt(existingQuantity) + quantityToAdd;
-    let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
+    let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage, itemObject.defaultPackage);
     cartItemsArray[itemIndex].quantity = newQuantity;
     cartItemsArray[itemIndex].itemTotal = itemTotal;
     console.log("itemIndex", itemIndex);
@@ -77,7 +77,7 @@ exports.addShopToSubCartsArray = (subCartsArray, shopId) => {
 exports.addItemToItemsArray = (cartItemsArray, quantityToAdd, itemObject) => {
     let newQuantity = quantityToAdd;
     console.log(`newQuantity`, newQuantity);
-    let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage);
+    let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage, itemObject.defaultPackage);
     cartItemsArray.push({
         shop: itemObject.shop,
         product: itemObject.product,
@@ -110,7 +110,7 @@ exports.decreaseItemQuantity = (shopCartObject, shopCartItems, itemIndex, quanti
     console.log("decrease item quantity");
     itemIndex = parseInt(itemIndex); quantityToRemove = parseInt(quantityToRemove)
     let newQuantity = parseInt(shopCartItems[itemIndex].quantity) - quantityToRemove;
-    let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage);
+    let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage, itemObject.defaultPackage);
     shopCartItems[itemIndex].quantity = newQuantity;
     shopCartItems[itemIndex].itemTotal = itemTotal;
     shopCartObject.items = shopCartItems
@@ -148,11 +148,12 @@ exports.updateExistingSubCart = (cartObject, subCartIndex, itemObject, itemId, q
 }
 
 
-exports.calculateItemTotal = (packagesArray, quantityToPurchase, minPackageObject) => {
+exports.calculateItemTotal = (packagesArray, quantityToPurchase, minPackageObject, defaultPackage) => {
 
     let remainingQuantity = quantityToPurchase;
     let itemTotal = 0;
     console.log(`calculating item total`);
+    packagesArray.push(defaultPackage)
     let smallestPackage = findPackageWithSmallestQuantity(packagesArray) || minPackageObject
     while (remainingQuantity >= smallestPackage.quantity) {
         const selectedPackage = selectPackage(packagesArray, remainingQuantity) || minPackageObject;
