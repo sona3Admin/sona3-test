@@ -153,7 +153,10 @@ exports.calculateItemTotal = (packagesArray, quantityToPurchase, minPackageObjec
     let remainingQuantity = quantityToPurchase;
     let itemTotal = 0;
     console.log(`calculating item total`);
+    console.log("defaultPackage", defaultPackage)
+
     packagesArray.push(defaultPackage)
+    console.log("packagesArray", packagesArray)
     let smallestPackage = findPackageWithSmallestQuantity(packagesArray) || minPackageObject
     while (remainingQuantity >= smallestPackage.quantity) {
         const selectedPackage = selectPackage(packagesArray, remainingQuantity) || minPackageObject;
