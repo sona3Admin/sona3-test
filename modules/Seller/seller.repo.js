@@ -335,8 +335,8 @@ exports.comparePassword = async (emailOrUsernameString, passwordString) => {
         emailOrUsernameString = emailOrUsernameString.toLowerCase()
         let existingObject = await this.find({
             $or: [
-                { email: emailOrUsernameString },
-                { userName: emailOrUsernameString }
+                { email: emailOrUsernameString, isDeleted: false },
+                { userName: emailOrUsernameString, isDeleted: false }
             ]
         })
 

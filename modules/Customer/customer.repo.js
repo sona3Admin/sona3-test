@@ -258,7 +258,7 @@ exports.remove = async (_id) => {
 exports.comparePassword = async (emailString, passwordString) => {
     try {
         emailString = emailString.toLowerCase()
-        const existingObject = await this.find({ email: emailString })
+        const existingObject = await this.find({ email: emailString, isDeleted: false })
 
         if (!existingObject.success || !existingObject.result.password) return {
             success: false,
