@@ -44,7 +44,7 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
     try {
         const { fcmToken } = req.body;
         let customerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
-        let operationResultObject = await customerRepo.find({ email: req.body.email })
+        let operationResultObject = await customerRepo.find({ email: req.body.email, isDeleted: false })
 
         if (operationResultObject.success &&
             (!operationResultObject.result.isEmailVerified ||
@@ -93,7 +93,7 @@ exports.authenticateByAppleAccount = async (req, res) => {
             req.body.email = payload.email
         }
 
-        let operationResultObject = await customerRepo.find({ email: req.body.email })
+        let operationResultObject = await customerRepo.find({ email: req.body.email, isDeleted: false })
 
         if (operationResultObject.success &&
             (!operationResultObject.result.isEmailVerified ||
@@ -203,7 +203,7 @@ exports.loginAsGuest = async (req, res) => {
 
 exports.sendEmailVerificationCode = async (req, res) => {
     try {
-        const operationResultObject = await customerRepo.find({ email: req.body.email })
+        const operationResultObject = await customerRepo.find({ email: req.body.email, isDeleted: false })
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
         payloadObject = {
             _id: operationResultObject.result._id,

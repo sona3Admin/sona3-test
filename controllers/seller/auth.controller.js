@@ -95,7 +95,7 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         const isLifeTimePlanOn = await getSettings("isLifeTimePlanOn")
 
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
-        let operationResultObject = await sellerRepo.find({ email: req.body.email })
+        let operationResultObject = await sellerRepo.find({ email: req.body.email, isDeleted: false })
 
         if (operationResultObject.success &&
             (!operationResultObject.result.isEmailVerified ||
@@ -141,7 +141,7 @@ exports.authenticateByAppleAccount = async (req, res) => {
 
         let sellerObject = { isEmailVerified: true, isPhoneVerified: req.body.phone ? true : false, ...req.body }
         if (!req.body.email) { }
-        let operationResultObject = await sellerRepo.find({ email: req.body.email })
+        let operationResultObject = await sellerRepo.find({ email: req.body.email, isDeleted: false })
 
         if (operationResultObject.success &&
             (!operationResultObject.result.isEmailVerified ||
@@ -182,7 +182,7 @@ exports.authenticateByAppleAccount = async (req, res) => {
 
 exports.sendEmailVerificationCode = async (req, res) => {
     try {
-        const operationResultObject = await sellerRepo.find({ email: req.body.email })
+        const operationResultObject = await sellerRepo.find({ email: req.body.email, isDeleted: false })
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
         payloadObject = {
             _id: operationResultObject.result._id,
