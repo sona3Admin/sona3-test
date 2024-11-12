@@ -9,7 +9,7 @@ exports.uploadImagesToMemory = () => {
             storage,
             fileFilter: (req, file, cb) => {
                 if (file) {
-                    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
+                    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg"|| file.mimetype == "image/svg") {
                         cb(null, true);
 
                     } else cb(new multer.MulterError(i18n.__("validImageFile")), false);
