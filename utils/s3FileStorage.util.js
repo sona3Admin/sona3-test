@@ -8,13 +8,34 @@ process.env.AWS_REGION = process.env.BUCKETEER_AWS_REGION;
 
 exports.uploadFilesToS3 = async (folderName, files) => {
   try {
+    const allowedMimeTypes = [
+      "image/png",
+      "image/jpg",
+      "image/jpeg",
+      "image/svg+xml"
+    ];
+
+    // Validate file types before upload
+    const invalidFiles = files.filter(file => !allowedMimeTypes.includes(file.mimetype));
+    if (invalidFiles.length > 0) {
+      return {
+        success: false,
+        code: 400,
+        error: `Invalid file type(s). Allowed types are: JPG, JPEG, PNG, and SVG`
+      };
+    }
+
     const params = files.map((file) => {
+      const extension = file.mimetype.split('/').pop().replace('svg+xml', 'svg');
+      console.log("extension", extension)
       return {
         Bucket: process.env.BUCKETEER_BUCKET_NAME,
         Key: `public/${folderName}/${uuid()}-${file.originalname}`,
         Body: file.buffer,
+        ContentType: file.mimetype, // Add content type to ensure proper handling by S3
       };
     });
+
     const uploadResults = await Promise.all(params.map((param) => s3.upload(param).promise()));
     return { success: true, result: uploadResults, code: 201 };
   } catch (err) {
@@ -25,9 +46,6 @@ exports.uploadFilesToS3 = async (folderName, files) => {
       error: err.message
     }
   }
-
-
-
 };
 
 
