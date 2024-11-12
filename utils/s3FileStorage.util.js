@@ -94,41 +94,31 @@ exports.deleteFilesFromS3 = (arrayOfFiles) => {
 }
 
 
-
-exports.uploadPDFtoS3 = async (folderName, fileContent) => {
+exports.uploadPDFtoS3 = async (folderName, files) => {
   try {
-    console.log("Uploading to S3. PDF size:", fileContent.length);
-    const params = {
-      Bucket: process.env.BUCKETEER_BUCKET_NAME,
-      Key: `public/pdf/${uuid()}-${folderName}.pdf`,
-      Body: fileContent,
-      ContentType: 'application/pdf'
+    const uploadPromises = files.map((file) => {
+      const params = {
+        Bucket: process.env.BUCKETEER_BUCKET_NAME,
+        Key: `public/pdf/${uuid()}-${folderName}.pdf`,
+        Body: file.buffer,
+        ContentType: file.mimetype
+      };
+      return s3.upload(params).promise();
+    });
+
+    const uploadResults = await Promise.all(uploadPromises);
+    return {
+      success: true,
+      result: uploadResults // URLs of uploaded files
     };
-
-    return new Promise((resolve, reject) => {
-      s3.upload(params, function (err, data) {
-        if (err) {
-          console.log('Error uploading file:', err);
-          reject({
-            success: false,
-            error: err.message
-          });
-        } else {
-          console.log('File uploaded successfully. URL:', data.Location);
-          resolve({
-            success: true,
-            result: data
-          });
-        }
-      });
-    }).catch((err) => { console.log(`err.message`, err.message); return });
   } catch (err) {
-    console.log(`err.message`, err.message);
+    console.error("Error uploading file:", err.message);
+    return { success: false, error: err.message };
   }
-}
+};
 
 
-exports.uploadExceltoS3 = async (fileContent, fileName) => {
+exports.uploadExcelS3 = async (fileContent, fileName) => {
   try {
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,

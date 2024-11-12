@@ -7,18 +7,20 @@ const { uploadImagesToMemory } = require("../../helpers/uploader.helper")
 const uploadedFiles = uploadImagesToMemory()
 let checkToken = require("../../helpers/jwt.helper").verifyToken;
 const allowedUsers = ["seller"]
+const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
 app.post("/register", validator(createSellerValidation), authController.register);
 app.post("/login", validator(loginValidation), authController.login);
 app.post("/social", validator(authenticateBySocialMediaValidation), authController.authenticateBySocialMediaAccount)
 app.post("/apple", validator(authenticateBySocialMediaValidation), authController.authenticateByAppleAccount)
-app.post("/identity", checkToken(allowedUsers), uploadedFiles.array('image', 2), sellerController.uploadIdentityImages)
+// app.post("/identity", checkToken(allowedUsers), uploadedFiles.array('image', 2), sellerController.uploadIdentityImages)
+app.post("/identity", checkToken(allowedUsers), uploadedFiles.array('document', 2), sellerController.uploadIdentityImages)
+
 app.delete("/identity", checkToken(allowedUsers), sellerController.deleteIdentityImages)
 app.post("/otp", validator(sendEmailValidation), authController.sendEmailVerificationCode);
 app.post("/verify", authController.verifyEmailOTP);
 app.put("/verify", checkToken(allowedUsers), validator(updateSellerValidation), sellerController.updateSeller)
-
 
 
 

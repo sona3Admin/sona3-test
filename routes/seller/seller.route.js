@@ -16,8 +16,5 @@ app.get("/get", checkIdentity("_id"), sellerController.getSeller);
 app.post("/image", checkIdentity("_id"), uploadedFiles.array('image', 1), sellerController.uploadImage)
 app.delete("/image", checkIdentity("_id"), sellerController.deleteImage)
 
-app.post("/identity", checkIdentity("_id"), uploadedFiles.array('documents', 2), sellerController.uploadIdentityImages)
-app.delete("/identity", checkIdentity("_id"), sellerController.deleteIdentityImages)
-
 
 module.exports = app

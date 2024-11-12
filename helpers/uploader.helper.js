@@ -12,8 +12,8 @@ exports.uploadImagesToMemory = () => {
                         "image/png",
                         "image/jpg",
                         "image/jpeg",
-                        "image/svg+xml",  // Correct MIME type for SVG
-                        "application/pdf" // Added PDF support
+                        "image/svg+xml",
+                        "application/pdf"
                     ];
 
                     if (allowedMimeTypes.includes(file.mimetype)) {
