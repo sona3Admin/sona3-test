@@ -1,7 +1,6 @@
 let multer = require('multer');
 const i18n = require('i18n');
 
-
 exports.uploadImagesToMemory = () => {
     try {
         const storage = multer.memoryStorage();
@@ -9,17 +8,27 @@ exports.uploadImagesToMemory = () => {
             storage,
             fileFilter: (req, file, cb) => {
                 if (file) {
-                    if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg"|| file.mimetype == "image/svg") {
+                    const allowedMimeTypes = [
+                        "image/png",
+                        "image/jpg",
+                        "image/jpeg",
+                        "image/svg+xml",  // Correct MIME type for SVG
+                        "application/pdf" // Added PDF support
+                    ];
+
+                    if (allowedMimeTypes.includes(file.mimetype)) {
                         cb(null, true);
-
-                    } else cb(new multer.MulterError(i18n.__("validImageFile")), false);
-
+                    } else {
+                        cb(new multer.MulterError(i18n.__("validImageFile")), false);
+                    }
+                } else {
+                    cb(new multer.MulterError(i18n.__("requiredImage")), false);
                 }
-
-                else cb(new multer.MulterError(i18n.__("requiredImage")), false);
-
             },
-            limits: { fileSize: 3000000, files: 8 },
+            limits: {
+                fileSize: 3000000, // 3MB limit
+                files: 8
+            },
         });
         return upload;
     } catch (err) {
@@ -27,5 +36,3 @@ exports.uploadImagesToMemory = () => {
         return
     }
 }
-
-
