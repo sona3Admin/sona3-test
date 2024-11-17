@@ -45,7 +45,7 @@ exports.get = async (filterObject, selectionObject) => {
                     { path: "shop", select: "nameEn nameAr phone image seller location address" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
                     { path: "items.product", select: "nameEn nameAr categories" },
-                    { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
+                    { path: "items.variation", select: "stock packages minPackage defaultPackage descriptionEn descriptionAr images fields  width height length weight" }
                 ]
             })
             .select(selectionObject)
@@ -86,7 +86,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
                     { path: "shop", select: "nameEn nameAr image" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
                     { path: "items.product", select: "nameEn nameAr" },
-                    { path: "items.variation", select: "stock packages minPackage descriptionEn descriptionAr images fields" }
+                    { path: "items.variation", select: "stock packages minPackage defaultPackage descriptionEn descriptionAr images fields" }
                 ]
             })
             .sort(sortObject)
@@ -148,7 +148,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         console.log("itemId", itemId);
         let variationResultObject = await variationRepo.get({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
-        if (!variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("cartFoodOnly") }
+        if (variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("isNotFoodCart") }
 
         variationResultObject.result.seller = variationResultObject.result.seller._id
         variationResultObject.result.shop = variationResultObject.result.shop._id
@@ -201,7 +201,7 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         let cartResultObject = await this.get({ customer: customerId });
         if (!cartResultObject.success) return cartResultObject;
         let cartObject = cartResultObject.result;
-
+        console.log(cartObject);
         let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", shopId)
         if (!isShopInSubCarts || !isShopInSubCarts.success) return { success: false, code: 404, error: i18n.__("notFound") };
         let shopCartIndex = parseInt(isShopInSubCarts.result)
@@ -214,10 +214,10 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         quantityToRemove = parseInt(quantityToRemove)
 
         if (parseInt(quantityToRemove) >= itemObject.quantity) {
-            shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex)
+            shopCartObject.items = removeItemFromItemsArray(shopCartObject, itemIndex);
             delete cartObject.variations;
             cartObject.$pull = { variations: itemId }
-        };
+        }
         if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
         if (parseInt(quantityToRemove) < parseInt(itemObject.quantity))
             shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, parseInt(itemIndex), parseInt(quantityToRemove), itemObject.variation);
@@ -341,7 +341,6 @@ exports.updateManyCarts = async (shopId, itemId) => {
     }
 
 }
-
 
 exports.remove = async (_id) => {
     try {
