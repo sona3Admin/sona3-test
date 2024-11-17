@@ -107,15 +107,20 @@ exports.removeShopFromSubCartsArray = (shopCarts, subCartIndex) => {
 
 
 exports.decreaseItemQuantity = (shopCartObject, shopCartItems, itemIndex, quantityToRemove, variation) => {
-    console.log("decrease item quantity");
-    itemIndex = parseInt(itemIndex); quantityToRemove = parseInt(quantityToRemove)
-    let newQuantity = parseInt(shopCartItems[itemIndex].quantity) - quantityToRemove;
-    let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage, itemObject.defaultPackage);
-    shopCartItems[itemIndex].quantity = newQuantity;
-    shopCartItems[itemIndex].itemTotal = itemTotal;
-    shopCartObject.items = shopCartItems
-    this.calculateShopTotal(shopCartObject)
-    return shopCartObject.items;
+    try {
+        console.log("decrease item quantity");
+        // console.log("Item Object", itemObject)
+        itemIndex = parseInt(itemIndex); quantityToRemove = parseInt(quantityToRemove)
+        let newQuantity = parseInt(shopCartItems[itemIndex].quantity) - quantityToRemove;
+        let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage, variation.defaultPackage);
+        shopCartItems[itemIndex].quantity = newQuantity;
+        shopCartItems[itemIndex].itemTotal = itemTotal;
+        shopCartObject.items = shopCartItems
+        this.calculateShopTotal(shopCartObject)
+        return shopCartObject.items;
+    } catch(err){
+        console.log("err in decreaseItemQuantity", err.message)
+    }
 }
 
 
