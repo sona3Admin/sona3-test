@@ -126,11 +126,12 @@ exports.create = async (formObject) => {
             error: i18n.__("internalServerError")
         }
         let productFormObject = { $push: { variations: resultObject._id }, $inc: { stock: resultObject.stock } }
-        if (resultObject.isDefault) {
+        if (formObject.isDefault) {
             productFormObject.defaultVariation = resultObject._id
             let discountValue = resultObject.minPackage.originalPrice - resultObject.minPackage.price
             productFormObject.discountValue = discountValue
         }
+        console.log("productFormObject", productFormObject)
         productRepo.updateDirectly(resultObject.product, productFormObject)
         return {
             success: true,
