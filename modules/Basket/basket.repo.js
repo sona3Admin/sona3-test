@@ -148,7 +148,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         console.log("itemId", itemId);
         let variationResultObject = await variationRepo.get({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
-        if (variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("isNotFoodCart") }
+        if (!variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("cartFoodOnly") }
 
         variationResultObject.result.seller = variationResultObject.result.seller._id
         variationResultObject.result.shop = variationResultObject.result.shop._id
