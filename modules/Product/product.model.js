@@ -14,8 +14,6 @@ const productSchema = mongoose.Schema({
     defaultVariation: { type: mongoose.Types.ObjectId, ref: "variations" },
     rating: { type: Number, min: 1, default: 1 },
     reviewCount: { type: Number, min: 0, default: 0 },
-    // isTopDeal: { type: Boolean, default: false },
-    // isInStock: { type: Boolean, default: true },
     isSustainable: { type: Boolean, default: false },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },

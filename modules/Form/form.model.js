@@ -8,8 +8,6 @@ const formSchema = mongoose.Schema({
     type: { type: String, enum: ["product", "service"], default: "product" },
     fields: [{ type: mongoose.Types.ObjectId, ref: "fields" }],
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
-    // isRequested: { type: Boolean, default: false },
-    // requestedBy: { type: mongoose.Types.ObjectId, ref: "sellers" },
     creationDate: { type: Date, default: Date.now() },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }

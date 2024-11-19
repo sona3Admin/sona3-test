@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const sellerRepo = require("../../modules/Seller/seller.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
+const emailHelper = require("../../helpers/email.helper")
 
 
 exports.createSeller = async (req, res) => {
@@ -61,6 +62,7 @@ exports.updateSeller = async (req, res) => {
     try {
         req.body["$unset"] = { token: 1 }
         const operationResultObject = await sellerRepo.update(req.query._id, req.body);
+        if (req?.body?.isVerified == true) emailHelper.sendSellerVerificationConfirmation(operationResultObject.result, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

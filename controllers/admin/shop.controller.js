@@ -1,7 +1,9 @@
 const i18n = require('i18n');
 const shopRepo = require("../../modules/Shop/shop.repo");
+const sellerRepo = require("../../modules/Seller/seller.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
+const emailHelper = require("../../helpers/email.helper")
 
 
 exports.createShop = async (req, res) => {
@@ -76,6 +78,11 @@ exports.countShops = async (req, res) => {
 exports.updateShop = async (req, res) => {
     try {
         const operationResultObject = await shopRepo.update({ _id: req.query._id }, req.body);
+
+        if (req?.body?.isVerified == true) {
+            const sellerObject = await sellerRepo.find({ _id: (operationResultObject.result.seller).toString() })
+            emailHelper.sendShopVerificationConfirmation(sellerObject.result, req.lang)
+        }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

@@ -8,8 +8,6 @@ const fieldSchema = mongoose.Schema({
     type: { type: String, enum: ["enum", "string", "number"], default: "string" },
     values: [{ en: { type: String }, ar: { type: String }, number: { type: Number } }],
     isRequired: { type: Boolean, default: true },
-    // isRequested: { type: Boolean, default: false },
-    // requestedBy: { type: mongoose.Types.ObjectId, ref: "sellers" },
     creationDate: { type: Date, default: Date.now() },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }
