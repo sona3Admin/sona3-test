@@ -490,12 +490,12 @@ exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees, i
     try {
         console.log("applying coupon on subscription fees...")
         let couponObject = await this.find({ code: couponId })
-        if (!couponObject.success && !couponObject.result.userType == "seller") return {
+        if (!couponObject.success || couponObject.result.userType !== "seller") return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         };
-        
+
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
 
