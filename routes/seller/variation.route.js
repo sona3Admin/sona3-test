@@ -14,7 +14,7 @@ app.post("/create", checkIdentity("seller"), validator(createVariationValidation
 app.put("/update", checkIdentity("seller"), validator(updateVariationValidation), variationController.updateVariation);
 app.delete("/remove", checkIdentity("seller"), variationController.removeVariation);
 
-app.post("/image", checkIdentity("seller"), uploadedFiles.array('images', 1), variationController.uploadImages)
+app.post("/image", checkIdentity("seller"), uploadedFiles.array('images', 10), variationController.uploadImages)
 app.delete("/image", checkIdentity("seller"), variationController.deleteImages)
 
 
