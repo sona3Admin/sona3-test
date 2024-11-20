@@ -196,7 +196,6 @@ exports.calculateCartTotal = (cartObject) => {
     cartObject.cartTotal = cartTotal;
     cartObject.cartOriginalTotal = cartOriginalTotal;
     if (cartObject?.coupon) cartObject = this.applyCoupon(cartObject)
-    // if (cartObject?.usedCashback) cartObject.cartTotal -= cartObject?.usedCashback
     if (cartObject.cartTotal < 0) cartObject.cartTotal = 0
 
     console.log("calculated cart total");
