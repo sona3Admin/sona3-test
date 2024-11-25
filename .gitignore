@@ -1,5 +1,7 @@
 node_modules/
-.vscode
+.vscode/
+.idea/
 logs/
 policy.json
+qodana.yaml
 .env
