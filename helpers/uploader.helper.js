@@ -33,6 +33,5 @@ exports.uploadImagesToMemory = () => {
         return upload;
     } catch (err) {
         console.log("err.message", err.message);
-        return
     }
 }

@@ -1,7 +1,7 @@
 
 exports.prepareQueryObjects = async (filterObject, sortObject) => {
     try {
-        delete filterObject["page"], delete filterObject["limit"]
+        delete filterObject["page"]; delete filterObject["limit"]
         let { locationFinalFilter, locationFinalSort } = handleLocationParams(filterObject);
         let finalFilterObject = handleSearchParams(filterObject);
 

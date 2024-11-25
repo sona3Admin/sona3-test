@@ -5,6 +5,8 @@ const ifastShipperHelper = require("../../utils/ifastShipping.util")
 const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
 const stripeHelper = require("../../utils/stripePayment.util")
+const emailHelper = require("../../helpers/email.helper")
+
 
 
 exports.purchaseRequest = async (req, res) => {
@@ -23,6 +25,8 @@ exports.purchaseRequest = async (req, res) => {
 
         customerOrderObject = await handleRequestPurchase(customerRequestObject.result, customerOrderObject)
         let operationResultObject = await requestRepo.updateDirectly(requestId, { ...customerOrderObject.calculations });
+        emailHelper.sendPurchaseConfirmationEmailToCustomer(customerOrderObject, req.lang)
+        emailHelper.sendPurchaseConfirmationEmailToSeller(customerOrderObject, req.lang)
         sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString, { hasSold: true })
         return res.status(operationResultObject.code).json(operationResultObject);
 
@@ -130,7 +134,10 @@ exports.cancelRequest = async (req, res) => {
 exports.createRequest = async (req, res) => {
     try {
         let customerRequestObject = req.body
-        const operationResultObject = await requestRepo.create(customerRequestObject);
+        const requestObject = await requestRepo.create(customerRequestObject);
+        const operationResultObject = await requestRepo.get({ _id: requestObject.result._id.toString() })
+        emailHelper.sendServiceRequestCreationEmailToCustomer(operationResultObject.result, req.lang)
+        emailHelper.sendServiceRequestCreationEmailToSeller(operationResultObject.result, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

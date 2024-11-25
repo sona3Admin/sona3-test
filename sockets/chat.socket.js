@@ -157,7 +157,6 @@ async function sendMessageNotification(io, roomObject, messageObject) {
 
     } catch (err) {
         console.log("err.message", err.message);
-        return
     }
 }
 

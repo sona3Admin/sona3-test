@@ -19,6 +19,7 @@ exports.generateDummyDataFromSchema = (schema) => {
                         break;
                     case 'password':
                         data[key] = '123';
+                        break;
                     case 'phone':
                         data[key] = generateRandomPhoneNumber("+20")
                         break;

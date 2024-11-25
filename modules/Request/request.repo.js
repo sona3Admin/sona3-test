@@ -34,9 +34,9 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await requestModel.findOne(filterObject).lean()
-            .populate({ path: "customer", select: "name phone image fcmToken" })
+            .populate({ path: "customer", select: "name email phone image fcmToken" })
             .populate({ path: "shop", select: "nameEn nameAr image phone location address" })
-            .populate({ path: "seller", select: "userName image fcmToken" })
+            .populate({ path: "seller", select: "userName email image fcmToken" })
             .populate({ path: "service", select: "-fields -tags -categories" })
             .select(selectionObject)
 
