@@ -416,7 +416,7 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
             <li><strong>Request Status:</strong> ${serviceRequest.status}</li>
             <li><strong>Service:</strong> ${serviceRequest.service.nameEn}</li>
             <li><strong>Service Description:</strong> ${serviceRequest.service.descriptionEn}</li>
-            <li><strong>Service Base Price:</strong> AED{serviceRequest.service.basePrice}</li>
+            <li><strong>Service Base Price:</strong> AED${serviceRequest.service.basePrice}</li>
             <li><strong>Request Notes:</strong> ${serviceRequest.requestNotes || "N/A"}</li>
           </ul>
         `,
@@ -434,7 +434,7 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
             <li><strong>حالة الطلب:</strong> ${serviceRequest.status}</li>
             <li><strong>الخدمة:</strong> ${serviceRequest.service.nameAr}</li>
             <li><strong>وصف الخدمة:</strong> ${serviceRequest.service.descriptionAr}</li>
-            <li><strong>السعر المبدئي الخدمة:</strong> درهم اماراتي{serviceRequest.service.basePrice}</li>
+            <li><strong>السعر المبدئي الخدمة:</strong> درهم اماراتي${serviceRequest.service.basePrice}</li>
             <li><strong>ملاحظات الطلب:</strong> ${serviceRequest.requestNotes || "لا يوجد"}</li>
           </ul>
         `,
