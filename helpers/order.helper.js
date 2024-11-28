@@ -94,7 +94,7 @@ exports.addOrderTaxes = (shopObject, customerOrderObject, isFood) => {
 
 
 exports.addOrderShippingFees = (shopObject, customerOrderObject) => {
-    const ifastShippingCost = 15
+    const ifastShippingCost = 21
     shopObject.shopShippingFees = ifastShippingCost
     shopObject.subOrderTotal = parseFloat(shopObject.shopShippingFees) + parseFloat(shopObject.shopTotal)
     customerOrderObject.shippingFeesTotal += parseFloat(shopObject.shopShippingFees)
