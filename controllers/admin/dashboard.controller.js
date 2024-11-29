@@ -172,7 +172,7 @@ exports.calculateRevenue = async (req, res) => {
 
         }
 
-        const commissions = parseInt(orderTotal * 0.10) || 0
+        const commissions = parseInt(orderTotal * 0.15) || 0
 
         if (filterObject.dateField) filterObject.dateField = "timestamp"
 

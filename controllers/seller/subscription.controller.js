@@ -13,7 +13,7 @@ exports.paySubscriptionFees = async (req, res) => {
     try {
         console.log("Initiating Subscription Flow...")
         const todayDate = new Date();
-        const freeTrialEndDate = new Date('2025-01-01');
+        const freeTrialEndDate = new Date('2026-01-01');
         let initialFees = 0
         let payedInitialFees = true
         const freeTrialOn = await getSettings("isFreeTrialOn")
