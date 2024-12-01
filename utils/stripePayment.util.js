@@ -147,16 +147,16 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             payment_method_types: ["card"],
             mode: "payment",
             line_items: [
-                {
-                    price_data: {
-                        currency: "aed",
-                        product_data: {
-                            name: `Subscription Fees for ${tierName} plan`,
-                        },
-                        unit_amount: parseInt(parseFloat(subscriptionFees) * cents),
-                    },
-                    quantity: 1,
-                }
+                // {
+                //     price_data: {
+                //         currency: "aed",
+                //         product_data: {
+                //             name: `Subscription Fees for ${tierName} plan`,
+                //         },
+                //         unit_amount: parseInt(parseFloat(subscriptionFees) * cents),
+                //     },
+                //     quantity: 1,
+                // }
             ],
             success_url: successUrl,
             cancel_url: cancelUrl
@@ -168,7 +168,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                 price_data: {
                     currency: "aed",
                     product_data: {
-                        name: `Initial Subscription Fees`,
+                        name: `Initial Fees`,
                     },
                     unit_amount: parseInt(parseFloat(initialFees) * cents),
                 },
