@@ -45,7 +45,7 @@ module.exports = {
                 "boolean.base": "validIsSubCategory",
             }),
 
-            parentCategory: joi.string().optional().messages({
+            parentCategory: joi.string().optional().allow(null).messages({
                 "boolean.base": "validCategory",
             }),
 
@@ -117,7 +117,7 @@ module.exports = {
                 "boolean.base": "validIsSubCategory",
             }),
 
-            parentCategory: joi.string().optional().messages({
+            parentCategory: joi.string().optional().allow(null).messages({
                 "boolean.base": "validCategory",
             }),
 

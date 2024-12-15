@@ -9,7 +9,7 @@ const categorySchema = mongoose.Schema({
     image: { type: Object },
     subCategories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     isSubCategory: { type: Boolean, default: false },
-    parentCategory: { type: mongoose.Types.ObjectId, ref: "categories" },
+    parentCategory: { type: mongoose.Types.ObjectId, ref: "categories", default: null },
     creationDate: { type: Date, default: Date.now() },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false }
