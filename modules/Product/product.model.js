@@ -7,6 +7,7 @@ const productSchema = mongoose.Schema({
     nameAr: { type: String, required: true },
     descriptionEn: { type: String, required: true },
     descriptionAr: { type: String, required: true },
+    mainCategory: { type: mongoose.Types.ObjectId, ref: "categories" },
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     tags: [{ type: mongoose.Types.ObjectId, ref: "tags" }],
     stock: { type: Number, min: 0 },
@@ -24,7 +25,7 @@ const productSchema = mongoose.Schema({
     verifyDate: { type: Date },
     lastUpdateDate: { type: Date },
     discountValue: { type: Number, default: 0 },
-   
+
 })
 
 
