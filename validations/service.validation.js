@@ -34,6 +34,11 @@ module.exports = {
                 "any.required": "requiredDescriptionAr",
             }),
 
+            mainCategory: joi.string().optional().messages({
+                "string.base": "validMainCategory",
+                "any.required": "requiredMainCategory",
+            }),
+
             categories: joi.array().items(joi.string()).optional().messages({
                 "array.base": "validCategoriesArray",
             }),
@@ -142,6 +147,11 @@ module.exports = {
 
             descriptionAr: joi.string().optional().messages({
                 "string.base": "validDescriptionAr",
+            }),
+
+            mainCategory: joi.string().optional().messages({
+                "string.base": "validMainCategory",
+                "any.required": "requiredMainCategory",
             }),
 
             categories: joi.array().items(joi.string()).optional().messages({

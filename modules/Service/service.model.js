@@ -7,6 +7,7 @@ const serviceSchema = mongoose.Schema({
     nameAr: { type: String, required: true },
     descriptionEn: { type: String, required: true },
     descriptionAr: { type: String, required: true },
+    mainCategory: { type: mongoose.Types.ObjectId, ref: "categories" },
     categories: [{ type: mongoose.Types.ObjectId, ref: "categories" }],
     tags: [{ type: mongoose.Types.ObjectId, ref: "tags" }],
     fields: [{
