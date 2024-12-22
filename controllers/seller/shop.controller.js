@@ -276,7 +276,10 @@ exports.uploadShopLicense = async (req, res) => {
             error: i18n.__("limitExceeded")
         });
 
-        let operationResultArray = await s3StorageHelper.uploadPDFtoS3("shopLicense", req.files)
+        let operationResultArray
+        if (req.query.fileType === "pdf") operationResultArray = await s3StorageHelper.uploadPDFtoS3("identity", req.files)
+        if (req.query.fileType === "img") operationResultArray = await s3StorageHelper.uploadFilesToS3("identity", req.files)
+            
         if (!operationResultArray.success) return res.status(500).json({
             success: false,
             code: 500,
