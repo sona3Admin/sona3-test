@@ -117,6 +117,7 @@ exports.checkForTrustedShops = async () => {
   try {
     console.log("==> Checking for trusted shops...");
     await shopRepo.updateMany({ rating: { $gte: 4, $lte: 5 } }, { isTrusted: true })
+    await shopRepo.updateMany({ rating: { $lte: 4 } }, { isTrusted: false })
     console.log("==> Finished checking trusted shops...");
 
   } catch (err) {
