@@ -40,6 +40,7 @@ exports.executeBatchJobs = async () => {
         await batchRepo.removeMany({});
         await this.checkExpiredSubscriptionsOfSellers();
         await this.generateDailyReports();
+        await this.checkForTrustedShops()
         console.log("==> Finished Executing Batch Jobs...")
         resolve();
       } catch (err) {
@@ -104,6 +105,19 @@ exports.generateDailyReports = async () => {
     console.log("==> Generating Daily Reports...");
     await reportHelper.generateReports();
     console.log("==> Finished Generating Daily Reports...");
+
+  } catch (err) {
+    console.error("==> Error Generating Daily Reports:", err.message);
+
+  }
+}
+
+
+exports.checkForTrustedShops = async () => {
+  try {
+    console.log("==> Checking for trusted shops...");
+    await shopRepo.updateMany({ rating: { $gte: 4, $lte: 5 } }, { isTrusted: true })
+    console.log("==> Finished checking trusted shops...");
 
   } catch (err) {
     console.error("==> Error Generating Daily Reports:", err.message);

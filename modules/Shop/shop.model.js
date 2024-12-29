@@ -22,6 +22,7 @@ const shopSchema = mongoose.Schema({
     },
     address: { type: Object },
     isVerified: { type: Boolean, default: false },
+    isTrusted: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     rating: { type: Number, min: 1, default: 1 },
