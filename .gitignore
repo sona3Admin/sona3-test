@@ -5,3 +5,4 @@ logs/
 policy.json
 qodana.yaml
 .env
+.nvmrc
