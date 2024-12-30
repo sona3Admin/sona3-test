@@ -11,7 +11,7 @@ const sellerSchema = mongoose.Schema({
     identity: [{ type: Object }],
     location: {
         type: { type: String, default: "Point" },
-        coordinates: { type: Array, default: [0, 0] }
+        coordinates: { type: Array, default: [55.296249, 25.276987] }
     },
     address: { type: Object },
     bankAccountNumber: { type: String },
