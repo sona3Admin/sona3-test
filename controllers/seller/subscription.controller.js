@@ -209,8 +209,8 @@ exports.applySubscription = async (req, res) => {
         const subscriptionStartDate = new Date(req.body.timestamp);
         console.log("subscriptionStartDate", subscriptionStartDate);
 
-        let subscriptionEndDate = new Date(subscriptionStartDate);
-
+        // let subscriptionEndDate = new Date(subscriptionStartDate);
+        let subscriptionEndDate = new Date('2026-01-01');
         if (req.body.tierDuration === 'month') subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1);
         else if (req.body.tierDuration === 'year') subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1);
 
