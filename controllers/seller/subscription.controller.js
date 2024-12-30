@@ -217,7 +217,7 @@ exports.applySubscription = async (req, res) => {
 
         if (req.body?.freeTrialApplied && freeTrialOn) {
             updatedSellerData = { freeTrialApplied: true };
-            subscriptionEndDate = new Date("2025-01-01");
+            subscriptionEndDate = new Date("2026-01-01");
         }
 
         console.log("subscriptionEndDate", subscriptionEndDate);
