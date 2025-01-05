@@ -342,6 +342,27 @@ exports.updateMany = async (filterObject, formObject) => {
 }
 
 
+exports.updateManyById = async (arrayOfIds, formObject) => {
+    try {
+        const objectIds = arrayOfIds.map(id => mongoose.Types.ObjectId(id));
+        await shopModel.updateMany({ _id: { $in: objectIds } }, { $set: formObject });
+        return {
+            success: true,
+            code: 200
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.removeMany = async (filterObject) => {
     try {
         const existingArray = await shopModel.find(filterObject);

@@ -27,6 +27,7 @@ const shopSchema = mongoose.Schema({
     isDeleted: { type: Boolean, default: false },
     rating: { type: Number, min: 1, default: 1 },
     reviewCount: { type: Number, min: 0, default: 0 },
+    orderCount: { type: Number, min: 0, default: 0 },
     joinDate: { type: Date },
     verifyDate: { type: Date },
     policyEn: { type: String },

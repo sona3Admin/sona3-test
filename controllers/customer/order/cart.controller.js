@@ -4,7 +4,8 @@ const orderRepo = require("../../../modules/Order/order.repo")
 const cartRepo = require("../../../modules/Cart/cart.repo");
 const { handleOrderCreation, handleReverseOrderCreation } = require("../../../helpers/order.helper")
 const firstFlightShipperHelper = require("../../../utils/firstFlightSipping.util")
-const stripeHelper = require("../../../utils/stripePayment.util")
+const stripeHelper = require("../../../utils/stripePayment.util");
+const shopRepo = require('../../../modules/Shop/shop.repo');
 
 
 exports.createOrder = async (req, res) => {
@@ -28,6 +29,7 @@ exports.createOrder = async (req, res) => {
 
         cartRepo.flush({ customer: req.body.customer })
         sellerRepo.updateManyById(operationResultObject.result.sellers, { hasSold: true })
+        shopRepo.updateManyById(operationResultObject.result.shops, { $inc: { orderCount: 1 } })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

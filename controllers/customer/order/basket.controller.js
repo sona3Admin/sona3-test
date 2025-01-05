@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const sellerRepo = require("../../../modules/Seller/seller.repo")
+const shopRepo = require("../../../modules/Shop/shop.repo")
 const orderRepo = require("../../../modules/Order/order.repo")
 const basketRepo = require("../../../modules/Basket/basket.repo");
 const { handleOrderCreation, handleReverseOrderCreation } = require("../../../helpers/order.helper")
@@ -27,6 +28,7 @@ exports.createOrder = async (req, res) => {
         // operationResultObject["orderData"] = shippingData.orderData
         basketRepo.flush({ customer: req.body.customer })
         sellerRepo.updateManyById(operationResultObject.result.sellers, { hasSold: true })
+        shopRepo.updateManyById(operationResultObject.result.shops, { $inc: { orderCount: 1 } })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
