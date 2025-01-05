@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
 const sellerRepo = require("../../modules/Seller/seller.repo");
+const shopRepo = require("../../modules/Shop/shop.repo")
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
 const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
@@ -28,6 +29,7 @@ exports.purchaseRequest = async (req, res) => {
         emailHelper.sendPurchaseConfirmationEmailToCustomer(customerOrderObject, req.lang)
         emailHelper.sendPurchaseConfirmationEmailToSeller(customerOrderObject, req.lang)
         sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString, { hasSold: true })
+        shopRepo.updateDirectly(customerRequestObject.result.shop._id.toString, { $inc: { orderCount: 1 } })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

@@ -69,7 +69,6 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
-        console.log(sortObject)
         const resultArray = await requestModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })

@@ -172,7 +172,8 @@ exports.calculateRevenue = async (req, res) => {
 
         }
 
-        const commissions = parseInt(orderTotal * 0.15) || 0
+        const commissionPercentage = 0.15
+        const commissions = parseInt(orderTotal * commissionPercentage) || 0
 
         if (filterObject.dateField) filterObject.dateField = "timestamp"
 
@@ -182,7 +183,8 @@ exports.calculateRevenue = async (req, res) => {
         return res.status(200).json({
             total: parseInt(commissions + subscriptionFees),
             subscriptionFees: parseInt(subscriptionFees),
-            commissions
+            commissions,
+            commissionPercentage
         });
 
     } catch (err) {
@@ -244,9 +246,12 @@ exports.countOrders = async (req, res) => {
         delete overallCounts.result.total;
 
         if (!startDate || !endDate) {
-            const sortedOrders = [...allOrderDocuments.result, ...allServiceRequests.result];
-            startDate = moment(sortedOrders[sortedOrders.length - 1].issueDate).startOf('day');
-            endDate = moment(sortedOrders[0].issueDate).endOf('day');
+            // const sortedOrders = [...allOrderDocuments.result, ...allServiceRequests.result];
+            console.log("allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate", allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate)
+            startDate = moment(allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate).startOf('day');
+            endDate = moment(allOrderDocuments.result[0].issueDate).endOf('day');
+            console.log("startDate", startDate)
+            console.log("endDate", endDate)
         }
 
         const daysDiff = endDate.diff(startDate, 'days');
@@ -302,6 +307,235 @@ exports.countOrders = async (req, res) => {
         });
     }
 };
+
+
+exports.getOrdersStats = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const orderSelectionObject = {
+            orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
+            shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
+        };
+
+        let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
+
+        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+
+        allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
+            order.subOrders.map(subOrder => ({
+                paymentMethod: order.paymentMethod,
+                cartTotal: order.cartTotal,
+                cartOriginalTotal: order.cartOriginalTotal,
+                shippingFeesTotal: order.shippingFeesTotal,
+                taxesTotal: order.taxesTotal,
+                orderTotal: order.orderTotal,
+                orderType: order.orderType,
+                issueDate: order.issueDate,
+                _id: order._id?.toString(),
+                ...subOrder
+            }))
+        );
+
+        allOrderDocuments.result = allOrderDocuments.result.filter((order) => order.status === "delivered");
+        const numberOfDeliveredOrders = allOrderDocuments.result.length;
+
+        const accumulations = {
+            orders: {
+                totalOrderCount: 0,
+                totalDaysOfOrders: 0,
+                ordersFromFoodProducts: 0,
+                ordersFromNonFoodProducts: 0,
+                ordersFromAllProducts: 0
+            },
+            sales: {
+                totalSales: 0,
+                salesFromFoodProducts: 0,
+                salesFromNonFoodProducts: 0,
+                salesFromAllProducts: 0
+            }
+        };
+
+        const issueDateCounts = allOrderDocuments.result.reduce((acc, order) => {
+            const date = new Date(order.issueDate);
+            date.setHours(0, 0, 0, 0);
+
+            const dateString = date.toISOString().split('T')[0];
+
+            if (!acc[dateString]) {
+                acc[dateString] = {
+                    orderCount: 0,
+                    totalSales: 0,
+                    ordersFromFoodProducts: 0,
+                    ordersFromNonFoodProducts: 0,
+                    salesFromFoodProducts: 0,
+                    salesFromNonFoodProducts: 0,
+                    sellersOfTheDay: []
+                };
+            }
+
+            // Update daily counts and sales
+            acc[dateString].orderCount++;
+            acc[dateString].totalSales += order.orderTotal;
+
+            if (order.orderType === "basket") {
+                acc[dateString].ordersFromFoodProducts++;
+                acc[dateString].salesFromFoodProducts += order.orderTotal;
+            } else if (order.orderType === "cart") {
+                acc[dateString].ordersFromNonFoodProducts++;
+                acc[dateString].salesFromNonFoodProducts += order.orderTotal;
+            }
+
+            // Sellers of the day logic
+            let sellerShopEntry = acc[dateString].sellersOfTheDay.find(
+                entry => entry.seller === order.seller.toString() && entry.shop === order.shop.toString()
+            );
+
+            if (sellerShopEntry) {
+                sellerShopEntry.orderCount += 1;
+                // sellerShopEntry.orders.push(order._id.toString());
+            } else {
+                acc[dateString].sellersOfTheDay.push({
+                    seller: order.seller.toString(),
+                    shop: order.shop.toString(),
+                    orderType: order.orderType, // Add orderType field here
+                    orderCount: 1,
+                    // orders: [order._id.toString()]
+                });
+            }
+
+            // Accumulate overall statistics
+            accumulations.orders.totalOrderCount++;
+            accumulations.sales.totalSales += parseFloat(order.orderTotal.toFixed(2));
+
+            if (order.orderType === "basket") {
+                accumulations.orders.ordersFromFoodProducts++;
+                accumulations.sales.salesFromFoodProducts += parseFloat(order.orderTotal.toFixed(2));
+            } else if (order.orderType === "cart") {
+                accumulations.orders.ordersFromNonFoodProducts++;
+                accumulations.sales.salesFromNonFoodProducts += parseFloat(order.orderTotal.toFixed(2));
+            }
+
+            return acc;
+        }, {});
+
+        // Set additional accumulations fields
+        accumulations.orders.totalDaysOfOrders = Object.keys(issueDateCounts).length;
+        accumulations.orders.ordersFromAllProducts = accumulations.orders.ordersFromFoodProducts + accumulations.orders.ordersFromNonFoodProducts;
+        accumulations.sales.salesFromAllProducts = parseFloat(accumulations.sales.salesFromFoodProducts.toFixed(2)) +
+            parseFloat(accumulations.sales.salesFromNonFoodProducts.toFixed(2));
+
+        const issueDatesWithCounts = Object.keys(issueDateCounts).map(date => ({
+            issueDate: date,
+            orderCount: issueDateCounts[date].orderCount,
+            totalSales: parseFloat(issueDateCounts[date].totalSales.toFixed(2)),
+            ordersFromFoodProducts: issueDateCounts[date].ordersFromFoodProducts,
+            ordersFromNonFoodProducts: issueDateCounts[date].ordersFromNonFoodProducts,
+            salesFromFoodProducts: parseFloat(issueDateCounts[date].salesFromFoodProducts.toFixed(2)),
+            salesFromNonFoodProducts: parseFloat(issueDateCounts[date].salesFromNonFoodProducts.toFixed(2)),
+            sellersOfTheDay: issueDateCounts[date].sellersOfTheDay
+        }));
+
+        return res.status(200).json({
+            success: true,
+            accumulations,
+            aggregations: issueDatesWithCounts
+        });
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.getServiceRequestsStats = async (req, res) => {
+    try {
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
+        const filterObject = {};
+        const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
+        const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
+        if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
+        // const numberOfDeliveredRequests = allServiceRequests.result.length;
+
+
+        const accumulations = {
+            orders: {
+                totalOrderCount: 0,
+                totalDaysOfOrders: 0,
+            },
+            sales: {
+                totalSales: 0,
+            }
+        };
+
+        const issueDateCounts = allServiceRequests.result.reduce((acc, order) => {
+            const date = new Date(order.issueDate);
+            date.setHours(0, 0, 0, 0);
+
+            const dateString = date.toISOString().split('T')[0];
+
+            if (!acc[dateString]) {
+                acc[dateString] = {
+                    orderCount: 0,
+                    totalSales: 0,
+                    sellersOfTheDay: []
+                };
+            }
+
+            acc[dateString].orderCount++;
+            acc[dateString].totalSales += order.orderTotal;
+
+            let sellerShopEntry = acc[dateString].sellersOfTheDay.find(
+                entry => entry.seller === order.seller._id.toString() && entry.shop === order.shop._id.toString()
+            );
+
+            if (sellerShopEntry) {
+                sellerShopEntry.orderCount += 1;
+                // sellerShopEntry.orders.push(order._id.toString());
+            } else {
+                acc[dateString].sellersOfTheDay.push({
+                    seller: order.seller._id.toString(),
+                    shop: order.shop._id.toString(),
+                    orderType: order.orderType, // Add orderType field here
+                    orderCount: 1,
+                    // orders: [order._id.toString()]
+                });
+            }
+
+            // Accumulate overall statistics
+            accumulations.orders.totalOrderCount++;
+            accumulations.sales.totalSales += parseFloat(order.orderTotal.toFixed(2));
+
+            return acc;
+        }, {});
+
+        accumulations.orders.totalDaysOfOrders = Object.keys(issueDateCounts).length;
+        const issueDatesWithCounts = Object.keys(issueDateCounts).map(date => ({
+            issueDate: date,
+            orderCount: issueDateCounts[date].orderCount,
+            totalSales: parseFloat(issueDateCounts[date].totalSales.toFixed(2)),
+            sellersOfTheDay: issueDateCounts[date].sellersOfTheDay
+        }));
+
+        return res.status(200).json({
+            success: true,
+            accumulations,
+            aggregations: issueDatesWithCounts
+        });
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
 
 
 async function getFilteredOrders(filterObject, orderSelectionObject) {

@@ -132,6 +132,8 @@ exports.aggregate = async (filterObject, selectionObject) => {
                     input: "$subOrders",
                     as: "subOrder",
                     in: {
+                        seller: "$$subOrder.seller",
+                        shop: "$$subOrder.shop",
                         shopTotal: "$$subOrder.shopTotal",
                         shopOriginalTotal: "$$subOrder.shopOriginalTotal",
                         shopTaxes: "$$subOrder.shopTaxes",
