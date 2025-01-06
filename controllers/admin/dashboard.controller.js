@@ -157,7 +157,6 @@ exports.calculateRevenue = async (req, res) => {
             paymentMethod: 1,
         }
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject)
-        console.log("allOrderDocuments", allOrderDocuments)
         if (allOrderDocuments.success) {
             allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
                 order?.subOrders?.map(subOrder => ({
@@ -181,10 +180,11 @@ exports.calculateRevenue = async (req, res) => {
         if (allSubscriptionPayments.success) subscriptionFees = allSubscriptionPayments.result.reduce((total, payment) => parseFloat(total) + parseFloat(payment.subscriptionFees), 0);
 
         return res.status(200).json({
-            total: parseInt(commissions + subscriptionFees),
+            totalSales: parseInt(orderTotal),
+            totalRevenue: parseInt(commissions + subscriptionFees),
             subscriptionFees: parseInt(subscriptionFees),
             commissions,
-            commissionPercentage
+            commissionPercentage,
         });
 
     } catch (err) {
