@@ -9,7 +9,9 @@ app.get("/item", dashboardController.countItems);
 app.get("/order", dashboardController.countOrders);
 app.get("/revenue", dashboardController.calculateRevenue);
 
-app.get("/orders", dashboardController.getOrdersStats);
-app.get("/requests", dashboardController.getServiceRequestsStats);
+app.get("/ordersByDay", dashboardController.getOrdersStatsByDay);
+app.get("/ordersByMonth", dashboardController.getOrdersStatsByMonth);
+app.get("/requestsByDay", dashboardController.getServiceRequestsStatsByDay);
+app.get("/requestsByMonth", dashboardController.getServiceRequestStatsByMonth);
 
 module.exports = app

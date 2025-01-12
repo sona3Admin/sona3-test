@@ -8,7 +8,7 @@ const serviceRepo = require("../../modules/Service/service.repo");
 const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
 const paymentRepo = require("../../modules/Payment/payment.repo");
-const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper")
+const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper");
 
 
 exports.countCustomers = async (req, res) => {
@@ -309,16 +309,16 @@ exports.countOrders = async (req, res) => {
 };
 
 
-exports.getOrdersStats = async (req, res) => {
+exports.getOrdersStatsByDay = async (req, res) => {
     try {
         const filterObject = req.query;
+        
         const orderSelectionObject = {
             orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
             shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
         };
 
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
-
         if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
 
         allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
@@ -337,7 +337,7 @@ exports.getOrdersStats = async (req, res) => {
         );
 
         allOrderDocuments.result = allOrderDocuments.result.filter((order) => order.status === "delivered");
-        const numberOfDeliveredOrders = allOrderDocuments.result.length;
+        // console.log(`allOrderDocuments`, allOrderDocuments.result)
 
         const accumulations = {
             orders: {
@@ -357,10 +357,8 @@ exports.getOrdersStats = async (req, res) => {
 
         const issueDateCounts = allOrderDocuments.result.reduce((acc, order) => {
             const date = new Date(order.issueDate);
-            date.setHours(0, 0, 0, 0);
 
             const dateString = date.toISOString().split('T')[0];
-
             if (!acc[dateString]) {
                 acc[dateString] = {
                     orderCount: 0,
@@ -373,7 +371,6 @@ exports.getOrdersStats = async (req, res) => {
                 };
             }
 
-            // Update daily counts and sales
             acc[dateString].orderCount++;
             acc[dateString].totalSales += order.orderTotal;
 
@@ -397,7 +394,7 @@ exports.getOrdersStats = async (req, res) => {
                 acc[dateString].sellersOfTheDay.push({
                     seller: order.seller.toString(),
                     shop: order.shop.toString(),
-                    orderType: order.orderType, // Add orderType field here
+                    orderType: order.orderType,
                     orderCount: 1,
                     // orders: [order._id.toString()]
                 });
@@ -418,7 +415,6 @@ exports.getOrdersStats = async (req, res) => {
             return acc;
         }, {});
 
-        // Set additional accumulations fields
         accumulations.orders.totalDaysOfOrders = Object.keys(issueDateCounts).length;
         accumulations.orders.ordersFromAllProducts = accumulations.orders.ordersFromFoodProducts + accumulations.orders.ordersFromNonFoodProducts;
         accumulations.sales.salesFromAllProducts = parseFloat(accumulations.sales.salesFromFoodProducts.toFixed(2)) +
@@ -452,7 +448,193 @@ exports.getOrdersStats = async (req, res) => {
 }
 
 
-exports.getServiceRequestsStats = async (req, res) => {
+exports.getOrdersStatsByMonth = async (req, res) => {
+    try {
+        console.log("getOrdersStatsByMonth")
+        const filterObject = req.query;
+        const orderSelectionObject = {
+            orderType: 1,
+            paymentMethod: 1,
+            cartTotal: 1,
+            cartOriginalTotal: 1,
+            shippingFeesTotal: 1,
+            taxesTotal: 1,
+            orderTotal: 1,
+            issueDate: 1,
+            _id: 1
+        };
+
+        let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
+
+        if (!allOrderDocuments.result) return res.status(200).json({ success: true, result: [] });
+
+        // Flatten and filter orders
+        allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
+            order.subOrders.map(subOrder => ({
+                paymentMethod: order.paymentMethod,
+                cartTotal: order.cartTotal,
+                cartOriginalTotal: order.cartOriginalTotal,
+                shippingFeesTotal: order.shippingFeesTotal,
+                taxesTotal: order.taxesTotal,
+                orderTotal: order.orderTotal,
+                orderType: order.orderType,
+                issueDate: order.issueDate,
+                _id: order._id?.toString(),
+                ...subOrder
+            }))
+        ).filter((order) => order.status === "delivered");
+
+        // Initialize aggregation object
+        const monthlyAggregations = {};
+        let minDate = null;
+        let maxDate = null;
+
+        // Group orders by month
+        allOrderDocuments.result.forEach(order => {
+            const orderDate = new Date(order.issueDate);
+            const monthKey = getMonthKey(orderDate);
+
+            if (!minDate || orderDate < minDate) minDate = new Date(orderDate);
+            if (!maxDate || orderDate > maxDate) maxDate = new Date(orderDate);
+
+            if (!monthlyAggregations[monthKey]) {
+                monthlyAggregations[monthKey] = {
+                    issueDate: monthKey,
+                    orderCount: 0,
+                    totalSales: 0,
+                    ordersFromFoodProducts: 0,
+                    ordersFromNonFoodProducts: 0,
+                    salesFromFoodProducts: 0,
+                    salesFromNonFoodProducts: 0,
+                    sellersOfTheDay: []
+                };
+            }
+
+            const month = monthlyAggregations[monthKey];
+            month.orderCount++;
+            month.totalSales += order.orderTotal;
+
+            if (order.orderType === "basket") {
+                month.ordersFromFoodProducts++;
+                month.salesFromFoodProducts += order.orderTotal;
+            } else if (order.orderType === "cart") {
+                month.ordersFromNonFoodProducts++;
+                month.salesFromNonFoodProducts += order.orderTotal;
+            }
+
+            // Update sellers
+            let sellerEntry = month.sellersOfTheDay.find(
+                entry => entry.seller === order.seller.toString() && entry.shop === order.shop.toString()
+            );
+
+            if (sellerEntry) {
+                sellerEntry.orderCount++;
+                sellerEntry.totalSales += order.orderTotal;
+            } else {
+                month.sellersOfTheDay.push({
+                    seller: order.seller.toString(),
+                    shop: order.shop.toString(),
+                    orderType: order.orderType,
+                    orderCount: 1,
+                    totalSales: order.orderTotal
+                });
+            }
+        });
+
+        // Fill in missing months
+        if (minDate && maxDate) {
+            let currentDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+            const endDate = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 1);
+
+            while (currentDate < endDate) {
+                const monthKey = getMonthKey(currentDate);
+
+                if (!monthlyAggregations[monthKey]) {
+                    monthlyAggregations[monthKey] = {
+                        issueDate: monthKey,
+                        orderCount: 0,
+                        totalSales: 0,
+                        ordersFromFoodProducts: 0,
+                        ordersFromNonFoodProducts: 0,
+                        salesFromFoodProducts: 0,
+                        salesFromNonFoodProducts: 0,
+                        sellersOfTheMonth: []
+                    };
+                }
+
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+        }
+
+        // Calculate accumulations
+        const accumulations = {
+            orders: {
+                totalOrderCount: 0,
+                totalMonthsOfOrders: Object.keys(monthlyAggregations).length,
+                ordersFromFoodProducts: 0,
+                ordersFromNonFoodProducts: 0,
+                ordersFromAllProducts: 0
+            },
+            sales: {
+                totalSales: 0,
+                salesFromFoodProducts: 0,
+                salesFromNonFoodProducts: 0,
+                salesFromAllProducts: 0
+            }
+        };
+
+        // Convert monthlyAggregations to array and calculate accumulations
+        const aggregations = Object.values(monthlyAggregations)
+            .sort((a, b) => a.issueDate.localeCompare(b.issueDate))
+            .map(month => {
+                // Update accumulations
+                accumulations.orders.totalOrderCount += month.orderCount;
+                accumulations.orders.ordersFromFoodProducts += month.ordersFromFoodProducts;
+                accumulations.orders.ordersFromNonFoodProducts += month.ordersFromNonFoodProducts;
+                accumulations.sales.totalSales += month.totalSales;
+                accumulations.sales.salesFromFoodProducts += month.salesFromFoodProducts;
+                accumulations.sales.salesFromNonFoodProducts += month.salesFromNonFoodProducts;
+
+                // Format numbers for the month
+                return {
+                    ...month,
+                    totalSales: parseFloat(month.totalSales.toFixed(2)),
+                    salesFromFoodProducts: parseFloat(month.salesFromFoodProducts.toFixed(2)),
+                    salesFromNonFoodProducts: parseFloat(month.salesFromNonFoodProducts.toFixed(2))
+                };
+            });
+
+        // Calculate final accumulations
+        accumulations.orders.ordersFromAllProducts =
+            accumulations.orders.ordersFromFoodProducts + accumulations.orders.ordersFromNonFoodProducts;
+        accumulations.sales.salesFromAllProducts = parseFloat(
+            (accumulations.sales.salesFromFoodProducts + accumulations.sales.salesFromNonFoodProducts).toFixed(2)
+        );
+        accumulations.sales.totalSales = parseFloat(accumulations.sales.totalSales.toFixed(2));
+        accumulations.sales.salesFromFoodProducts = parseFloat(accumulations.sales.salesFromFoodProducts.toFixed(2));
+        accumulations.sales.salesFromNonFoodProducts = parseFloat(accumulations.sales.salesFromNonFoodProducts.toFixed(2));
+
+        return res.status(200).json({
+            success: true,
+            accumulations,
+            aggregations
+        });
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
+
+
+
+exports.getServiceRequestsStatsByDay = async (req, res) => {
     try {
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
         const filterObject = {};
@@ -474,7 +656,6 @@ exports.getServiceRequestsStats = async (req, res) => {
 
         const issueDateCounts = allServiceRequests.result.reduce((acc, order) => {
             const date = new Date(order.issueDate);
-            date.setHours(0, 0, 0, 0);
 
             const dateString = date.toISOString().split('T')[0];
 
@@ -536,6 +717,128 @@ exports.getServiceRequestsStats = async (req, res) => {
         });
     }
 }
+
+
+exports.getServiceRequestStatsByMonth = async (req, res) => {
+    try {
+        console.log("getOrdersStatsByMonth")
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
+        const filterObject = {};
+        const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
+        const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
+        if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
+        // const numberOfDeliveredRequests = allServiceRequests.result.length;
+
+
+        // Initialize aggregation object
+        const monthlyAggregations = {};
+        let minDate = null;
+        let maxDate = null;
+
+        // Group orders by month
+        allServiceRequests.result.forEach(order => {
+            const orderDate = new Date(order.issueDate);
+            const monthKey = getMonthKey(orderDate);
+
+            if (!minDate || orderDate < minDate) minDate = new Date(orderDate);
+            if (!maxDate || orderDate > maxDate) maxDate = new Date(orderDate);
+
+            if (!monthlyAggregations[monthKey]) {
+                monthlyAggregations[monthKey] = {
+                    issueDate: monthKey,
+                    orderCount: 0,
+                    totalSales: 0,
+                    sellersOfTheDay: []
+                };
+            }
+
+            const month = monthlyAggregations[monthKey];
+            month.orderCount++;
+            month.totalSales += order.orderTotal;
+
+
+            // Update sellers
+            let sellerEntry = month.sellersOfTheDay.find(
+                entry => entry.seller === order.seller._id.toString() && entry.shop === order.shop._id.toString()
+            );
+
+            if (sellerEntry) {
+                sellerEntry.orderCount++;
+                sellerEntry.totalSales += order.orderTotal;
+            } else {
+                month.sellersOfTheDay.push({
+                    seller: order.seller._id.toString(),
+                    shop: order.shop._id.toString(),
+                    orderCount: 1,
+                    totalSales: order.orderTotal
+                });
+            }
+        });
+
+        // Fill in missing months
+        if (minDate && maxDate) {
+            let currentDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+            const endDate = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 1);
+
+            while (currentDate < endDate) {
+                const monthKey = getMonthKey(currentDate);
+
+                if (!monthlyAggregations[monthKey]) {
+                    monthlyAggregations[monthKey] = {
+                        issueDate: monthKey,
+                        orderCount: 0,
+                        totalSales: 0,
+                        sellersOfTheMonth: []
+                    };
+                }
+
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+        }
+
+        // Calculate accumulations
+        const accumulations = {
+            orders: {
+                totalOrderCount: 0,
+                totalMonthsOfOrders: Object.keys(monthlyAggregations).length,
+            },
+            sales: {
+                totalSales: 0,
+            }
+        };
+
+        // Convert monthlyAggregations to array and calculate accumulations
+        const aggregations = Object.values(monthlyAggregations)
+            .sort((a, b) => a.issueDate.localeCompare(b.issueDate))
+            .map(month => {
+                // Update accumulations
+                accumulations.orders.totalOrderCount += month.orderCount;
+                accumulations.sales.totalSales += month.totalSales;
+
+                return {
+                    ...month,
+                    totalSales: parseFloat(month.totalSales.toFixed(2)),
+                };
+            });
+
+
+        accumulations.sales.totalSales = parseFloat(accumulations.sales.totalSales.toFixed(2));
+
+        return res.status(200).json({
+            success: true,
+            accumulations,
+            aggregations
+        });
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
 
 
 async function getFilteredOrders(filterObject, orderSelectionObject) {
@@ -633,3 +936,9 @@ function calculateSales(periodOrders, periodServiceRequests) {
         totalSales: salesFromFoodProducts + salesFromNonFoodProducts + salesFromServiceRequests
     };
 }
+
+
+const getMonthKey = (date) => {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+};
