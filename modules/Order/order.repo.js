@@ -106,7 +106,6 @@ exports.aggregate = async (filterObject, selectionObject) => {
         // Normalize filterObject using the prepareQueryObjects function
         const normalizedQueryObjects = await prepareQueryObjects(filterObject, {});
         filterObject = normalizedQueryObjects.filterObject;
-        console.log(`filterObject`, filterObject);
         // Helper function to create a projection object based on the selection object
         const createProjection = (selectionObj) => {
             return Object.entries(selectionObj).reduce((projection, [key, value]) => {
@@ -161,7 +160,6 @@ exports.aggregate = async (filterObject, selectionObject) => {
         // Add sorting by issueDate
         pipeline.push({ $sort: { issueDate: -1 } });
         // Execute the aggregation pipeline
-        console.log(`pipeline`, pipeline[0].$match);
         const resultArray = await orderModel.aggregate(pipeline).exec();
 
         if (!resultArray || resultArray.length === 0) {

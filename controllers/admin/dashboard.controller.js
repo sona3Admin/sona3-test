@@ -631,13 +631,11 @@ exports.getOrdersStatsByMonth = async (req, res) => {
 };
 
 
-
-
-
 exports.getServiceRequestsStatsByDay = async (req, res) => {
     try {
+        const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
-        const filterObject = {};
+
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
@@ -721,9 +719,9 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
 
 exports.getServiceRequestStatsByMonth = async (req, res) => {
     try {
-        console.log("getOrdersStatsByMonth")
+        const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
-        const filterObject = {};
+
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
