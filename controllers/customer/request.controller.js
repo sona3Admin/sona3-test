@@ -28,8 +28,9 @@ exports.purchaseRequest = async (req, res) => {
         let operationResultObject = await requestRepo.updateDirectly(requestId, { ...customerOrderObject.calculations });
         emailHelper.sendPurchaseConfirmationEmailToCustomer(customerOrderObject, req.lang)
         emailHelper.sendPurchaseConfirmationEmailToSeller(customerOrderObject, req.lang)
-        sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString, { hasSold: true })
-        shopRepo.updateDirectly(customerRequestObject.result.shop._id.toString, { $inc: { orderCount: 1 } })
+        customerRepo.updateDirectly(customerOrderObject.customer, { hasPurchased: true })
+        sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString(), { hasSold: true })
+        shopRepo.updateDirectly(customerRequestObject.result.shop._id.toString(), { $inc: { orderCount: 1 } })
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

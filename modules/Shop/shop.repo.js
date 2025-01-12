@@ -1,4 +1,5 @@
 const i18n = require('i18n');
+const mongoose = require("mongoose");
 let shopModel = require("./shop.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper");
 const sellerRepo = require('../Seller/seller.repo');
@@ -303,6 +304,7 @@ exports.updateDirectly = async (_id, formObject) => {
             error: i18n.__("notFound")
         }
 
+
         return {
             success: true,
             code: 200,
@@ -345,7 +347,7 @@ exports.updateMany = async (filterObject, formObject) => {
 exports.updateManyById = async (arrayOfIds, formObject) => {
     try {
         const objectIds = arrayOfIds.map(id => mongoose.Types.ObjectId(id));
-        await shopModel.updateMany({ _id: { $in: objectIds } }, { $set: formObject });
+        await shopModel.updateMany({ _id: { $in: objectIds } }, formObject);
         return {
             success: true,
             code: 200

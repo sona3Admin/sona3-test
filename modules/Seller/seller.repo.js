@@ -240,22 +240,23 @@ exports.updateDirectly = async (_id, formObject) => {
 exports.updateManyById = async (arrayOfIds, formObject) => {
     try {
         const objectIds = arrayOfIds.map(id => mongoose.Types.ObjectId(id));
+
         await sellerModel.updateMany({ _id: { $in: objectIds } }, { $set: formObject });
+
         return {
             success: true,
             code: 200
         };
-
     } catch (err) {
-        console.log(`err.message`, err.message);
+        console.log(`Error stack trace:`, err.stack); // Provide detailed error
+        console.log(`err.message`, err.message); // Detailed error message
         return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         };
     }
-
-}
+};
 
 
 exports.remove = async (_id) => {

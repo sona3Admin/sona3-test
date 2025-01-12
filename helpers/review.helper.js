@@ -18,9 +18,14 @@ exports.defineReviewedItem = (reviewObject) => {
 
 exports.getPurchasedOrder = async (reviewObject, itemToReview) => {
     let existingItemObject
-    console.log(`itemToReview`, itemToReview);
+    console.log(`itemToReview in getPurchasedOrder`, itemToReview);
+    console.log(`reviewObject in getPurchasedOrder`, reviewObject);
     if (itemToReview?.shop) {
-        existingItemObject = await orderRepo.find({ customer: reviewObject.customer, shops: itemToReview.shop })
+        const shop = await shopRepo.find({ _id: itemToReview.shop })
+        if (!shop.success) return shop
+        if (shop.result.type == "product") existingItemObject = await orderRepo.find({ customer: reviewObject.customer, shops: itemToReview.shop })
+        if (shop.result.type == "service") existingItemObject = await requestRepo.find({ customer: reviewObject.customer, shops: itemToReview.shop, status: "purchased" })  
+
         console.log(`existingItemObject in shop`, existingItemObject);
     }
 
