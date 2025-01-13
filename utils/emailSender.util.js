@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 exports.sendEmail = async (receivers, subject, text, html, lang) => {
   try {
     const recipientList = Array.isArray(receivers) ? receivers.join(', ') : receivers;
-
+    console.log("recipientList", recipientList);
     const info = await transporter.sendMail({
       from: {
         address: 'support@sona3.ae',
