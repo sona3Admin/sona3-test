@@ -179,13 +179,13 @@ exports.countShops = async (req, res) => {
         const unselectedFields = { seller: 0, categories: 0, productCategories: 0, serviceCategories: 0 }
         const allDocuments = await shopRepo.list(
             { ...filterObject, isDeleted: false },
-            { isActive: 1, isVerified: 1, isFood: 1, type: 1, joinDate: 1, ...unselectedFields },
+            { isActive: 1, isVerified: 1, isFood: 1, type: 1, joinDate: 1, hasSold: 1, ...unselectedFields },
             {}, pageNumber, limitNumber
         );
 
         let countingResults = {};
-        const filterCategories = ['isActive', 'isVerified'];
-        const categoryMap = { isActive: 'active', isVerified: 'verified' };
+        const filterCategories = ['isActive', 'isVerified', 'hasSold'];
+        const categoryMap = { isActive: 'active', isVerified: 'verified', hasSold: 'selling' };
 
         countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
         if (queryObject.type) countingResults = groupShopsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults)
@@ -197,6 +197,74 @@ exports.countShops = async (req, res) => {
                 result: typeCountingResult
             });
         }
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: countingResults
+        });
+
+    } catch (err) {
+        console.error(`Error in countShops: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
+exports.countProducts = async (req, res) => {
+    try {
+        const { query: filterObject, body: { filters: queryObject } } = req;
+        const pageNumber = req.query.page || 1;
+        const limitNumber = req.query.limit || 0;
+        const allDocuments = await productRepo.list(
+            { ...filterObject, isDeleted: false },
+            { isActive: 1, isVerified: 1, isFood: 1, creationDate: 1 },
+            {}, pageNumber, limitNumber
+        );
+
+        let countingResults = {};
+        const filterCategories = ['isActive', 'isVerified', 'isFood'];
+        const categoryMap = { isActive: 'active', isVerified: 'verified', isFood: 'food' };
+
+        countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: countingResults
+        });
+
+    } catch (err) {
+        console.error(`Error in countShops: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
+exports.countServices = async (req, res) => {
+    try {
+        const { query: filterObject, body: { filters: queryObject } } = req;
+        const pageNumber = req.query.page || 1;
+        const limitNumber = req.query.limit || 0;
+        const allDocuments = await serviceRepo.list(
+            { ...filterObject, isDeleted: false },
+            { isActive: 1, isVerified: 1, creationDate: 1 },
+            {}, pageNumber, limitNumber
+        );
+
+        let countingResults = {};
+        const filterCategories = ['isActive', 'isVerified'];
+        const categoryMap = { isActive: 'active', isVerified: 'verified' };
+
+        countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
 
         return res.status(200).json({
             success: true,
@@ -311,6 +379,31 @@ function groupShopsByDateRange(filterObject, queryObject, filterCategories, cate
         aggregationPeriod
     }
     return typeCountingResult
+}
+
+
+function groupProductsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults) {
+    const countingFilters = [
+        { label: "foodProducts", conditions: [{ fieldName: "isFood", fieldValue: true }, { fieldName: "type", fieldValue: "product" }] },
+        { label: "nonFoodProducts", conditions: [{ fieldName: "isFood", fieldValue: false }, { fieldName: "type", fieldValue: "product" }] },
+    ];
+    const typeCountingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters)
+    let allFoodProducts = { result: [] }
+    let allNonFoodProducts = { result: [] }
+    let allServiceShops = { result: [] }
+    allFoodProducts.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == true);
+    allFoodProducts = groupByCategories(queryObject, filterCategories, categoryMap, allFoodProducts)
+
+    allNonFoodProducts.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == false);
+    allNonFoodProducts = groupByCategories(queryObject, filterCategories, categoryMap, allNonFoodProducts)
+
+    countingResults.type = {}
+    countingResults.type = {
+        foodProducts: { ...allFoodProducts, total: typeCountingResult.result.foodProducts },
+        nonFoodProducts: { ...allNonFoodProducts, total: typeCountingResult.result.nonFoodProducts },
+        total: typeCountingResult.result.foodProducts + typeCountingResult.result.nonFoodProducts
+    };
+    return countingResults
 }
 
 

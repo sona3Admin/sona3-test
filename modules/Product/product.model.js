@@ -25,6 +25,7 @@ const productSchema = mongoose.Schema({
     verifyDate: { type: Date },
     lastUpdateDate: { type: Date },
     discountValue: { type: Number, default: 0 },
+    orderCount: { type: Number, min: 0, default: 0 },
 
 })
 

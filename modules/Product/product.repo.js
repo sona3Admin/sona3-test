@@ -5,7 +5,7 @@ const shopRepo = require("../Shop/shop.repo")
 const sellerRepo = require("../Seller/seller.repo")
 const variationRepo = require("../Variation/variation.repo")
 const { getTiers } = require("../../helpers/tiers.helper")
-
+const mongoose = require("mongoose")
 
 exports.find = async (filterObject) => {
     try {
@@ -260,6 +260,27 @@ exports.updateMany = async (filterObject, formObject) => {
             success: true,
             code: 200,
             result: resultObject
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
+exports.updateManyById = async (arrayOfIds, formObject) => {
+    try {
+        const objectIds = arrayOfIds.map(id => mongoose.Types.ObjectId(id));
+        await productModel.updateMany({ _id: { $in: objectIds } }, formObject);
+        return {
+            success: true,
+            code: 200
         };
 
     } catch (err) {

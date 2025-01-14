@@ -33,7 +33,9 @@ const shopSchema = mongoose.Schema({
     policyEn: { type: String },
     policyAr: { type: String },
     isFood: { type: Boolean },
-    type: { type: String, enum: ["product", "service"] }
+    type: { type: String, enum: ["product", "service"] },
+    hasSold: { type: Boolean, default: false },
+
 })
 
 shopSchema.index({ location: '2dsphere' });

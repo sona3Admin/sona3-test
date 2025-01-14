@@ -146,17 +146,97 @@ exports.countItems = async (req, res) => {
 }
 
 
+// exports.calculateRevenue = async (req, res) => {
+//     try {
+//         const filterObject = req.query;
+//         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+//         let orderTotal = 0
+//         let subscriptionFees = 0
+//         const orderSelectionObject = {
+//             orderType: 1,
+//             paymentMethod: 1,
+//         }
+//         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject)
+//         if (allOrderDocuments.success) {
+//             allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
+//                 order?.subOrders?.map(subOrder => ({
+//                     paymentMethod: order.paymentMethod,
+//                     ...subOrder
+//                 }))
+//             );
+//             allOrderDocuments.result = allOrderDocuments?.result?.filter((order) => {
+//                 return order.status == "delivered"
+//             })
+//             orderTotal = allOrderDocuments.result.reduce((total, order) => parseFloat(total) + parseFloat(order.shopTotal), 0);
+
+//         }
+
+//         const commissionPercentage = 0.15
+//         const commissions = parseInt(orderTotal * commissionPercentage) || 0
+
+//         if (filterObject.dateField) filterObject.dateField = "timestamp"
+
+//         const allSubscriptionPayments = await paymentRepo.list({ ...filterObject, orderType: "subscription" }, { subscriptionFees: 1 }, {}, pageNumber, limitNumber);
+//         if (allSubscriptionPayments.success) subscriptionFees = allSubscriptionPayments.result.reduce((total, payment) => parseFloat(total) + parseFloat(payment.subscriptionFees), 0);
+
+//         return res.status(200).json({
+//             totalSales: parseInt(orderTotal),
+//             totalRevenue: parseInt(commissions + subscriptionFees),
+//             subscriptionFees: parseInt(subscriptionFees),
+//             commissions,
+//             commissionPercentage,
+//         });
+
+//     } catch (err) {
+//         console.log(`err.message`, err.message);
+//         return res.status(500).json({
+//             success: false,
+//             code: 500,
+//             error: i18n.__("internalServerError")
+//         });
+//     }
+// }
+
 exports.calculateRevenue = async (req, res) => {
     try {
         const filterObject = req.query;
-        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
-        let orderTotal = 0
-        let subscriptionFees = 0
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
+        let orderTotal = 0;
+        let subscriptionFees = 0;
+
+        // Initialize tier revenue tracking
+        const tierRevenue = {
+            basic: {
+                monthly: 0,
+                yearly: 0,
+                total: 0,
+                numberOfSubscriptions: 0
+            },
+            pro: {
+                monthly: 0,
+                yearly: 0,
+                total: 0,
+                numberOfSubscriptions: 0
+            },
+            advanced: {
+                monthly: 0,
+                yearly: 0,
+                total: 0,
+                numberOfSubscriptions: 0
+            },
+            lifetime: {
+                total: 0,
+                numberOfSubscriptions: 0
+            }
+        };
+
         const orderSelectionObject = {
             orderType: 1,
             paymentMethod: 1,
-        }
-        let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject)
+        };
+
+        // Process regular orders
+        let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
         if (allOrderDocuments.success) {
             allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
                 order?.subOrders?.map(subOrder => ({
@@ -164,27 +244,72 @@ exports.calculateRevenue = async (req, res) => {
                     ...subOrder
                 }))
             );
-            allOrderDocuments.result = allOrderDocuments?.result?.filter((order) => {
-                return order.status == "delivered"
-            })
-            orderTotal = allOrderDocuments.result.reduce((total, order) => parseFloat(total) + parseFloat(order.shopTotal), 0);
-
+            allOrderDocuments.result = allOrderDocuments?.result?.filter((order) =>
+                order.status === "delivered"
+            );
+            orderTotal = allOrderDocuments.result.reduce((total, order) =>
+                parseFloat(total) + parseFloat(order.shopTotal), 0);
         }
 
-        const commissionPercentage = 0.15
-        const commissions = parseInt(orderTotal * commissionPercentage) || 0
+        const commissionPercentage = 0.15;
+        const commissions = parseInt(orderTotal * commissionPercentage) || 0;
 
-        if (filterObject.dateField) filterObject.dateField = "timestamp"
+        if (filterObject.dateField) filterObject.dateField = "timestamp";
 
-        const allSubscriptionPayments = await paymentRepo.list({ ...filterObject, orderType: "subscription" }, { subscriptionFees: 1 }, {}, pageNumber, limitNumber);
-        if (allSubscriptionPayments.success) subscriptionFees = allSubscriptionPayments.result.reduce((total, payment) => parseFloat(total) + parseFloat(payment.subscriptionFees), 0);
+        // Process subscription payments with detailed tier breakdown
+        const allSubscriptionPayments = await paymentRepo.list(
+            { ...filterObject, orderType: "subscription" },
+            { subscriptionFees: 1, tier: 1, tierDuration: 1, freeTrialApplied: 1 },
+            {},
+            pageNumber,
+            limitNumber
+        );
+
+        if (allSubscriptionPayments.success) {
+            allSubscriptionPayments.result.forEach(payment => {
+                // Add to total subscription fees
+                subscriptionFees += parseFloat(payment.subscriptionFees);
+
+                // Skip free trial subscriptions in revenue calculation if needed
+                if (payment.freeTrialApplied) return;
+
+                // Add to tier-specific revenue
+                if (payment.tier !== 'lifetime') {
+                    tierRevenue[payment.tier][payment.tierDuration === 'month' ? 'monthly' : 'yearly']
+                        += parseFloat(payment.subscriptionFees);
+                    tierRevenue[payment.tier].total += parseFloat(payment.subscriptionFees);
+                    tierRevenue[payment.tier].numberOfSubscriptions++;
+                } else {
+                    tierRevenue.lifetime.total += parseFloat(payment.subscriptionFees);
+                    tierRevenue.lifetime.numberOfSubscriptions++;
+                }
+            });
+        }
+
+        // Calculate summary metrics
+        const totalMonthlyRevenue = Object.values(tierRevenue)
+            .reduce((sum, tier) => sum + (tier.monthly || 0), 0);
+        const totalYearlyRevenue = Object.values(tierRevenue)
+            .reduce((sum, tier) => sum + (tier.yearly || 0), 0);
+        const totalLifetimeRevenue = tierRevenue.lifetime.total;
 
         return res.status(200).json({
-            totalSales: parseInt(orderTotal),
-            totalRevenue: parseInt(commissions + subscriptionFees),
-            subscriptionFees: parseInt(subscriptionFees),
-            commissions,
-            commissionPercentage,
+            totalRevenues: parseInt(commissions + subscriptionFees),
+            orders: {
+                totalSales: parseInt(orderTotal),
+                totalRevenueFromFromOrders: commissions,
+                commissionPercentage,
+            },
+            subscriptions:{
+                totalRevenueFromSubscriptionFees: parseInt(subscriptionFees),
+                byTier: tierRevenue,
+                summary: {
+                    monthlyTotal: parseInt(totalMonthlyRevenue),
+                    yearlyTotal: parseInt(totalYearlyRevenue),
+                    lifetimeTotal: parseInt(totalLifetimeRevenue)
+                }
+            },
+        
         });
 
     } catch (err) {
@@ -195,7 +320,7 @@ exports.calculateRevenue = async (req, res) => {
             error: i18n.__("internalServerError")
         });
     }
-}
+};
 
 
 exports.countOrders = async (req, res) => {
@@ -312,7 +437,8 @@ exports.countOrders = async (req, res) => {
 exports.getOrdersStatsByDay = async (req, res) => {
     try {
         const filterObject = req.query;
-        
+        const orderStatus = req.query.status || "delivered";
+        delete req.query.status;
         const orderSelectionObject = {
             orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
             shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
@@ -336,8 +462,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
             }))
         );
 
-        allOrderDocuments.result = allOrderDocuments.result.filter((order) => order.status === "delivered");
-        // console.log(`allOrderDocuments`, allOrderDocuments.result)
+        allOrderDocuments.result = allOrderDocuments.result.filter((order) => order.status === orderStatus);
 
         const accumulations = {
             orders: {
@@ -352,6 +477,19 @@ exports.getOrdersStatsByDay = async (req, res) => {
                 salesFromFoodProducts: 0,
                 salesFromNonFoodProducts: 0,
                 salesFromAllProducts: 0
+            },
+            shippingFees: {
+                shippingFeesFromFoodProducts: 0,
+                shippingFeesFromNonFoodProducts: 0,
+                shippingFeesTotal: 0
+            },
+            highestOrderFromFood: {
+                orderTotal: 0,
+                orderId: null,
+            },
+            highestOrderFromNonFood: {
+                orderTotal: 0,
+                orderId: null,
             }
         };
 
@@ -367,19 +505,34 @@ exports.getOrdersStatsByDay = async (req, res) => {
                     ordersFromNonFoodProducts: 0,
                     salesFromFoodProducts: 0,
                     salesFromNonFoodProducts: 0,
+                    shippingFeesTotal: 0,
+                    shippingFeesFromFoodProducts: 0,
+                    shippingFeesFromNonFoodProducts: 0,
                     sellersOfTheDay: []
                 };
             }
 
             acc[dateString].orderCount++;
-            acc[dateString].totalSales += order.orderTotal;
+            acc[dateString].totalSales += order.cartTotal;
+            acc[dateString].shippingFeesTotal += order.shippingFeesTotal;
 
             if (order.orderType === "basket") {
                 acc[dateString].ordersFromFoodProducts++;
-                acc[dateString].salesFromFoodProducts += order.orderTotal;
+                acc[dateString].salesFromFoodProducts += order.cartTotal;
+                acc[dateString].shippingFeesFromFoodProducts += order.shippingFeesTotal;
+                if (order.orderTotal > accumulations.highestOrderFromFood.orderTotal) {
+                    accumulations.highestOrderFromFood.orderTotal = order.orderTotal;
+                    accumulations.highestOrderFromFood.orderId = order._id;
+                }
             } else if (order.orderType === "cart") {
+
                 acc[dateString].ordersFromNonFoodProducts++;
-                acc[dateString].salesFromNonFoodProducts += order.orderTotal;
+                acc[dateString].salesFromNonFoodProducts += order.cartTotal;
+                acc[dateString].shippingFeesFromNonFoodProducts += order.shippingFeesTotal;
+                if (order.orderTotal > accumulations.highestOrderFromNonFood.orderTotal) {
+                    accumulations.highestOrderFromNonFood.orderTotal = order.orderTotal;
+                    accumulations.highestOrderFromNonFood.orderId = order._id;
+                }
             }
 
             // Sellers of the day logic
@@ -402,14 +555,17 @@ exports.getOrdersStatsByDay = async (req, res) => {
 
             // Accumulate overall statistics
             accumulations.orders.totalOrderCount++;
-            accumulations.sales.totalSales += parseFloat(order.orderTotal.toFixed(2));
+            accumulations.sales.totalSales += parseFloat(order.cartTotal.toFixed(2));
+            accumulations.shippingFees.shippingFeesTotal += parseFloat(order.shippingFeesTotal.toFixed(2));
 
             if (order.orderType === "basket") {
                 accumulations.orders.ordersFromFoodProducts++;
-                accumulations.sales.salesFromFoodProducts += parseFloat(order.orderTotal.toFixed(2));
+                accumulations.sales.salesFromFoodProducts += parseFloat(order.cartTotal.toFixed(2));
+                accumulations.shippingFees.shippingFeesFromFoodProducts += parseFloat(order.shippingFeesTotal.toFixed(2));
             } else if (order.orderType === "cart") {
                 accumulations.orders.ordersFromNonFoodProducts++;
-                accumulations.sales.salesFromNonFoodProducts += parseFloat(order.orderTotal.toFixed(2));
+                accumulations.sales.salesFromNonFoodProducts += parseFloat(order.cartTotal.toFixed(2));
+                accumulations.shippingFees.shippingFeesFromNonFoodProducts += parseFloat(order.shippingFeesTotal.toFixed(2));
             }
 
             return acc;
@@ -420,6 +576,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
         accumulations.sales.salesFromAllProducts = parseFloat(accumulations.sales.salesFromFoodProducts.toFixed(2)) +
             parseFloat(accumulations.sales.salesFromNonFoodProducts.toFixed(2));
 
+        accumulations.shippingFees.shippingFeesTotal = parseFloat(accumulations.shippingFees.shippingFeesFromFoodProducts.toFixed(2)) + parseFloat(accumulations.shippingFees.shippingFeesFromNonFoodProducts.toFixed(2));
         const issueDatesWithCounts = Object.keys(issueDateCounts).map(date => ({
             issueDate: date,
             orderCount: issueDateCounts[date].orderCount,
@@ -428,6 +585,9 @@ exports.getOrdersStatsByDay = async (req, res) => {
             ordersFromNonFoodProducts: issueDateCounts[date].ordersFromNonFoodProducts,
             salesFromFoodProducts: parseFloat(issueDateCounts[date].salesFromFoodProducts.toFixed(2)),
             salesFromNonFoodProducts: parseFloat(issueDateCounts[date].salesFromNonFoodProducts.toFixed(2)),
+            shippingFeesTotal: parseFloat(issueDateCounts[date].shippingFeesTotal.toFixed(2)),
+            shippingFeesFromFoodProducts: parseFloat(issueDateCounts[date].shippingFeesFromFoodProducts.toFixed(2)),
+            shippingFeesFromNonFoodProducts: parseFloat(issueDateCounts[date].shippingFeesFromNonFoodProducts.toFixed(2)),
             sellersOfTheDay: issueDateCounts[date].sellersOfTheDay
         }));
 
@@ -450,8 +610,9 @@ exports.getOrdersStatsByDay = async (req, res) => {
 
 exports.getOrdersStatsByMonth = async (req, res) => {
     try {
-        console.log("getOrdersStatsByMonth")
         const filterObject = req.query;
+        const orderStatus = req.query.status || "delivered";
+        delete req.query.status;
         const orderSelectionObject = {
             orderType: 1,
             paymentMethod: 1,
@@ -482,10 +643,38 @@ exports.getOrdersStatsByMonth = async (req, res) => {
                 _id: order._id?.toString(),
                 ...subOrder
             }))
-        ).filter((order) => order.status === "delivered");
+        ).filter((order) => order.status === orderStatus);
 
         // Initialize aggregation object
         const monthlyAggregations = {};
+        const accumulations = {
+            orders: {
+                totalOrderCount: 0,
+                totalMonthsOfOrders: 0,
+                ordersFromFoodProducts: 0,
+                ordersFromNonFoodProducts: 0,
+                ordersFromAllProducts: 0
+            },
+            sales: {
+                totalSales: 0,
+                salesFromFoodProducts: 0,
+                salesFromNonFoodProducts: 0,
+                salesFromAllProducts: 0
+            },
+            shippingFees: {
+                shippingFeesFromFoodProducts: 0,
+                shippingFeesFromNonFoodProducts: 0,
+                shippingFeesTotal: 0
+            },
+            highestOrderFromFood: {
+                orderTotal: 0,
+                orderId: null,
+            },
+            highestOrderFromNonFood: {
+                orderTotal: 0,
+                orderId: null,
+            }
+        };
         let minDate = null;
         let maxDate = null;
 
@@ -501,42 +690,55 @@ exports.getOrdersStatsByMonth = async (req, res) => {
                 monthlyAggregations[monthKey] = {
                     issueDate: monthKey,
                     orderCount: 0,
-                    totalSales: 0,
                     ordersFromFoodProducts: 0,
                     ordersFromNonFoodProducts: 0,
+                    totalSales: 0,
                     salesFromFoodProducts: 0,
                     salesFromNonFoodProducts: 0,
-                    sellersOfTheDay: []
+                    shippingFeesTotal: 0,
+                    shippingFeesFromFoodProducts: 0,
+                    shippingFeesFromNonFoodProducts: 0,
+                    sellersOfTheMonth: []
                 };
             }
 
             const month = monthlyAggregations[monthKey];
             month.orderCount++;
-            month.totalSales += order.orderTotal;
+            month.totalSales += order.cartTotal;
+            month.shippingFeesTotal += order.shippingFeesTotal;
 
             if (order.orderType === "basket") {
                 month.ordersFromFoodProducts++;
-                month.salesFromFoodProducts += order.orderTotal;
+                month.salesFromFoodProducts += order.cartTotal;
+                month.shippingFeesFromFoodProducts += order.shippingFeesTotal;
             } else if (order.orderType === "cart") {
                 month.ordersFromNonFoodProducts++;
-                month.salesFromNonFoodProducts += order.orderTotal;
+                month.salesFromNonFoodProducts += order.cartTotal;
+                month.shippingFeesFromNonFoodProducts += order.shippingFeesTotal;
             }
 
+            if (order.orderType === "basket" && order.orderTotal > accumulations.highestOrderFromFood.orderTotal) {
+                accumulations.highestOrderFromFood.orderTotal = order.orderTotal;
+                accumulations.highestOrderFromFood.orderId = order._id;
+            } else if (order.orderType === "cart" && order.orderTotal > accumulations.highestOrderFromNonFood.orderTotal) {
+                accumulations.highestOrderFromNonFood.orderTotal = order.orderTotal;
+                accumulations.highestOrderFromNonFood.orderId = order._id;
+            }
             // Update sellers
-            let sellerEntry = month.sellersOfTheDay.find(
+            let sellerEntry = month.sellersOfTheMonth.find(
                 entry => entry.seller === order.seller.toString() && entry.shop === order.shop.toString()
             );
 
             if (sellerEntry) {
                 sellerEntry.orderCount++;
-                sellerEntry.totalSales += order.orderTotal;
+                sellerEntry.totalSales += order.cartTotal;
             } else {
-                month.sellersOfTheDay.push({
+                month.sellersOfTheMonth.push({
                     seller: order.seller.toString(),
                     shop: order.shop.toString(),
                     orderType: order.orderType,
                     orderCount: 1,
-                    totalSales: order.orderTotal
+                    totalSales: order.cartTotal
                 });
             }
         });
@@ -558,6 +760,9 @@ exports.getOrdersStatsByMonth = async (req, res) => {
                         ordersFromNonFoodProducts: 0,
                         salesFromFoodProducts: 0,
                         salesFromNonFoodProducts: 0,
+                        shippingFeesTotal: 0,
+                        shippingFeesFromFoodProducts: 0,
+                        shippingFeesFromNonFoodProducts: 0,
                         sellersOfTheMonth: []
                     };
                 }
@@ -567,21 +772,7 @@ exports.getOrdersStatsByMonth = async (req, res) => {
         }
 
         // Calculate accumulations
-        const accumulations = {
-            orders: {
-                totalOrderCount: 0,
-                totalMonthsOfOrders: Object.keys(monthlyAggregations).length,
-                ordersFromFoodProducts: 0,
-                ordersFromNonFoodProducts: 0,
-                ordersFromAllProducts: 0
-            },
-            sales: {
-                totalSales: 0,
-                salesFromFoodProducts: 0,
-                salesFromNonFoodProducts: 0,
-                salesFromAllProducts: 0
-            }
-        };
+        accumulations.orders.totalMonthsOfOrders = Object.keys(monthlyAggregations).length;
 
         // Convert monthlyAggregations to array and calculate accumulations
         const aggregations = Object.values(monthlyAggregations)
@@ -594,6 +785,9 @@ exports.getOrdersStatsByMonth = async (req, res) => {
                 accumulations.sales.totalSales += month.totalSales;
                 accumulations.sales.salesFromFoodProducts += month.salesFromFoodProducts;
                 accumulations.sales.salesFromNonFoodProducts += month.salesFromNonFoodProducts;
+                accumulations.shippingFees.shippingFeesFromFoodProducts += month.shippingFeesFromFoodProducts;
+                accumulations.shippingFees.shippingFeesFromNonFoodProducts += month.shippingFeesFromNonFoodProducts;
+                accumulations.shippingFees.shippingFeesTotal += month.shippingFeesFromFoodProducts + month.shippingFeesFromNonFoodProducts;
 
                 // Format numbers for the month
                 return {
@@ -635,8 +829,8 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
-
-        const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
+        req.query.status = req.query.status || "purchased";
+        const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, cartTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
         // const numberOfDeliveredRequests = allServiceRequests.result.length;
@@ -721,7 +915,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
-
+        req.query.status = req.query.status || "purchased";
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.result) return { success: true, code: 200, result: [] };

@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
 const sellerRepo = require("../../modules/Seller/seller.repo");
 const shopRepo = require("../../modules/Shop/shop.repo")
+const serviceRepo = require("../../modules/Service/service.repo")
 const customerRepo = require("../../modules/Customer/customer.repo")
 const ifastShipperHelper = require("../../utils/ifastShipping.util")
 const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
@@ -31,6 +32,7 @@ exports.purchaseRequest = async (req, res) => {
          customerRepo.updateDirectly(req.body.customer, { hasPurchased: true })
          sellerRepo.updateDirectly(customerRequestObject.result.seller._id.toString(), { hasSold: true })
          shopRepo.updateDirectly(customerRequestObject.result.shop._id.toString(), { $inc: { orderCount: 1 } })
+         serviceRepo.updateDirectly(customerRequestObject.result.service._id.toString(), { $inc: { orderCount: 1 } })
          emailHelper.sendPurchaseConfirmationEmailToCustomer(customerOrderObject, req.lang)
          emailHelper.sendPurchaseConfirmationEmailToSeller(customerOrderObject, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
