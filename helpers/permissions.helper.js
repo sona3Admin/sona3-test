@@ -151,7 +151,17 @@ let reportEndPoints = [
     "/admin/reports/countCustomers",
     "/admin/reports/countSellers",
     "/admin/reports/countShops",
-    "/admin/reports/countTiers"
+    "/admin/reports/countTiers",
+    "/admin/reports/countProducts",
+    "/admin/reports/countServices",
+]
+
+
+let complaintEndPoints = [
+    "/admin/complaints/list",
+    "/admin/complaints/get",
+    "/admin/complaints/update",
+    "/admin/complaints/remove"
 ]
 
 
@@ -181,7 +191,7 @@ notificationEndPoints = new Set(notificationEndPoints);
 settingEndPoints = new Set(settingEndPoints);
 dashboardEndPoints = new Set(dashboardEndPoints);
 reportEndPoints = new Set(reportEndPoints);
-
+complaintEndPoints = new Set(complaintEndPoints);
 
 let permissions = new Map();
 
@@ -211,6 +221,6 @@ permissions.set("notifications", notificationEndPoints)
 permissions.set("settings", settingEndPoints)
 permissions.set("dashboards", dashboardEndPoints)
 permissions.set("reports", reportEndPoints)
-
+permissions.set("complaints", complaintEndPoints)
 
 module.exports = { permissions }

@@ -33,6 +33,7 @@ const notificationRoutes = require("./notification.route");
 const settingRoutes = require("./setting.route");
 const dashboardRoutes = require("./dashboard.route");
 const reportRoutes = require("./report.route");
+const complaintRoutes = require("./complaint.route");
 
 
 app.use(authRoutes)
@@ -63,6 +64,6 @@ app.use("/notifications", checkToken(allowedUsers), isAuthorized, notificationRo
 app.use("/settings", checkToken(allowedUsers), isAuthorized, settingRoutes);
 app.use("/dashboards", checkToken(allowedUsers), isAuthorized, dashboardRoutes);
 app.use("/reports", checkToken(allowedUsers), isAuthorized, reportRoutes);
-
+app.use("/complaints", checkToken(allowedUsers), isAuthorized, complaintRoutes);
 
 module.exports = app
