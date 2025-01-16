@@ -8,6 +8,8 @@ app.get("/countTiers", reportController.countSellersBasedOnTiers);
 app.post("/countShops", reportController.countShops);
 app.post("/countProducts", reportController.countProducts);
 app.post("/countServices", reportController.countServices);
+app.get("/shippingInvoice", reportController.calculateShippingInvoice);
+app.get("/sellersInvoices", reportController.calculateSellersInvoices);
 
 
 

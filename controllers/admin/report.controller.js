@@ -8,7 +8,8 @@ const serviceRepo = require("../../modules/Service/service.repo");
 const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
 const paymentRepo = require("../../modules/Payment/payment.repo");
-const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper")
+const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper");
+const { date } = require('joi');
 const UAE_MAIN_CITIES = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
 
 
@@ -281,6 +282,166 @@ exports.countServices = async (req, res) => {
         });
     }
 };
+
+
+exports.calculateShippingInvoice = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const orderStatus = "delivered";
+        delete req.query.status;
+        let startDate, endDate;
+        const orderSelectionObject = {
+            orderType: 1, shippingFeesTotal: 1, issueDate: 1, _id: 1
+        };
+        if (filterObject.dateFrom && filterObject.dateTo) {
+            filterObject.dateFrom = moment(filterObject.dateFrom).startOf('day');
+            startDate = filterObject.dateFrom;
+            filterObject.dateTo = moment(filterObject.dateTo).endOf('day');
+            endDate = filterObject.dateTo;
+
+        }
+
+        let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
+        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+
+        allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
+            order.subOrders.map(subOrder => ({
+
+                shippingFeesTotal: order.shippingFeesTotal,
+                orderType: order.orderType,
+                issueDate: order.issueDate,
+                _id: order._id?.toString(),
+                ...subOrder
+            }))
+        );
+
+        allOrderDocuments.result = allOrderDocuments.result.filter((order) => order.status === orderStatus);
+
+        let ifastShippingInvoiceTotal = 0;
+        let firstFlightShippingInvoiceTotal = 0;
+
+        allOrderDocuments.result.forEach(order => {
+            if (order.orderType === "basket") {
+                ifastShippingInvoiceTotal += parseFloat(order.shopShippingFees);
+            } else if (order.orderType === "cart") {
+                firstFlightShippingInvoiceTotal += parseFloat(order.shopShippingFees);
+            }
+        });
+        console.log(`filterObject`, filterObject)
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: {
+                ifastShippingInvoiceTotal: parseFloat(ifastShippingInvoiceTotal.toFixed(2)),
+                firstFlightShippingInvoiceTotal: parseFloat(firstFlightShippingInvoiceTotal.toFixed(2)),
+                total: parseFloat((ifastShippingInvoiceTotal + firstFlightShippingInvoiceTotal).toFixed(2)),
+                dateRange: { startDate, endDate }
+            }
+        });
+    } catch (err) {
+        console.error(`Error: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.calculateSellersInvoices = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const orderStatus = "delivered";
+        const COMMISSION_RATE = 0.15; // 15% commission
+        delete req.query.status;
+        let startDate, endDate;
+        const orderSelectionObject = {
+            orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
+            shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
+        };
+
+        if (filterObject.dateFrom && filterObject.dateTo) {
+            filterObject.dateFrom = moment(filterObject.dateFrom).startOf('day');
+            startDate = filterObject.dateFrom;
+            filterObject.dateTo = moment(filterObject.dateTo).endOf('day');
+            endDate = filterObject.dateTo;
+        }
+
+        let allOrderDocuments = await orderRepo.aggregateAndPopulate(filterObject, orderSelectionObject);
+        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+
+        allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
+            order.subOrders.map(subOrder => ({
+                paymentMethod: order.paymentMethod,
+                cartTotal: order.cartTotal,
+                cartOriginalTotal: order.cartOriginalTotal,
+                shippingFeesTotal: order.shippingFeesTotal,
+                taxesTotal: order.taxesTotal,
+                orderTotal: order.orderTotal,
+                orderType: order.orderType,
+                issueDate: order.issueDate,
+                _id: order._id?.toString(),
+                ...subOrder
+            }))
+        );
+
+        allOrderDocuments.result = allOrderDocuments.result.filter((order) => order.status === orderStatus);
+        const sellerInvoices = {};
+        let totalAccumulatedInvoice = 0;
+
+        allOrderDocuments.result.forEach(order => {
+            if (!sellerInvoices[order.seller._id.toString()]) {
+                sellerInvoices[order.seller._id.toString()] = {
+                    seller: order.seller,
+                    shop: order.shop,
+                    totalAmount: 0,
+                    orderCount: 0
+                };
+            }
+            sellerInvoices[order.seller._id.toString()].totalAmount += order.shopTotal;
+            sellerInvoices[order.seller._id.toString()].orderCount++;
+        });
+
+        const sellerInvoicesArray = Object.values(sellerInvoices).map(invoice => {
+            const afterCommission = invoice.totalAmount * (1 - COMMISSION_RATE);
+            totalAccumulatedInvoice += afterCommission;
+
+            return {
+                seller: invoice.seller,
+                shop: invoice.shop,
+                toBePayedToSeller: afterCommission,
+                orderCount: invoice.orderCount,
+                totalBeforeCommission: invoice.totalAmount,
+                commission: invoice.totalAmount * COMMISSION_RATE,
+                commissionRate: COMMISSION_RATE,
+            };
+        });
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: {
+                sellerInvoices: sellerInvoicesArray,
+                totalAccumulatedInvoice: totalAccumulatedInvoice,
+                totalOrderCount: allOrderDocuments.result.length,
+            },
+
+            dateRange: { startDate, endDate }
+        });
+
+    } catch (err) {
+        console.error(`Error: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
 
 
 function groupShopsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults) {

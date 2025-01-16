@@ -186,6 +186,145 @@ exports.aggregate = async (filterObject, selectionObject) => {
     }
 };
 
+exports.aggregateAndPopulate = async (filterObject, selectionObject) => {
+    try {
+        const normalizedQueryObjects = await prepareQueryObjects(filterObject, {});
+        filterObject = normalizedQueryObjects.filterObject;
+
+        const createProjection = (selectionObj) => {
+            return Object.entries(selectionObj).reduce((projection, [key, value]) => {
+                if (typeof value === 'object') {
+                    projection[key] = {
+                        $map: {
+                            input: `$${key}`,
+                            as: "item",
+                            in: createProjection(value)
+                        }
+                    };
+                } else if (value) {
+                    projection[key] = value;
+                }
+                return projection;
+            }, {});
+        };
+
+        const subOrdersProjection = {
+            subOrders: 1,
+            orderType: 1,
+            paymentMethod: 1,
+            cartTotal: 1,
+            cartOriginalTotal: 1,
+            shippingFeesTotal: 1,
+            taxesTotal: 1,
+            orderTotal: 1,
+            issueDate: 1,
+            _id: 1
+        };
+
+        const pipeline = [];
+
+        if (filterObject) pipeline.push({ $match: filterObject });
+
+        pipeline.push({ $unwind: "$subOrders" });
+
+        pipeline.push({
+            $lookup: {
+                from: "sellers",
+                localField: "subOrders.seller",
+                foreignField: "_id",
+                as: "sellerDetails"
+            }
+        });
+
+        pipeline.push({
+            $lookup: {
+                from: "shops",
+                localField: "subOrders.shop",
+                foreignField: "_id",
+                as: "shopDetails"
+            }
+        });
+
+        // Add a project stage to reshape the data after lookups
+        pipeline.push({
+            $project: {
+                _id: 1,
+                orderType: 1,
+                paymentMethod: 1,
+                cartTotal: 1,
+                cartOriginalTotal: 1,
+                shippingFeesTotal: 1,
+                taxesTotal: 1,
+                orderTotal: 1,
+                issueDate: 1,
+                subOrders: {
+                    seller: {
+                        _id: "$subOrders.seller",
+                        userName: { $arrayElemAt: ["$sellerDetails.userName", 0] },
+                        image: { $arrayElemAt: ["$sellerDetails.image", 0] }
+                    },
+                    shop: {
+                        _id: "$subOrders.shop",
+                        nameEn: { $arrayElemAt: ["$shopDetails.nameEn", 0] },
+                        nameAr: { $arrayElemAt: ["$shopDetails.nameAr", 0] },
+                        image: { $arrayElemAt: ["$shopDetails.image", 0] }
+                    },
+                    shopTotal: "$subOrders.shopTotal",
+                    shopOriginalTotal: "$subOrders.shopOriginalTotal",
+                    shopTaxes: "$subOrders.shopTaxes",
+                    shopShippingFees: "$subOrders.shopShippingFees",
+                    subOrderTotal: "$subOrders.subOrderTotal",
+                    status: "$subOrders.status",
+                    shippingStatus: "$subOrders.shippingStatus"
+                }
+            }
+        });
+
+        pipeline.push({
+            $group: {
+                _id: "$_id",
+                orderType: { $first: "$orderType" },
+                paymentMethod: { $first: "$paymentMethod" },
+                cartTotal: { $first: "$cartTotal" },
+                cartOriginalTotal: { $first: "$cartOriginalTotal" },
+                shippingFeesTotal: { $first: "$shippingFeesTotal" },
+                taxesTotal: { $first: "$taxesTotal" },
+                orderTotal: { $first: "$orderTotal" },
+                issueDate: { $first: "$issueDate" },
+                subOrders: { $push: "$subOrders" }
+            }
+        });
+
+        if (selectionObject) {
+            const projection = { ...createProjection(selectionObject), ...subOrdersProjection };
+            pipeline.push({ $project: projection });
+        }
+
+        pipeline.push({ $sort: { issueDate: -1 } });
+
+        const resultArray = await orderModel.aggregate(pipeline).exec();
+
+        if (!resultArray || resultArray.length === 0) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        };
+
+        return {
+            success: true,
+            code: 200,
+            result: resultArray
+        };
+
+    } catch (err) {
+        console.error(`Error: ${err.message}`);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+};
 
 exports.count = async (filterObject, sortObject) => {
     try {
