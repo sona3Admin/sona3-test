@@ -1,6 +1,86 @@
 const i18n = require('i18n');
 const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
+const productRepo = require('../../modules/Product/product.repo');
+const serviceRepo = require('../../modules/Service/service.repo');
+const { groupByCategories } = require('../admin/report.controller');
+
+
+exports.countProducts = async (req, res) => {
+    try {
+        const { query: filterObject, body: { filters: queryObject } } = req;
+        const pageNumber = req.query.page || 1;
+        const limitNumber = req.query.limit || 0;
+        const allDocuments = await productRepo.list(
+            { ...filterObject, isDeleted: false },
+            { isActive: 1, isVerified: 1, isFood: 1, creationDate: 1 },
+            {}, pageNumber, limitNumber
+        );
+
+        let countingResults = {};
+        const filterCategories = ['isActive', 'isVerified', 'isFood'];
+        const categoryMap = { isActive: 'active', isVerified: 'verified', isFood: 'food' };
+
+        countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: countingResults
+        });
+
+    } catch (err) {
+        console.error(`Error in countShops: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
+exports.countServices = async (req, res) => {
+    try {
+        const { query: filterObject, body: { filters: queryObject } } = req;
+        const pageNumber = req.query.page || 1;
+        const limitNumber = req.query.limit || 0;
+        const allDocuments = await serviceRepo.list(
+            { ...filterObject, isDeleted: false },
+            { isActive: 1, isVerified: 1, creationDate: 1 },
+            {}, pageNumber, limitNumber
+        );
+
+        let countingResults = {};
+        const filterCategories = ['isActive', 'isVerified'];
+        const categoryMap = { isActive: 'active', isVerified: 'verified' };
+
+        countingResults = groupByCategories(queryObject, filterCategories, categoryMap, allDocuments)
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            result: countingResults
+        });
+
+    } catch (err) {
+        console.error(`Error in countShops: ${err.message}`);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+
+
+
+
+
+
+
+
 
 
 exports.countOrders = async (req, res) => {
@@ -20,7 +100,7 @@ exports.countOrders = async (req, res) => {
         let grossSales = allOrderDocuments.result.reduce((total, order) => total + parseInt(order.shopTotal), 0);
         overallCounts.grossSales = grossSales
 
-        let netSales = allOrderDocuments.result.reduce((total, order) => total + (parseInt(order.shopTotal) * 0.9), 0);
+        let netSales = allOrderDocuments.result.reduce((total, order) => total + (parseInt(order.shopTotal) * 0.85), 0);
         overallCounts.netSales = netSales
 
         return res.status(200).json({
@@ -87,6 +167,6 @@ function getFlattedOrders(allOrderDocuments) {
             ...subOrder
         }))
     );
-    // allOrderDocuments.result = allOrderDocuments?.result?.filter((order) => order.status === "delivered");
+    allOrderDocuments.result = allOrderDocuments?.result?.filter((order) => order.status === "delivered");
     return allOrderDocuments
 }
