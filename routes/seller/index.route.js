@@ -23,6 +23,7 @@ const roomRoutes = require("./room.route");
 const notificationRoutes = require("./notification.route");
 const tiersRoutes = require("./subscription.route");
 const reportRoutes = require("./report.route");
+const dashboardRoutes = require("./dashboard.route");
 
 
 app.use(authRoutes)
@@ -44,6 +45,6 @@ app.use("/rooms", checkToken(allowedUsers), roomRoutes);
 app.use("/notifications", checkToken(allowedUsers), notificationRoutes);
 app.use("/tiers", checkToken(allowedUsers), tiersRoutes);
 app.use("/reports", checkToken(allowedUsers), reportRoutes);
-
+app.use("/dashboards", checkToken(allowedUsers), dashboardRoutes)
 
 module.exports = app
