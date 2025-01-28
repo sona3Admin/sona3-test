@@ -19,7 +19,7 @@ const authData = {
     AccountNo: firstFlightAccountNumber,
     Country: firstFlightCountry,
 }
-console.log("authData", authData)
+
 
 exports.calculateOrderShippingCost = async (orderDetailsObject) => {
     try {
