@@ -8,7 +8,7 @@ const s3StorageHelper = require("./s3FileStorage.util")
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
 const firstFlightUsername = process.env.FIRSTFLIGHT_USER_NAME;
-const firstFlightPassword = `Mkiolo#2536`;
+const firstFlightPassword = process.env.FIRSTFLIGHT_PASSWORD;
 const firstFlightAccountNumber = process.env.FIRSTFLIGHT_ACCOUNT_NUMBER;
 const firstFlightCountry = process.env.FIRSTFLIGHT_COUNTRY;
 
@@ -19,7 +19,7 @@ const authData = {
     AccountNo: firstFlightAccountNumber,
     Country: firstFlightCountry,
 }
-
+console.log("authData", authData)
 
 exports.calculateOrderShippingCost = async (orderDetailsObject) => {
     try {
