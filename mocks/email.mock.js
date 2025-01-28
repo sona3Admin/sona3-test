@@ -126,3 +126,37 @@ exports.sendPurchaseConfirmationEmailToSeller = async (req, res) => {
 }
 
 
+exports.sendOrderPurchaseConfirmationEmailToCustomer = async (req, res) => {
+    try {
+
+        let customerOrderObject = req.body
+        const operationResultObject = await emailHelper.sendOrderPurchaseConfirmationEmailToCustomer(customerOrderObject, req.lang)
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+
+exports.sendOrderPurchaseConfirmationEmailToSeller = async (req, res) => {
+    try {
+
+        let customerOrderObject = req.body
+        const operationResultObject = await emailHelper.sendOrderPurchaseConfirmationEmailToSeller(customerOrderObject, req.lang)
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        console.log(`err.message controller`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}

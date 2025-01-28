@@ -750,6 +750,221 @@ exports.sendPurchaseConfirmationEmailToSeller = async (purchaseDetails, lang) =>
 };
 
 
+exports.sendOrderPurchaseConfirmationEmailToCustomer = async (orderDetails, lang) => {
+  try {
+    lang = !lang || lang === "en" ? "en" : "ar";
+    orderDetails["paymentEn"] = orderDetails.paymentMethod == "cashOnDelivery" ? "Cash On Delivery" : "Visa"
+    orderDetails["paymentAr"] = orderDetails.paymentMethod == "cashOnDelivery" ? "الدفع عند التوصيل" : "فيزا"
+
+    const content = {
+      en: {
+        subject: "Purchase Confirmation",
+        greeting: `Hello ${orderDetails.customer.name},`,
+        message: `Thank you for your purchase on Sona3. Below are the details of your order:`,
+        details: `
+          <ul>
+            <li><strong>Order ID:</strong> ${orderDetails._id}</li>
+            <li><strong>Order Status:</strong> Pending</li>
+            <li><strong>Cart Total:</strong> AED${orderDetails.cartTotal}</li>
+            <li><strong>Taxes:</strong> ${orderDetails.taxesRate}% (AED${orderDetails.taxesTotal})</li>
+            <li><strong>Shipping Fees Total:</strong> AED${orderDetails.shippingFeesTotal}</li>
+            <li><strong>Order Total:</strong> AED${orderDetails.orderTotal}</li>
+            <li><strong>Payment Method:</strong> ${orderDetails.paymentEn}</li>
+          </ul>
+        `,
+        bestRegards: "Best regards,",
+        team: "SONA3 Team",
+      },
+      ar: {
+        subject: "تأكيد الشراء",
+        greeting: `مرحبًا ${orderDetails.customer.name},`,
+        message: `شكرًا لقيامك بالشراء من صناع". إليك تفاصيل طلبك:`,
+        details: `
+          <ul>
+            <li><strong>رقم الطلب:</strong> ${orderDetails._id}</li>
+            <li><strong>حالة الطلب:</strong> قيد الانتظار</li>
+            <li><strong>إجمالي السلة:</strong> درهم إماراتي${orderDetails.cartTotal}</li>
+            <li><strong>الضرائب:</strong> ${orderDetails.taxesRate}% (درهم إماراتي${orderDetails.taxesTotal})</li>
+            <li><strong>إجمالي تكلفة التوصيل:</strong> درهم إماراتي${orderDetails.shippingFeesTotal}</li>
+            <li><strong>إجمالي الطلب:</strong> درهم إماراتي${orderDetails.orderTotal}</li>
+            <li><strong>طريقة الدفع:</strong> ${orderDetails.paymentAr}</li>
+          </ul>
+        `,
+        bestRegards: "مع أطيب التحيات،",
+        team: "فريق صناع",
+      },
+    };
+
+    const selectedContent = content[lang];
+
+    const htmlContent = `
+      ${setEmailHeader(lang, selectedContent.subject)}
+      <body>
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
+            <h1>${selectedContent.subject}</h1>
+            <p>${selectedContent.greeting}</p>
+            <p>${selectedContent.message}</p>
+            <div class="details">
+              ${selectedContent.details}
+            </div>
+          </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
+        </div>
+      </body>
+      </html>
+    `;
+
+    const textContent = `
+      ${selectedContent.greeting}
+
+      ${selectedContent.message}
+
+      Order Details:
+      - Order ID: ${orderDetails._id}
+      - Order Status: ${orderDetails.status}
+      - Cart Total: AED${orderDetails.cartTotal}
+      - Order Total: AED${orderDetails.orderTotal}
+      - Taxes: ${orderDetails.taxesRate}% (AED${orderDetails.taxesTotal})
+      - Payment Method: ${orderDetails.paymentMethod}
+      - Notes: ${orderDetails.requestNotes || "N/A"}
+
+      ${selectedContent.bestRegards}
+      ${selectedContent.team}
+    `;
+
+    const emailResult = await sendEmail(
+      orderDetails.customer.email,
+      selectedContent.subject,
+      textContent,
+      htmlContent,
+      lang
+    );
+
+    return emailResult.success
+      ? { success: true, code: 200, message: "Purchase confirmation email sent successfully" }
+      : { success: false, code: 500, error: "Failed to send purchase confirmation email" };
+  } catch (err) {
+    console.error("Error in sendPurchaseConfirmationEmailToCustomer:", err.message);
+    return { success: false, code: 500, error: "Failed to send purchase confirmation email" };
+  }
+};
+
+
+exports.sendOrderPurchaseConfirmationEmailToSeller = async (orderDetails, lang) => {
+  try {
+    lang = !lang || lang === "en" ? "en" : "ar";
+    orderDetails["paymentEn"] = orderDetails.paymentMethod == "cashOnDelivery" ? "Cash On Delivery" : "Visa"
+    orderDetails["paymentAr"] = orderDetails.paymentMethod == "cashOnDelivery" ? "الدفع عند التوصيل" : "فيزا"
+    const content = {
+      en: {
+        subject: "New Purchase Notification",
+        greeting: `Hello ${orderDetails.seller.userName},`,
+        message: `A new order has been purchased from your shop "${orderDetails.shop.nameEn}". Below are the details of the purchase:`,
+        details: `
+          <ul>
+            <li><strong>Order ID:</strong> ${orderDetails._id}</li>
+            <li><strong>Customer Name:</strong> ${orderDetails.customer.name}</li>
+            <li><strong>Customer Phone:</strong> ${orderDetails.customer.phone}</li>
+            <li><strong>Shop Name:</strong> ${orderDetails.shop.nameEn}</li>
+            <li><strong>Cart Total:</strong> AED${orderDetails.shopTotal}</li>
+            <li><strong>Taxes:</strong> ${orderDetails.taxesRate}% (AED${orderDetails.shopTaxes})</li>
+            <li><strong>Shipping Fees Total:</strong> AED${orderDetails.shopShippingFees}</li>
+            <li><strong>Order Total:</strong> AED${orderDetails.subOrderTotal}</li>
+            <li><strong>Payment Method:</strong> ${orderDetails.paymentEn}</li>
+          </ul>
+        `,
+        bestRegards: "Best regards,",
+        team: "SONA3 Team",
+      },
+      ar: {
+        subject: "إشعار بعملية شراء جديدة",
+        greeting: `مرحبًا ${orderDetails.seller.userName},`,
+        message: `تم شراء طلب جديد من متجرك "${orderDetails.shop.nameAr}". إليك تفاصيل عملية الشراء:`,
+        details: `
+          <ul>
+            <li><strong>رقم الطلب:</strong> ${orderDetails._id}</li>
+            <li><strong>اسم العميل:</strong> ${orderDetails.customer.name}</li>
+            <li><strong>رقم هاتف العميل:</strong> ${orderDetails.customer.phone}</li>
+            <li><strong>اسم المتجر:</strong> ${orderDetails.shop.nameAr}</li>
+            <li><strong>إجمالي السلة:</strong> درهم إماراتي${orderDetails.shopTotal}</li>
+            <li><strong>الضرائب:</strong> ${orderDetails.taxesRate}% (درهم إماراتي${orderDetails.shopTaxes})</li>
+            <li><strong>إجمالي التوصيل:</strong> درهم إماراتي${orderDetails.shopShippingFees}</li>
+            <li><strong>إجمالي الطلب:</strong> درهم إماراتي${orderDetails.orderTotal}</li>
+            <li><strong>طريقة الدفع:</strong> ${orderDetails.paymentAr}</li>
+          </ul>
+        `,
+        bestRegards: "مع أطيب التحيات،",
+        team: "فريق صناع",
+      },
+    };
+    const selectedContent = content[lang];
+
+    const htmlContent = `
+      ${setEmailHeader(lang, selectedContent.subject)}
+      <body>
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
+            <h1>${selectedContent.subject}</h1>
+            <p>${selectedContent.greeting}</p>
+            <p>${selectedContent.message}</p>
+            <div class="details">
+              ${selectedContent.details}
+            </div>
+          </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
+        </div>
+      </body>
+      </html>
+    `;
+
+    const textContent = `
+      ${selectedContent.greeting}
+
+      ${selectedContent.message}
+
+      Purchase Details:
+      - Order ID: ${orderDetails._id}
+      - Customer Name: ${orderDetails.customer.name}
+      - Customer Phone: ${orderDetails.customer.phone}
+      - Shop Name: ${orderDetails.shop.nameEn}
+      - Order Total: AED${orderDetails.subOrderTotal}
+      - Taxes: ${orderDetails.taxesRate}% (AED${orderDetails.shopTaxes})
+      - Payment Method: ${orderDetails.paymentMethod}
+      ${selectedContent.bestRegards}
+      ${selectedContent.team}
+    `;
+
+    const emailResult = await sendEmail(
+      orderDetails.seller.email,
+      selectedContent.subject,
+      textContent,
+      htmlContent,
+      lang
+    );
+
+    return emailResult.success
+      ? { success: true, code: 200, message: "Purchase notification email sent to seller successfully" }
+      : { success: false, code: 500, error: "Failed to send purchase notification email to seller" };
+  } catch (err) {
+    console.error("Error in sendPurchaseConfirmationEmailToSeller:", err.message);
+    return { success: false, code: 500, error: "Failed to send purchase notification email to seller" };
+  }
+};
+
+
 const generateRandomOTPCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
 };

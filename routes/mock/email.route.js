@@ -9,5 +9,8 @@ app.post("/customerRequestCreated", emailController.sendServiceRequestCreationEm
 app.post("/sellerRequestCreated", emailController.sendServiceRequestCreationEmailToSeller)
 app.post("/customerRequestPurchased", emailController.sendPurchaseConfirmationEmailToCustomer)
 app.post("/sellerRequestPurchased", emailController.sendPurchaseConfirmationEmailToSeller)
+app.post("/customerOrderPurchased", emailController.sendOrderPurchaseConfirmationEmailToCustomer)
+app.post("/sellerOrderPurchased", emailController.sendOrderPurchaseConfirmationEmailToSeller)
+
 
 module.exports = app
