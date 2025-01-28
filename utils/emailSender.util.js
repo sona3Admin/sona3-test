@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-exports.sendEmail = async (receivers, subject, text, html, lang) => {
+exports.sendEmail = async (receivers, subject, text, html, lang, attachments) => {
   try {
     const recipientList = Array.isArray(receivers) ? receivers.join(', ') : receivers;
     console.log("recipientList", recipientList);
@@ -23,6 +23,7 @@ exports.sendEmail = async (receivers, subject, text, html, lang) => {
       subject: subject,
       text: text,
       html: html,
+      attachments: attachments
     });
 
     console.log('Email sent: %s', info.messageId);

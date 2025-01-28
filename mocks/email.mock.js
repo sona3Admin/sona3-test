@@ -25,11 +25,7 @@ exports.sendEmailVerificationCode = async (req, res) => {
 
 exports.sendSellerVerificationConfirmation = async (req, res) => {
     try {
-        const payloadObject = {
-            userName: req.body.userName,
-            email: req.body.email
-        };
-        const operationResultObject = await emailHelper.sendSellerVerificationConfirmation(payloadObject, req.lang)
+        const operationResultObject = await emailHelper.sendSellerVerificationConfirmation(req.body, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
@@ -45,11 +41,8 @@ exports.sendSellerVerificationConfirmation = async (req, res) => {
 
 exports.sendShopVerificationConfirmation = async (req, res) => {
     try {
-        const payloadObject = {
-            userName: req.body.userName,
-            email: req.body.email
-        };
-        const operationResultObject = await emailHelper.sendShopVerificationConfirmation(payloadObject, req.lang)
+        
+        const operationResultObject = await emailHelper.sendShopVerificationConfirmation(req.body, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {

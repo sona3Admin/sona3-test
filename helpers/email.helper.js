@@ -1,8 +1,11 @@
 const { sendEmail } = require("../utils/emailSender.util");
+const { setEmailHeader, setEmailLogo, setEmailFooter, setSellerPlaceholder, setShopPlaceholder } = require("../ui/email.ui");
+
 
 
 exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
   try {
+
     const otpCode = generateRandomOTPCode();
     lang = !lang || lang === "en" ? "en" : "ar";
 
@@ -10,38 +13,39 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
       en: {
         verifyEmail: {
           subject: "Verify Your Sona3 Account",
-          greeting: `Hello ${receiverObject?.name || receiverObject?.userName},`,
-          message: `Thank you for registering with our service. To complete your registration, please use the following verification code:`,
-          bestRegards: "Best regards,",
+          greeting: `Hi ${receiverObject?.name || receiverObject?.userName},`,
+          message: "This is your verification code:",
+          footerMessage: "This code will only be valid for the next 5 minutes. If the code does not work, you can use this login verification link:",
+          signature: "Best regards,",
           team: "SONA3 Team",
           ignore: "If you didn't request this code, please ignore this email.",
         },
         resetPassword: {
           subject: "Reset Your Sona3 Account Password",
-          greeting: `Hello ${receiverObject?.name || receiverObject?.userName},`,
-          message: `We received a request to reset your Sona3 account password. To proceed with the password reset, please use the following code:`,
-          bestRegards: "Best regards,",
+          greeting: `Hi ${receiverObject?.name || receiverObject?.userName},`,
+          message: "We received a request to reset your Sona3 account password. To proceed with the password reset, please use the following code:",
+          footerMessage: "If you didn’t request this password reset, please ignore this email and ensure your account is secure.",
+          signature: "Best regards,",
           team: "SONA3 Team",
-          ignore: "If you didn't request a password reset, please ignore this email and ensure your account is secure.",
-        }
+        },
       },
       ar: {
         verifyEmail: {
           subject: "تأكيد حسابك على صناع",
           greeting: `مرحبًا ${receiverObject?.name || receiverObject?.userName},`,
-          message: `شكرًا لتسجيلك في خدمتنا. لإكمال التسجيل، يرجى استخدام رمز التحقق التالي:`,
-          bestRegards: "مع أطيب التحيات،",
+          message: "هذا هو رمز التحقق الخاص بك:",
+          footerMessage: "هذا الرمز سيبقى صالحًا لمدة 5 دقائق فقط. إذا لم يعمل الرمز، يمكنك استخدام رابط التحقق من التسجيل:",
+          signature: "مع أطيب التحيات،",
           team: "فريق صناع",
-          ignore: "إذا لم تطلب هذا الرمز، يرجى تجاهل هذا البريد الإلكتروني.",
         },
         resetPassword: {
           subject: "إعادة تعيين كلمة المرور لحسابك على صناع",
           greeting: `مرحبًا ${receiverObject?.name || receiverObject?.userName},`,
-          message: `لقد تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابك على صناع. للمتابعة مع إعادة تعيين كلمة المرور، يرجى استخدام الرمز التالي:`,
-          bestRegards: "مع أطيب التحيات،",
+          message: "لقد تلقينا طلبًا لإعادة تعيين كلمة المرور لحسابك على صناع. للمتابعة مع إعادة تعيين كلمة المرور، يرجى استخدام الرمز التالي:",
+          footerMessage: "إذا لم تطلب هذه العملية، يرجى تجاهل هذا البريد وتأكد من أمان حسابك.",
+          signature: "مع أطيب التحيات،",
           team: "فريق صناع",
-          ignore: "إذا لم تطلب إعادة تعيين كلمة المرور، يرجى تجاهل هذا البريد الإلكتروني والتأكد من أمان حسابك.",
-        }
+        },
       },
     };
 
@@ -49,38 +53,28 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
     const selectedContent = content[lang][type];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #000; direction: ${lang === "ar" ? "rtl" : "ltr"}; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background-color: #88050d; color: #fff; text-align: center; padding: 10px; }
-          .content { background-color: #dfb678; padding: 20px; color: black; }
-          .code { font-size: 24px; font-weight: bold; text-align: center; margin: 20px 0; color: #fff; }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
-            <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
+        <div class="email-container">
+          ${setEmailLogo()}
+          
+          <div class="email-body">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
             <div class="code">${otpCode}</div>
-            <p>${selectedContent.ignore}</p>
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <p>${selectedContent.footerMessage}</p>
+            <p class="signature">${selectedContent.signature}<br />${selectedContent.team}</p>
+            <p style="font-size: 14px; color: #888888; margin-top: 50px;">
+              ${selectedContent.ignore}
+            </p>
           </div>
+          ${setEmailFooter(lang)}
+          
         </div>
       </body>
       </html>
     `;
 
-    // Construct the plain text version of the email
     const textContent = `
       ${selectedContent.greeting}
 
@@ -88,19 +82,20 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
 
       ${otpCode}
 
-      ${selectedContent.ignore}
+      ${selectedContent.footerMessage}
 
-      ${selectedContent.bestRegards}
+      ${selectedContent.signature}
       ${selectedContent.team}
+
+      ${selectedContent.ignore}
     `;
 
-    // Send the email using the utility function
     const emailResult = await sendEmail(
       receiverObject.email,
       selectedContent.subject,
       textContent,
       htmlContent,
-      lang // Pass the lang parameter for the email "from" name
+      lang
     );
 
     if (emailResult.success) {
@@ -127,7 +122,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
 exports.sendSellerVerificationConfirmation = async (receiverObject, lang) => {
   try {
     lang = !lang || lang === "en" ? "en" : "ar";
-
+    const sellerImage = receiverObject?.image?.Location || setSellerPlaceholder();
     const content = {
       en: {
         subject: "Your Sona3 Seller Account is Now Verified",
@@ -150,77 +145,30 @@ exports.sendSellerVerificationConfirmation = async (receiverObject, lang) => {
     const selectedContent = content[lang];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            direction: ${lang === "ar" ? "rtl" : "ltr"}; 
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
-          }
-          .header { 
-            background-color: #88050d; 
-            color: #fff; 
-            text-align: center; 
-            padding: 20px; 
-            border-radius: 5px 5px 0 0; 
-          }
-          .content { 
-            background-color: #fff; 
-            padding: 30px; 
-            border: 1px solid #dfb678;
-            border-radius: 0 0 5px 5px;
-          }
-          .steps {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-          }
-          .steps ul {
-            margin: 10px 0;
-            padding-${lang === "ar" ? "right" : "left"}: 20px;
-          }
-          .support {
-            background-color: #dfb678;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            color: #333;
-          }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
+            <div style="text-align: center;">
+              <img src="${sellerImage}" alt="Seller Image" width="120" height="120" style="display: block; margin: 0 auto; border-radius: 50%;" />
+            </div>
             <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
-            
-            <div class="support">
-              <p>${selectedContent.support}</p>
-            </div>
-
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <p>${selectedContent.support}</p>
           </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
         </div>
       </body>
       </html>
     `;
 
-    // Construct the plain text version of the email
     const textContent = `
       ${selectedContent.greeting}
 
@@ -232,7 +180,6 @@ exports.sendSellerVerificationConfirmation = async (receiverObject, lang) => {
       ${selectedContent.team}
     `;
 
-    // Send the email using the utility function
     const emailResult = await sendEmail(
       receiverObject.email,
       selectedContent.subject,
@@ -265,7 +212,8 @@ exports.sendSellerVerificationConfirmation = async (receiverObject, lang) => {
 exports.sendShopVerificationConfirmation = async (receiverObject, lang) => {
   try {
     lang = !lang || lang === "en" ? "en" : "ar";
-
+    const shopImage = receiverObject?.image?.Location || setShopPlaceholder();
+    console.log("shopImage", shopImage)
     const content = {
       en: {
         subject: "Your Sona3 Shop is Now Verified",
@@ -288,71 +236,25 @@ exports.sendShopVerificationConfirmation = async (receiverObject, lang) => {
     const selectedContent = content[lang];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            direction: ${lang === "ar" ? "rtl" : "ltr"}; 
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
-          }
-          .header { 
-            background-color: #88050d; 
-            color: #fff; 
-            text-align: center; 
-            padding: 20px; 
-            border-radius: 5px 5px 0 0; 
-          }
-          .content { 
-            background-color: #fff; 
-            padding: 30px; 
-            border: 1px solid #dfb678;
-            border-radius: 0 0 5px 5px;
-          }
-          .steps {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-          }
-          .steps ul {
-            margin: 10px 0;
-            padding-${lang === "ar" ? "right" : "left"}: 20px;
-          }
-          .support {
-            background-color: #dfb678;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            color: #333;
-          }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
+            <div style="text-align: center;">
+              <img src="${shopImage}" alt="Seller Image" width="120" height="120" style="display: block; margin: 0 auto; border-radius: 50%;" />
+            </div>
             <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
-            
-            <div class="support">
-              <p>${selectedContent.support}</p>
-            </div>
-
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <p>${selectedContent.support}</p>
           </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
         </div>
       </body>
       </html>
@@ -446,51 +348,24 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
     const selectedContent = content[lang];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            direction: ${lang === "ar" ? "rtl" : "ltr"}; 
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
-          }
-          .header { 
-            background-color: #88050d; 
-            color: #fff; 
-            text-align: center; 
-            padding: 20px; 
-            border-radius: 5px 5px 0 0; 
-          }
-          .content { 
-            background-color: #fff; 
-            padding: 30px; 
-            border: 1px solid #dfb678;
-            border-radius: 0 0 5px 5px;
-          }
-          ul { margin: 10px 0; padding-${lang === "ar" ? "right" : "left"}: 20px; }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
             <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
-            ${selectedContent.details}
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <div class="details">
+              ${selectedContent.details}
+            </div>
           </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
         </div>
       </body>
       </html>
@@ -587,51 +462,24 @@ exports.sendPurchaseConfirmationEmailToCustomer = async (purchaseDetails, lang) 
     const selectedContent = content[lang];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            direction: ${lang === "ar" ? "rtl" : "ltr"}; 
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
-          }
-          .header { 
-            background-color: #88050d; 
-            color: #fff; 
-            text-align: center; 
-            padding: 20px; 
-            border-radius: 5px 5px 0 0; 
-          }
-          .content { 
-            background-color: #fff; 
-            padding: 30px; 
-            border: 1px solid #d4d4d4;
-            border-radius: 0 0 5px 5px;
-          }
-          ul { margin: 10px 0; padding-${lang === "ar" ? "right" : "left"}: 20px; }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
             <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
-            ${selectedContent.details}
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <div class="details">
+              ${selectedContent.details}
+            </div>
           </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
         </div>
       </body>
       </html>
@@ -722,51 +570,24 @@ exports.sendServiceRequestCreationEmailToSeller = async (serviceRequest, lang) =
     const selectedContent = content[lang];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            direction: ${lang === "ar" ? "rtl" : "ltr"}; 
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
-          }
-          .header { 
-            background-color: #88050d; 
-            color: #fff; 
-            text-align: center; 
-            padding: 20px; 
-            border-radius: 5px 5px 0 0; 
-          }
-          .content { 
-            background-color: #fff; 
-            padding: 30px; 
-            border: 1px solid #dfb678;
-            border-radius: 0 0 5px 5px;
-          }
-          ul { margin: 10px 0; padding-${lang === "ar" ? "right" : "left"}: 20px; }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
             <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
-            ${selectedContent.details}
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <div class="details">
+              ${selectedContent.details}
+            </div>
           </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
         </div>
       </body>
       </html>
@@ -866,51 +687,24 @@ exports.sendPurchaseConfirmationEmailToSeller = async (purchaseDetails, lang) =>
     const selectedContent = content[lang];
 
     const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="${lang}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${selectedContent.subject}</title>
-        <style>
-          body { 
-            font-family: Arial, sans-serif; 
-            line-height: 1.6; 
-            color: #333; 
-            direction: ${lang === "ar" ? "rtl" : "ltr"}; 
-          }
-          .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 20px; 
-          }
-          .header { 
-            background-color: #88050d; 
-            color: #fff; 
-            text-align: center; 
-            padding: 20px; 
-            border-radius: 5px 5px 0 0; 
-          }
-          .content { 
-            background-color: #fff; 
-            padding: 30px; 
-            border: 1px solid #d4d4d4;
-            border-radius: 0 0 5px 5px;
-          }
-          ul { margin: 10px 0; padding-${lang === "ar" ? "right" : "left"}: 20px; }
-        </style>
-      </head>
+      ${setEmailHeader(lang, selectedContent.subject)}
       <body>
-        <div class="container">
-          <div class="header">
+        <div class="email-container">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body">
             <h1>${selectedContent.subject}</h1>
-          </div>
-          <div class="content">
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
-            ${selectedContent.details}
-            <p>${selectedContent.bestRegards}<br>${selectedContent.team}</p>
+            <div class="details">
+              ${selectedContent.details}
+            </div>
           </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter(lang)}
         </div>
       </body>
       </html>

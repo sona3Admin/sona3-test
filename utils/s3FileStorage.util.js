@@ -1,5 +1,6 @@
 let AWS = require('aws-sdk');
 const uuid = require("uuid").v4
+const sharp = require('sharp');
 const s3 = new AWS.S3();
 process.env.AWS_ACCESS_KEY_ID = process.env.BUCKETEER_AWS_ACCESS_KEY_ID;
 process.env.AWS_SECRET_ACCESS_KEY = process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY;
@@ -148,5 +149,87 @@ exports.uploadExcelS3 = async (fileContent, fileName) => {
     });
   } catch (err) {
     console.log(`err.message`, err.message);
+  }
+}
+
+
+exports.listFilesInS3Folder = async (folderPath) => {
+  const params = {
+    Bucket: process.env.BUCKETEER_BUCKET_NAME,
+    Prefix: folderPath,
+  };
+
+  try {
+    const data = await s3.listObjectsV2(params).promise();
+
+    const fileKeys = data.Contents.map((item) => item.Key);
+    return {
+      success: true,
+      result: fileKeys,
+      code: 200
+    };
+  } catch (error) {
+    console.error('Error listing files in S3 folder:', error);
+    throw error;
+  }
+};
+
+
+exports.getImageBufferFromS3 = async (key) => {
+  try {
+    const params = {
+      Bucket: process.env.BUCKETEER_BUCKET_NAME,
+      Key: key,
+    };
+    const data = await s3.getObject(params).promise();
+    const buffer = data.Body;
+    return buffer;
+  } catch (err) {
+    console.error(`Error generating public URL: ${err.message}`);
+    throw new Error('Failed to generate image URL');
+  }
+}
+
+
+// exports.getImageWithContentType = async (key) => {
+//   try {
+//     const params = {
+//       Bucket: process.env.BUCKETEER_BUCKET_NAME,
+//       Key: key,
+//     };
+//     const data = await s3.getObject(params).promise();
+
+//     const optimizedBuffer = await sharp(data.Body)
+//     .resize(150, 150, {
+//       fit: 'inside',
+//       withoutEnlargement: true
+//     })
+//     .png({ quality: 80 }) // Convert to PNG with compression
+//     .toBuffer();
+
+//     return `data:image/png;base64,${optimizedBuffer.toString('base64')}`;
+//   } catch (err) {
+//     console.error(`Error fetching image from S3: ${err.message}`);
+//     throw new Error('Failed to fetch image');
+//   }
+// }
+
+
+exports.getImageWithContentType = async (key) => {
+  try {
+    const params = {
+      Bucket: process.env.BUCKETEER_BUCKET_NAME,
+      Key: key,
+    };
+
+    const data = await s3.getObject(params).promise();
+    const base64String = data.Body.toString('base64');
+    const contentType = data.ContentType || 'image/svg+xml';
+
+    console.log(`Successfully processed ${key}, content type: ${contentType}`);
+    return `data:${contentType};base64,${base64String}`;
+  } catch (err) {
+    console.error(`Error fetching ${key}:`, err);
+    return null;
   }
 }

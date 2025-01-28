@@ -2,7 +2,8 @@ node_modules/
 .vscode/
 .idea/
 logs/
-policy.json
+s3.policy.json
+s3.cors.json
 qodana.yaml
 .env
 .nvmrc
