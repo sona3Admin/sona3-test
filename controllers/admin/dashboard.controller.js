@@ -67,10 +67,12 @@ exports.countShops = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
-        const allDocuments = await shopRepo.list(filterObject, { isVerified: 1, isFood: 1, type: 1 }, {}, pageNumber, limitNumber);
+        const allDocuments = await shopRepo.list(filterObject, { isVerified: 1, isFood: 1, type: 1, isActive: 1 }, {}, pageNumber, limitNumber);
         const countingFilters = [
             { label: "verified", conditions: [{ fieldName: "isVerified", fieldValue: true }] },
             { label: "unverified", conditions: [{ fieldName: "isVerified", fieldValue: false }] },
+            { label: "active", conditions: [{ fieldName: "isActive", fieldValue: true }] },
+            { label: "inactive", conditions: [{ fieldName: "isActive", fieldValue: false }] },
             { label: "productShops", conditions: [{ fieldName: "type", fieldValue: "product" }] },
             {
                 label: "foodShops", conditions: [
