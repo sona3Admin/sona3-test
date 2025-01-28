@@ -148,57 +148,6 @@ exports.countItems = async (req, res) => {
 }
 
 
-// exports.calculateRevenue = async (req, res) => {
-//     try {
-//         const filterObject = req.query;
-//         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
-//         let orderTotal = 0
-//         let subscriptionFees = 0
-//         const orderSelectionObject = {
-//             orderType: 1,
-//             paymentMethod: 1,
-//         }
-//         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject)
-//         if (allOrderDocuments.success) {
-//             allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
-//                 order?.subOrders?.map(subOrder => ({
-//                     paymentMethod: order.paymentMethod,
-//                     ...subOrder
-//                 }))
-//             );
-//             allOrderDocuments.result = allOrderDocuments?.result?.filter((order) => {
-//                 return order.status == "delivered"
-//             })
-//             orderTotal = allOrderDocuments.result.reduce((total, order) => parseFloat(total) + parseFloat(order.shopTotal), 0);
-
-//         }
-
-//         const commissionPercentage = 0.15
-//         const commissions = parseInt(orderTotal * commissionPercentage) || 0
-
-//         if (filterObject.dateField) filterObject.dateField = "timestamp"
-
-//         const allSubscriptionPayments = await paymentRepo.list({ ...filterObject, orderType: "subscription" }, { subscriptionFees: 1 }, {}, pageNumber, limitNumber);
-//         if (allSubscriptionPayments.success) subscriptionFees = allSubscriptionPayments.result.reduce((total, payment) => parseFloat(total) + parseFloat(payment.subscriptionFees), 0);
-
-//         return res.status(200).json({
-//             totalSales: parseInt(orderTotal),
-//             totalRevenue: parseInt(commissions + subscriptionFees),
-//             subscriptionFees: parseInt(subscriptionFees),
-//             commissions,
-//             commissionPercentage,
-//         });
-
-//     } catch (err) {
-//         console.log(`err.message`, err.message);
-//         return res.status(500).json({
-//             success: false,
-//             code: 500,
-//             error: i18n.__("internalServerError")
-//         });
-//     }
-// }
-
 exports.calculateRevenue = async (req, res) => {
     try {
         const filterObject = req.query;
@@ -832,11 +781,9 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
         req.query.status = req.query.status || "purchased";
-        const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, cartTotal: 1, issueDate: 1, seller: 1, shop: 1 };
+        const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
-        // const numberOfDeliveredRequests = allServiceRequests.result.length;
-
 
         const accumulations = {
             orders: {
