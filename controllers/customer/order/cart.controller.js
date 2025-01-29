@@ -26,6 +26,7 @@ exports.createOrder = async (req, res) => {
         let shippingData = await firstFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
+        console.log("Saved Shipment Data")
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
         cartRepo.flush({ customer: req.body.customer })

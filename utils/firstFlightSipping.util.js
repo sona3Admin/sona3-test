@@ -592,17 +592,12 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
     try {
         console.log("Saving Shipment data", arrayOfTrackingObjects)
         let resultObject
+        let shippingFeesTotal = 0
         console.log("shippingCost", shippingCost)
-        let shippingFeesTotal = shippingCost?.total ? parseFloat(shippingCost?.total) : parseFloat(shippingCost)
-
-        // if (orderData.service) {
-        //     let shippingId = arrayOfTrackingObjects.AirwayBillNumber
-
-        //     resultObject = await requestRepo.updateDirectly(orderData._id.toString(), { shippingId })
-
-        //     return resultObject
-        // }
-
+        
+        if (shippingCost?.total != undefined) shippingFeesTotal = parseFloat(shippingCost?.total)
+        else shippingFeesTotal = parseFloat(shippingCost)
+       
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
 
         let subOrdersArray = orderData.subOrders
@@ -617,10 +612,11 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
             shipments.push(arrayOfTrackingObjects[index])
             index++
         })
-        resultObject = await orderRepo.updateDirectly(orderData._id.toString(), {
-            subOrders: subOrdersArray, shipments, shippingFeesTotal,
-            $inc: { orderTotal: shippingFeesTotal }
-        })
+        const updatedOrderQuery = {
+            subOrders: subOrdersArray, shipments, shippingFeesTotal
+        }
+        if (shippingFeesTotal > 0) updatedOrderQuery.$inc = { orderTotal: shippingFeesTotal }
+        resultObject = await orderRepo.updateDirectly(orderData._id.toString(), updatedOrderQuery)
         return resultObject
 
     } catch (err) {
