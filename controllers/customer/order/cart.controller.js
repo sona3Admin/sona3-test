@@ -7,6 +7,7 @@ const cartRepo = require("../../../modules/Cart/cart.repo");
 const { handleOrderCreation, handleReverseOrderCreation } = require("../../../helpers/order.helper")
 const firstFlightShipperHelper = require("../../../utils/firstFlightSipping.util")
 const stripeHelper = require("../../../utils/stripePayment.util");
+const { sendOrderPurchaseConfirmationEmailToCustomer, sendOrderPurchaseConfirmationEmailToSeller } = require('../../../helpers/email.helper');
 
 
 exports.createOrder = async (req, res) => {
@@ -17,12 +18,13 @@ exports.createOrder = async (req, res) => {
         let customerOrderObject = req.body
         let customerCartObject = await cartRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        const customerDetailsObject = customerCartObject.result.customer
 
         customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject, false, true)
         customerOrderObject["orderType"] = "cart";
         let operationResultObject = await orderRepo.create(customerOrderObject);
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        console.log("passed")
+
         let shippingData = await firstFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
@@ -33,31 +35,10 @@ exports.createOrder = async (req, res) => {
         sellerRepo.updateManyById(operationResultObject.result.sellers, { hasSold: true })
         shopRepo.updateManyById(operationResultObject.result.shops, { $inc: { orderCount: 1 }, hasSold: true })
         productRepo.updateManyById(operationResultObject.result.products, { $inc: { orderCount: 1 } })
-        return res.status(operationResultObject.code).json(operationResultObject);
-
-    } catch (err) {
-        console.log(`err.message controller`, err.message);
-        return res.status(500).json({
-            success: false,
-            code: 500,
-            error: i18n.__("internalServerError")
-        });
-    }
-}
-
-
-exports.returnSubOrder = async (req, res) => {
-    try {
-        let orderObject = await orderRepo.get({ _id: req.query._id, "subOrders._id": req.query.subOrder })
-        if (!orderObject.success) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
-        orderObject = handleReverseOrderCreation(orderObject.result, req.query.subOrder)
-
-        let shippingData = await firstFlightShipperHelper.createNewBulkOrder(orderObject, true)
-        if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-        console.log("shippingData", shippingData)
-        let operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, orderObject, shippingData.result[0].CODAmount)
-        if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-
+        operationResultObject.result = operationResultObject.result.toObject()
+        operationResultObject.result.customer = { ...customerDetailsObject }
+        sendOrderPurchaseConfirmationEmailToCustomer(operationResultObject.result, req.lang)
+        sendConfirmationEmailsToSellers(operationResultObject.result, req.lang)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     }
@@ -94,4 +75,31 @@ exports.createOrderPaymentLink = async (req, res) => {
             error: i18n.__("internalServerError")
         });
     }
+}
+
+
+async function sendConfirmationEmailsToSellers(orderDetails, lang) {
+    orderDetails.subOrders.forEach(async (subOrderDetails) => {
+        try {
+            let shopData = await shopRepo.getWithSeller({ _id: subOrderDetails.shop.toString() }, { nameEn: 1, nameAr: 1 });
+            if (shopData.success) {
+                const subOrderData = {
+                    _id: orderDetails._id.toString(),
+                    customer: orderDetails.customer,
+                    seller: shopData.result.seller,
+                    shop: { nameEn: shopData.result.nameEn, nameAr: shopData.result.nameAr },
+                    paymentMethod: orderDetails.paymentMethod,
+                    shopTotal: subOrderDetails.shopTotal,
+                    shopTaxes: subOrderDetails.shopTaxes,
+                    taxesRate: orderDetails.taxesRate,
+                    shopShippingFees: subOrderDetails.shopShippingFees,
+                    orderTotal: subOrderDetails.subOrderTotal
+                }
+                sendOrderPurchaseConfirmationEmailToSeller(subOrderData, lang);
+            }
+
+        } catch (err) {
+            console.error(`Failed to send confirmation email to seller with ID ${subOrderDetails}:`, err.message);
+        }
+    });
 }

@@ -7,11 +7,7 @@ const { createOrderValidation } = require("../../validations/order.validation")
 const validator = require("../../helpers/validation.helper")
 
 app.post("/cart", checkIdentity("customer"), validator(createOrderValidation), cartOrderController.createOrder);
-app.delete("/cart", checkIdentity("customer"), cartOrderController.returnSubOrder);
-
 app.post("/basket", checkIdentity("customer"), validator(createOrderValidation), basketOrderController.createOrder);
-app.delete("/basket", checkIdentity("customer"), basketOrderController.returnSubOrder);
-app.patch("/basket", checkIdentity("customer"), basketOrderController.cancelSubOrder);
 
 app.put("/update", checkIdentity("customer"), orderController.updateOrder);
 

@@ -68,6 +68,36 @@ exports.get = async (filterObject, selectionObject) => {
 }
 
 
+exports.getWithSeller = async (filterObject, selectionObject) => {
+    try {
+        let resultObject = await shopModel.findOne(filterObject).lean()
+            .populate({ path: "seller", select: "userName email" })
+            .select(selectionObject)
+
+        if (!resultObject) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultObject,
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
+
+
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
 
