@@ -248,7 +248,7 @@ exports.calculateRevenue = async (req, res) => {
             totalRevenues: parseInt(commissions + subscriptionFees),
             orders: {
                 totalSales: parseInt(orderTotal),
-                totalRevenueFromFromOrders: commissions,
+                totalRevenueFromOrders: commissions,
                 commissionPercentage,
             },
             subscriptions:{
