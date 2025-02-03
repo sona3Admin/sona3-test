@@ -84,8 +84,8 @@ exports.countSellersBasedOnTiers = async (req, res) => {
         let startDate, endDate;
 
         if (filterObject.dateFrom && filterObject.dateTo) {
-            startDate = moment(filterObject.dateFrom).startOf('day');
-            endDate = moment(filterObject.dateTo).endOf('day');
+            startDate = moment(filterObject.dateFrom).utc().startOf('day');
+            endDate = moment(filterObject.dateTo).utc().endOf('day');
         }
 
         const allDocuments = await sellerRepo.list(
@@ -115,7 +115,7 @@ exports.countSellersBasedOnTiers = async (req, res) => {
 
 
         const sellersInRange = allDocuments.result.filter(seller =>
-            moment(seller.joinDate).isBetween(startDate, endDate, null, '[]')
+            moment(seller.joinDate).utc().isBetween(startDate, endDate, null, '[]')
         );
 
         const daysDiff = endDate.diff(startDate, 'days');
@@ -124,16 +124,16 @@ exports.countSellersBasedOnTiers = async (req, res) => {
 
         const aggregations = {};
         countingResult.result.aggregations = {}
-        let currentPeriodStart = moment(startDate);
+        let currentPeriodStart = moment(startDate).utc();
 
         for (let i = 0; i < periodCount; i++) {
             let periodEnd = getPeriodEnd(currentPeriodStart, aggregationPeriod);
             if (periodEnd.isAfter(endDate)) {
-                periodEnd = moment(endDate);
+                periodEnd = moment(endDate).utc();
             }
 
             const sellersInPeriod = sellersInRange.filter(seller =>
-                moment(seller.joinDate).isBetween(currentPeriodStart, periodEnd, null, '[]')
+                moment(seller.joinDate).utc().isBetween(currentPeriodStart, periodEnd, null, '[]')
             );
 
             const periodCounts = countObjectsByArrayOfFilters(sellersInPeriod, countingFilters);
@@ -294,9 +294,9 @@ exports.calculateShippingInvoice = async (req, res) => {
             orderType: 1, shippingFeesTotal: 1, issueDate: 1, _id: 1
         };
         if (filterObject.dateFrom && filterObject.dateTo) {
-            filterObject.dateFrom = moment(filterObject.dateFrom).startOf('day');
+            filterObject.dateFrom = moment(filterObject.dateFrom).utc().startOf('day');
             startDate = filterObject.dateFrom;
-            filterObject.dateTo = moment(filterObject.dateTo).endOf('day');
+            filterObject.dateTo = moment(filterObject.dateTo).utc().endOf('day');
             endDate = filterObject.dateTo;
 
         }
@@ -363,9 +363,9 @@ exports.calculateSellersInvoices = async (req, res) => {
         };
 
         if (filterObject.dateFrom && filterObject.dateTo) {
-            filterObject.dateFrom = moment(filterObject.dateFrom).startOf('day');
+            filterObject.dateFrom = moment(filterObject.dateFrom).utc().startOf('day');
             startDate = filterObject.dateFrom;
-            filterObject.dateTo = moment(filterObject.dateTo).endOf('day');
+            filterObject.dateTo = moment(filterObject.dateTo).utc().endOf('day');
             endDate = filterObject.dateTo;
         }
 
@@ -481,8 +481,8 @@ function groupShopsByDateRange(filterObject, queryObject, filterCategories, cate
     let startDate, endDate;
 
     if (filterObject.dateFrom && filterObject.dateTo) {
-        startDate = moment(filterObject.dateFrom).startOf('day');
-        endDate = moment(filterObject.dateTo).endOf('day');
+        startDate = moment(filterObject.dateFrom).utc().startOf('day');
+        endDate = moment(filterObject.dateTo).utc().endOf('day');
     }
 
     let typeCountingResult = {}
@@ -491,7 +491,7 @@ function groupShopsByDateRange(filterObject, queryObject, filterCategories, cate
     typeCountingResult.accumulations = accumulationResults
 
     const shopsInRange = allDocuments.result.filter(seller =>
-        moment(seller.joinDate).isBetween(startDate, endDate, null, '[]')
+        moment(seller.joinDate).utc().isBetween(startDate, endDate, null, '[]')
     );
 
     const daysDiff = endDate.diff(startDate, 'days');
@@ -500,16 +500,16 @@ function groupShopsByDateRange(filterObject, queryObject, filterCategories, cate
 
     const aggregations = {};
     typeCountingResult.aggregations = {}
-    let currentPeriodStart = moment(startDate);
+    let currentPeriodStart = moment(startDate).utc();
 
     for (let i = 0; i < periodCount; i++) {
         let periodEnd = getPeriodEnd(currentPeriodStart, aggregationPeriod);
         if (periodEnd.isAfter(endDate)) {
-            periodEnd = moment(endDate);
+            periodEnd = moment(endDate).utc();
         }
 
         const shopsInPeriod = shopsInRange.filter(shop =>
-            moment(shop.joinDate).isBetween(currentPeriodStart, periodEnd, null, '[]')
+            moment(shop.joinDate).utc().isBetween(currentPeriodStart, periodEnd, null, '[]')
         );
 
         const countingFilters = [
@@ -590,15 +590,15 @@ function getAggregationPeriodAndCount(daysDiff) {
 function getPeriodEnd(currentPeriodStart, aggregationPeriod) {
     switch (aggregationPeriod) {
         case 'day':
-            return moment(currentPeriodStart).add(1, 'days');
+            return moment(currentPeriodStart).utc().add(1, 'days');
         case 'week':
-            return moment(currentPeriodStart).add(7, 'days');
+            return moment(currentPeriodStart).utc().add(7, 'days');
         case 'month':
-            return moment(currentPeriodStart).add(1, 'months');
+            return moment(currentPeriodStart).utc().add(1, 'months');
         case 'year':
-            return moment(currentPeriodStart).add(1, 'years');
+            return moment(currentPeriodStart).utc().add(1, 'years');
         default:
-            return moment(currentPeriodStart).endOf(aggregationPeriod);
+            return moment(currentPeriodStart).utc().endOf(aggregationPeriod);
     }
 }
 
