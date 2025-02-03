@@ -283,8 +283,8 @@ exports.countOrders = async (req, res) => {
 
         let startDate, endDate;
         if (filterObject.dateFrom && filterObject.dateTo) {
-            startDate = moment(filterObject.dateFrom).startOf('day');
-            endDate = moment(filterObject.dateTo).endOf('day');
+            startDate = moment(filterObject.dateFrom).utc().startOf('day');
+            endDate = moment(filterObject.dateTo).utc().endOf('day');
         }
 
         const orderSelectionObject = {
@@ -324,8 +324,8 @@ exports.countOrders = async (req, res) => {
         if (!startDate || !endDate) {
             // const sortedOrders = [...allOrderDocuments.result, ...allServiceRequests.result];
             console.log("allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate", allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate)
-            startDate = moment(allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate).startOf('day');
-            endDate = moment(allOrderDocuments.result[0].issueDate).endOf('day');
+            startDate = moment(allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate).utc().startOf('day');
+            endDate = moment(allOrderDocuments.result[0].issueDate).utc().endOf('day');
             console.log("startDate", startDate)
             console.log("endDate", endDate)
         }
@@ -334,12 +334,12 @@ exports.countOrders = async (req, res) => {
         const { aggregationPeriod, periodCount } = getAggregationPeriodAndCount(daysDiff, sumByRange);
 
         const aggregations = {};
-        let currentPeriodStart = moment(startDate);
+        let currentPeriodStart = moment(startDate).utc();
 
         for (let i = 0; i < periodCount; i++) {
             let periodEnd = getPeriodEnd(currentPeriodStart, aggregationPeriod);
             if (periodEnd.isAfter(endDate)) {
-                periodEnd = moment(endDate);
+                periodEnd = moment(endDate).utc();
             }
 
             const { periodOrders, periodServiceRequests, periodCounts } = filterAndCountOrders(
@@ -1031,25 +1031,25 @@ function getAggregationPeriodAndCount(daysDiff, sumByRange) {
 function getPeriodEnd(currentPeriodStart, aggregationPeriod) {
     switch (aggregationPeriod) {
         case 'day':
-            return moment(currentPeriodStart).add(1, 'days');
+            return moment(currentPeriodStart).utc().add(1, 'days');
         case 'week':
-            return moment(currentPeriodStart).add(7, 'days');
+            return moment(currentPeriodStart).utc().add(7, 'days');
         case 'month':
-            return moment(currentPeriodStart).add(30, 'days');
+            return moment(currentPeriodStart).utc().add(30, 'days');
         case 'year':
-            return moment(currentPeriodStart).add(365, 'days');
+            return moment(currentPeriodStart).utc().add(365, 'days');
         default:
-            return moment(currentPeriodStart).endOf(aggregationPeriod);
+            return moment(currentPeriodStart).utc().endOf(aggregationPeriod);
     }
 }
 
 
 function filterAndCountOrders(orders, serviceRequests, currentPeriodStart, periodEnd, orderCountingFilters) {
     const periodOrders = orders.filter(order =>
-        moment(order.issueDate).isBetween(currentPeriodStart, periodEnd, null, '[]')
+        moment(order.issueDate).utc().isBetween(currentPeriodStart, periodEnd, null, '[]')
     );
     const periodServiceRequests = serviceRequests.filter(request =>
-        moment(request.issueDate).isBetween(currentPeriodStart, periodEnd, null, '[]')
+        moment(request.issueDate).utc().isBetween(currentPeriodStart, periodEnd, null, '[]')
     );
 
     const periodCounts = countObjectsByArrayOfFilters(periodOrders, orderCountingFilters);
