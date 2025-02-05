@@ -104,6 +104,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+        console.log("normalizedQueryObjects", normalizedQueryObjects)
         let resultArray = await shopModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image type tier tierDuration isSubscribed subscriptionStartDate subscriptionEndDate" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })

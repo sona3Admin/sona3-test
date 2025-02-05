@@ -113,13 +113,14 @@ function handleSortParams(filterObject) {
     let finalSortObject = {};
 
     finalSortObject = handleSortProperty('sortByAlpha', filterObject, finalSortObject, 1);
-    finalSortObject = handleSortProperty('sortByRating', filterObject, finalSortObject, filterObject?.sortByRating === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('sortByStock', filterObject, finalSortObject, filterObject?.sortByStock === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('sortByPrice', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('discountValue', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('rank', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('rating', filterObject, finalSortObject, filterObject?.sortByPrice === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('sortByDate', filterObject, finalSortObject, filterObject?.sortOrder || -1);
+    finalSortObject = handleSortProperty('sortByRating', filterObject, finalSortObject, parseInt(filterObject?.sortByRating) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('sortByStock', filterObject, finalSortObject, parseInt(filterObject?.sortByStock) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('sortByPrice', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('discountValue', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('rank', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('rating', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('orderCount', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('sortByDate', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) || -1);
 
     return finalSortObject;
 }
@@ -143,17 +144,12 @@ function handleSortProperty(property, filterObject, finalSortObject, sortOrder) 
     if (filterObject?.[property]) {
         finalSortObject[property] = sortOrder;
 
-        if (property == "sortByDate") {
-            finalSortObject[`${filterObject[property]}`] = filterObject["sortOrder"];
-            delete filterObject["sortOrder"];
-            delete finalSortObject["sortByDate"];
-        }
-        if (property == "sortByAlpha") {
+        if (property == "sortByDate") finalSortObject[`${filterObject[property]}`] = filterObject["sortOrder"];
+        if (property == "sortByAlpha") finalSortObject[`${filterObject[property]}`] = 1;
 
-            finalSortObject[`${filterObject[property]}`] = 1;
-            delete finalSortObject["sortByAlpha"];
-
-        }
+        delete finalSortObject["sortByAlpha"];
+        delete finalSortObject["sortByDate"];
+        delete filterObject["sortOrder"];
         delete filterObject[property];
     }
     return finalSortObject;
