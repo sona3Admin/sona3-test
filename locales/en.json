@@ -172,5 +172,6 @@
 	"userType": "Invalid user type",
 	"\"useName\" is not allowed": "\"useName\" is not allowed",
 	"cannotDowngradeTier": "Can't Downgrade Tier",
-	"invalidOTP": "Invalid OTP!"
+	"invalidOTP": "Invalid OTP!",
+	"invalidDateRange" : "Invalid date range: startDate and endDate must be within the same half of the month."
 }
