@@ -471,8 +471,8 @@ exports.getOrdersStatsByDay = async (req, res) => {
                 acc[dateString].ordersFromFoodProducts++;
                 acc[dateString].salesFromFoodProducts += order.cartTotal;
                 acc[dateString].shippingFeesFromFoodProducts += order.shippingFeesTotal;
-                if (order.orderTotal > accumulations.highestOrderFromFood.orderTotal) {
-                    accumulations.highestOrderFromFood.orderTotal = order.orderTotal;
+                if (order.cartTotal > accumulations.highestOrderFromFood.orderTotal) {
+                    accumulations.highestOrderFromFood.orderTotal = order.cartTotal;
                     accumulations.highestOrderFromFood.orderId = order._id;
                 }
             } else if (order.orderType === "cart") {
@@ -480,8 +480,8 @@ exports.getOrdersStatsByDay = async (req, res) => {
                 acc[dateString].ordersFromNonFoodProducts++;
                 acc[dateString].salesFromNonFoodProducts += order.cartTotal;
                 acc[dateString].shippingFeesFromNonFoodProducts += order.shippingFeesTotal;
-                if (order.orderTotal > accumulations.highestOrderFromNonFood.orderTotal) {
-                    accumulations.highestOrderFromNonFood.orderTotal = order.orderTotal;
+                if (order.cartTotal > accumulations.highestOrderFromNonFood.orderTotal) {
+                    accumulations.highestOrderFromNonFood.orderTotal = order.cartTotal;
                     accumulations.highestOrderFromNonFood.orderId = order._id;
                 }
             }
@@ -668,11 +668,11 @@ exports.getOrdersStatsByMonth = async (req, res) => {
                 month.shippingFeesFromNonFoodProducts += order.shippingFeesTotal;
             }
 
-            if (order.orderType === "basket" && order.orderTotal > accumulations.highestOrderFromFood.orderTotal) {
-                accumulations.highestOrderFromFood.orderTotal = order.orderTotal;
+            if (order.orderType === "basket" && order.cartTotal > accumulations.highestOrderFromFood.orderTotal) {
+                accumulations.highestOrderFromFood.orderTotal = order.cartTotal;
                 accumulations.highestOrderFromFood.orderId = order._id;
-            } else if (order.orderType === "cart" && order.orderTotal > accumulations.highestOrderFromNonFood.orderTotal) {
-                accumulations.highestOrderFromNonFood.orderTotal = order.orderTotal;
+            } else if (order.orderType === "cart" && order.cartTotal > accumulations.highestOrderFromNonFood.orderTotal) {
+                accumulations.highestOrderFromNonFood.orderTotal = order.cartTotal;
                 accumulations.highestOrderFromNonFood.orderId = order._id;
             }
             // Update sellers
