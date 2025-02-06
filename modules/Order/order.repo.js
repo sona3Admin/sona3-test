@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const orderModel = require("./order.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
+const mongoose = require("mongoose");
 
 
 exports.find = async (filterObject) => {
@@ -160,6 +161,93 @@ exports.aggregate = async (filterObject, selectionObject) => {
         // Add sorting by issueDate
         pipeline.push({ $sort: { issueDate: -1 } });
         // Execute the aggregation pipeline
+        const resultArray = await orderModel.aggregate(pipeline).exec();
+
+        if (!resultArray || resultArray.length === 0) {
+            return {
+                success: false,
+                code: 404,
+                error: i18n.__("notFound")
+            };
+        }
+
+        return {
+            success: true,
+            code: 200,
+            result: resultArray
+        };
+
+    } catch (err) {
+        console.error(`Error: ${err.message}`);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+};
+
+exports.aggregateBySellers = async (filterObject, selectionObject) => {
+    try {
+        const normalizedQueryObjects = await prepareQueryObjects(filterObject, {});
+        filterObject = normalizedQueryObjects.filterObject;
+        if (Array.isArray(filterObject.sellers) && filterObject.sellers.length > 0) {
+            filterObject.sellers = {
+                $in: filterObject.sellers.map(id => new mongoose.Types.ObjectId(id))
+            };
+        }
+
+        const createProjection = (selectionObj) => {
+            return Object.entries(selectionObj).reduce((projection, [key, value]) => {
+                if (typeof value === 'object') {
+                    projection[key] = {
+                        $map: {
+                            input: `$${key}`,
+                            as: "item",
+                            in: createProjection(value)
+                        }
+                    };
+                } else if (value) {
+                    projection[key] = value;
+                }
+                return projection;
+            }, {});
+        };
+
+        const subOrdersProjection = {
+            subOrders: {
+                $map: {
+                    input: "$subOrders",
+                    as: "subOrder",
+                    in: {
+                        seller: "$$subOrder.seller",
+                        shop: "$$subOrder.shop",
+                        shopTotal: "$$subOrder.shopTotal",
+                        shopOriginalTotal: "$$subOrder.shopOriginalTotal",
+                        shopTaxes: "$$subOrder.shopTaxes",
+                        shopShippingFees: "$$subOrder.shopShippingFees",
+                        subOrderTotal: "$$subOrder.subOrderTotal",
+                        status: "$$subOrder.status",
+                        shippingStatus: "$$subOrder.shippingStatus"
+                    }
+                }
+            }
+        };
+
+        const pipeline = [];
+        if (filterObject) {
+            pipeline.push({ $match: filterObject });
+        }
+
+        if (selectionObject) {
+            const projection = { ...createProjection(selectionObject), ...subOrdersProjection };
+            pipeline.push({ $project: projection });
+        } else {
+            pipeline.push({ $project: subOrdersProjection });
+        }
+
+        pipeline.push({ $sort: { issueDate: -1 } });
+
         const resultArray = await orderModel.aggregate(pipeline).exec();
 
         if (!resultArray || resultArray.length === 0) {

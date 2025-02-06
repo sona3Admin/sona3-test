@@ -72,7 +72,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         const resultArray = await requestModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "shop", select: "nameEn nameAr image" })
-	    .populate({ path: "seller", select: "userName image fcmToken" })
+            .populate({ path: "seller", select: "userName image fcmToken" })
             .populate({ path: "service", select: "-fields -tags -categories" })
             .sort(sortObject)
             .select(selectionObject)
@@ -104,6 +104,50 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 }
 
+
+exports.listBySellers = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
+
+        if (Array.isArray(filterObject.sellers) && filterObject.sellers.length > 0) {
+            filterObject.seller = {
+                $in: filterObject.sellers
+            };
+            delete filterObject.sellers
+        }
+        
+        const resultArray = await requestModel.find(filterObject).lean()
+            .sort(sortObject)
+            .select(selectionObject)
+            .limit(limitNumber)
+            .skip((pageNumber - 1) * limitNumber);
+
+        if (!resultArray) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        const count = await requestModel.count(filterObject);
+        return {
+            success: true,
+            code: 200,
+            result: resultArray,
+            count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+
+}
 
 exports.count = async (filterObject, sortObject) => {
     try {

@@ -443,6 +443,176 @@ exports.calculateSellersInvoices = async (req, res) => {
 
 
 
+exports.listSellersWithOrderSummary = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        const orderStatus = filterObject.orderStatus || "delivered";
+        delete filterObject.orderStatus;
+
+        const orderSelectionObject = {
+            orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
+            shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
+        };
+        let orderFilterObject = {};
+        let sellerFilterObject = {};
+        if (filterObject.issueDateFrom) {
+            orderFilterObject.dateField = "issueDate";
+            orderFilterObject.dateFrom = filterObject.issueDateFrom;
+            delete filterObject.issueDateFrom;
+        }
+        if (filterObject.issueDateTo) {
+            orderFilterObject.dateField = "issueDate";
+            orderFilterObject.dateTo = filterObject.issueDateTo;
+            delete filterObject.issueDateTo;
+        }
+        if (filterObject.joinDateFrom) {
+            sellerFilterObject.dateField = "joinDate";
+            sellerFilterObject.dateFrom = filterObject.joinDateFrom;
+            delete filterObject.joinDateFrom;
+        }
+        if (filterObject.joinDateTo) {
+            sellerFilterObject.dateField = "joinDate";
+            sellerFilterObject.dateTo = filterObject.joinDateTo;
+            delete filterObject.joinDateTo;
+        }
+        sellerFilterObject = { ...filterObject, ...sellerFilterObject };
+
+        let sellers = await sellerRepo.listAndPopulateShop(sellerFilterObject, { joinDate: 1, userName: 1, shop: 1 }, {}, pageNumber, limitNumber);
+
+        let sellersIds = sellers.result.map(seller => seller._id.toString());
+
+        orderFilterObject.sellers = sellersIds;
+
+        let allOrderDocuments = await orderRepo.aggregateBySellers(orderFilterObject, orderSelectionObject);
+
+        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+
+        allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
+            order?.subOrders?.map(subOrder => ({
+                issueDate: order.issueDate,
+                ...subOrder
+            }))
+        );
+        let sellersResult = await Promise.all(sellers.result.map(async (seller) => {
+            let orderDetails = {
+                orderTotal: 0,
+                totalOrderCount: 0,
+                commissions: 0,
+                commissionsPercentage: 0.15,
+                totalSales: 0,
+            };
+
+            let sellerOrders = allOrderDocuments?.result?.filter((order) =>
+                order.status === orderStatus &&
+                order.seller.toString() === seller._id.toString()
+            ) || [];
+
+            orderDetails.orderTotal = sellerOrders.reduce((total, order) =>
+                parseFloat(total) + parseFloat(order.shopTotal), 0);
+
+            orderDetails.totalOrderCount = sellerOrders.length;
+
+            orderDetails.commissions = orderDetails.orderTotal * orderDetails.commissionsPercentage;
+
+            orderDetails.totalSales = orderDetails.orderTotal - orderDetails.commissions;
+
+            seller.orderDetails = orderDetails;
+
+            return seller;
+        }));
+
+        sellers.result = sellersResult;
+
+        return res.status(sellers.code).json(sellers);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+exports.listSellersWithServicesRequestSummary = async (req, res) => {
+    try {
+        const filterObject = req.query;
+        const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        const orderStatus = filterObject.orderStatus || "purchased";
+        delete filterObject.orderStatus;
+        const serviceRequestSelectionObject = { status: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
+
+        let orderFilterObject = {};
+        let sellerFilterObject = {};
+        if (filterObject.issueDateFrom) {
+            orderFilterObject.dateField = "issueDate";
+            orderFilterObject.dateFrom = filterObject.issueDateFrom;
+            delete filterObject.issueDateFrom;
+        }
+        if (filterObject.issueDateTo) {
+            orderFilterObject.dateField = "issueDate";
+            orderFilterObject.dateTo = filterObject.issueDateTo;
+            delete filterObject.issueDateTo;
+        }
+        if (filterObject.joinDateFrom) {
+            sellerFilterObject.dateField = "joinDate";
+            sellerFilterObject.dateFrom = filterObject.joinDateFrom;
+            delete filterObject.joinDateFrom;
+        }
+        if (filterObject.joinDateTo) {
+            sellerFilterObject.dateField = "joinDate";
+            sellerFilterObject.dateTo = filterObject.joinDateTo;
+            delete filterObject.joinDateTo;
+        }
+        sellerFilterObject = { ...filterObject, ...sellerFilterObject };
+
+        let sellers = await sellerRepo.listAndPopulateShop(sellerFilterObject, { joinDate: 1, userName: 1, shop: 1 }, {}, pageNumber, limitNumber);
+
+        let sellersIds = sellers.result.map(seller => seller._id.toString());
+
+        orderFilterObject.sellers = sellersIds;
+
+        const allServiceRequests = await requestRepo.listBySellers({ ...orderFilterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, 0);
+        if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
+
+        let sellersResult = await Promise.all(sellers.result.map(async (seller) => {
+            let orderDetails = {
+                totalOrderCount: 0,
+                totalSales: 0,
+            };
+
+            let sellerOrders = allServiceRequests?.result?.filter((order) =>
+                order.status === orderStatus &&
+                order.seller.toString() === seller._id.toString()
+            ) || [];
+
+
+            let orderTotal = sellerOrders.reduce((total, order) =>
+                parseFloat(total) + parseFloat(order.orderTotal), 0);
+
+            orderDetails.totalOrderCount = sellerOrders.length;
+
+            orderDetails.totalSales = orderTotal;
+
+            seller.orderDetails = orderDetails;
+
+            return seller;
+        }));
+        sellers.result = sellersResult;
+
+        return res.status(sellers.code).json(sellers);
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
 
 function groupShopsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults) {
     const countingFilters = [

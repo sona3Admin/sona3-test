@@ -7,6 +7,7 @@ const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require('../Shop/shop.repo');
 const productRepo = require('../Product/product.repo');
 const serviceRepo = require('../Service/service.repo');
+const shopModel = require("../Shop/shop.model");
 
 
 exports.find = async (filterObject) => {
@@ -100,6 +101,61 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
     }
 
 }
+
+exports.listAndPopulateShop = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
+    try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject);
+        filterObject = normalizedQueryObjects.filterObject;
+
+        if (filterObject && filterObject._id && typeof filterObject._id === "string") {
+            filterObject._id = new mongoose.Types.ObjectId(filterObject._id);
+        }
+
+
+        let resultArray = await sellerModel.aggregate([
+            { $match: filterObject },
+            { $skip: (pageNumber - 1) * limitNumber },
+            { $limit: limitNumber },
+            {
+                $lookup: {
+                    from: "shops",
+                    localField: "_id",
+                    foreignField: "seller",
+                    as: "shopDetails",
+                }
+            },
+            {
+                $project: {
+                    ...selectionObject,
+                    shop: {
+                        _id: { $arrayElemAt: ["$shopDetails._id", 0] },
+                        nameEn: { $arrayElemAt: ["$shopDetails.nameEn", 0] },
+                        nameAr: { $arrayElemAt: ["$shopDetails.nameAr", 0] }
+                    }
+                }
+            }
+        ]);
+
+        let count = await sellerModel.countDocuments(filterObject);
+
+        return {
+            success: true,
+            code: 200,
+            result: resultArray,
+            count
+        };
+
+    } catch (err) {
+        console.log(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+};
+
+
 
 
 exports.count = async (filterObject, sortObject) => {
