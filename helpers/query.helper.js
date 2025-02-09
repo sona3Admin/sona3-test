@@ -152,6 +152,7 @@ function handleSortProperty(property, filterObject, finalSortObject, sortOrder) 
         delete finalSortObject["sortByAlpha"];
         delete finalSortObject["sortByDate"];
         delete filterObject["sortOrder"];
+        delete filterObject["price"];
         delete filterObject[property];
     }
     return finalSortObject;
