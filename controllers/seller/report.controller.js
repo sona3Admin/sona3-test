@@ -90,7 +90,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
         };
 
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
-        if (!allOrderDocuments.success) return res.status(allOrderDocuments.code).json(allOrderDocuments)
+        if (!allOrderDocuments.success) allOrderDocuments = { success: true, code: 200, result: [] };
 
 
 
