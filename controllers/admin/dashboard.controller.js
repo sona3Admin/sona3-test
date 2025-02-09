@@ -393,10 +393,9 @@ exports.getOrdersStatsByDay = async (req, res) => {
         const orderSelectionObject = {
             orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
             shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
-        };
-
+        };        
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
-        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+        if (!allOrderDocuments.success) return res.status(allOrderDocuments.code).json(allOrderDocuments)
 
         allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
             order.subOrders.map(subOrder => ({
