@@ -63,7 +63,7 @@ let productEndPoints = [
 
 let variationEndPoints = [
     "/admin/variations/create", "/admin/variations/update", "/admin/variations/remove",
-    "/admin/variations/list", "/admin/variations/get", "/admin/variations/image"
+    "/admin/variations/list", "/admin/variations/get", "/admin/variations/image", "/admin/variations/listByPrice"
 ]
 
 
@@ -142,8 +142,11 @@ let dashboardEndPoints = [
     "/admin/dashboards/seller",
     "/admin/dashboards/shop",
     "/admin/dashboards/item",
-    "/admin/dashboards/order",
     "/admin/dashboards/revenue",
+    "/admin/dashboards/ordersByDay",
+    "/admin/dashboards/ordersByMonth",
+    "/admin/dashboards/requestsByDay",
+    "/admin/dashboards/requestsByMonth",
 ]
 
 
@@ -154,6 +157,10 @@ let reportEndPoints = [
     "/admin/reports/countTiers",
     "/admin/reports/countProducts",
     "/admin/reports/countServices",
+    "/admin/reports/shippingInvoice",
+    "/admin/reports/sellersInvoices",
+    "/admin/reports/listSellersWithOrderSummary",
+    "/admin/reports/listSellersWithServicesRequestSummary",
 ]
 
 

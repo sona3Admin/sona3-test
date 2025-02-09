@@ -115,7 +115,7 @@ function handleSortParams(filterObject) {
     finalSortObject = handleSortProperty('sortByAlpha', filterObject, finalSortObject, 1);
     finalSortObject = handleSortProperty('sortByRating', filterObject, finalSortObject, parseInt(filterObject?.sortByRating) === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('sortByStock', filterObject, finalSortObject, parseInt(filterObject?.sortByStock) === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('sortByPrice', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
+    finalSortObject = handleSortProperty('price', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('discountValue', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('rank', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('rating', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
@@ -147,6 +147,7 @@ function handleSortProperty(property, filterObject, finalSortObject, sortOrder) 
 
         if (property == "sortByDate") finalSortObject[`${filterObject[property]}`] = filterObject["sortOrder"];
         if (property == "sortByAlpha") finalSortObject[`${filterObject[property]}`] = 1;
+        if (property == "price") finalSortObject["minPackage.price"] = filterObject["sortOrder"];
 
         delete finalSortObject["sortByAlpha"];
         delete finalSortObject["sortByDate"];

@@ -7,6 +7,7 @@ const uploadedFiles = uploadImagesToMemory()
 
 
 app.get("/list", variationController.listVariations);
+app.get("/listByPrice", variationController.listVariationsAndSortByPrice);
 app.get("/get", variationController.getVariation);
 
 app.post("/create", validator(createVariationValidation), variationController.createVariation);
