@@ -251,7 +251,7 @@ exports.calculateRevenue = async (req, res) => {
                 totalRevenueFromOrders: commissions,
                 commissionPercentage,
             },
-            subscriptions:{
+            subscriptions: {
                 totalRevenueFromSubscriptionFees: parseInt(subscriptionFees),
                 byTier: tierRevenue,
                 summary: {
@@ -260,7 +260,7 @@ exports.calculateRevenue = async (req, res) => {
                     lifetimeTotal: parseInt(totalLifetimeRevenue)
                 }
             },
-        
+
         });
 
     } catch (err) {
@@ -396,7 +396,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
         };
 
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
-        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+        if (!allOrderDocuments.result) allOrderDocuments = { success: true, code: 200, result: [] };
 
         allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
             order.subOrders.map(subOrder => ({
@@ -783,7 +783,7 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
         req.query.status = req.query.status || "purchased";
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
-        if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
+        if (!allServiceRequests.result) allServiceRequests = { success: true, code: 200, result: [] };
 
         const accumulations = {
             orders: {
@@ -867,7 +867,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
         req.query.status = req.query.status || "purchased";
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
         const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
-        if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
+        if (!allServiceRequests.result) allServiceRequests = { success: true, code: 200, result: [] };
         // const numberOfDeliveredRequests = allServiceRequests.result.length;
 
 
@@ -984,7 +984,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
 
 async function getFilteredOrders(filterObject, orderSelectionObject) {
     let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
-    if (!allOrderDocuments.result) return { success: true, code: 200, result: [] }
+    if (!allOrderDocuments.result) allOrderDocuments = { success: true, code: 200, result: [] }
     allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
         order.subOrders.map(subOrder => ({
             paymentMethod: order.paymentMethod,

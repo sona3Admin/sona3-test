@@ -302,7 +302,7 @@ exports.calculateShippingInvoice = async (req, res) => {
         }
 
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
-        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+        if (!allOrderDocuments.result) allOrderDocuments = { success: true, code: 200, result: [] };
 
         allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
             order.subOrders.map(subOrder => ({
@@ -370,7 +370,7 @@ exports.calculateSellersInvoices = async (req, res) => {
         }
 
         let allOrderDocuments = await orderRepo.aggregateAndPopulate(filterObject, orderSelectionObject);
-        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+        if (!allOrderDocuments.result) allOrderDocuments = { success: true, code: 200, result: [] };
 
         allOrderDocuments.result = allOrderDocuments.result.flatMap(order =>
             order.subOrders.map(subOrder => ({
@@ -486,7 +486,7 @@ exports.listSellersWithOrderSummary = async (req, res) => {
 
         let allOrderDocuments = await orderRepo.aggregateBySellers(orderFilterObject, orderSelectionObject);
 
-        if (!allOrderDocuments.result) return { success: true, code: 200, result: [] };
+        if (!allOrderDocuments.result) allOrderDocuments = { success: true, code: 200, result: [] };
 
         allOrderDocuments.result = allOrderDocuments?.result?.flatMap(order =>
             order?.subOrders?.map(subOrder => ({
@@ -575,7 +575,7 @@ exports.listSellersWithServicesRequestSummary = async (req, res) => {
         orderFilterObject.sellers = sellersIds;
 
         const allServiceRequests = await requestRepo.listBySellers({ ...orderFilterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, 0);
-        if (!allServiceRequests.result) return { success: true, code: 200, result: [] };
+        if (!allServiceRequests.result) allServiceRequests = { success: true, code: 200, result: [] };
 
         let sellersResult = await Promise.all(sellers.result.map(async (seller) => {
             let orderDetails = {

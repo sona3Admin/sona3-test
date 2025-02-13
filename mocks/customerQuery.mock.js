@@ -48,30 +48,19 @@ const { countObjectsByArrayOfFilters } = require('../helpers/report.helper');
 
 exports.executeQuery = async (req, res) => {
     try {
-        const filterObject = req.query;
-        const pageNumber = req.query.page || 1;
-        const limitNumber = req.query.limit || 0;
-        const productSelection = {
-            isActive: 1, isVerified: 1, isFood: 1, creationDate: 1, orderCount: 1, discountValue: 1,
-            nameEn: 1, nameAr: 1, rating: 1, defaultVariation: 1, stock: 1
-        };
-
-        const allDocuments = await productRepo.list(
-            { ...filterObject, isDeleted: false },
-            productSelection,
-            {}, pageNumber, limitNumber
-        );
-
-        // let countingResults = {};
-        // const filterCategories = ['isActive', 'isVerified'];
-        // const categoryMap = { isActive: 'active', isVerified: 'verified' };
-
-        // countingResults = groupByCategories(filterObject, filterCategories, categoryMap, allDocuments)
+        let allServices = await serviceModel.find({ isDeleted: false });
+        for (const service of allServices) {
+            if(service?.orderCount == undefined){
+                console.log(`service has no order count`, service)
+                await serviceModel.updateOne({ _id: service._id }, { orderCount: 0 })
+            }
+            console.log(`service`, service?.orderCount, service?._id)
+        }
 
         return res.status(200).json({
             success: true,
             code: 200,
-            result: allDocuments
+
         });
 
     } catch (err) {
