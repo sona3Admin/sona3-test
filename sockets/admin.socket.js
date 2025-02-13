@@ -16,6 +16,12 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
             const adminsRoomId = ADMIN_ROOM_ID
             socket.join(adminsRoomId.toString())
+            console.log("Admin joined the room");
+            console.log("socket.rooms", socket.rooms);
+            console.log("socketId", socketId);
+            console.log("socket.socketTokenData", socket.socketTokenData);
+            console.log("adminsRoomId", adminsRoomId);
+
             return sendAck({ success: true, code: 200 })
         } catch (err) {
             console.log("err.message", err.message)
