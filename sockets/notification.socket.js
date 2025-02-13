@@ -126,15 +126,10 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (!notificationResult.success) return sendAck(notificationResult)
             if (!notificationResult.notificationObject.timestamp) notificationResult.notificationObject.timestamp = dataObject.timestamp
 
-            console.log("notificationResult", notificationResult);
-            
             let resultObject = await notificationRepo.create(notificationResult.notificationObject)
 
             let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
             let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
-
-            console.log("resultObject", resultObject);
-            
 
             notificationResult.receivers.forEach((receiver) => {
                 io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
