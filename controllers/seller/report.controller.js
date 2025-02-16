@@ -902,10 +902,9 @@ exports.financesServicesRequest = async (req, res) => {
         filterObject.dateTo = endDate.toISOString();
         filterObject.dateField = "issueDate";
 
-        const serviceRequestSelectionObject = { status: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
+        const serviceRequestSelectionObject = { status: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 , serviceTotal: 1};
 
-        const allServiceRequests = await requestRepo.list({ ...filterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
-
+        const allServiceRequests = await requestRepo.list({ ...filterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);        
         if (!allServiceRequests.success) allServiceRequests = { success: true, code: 200, result: [] };
 
         const sellerObject = await sellerRepo.get({ _id: req.tokenData._id }, {
@@ -930,9 +929,9 @@ exports.financesServicesRequest = async (req, res) => {
             }
 
             acc[dateString].orderCount++;
-            acc[dateString].totalSales += order.orderTotal;
+            acc[dateString].totalSales += order.serviceTotal;
 
-            totalSales += parseFloat(order.orderTotal.toFixed(2));
+            totalSales += parseFloat(order.serviceTotal.toFixed(2));
             return acc;
         }, {});
         const issueDatesWithCounts = Object.keys(issueDateCounts).map(date => ({
