@@ -120,7 +120,14 @@ function handleSortParams(filterObject) {
     finalSortObject = handleSortProperty('rank', filterObject, finalSortObject, parseInt(filterObject?.sortByPrice) === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('rating', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
     finalSortObject = handleSortProperty('basePrice', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
-    finalSortObject = handleSortProperty('orderCount', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) === 1 ? 1 : -1);
+    if (parseInt(filterObject?.orderCount) !== 0) {
+        finalSortObject = handleSortProperty(
+            'orderCount',
+            filterObject,
+            finalSortObject,
+            parseInt(filterObject?.sortOrder) === 1 ? 1 : -1
+        );
+    }
     finalSortObject = handleSortProperty('sortByDate', filterObject, finalSortObject, parseInt(filterObject?.sortOrder) || -1);
 
     return finalSortObject;

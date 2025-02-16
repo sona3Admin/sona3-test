@@ -506,7 +506,7 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
             }
 
             acc[dateString].orderCount++;
-            acc[dateString].totalSales += order.orderTotal;
+            acc[dateString].totalSales += order.serviceTotal;
 
             let sellerShopEntry = acc[dateString].sellersOfTheDay.find(
                 entry => entry.seller === order.seller._id.toString() && entry.shop === order.shop._id.toString()
@@ -527,7 +527,7 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
 
             // Accumulate overall statistics
             accumulations.orders.totalOrderCount++;
-            accumulations.sales.totalSales += parseFloat(order.orderTotal.toFixed(2));
+            accumulations.sales.totalSales += parseFloat(order.serviceTotal.toFixed(2));
 
             return acc;
         }, {});
@@ -592,7 +592,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
 
             const month = monthlyAggregations[monthKey];
             month.orderCount++;
-            month.totalSales += order.orderTotal;
+            month.totalSales += order.serviceTotal;
 
 
             // Update sellers
@@ -602,7 +602,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
 
             if (sellerEntry) {
                 sellerEntry.orderCount++;
-                sellerEntry.totalSales += order.orderTotal;
+                sellerEntry.totalSales += order.serviceTotal;
             } else {
                 month.sellersOfTheDay.push({
                     seller: order.seller._id.toString(),
