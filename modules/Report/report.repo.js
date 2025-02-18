@@ -96,7 +96,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 }
 
 
-exports.aggregate = async (filterObject, selectionObject) => {
+exports.aggregate = async (filterObject) => {
     try {
         const normalizedQueryObjects = await prepareQueryObjects(filterObject, {});
         filterObject = normalizedQueryObjects.filterObject;

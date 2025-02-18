@@ -3,7 +3,7 @@ const qs = require('qs');
 const i18n = require('i18n');
 const orderRepo = require("../modules/Order/order.repo")
 const requestRepo = require("../modules/Request/request.repo")
-const { getSettings, setSettings, listSettings } = require("../helpers/settings.helper")
+const { setSettings, listSettings } = require("../helpers/settings.helper")
 const { processPDFContent } = require("../helpers/convertToFile.helper")
 const s3StorageHelper = require("./s3FileStorage.util")
 
@@ -30,7 +30,7 @@ exports.getAuthToken = async () => {
 
         if (!ifastToken || !tokenExpiry || Date.now() >= tokenExpiry) {
             console.log("Ifast Token Expired or Not Found!")
-            result = await this.acquireTokenFromIfast(authData);
+            let result = await this.acquireTokenFromIfast(authData);
             ifastToken = result.token
         } else console.log("Ifast Token is Found and Valid!")
 
@@ -59,7 +59,7 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
 
         let ifastToken = response.data.access_token;
         let tokenExpiry = Date.now() + response.data.expires_in * 1000;
-        let newSettings = await setSettings({ ifastToken, tokenExpiry })
+        await setSettings({ ifastToken, tokenExpiry })
 
         console.log('New Token Acquired from Ifast');
         return {
@@ -88,7 +88,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         else orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
         console.log('Creating New Order...');
-    
+
         const response = await axios.post(`${ifastBaseUrl}/api/order/placeorderbulkwithpickup`, orderData, {
             headers: {
                 'Content-Type': 'application/json',
@@ -345,7 +345,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
     try {
         const { token } = await this.getAuthToken();
         console.log('Generating Label...');
-    
+
         const response = await axios.get(`${ifastBaseUrl}/api/order/GetAirWayBill?TrackingNos=${airwayBillNumber}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -359,16 +359,16 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
 
         // Convert arraybuffer to string
         const pdfContent = Buffer.from(response.data).toString('binary');
-    
+
         let generatedPDF = await processPDFContent(pdfContent);
-        
+
         if (!generatedPDF.success) {
             console.log("PDF processing failed:", generatedPDF.error);
             return generatedPDF;
         }
 
         let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result);
-    
+
         if (!uploadedFile.success) {
             console.log("S3 upload failed:", uploadedFile.error);
             return uploadedFile;
@@ -380,7 +380,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
             result: uploadedFile.result
         }
 
-    } catch(err) {
+    } catch (err) {
         console.log('Error in generateOrderLabel:', err.message);
         return {
             success: false,

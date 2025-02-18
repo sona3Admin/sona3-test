@@ -2,7 +2,6 @@ const i18n = require('i18n');
 const productModel = require("./product.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require("../Shop/shop.repo")
-const sellerRepo = require("../Seller/seller.repo")
 const variationRepo = require("../Variation/variation.repo")
 const { getTiers } = require("../../helpers/tiers.helper")
 const mongoose = require("mongoose")

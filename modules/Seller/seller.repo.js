@@ -7,7 +7,6 @@ const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require('../Shop/shop.repo');
 const productRepo = require('../Product/product.repo');
 const serviceRepo = require('../Service/service.repo');
-const shopModel = require("../Shop/shop.model");
 
 
 exports.find = async (filterObject) => {
@@ -184,7 +183,7 @@ exports.count = async (filterObject, sortObject) => {
 exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
-        uniqueObjectResult = await this.isObjectUninque(formObject);
+        const uniqueObjectResult = await this.isObjectUninque(formObject);
         if (!uniqueObjectResult.success) return uniqueObjectResult
         const resultObject = new sellerModel(formObject);
         await resultObject.save();

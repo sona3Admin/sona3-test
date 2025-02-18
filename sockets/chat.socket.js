@@ -4,8 +4,7 @@ const notificationRepo = require("../modules/Notification/notification.repo")
 const { sendMessageValidation } = require("../validations/room.validation")
 const { socketValidator } = require("../helpers/socketValidation.helper")
 const ADMIN_ROOM_ID = "Sona3AdminsRoom"
-const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
-const SELLER_ROOM_ID = "Sona3SellersRoom"
+
 
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => {
@@ -72,7 +71,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
     socket.on('markAsRead', async (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
-            let resultObject = notificationRepo.removeBy({ receivers: socket.socketTokenData._id, redirectId: dataObject.roomId })
+            notificationRepo.removeBy({ receivers: socket.socketTokenData._id, redirectId: dataObject.roomId })
             roomRepo.update(dataObject.roomId, { unreadCount: 0 })
             sendAck({ success: true, code: 200 })
 

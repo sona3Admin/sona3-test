@@ -12,7 +12,7 @@ exports.login = async (req, res) => {
         // if (!operationResultObject.result.isActive)
         //     return res.status(401).json({ success: false, code: 401, error: res.__("unauthorized") })
 
-        payloadObject = {
+        let payloadObject = {
             _id: operationResultObject.result._id,
             name: operationResultObject.result.name,
             email: operationResultObject.result.email,

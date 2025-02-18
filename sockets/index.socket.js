@@ -22,7 +22,7 @@ exports.serverSocketHandler = (socket, io) => {
 
         adminSocketHandler(socket, io, socketId, localeMessages, locale);
         chatSocketHandler(socket, io, socketId, localeMessages, locale);
-        notificationSocketHandler(socket, io, socketId, localeMessages, locale);
+        notificationSocketHandler(socket, io, localeMessages);
     } catch (err) {
         return console.log(`err.message`, err.message);
     }

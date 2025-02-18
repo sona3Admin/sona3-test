@@ -4,7 +4,7 @@ exports.generateDummyDataFromSchema = (schema) => {
         const data = {};
 
         for (const key in schema) {
-            if (schema.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(schema, key)) {
                 const fieldType = schema[key];
 
                 switch (fieldType) {

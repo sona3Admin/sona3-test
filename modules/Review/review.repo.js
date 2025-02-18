@@ -221,7 +221,7 @@ exports.remove = async (_id) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        itemToReview = { [resultObject.result.reviewOn]: (resultObject.result[resultObject.result.reviewOn]).toString() }
+        let itemToReview = { [resultObject.result.reviewOn]: (resultObject.result[resultObject.result.reviewOn]).toString() }
         await reviewModel.findByIdAndDelete({ _id })
         updateReviewedItemRating(resultObject.result, itemToReview);
 

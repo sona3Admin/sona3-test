@@ -55,7 +55,7 @@ exports.deleteFileFromS3 = async (fileName) => {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Key: fileName,
     };
-    return await s3.deleteObject(params, function (err, data) {
+    return await s3.deleteObject(params, function (err) {
       if (err) console.log(err, err.stack);  // error
       else console.log("file deleted successfully");                 // deleted
     }).promise();

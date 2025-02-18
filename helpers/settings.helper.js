@@ -33,7 +33,7 @@ exports.setSettings = async (newSettings) => {
         const currentSettings = await this.getSettings();
         // console.log("currentSettings", currentSettings)
         for (const key in newSettings) {
-            if (currentSettings.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(currentSettings, key)) {
               currentSettings[key] = newSettings[key];
             }
           }

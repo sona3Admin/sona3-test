@@ -39,7 +39,7 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
 }
 
 
-exports.handleReturnService = (customerRequestObject, subOrderId) => {
+exports.handleReturnService = (customerRequestObject) => {
     customerRequestObject.name = customerRequestObject.customer.name
     customerRequestObject.phone = customerRequestObject.customer.phone
     customerRequestObject.shipperRef = generateSubCartId()

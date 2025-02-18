@@ -1,8 +1,5 @@
 let jwt = require("jsonwebtoken")
 const i18n = require('i18n');
-let adminRepo = require("../modules/Admin/admin.repo")
-let customerRepo = require("../modules/Customer/customer.repo")
-let sellerRepo = require("../modules/Seller/seller.repo")
 
 
 exports.generateToken = (payloadObject, expiryTimeString) => {

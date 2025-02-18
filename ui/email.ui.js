@@ -119,7 +119,7 @@ exports.setEmailLogo = () => {
 }
 
 
-exports.setEmailFooter = (lang) => {
+exports.setEmailFooter = () => {
     return `
         <div class="email-footer" style="justify-content: space-between;">
             <!-- <img src="${SONA3_LOGO}" alt="Sona3 Logo" /> -->

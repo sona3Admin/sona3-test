@@ -5,7 +5,6 @@ const sellerRepo = require("../modules/Seller/seller.repo");
 const shopRepo = require("../modules/Shop/shop.repo");
 const serviceRepo = require("../modules/Service/service.repo");
 const productRepo = require("../modules/Product/product.repo");
-const reportHelper = require("../helpers/report.helper");
 
 
 let rule = new scheduler.RecurrenceRule();
@@ -32,7 +31,7 @@ const dateFormat = () => {
 
 
 exports.executeBatchJobs = async () => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     scheduler.scheduleJob(rule, async () => {
       try {
         console.log("==> Started Batch Jobs at ", dateFormat());
@@ -99,18 +98,6 @@ exports.checkExpiredSubscriptionsOfSellers = async () => {
   }
 };
 
-
-exports.generateDailyReports = async () => {
-  try {
-    console.log("==> Generating Daily Reports...");
-    await reportHelper.generateReports();
-    console.log("==> Finished Generating Daily Reports...");
-
-  } catch (err) {
-    console.error("==> Error Generating Daily Reports:", err.message);
-
-  }
-}
 
 
 exports.checkForTrustedShops = async () => {

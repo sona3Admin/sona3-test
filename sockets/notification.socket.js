@@ -12,7 +12,7 @@ const ADMIN_ROOM_ID = "Sona3AdminsRoom"
 const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
 const SELLER_ROOM_ID = "Sona3SellersRoom"
 
-exports.notificationSocketHandler = (socket, io, socketId, localeMessages, language) => {
+exports.notificationSocketHandler = (socket, io, localeMessages) => {
 
     socket.on("joinCustomersRoom", (dataObject, sendAck) => {
         try {
@@ -114,13 +114,13 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
 
             if (sender.role == "seller") {
                 sender.name = socket.socketTokenData.userName
-                if (dataObject.order || dataObject.request) notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                if (dataObject.order || dataObject.request) notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages)
                 else notificationResult = await handleUpdateBySeller(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
             }
 
             if (sender.role == "customer" && (dataObject.order || dataObject.request)) {
                 sender.name = socket.socketTokenData.name
-                notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages, bodyMessages[`${dataObject.action}`])
+                notificationResult = await updateTransactionStatus(sender, dataObject, localeMessages)
             }
 
             if (!notificationResult.success) return sendAck(notificationResult)
@@ -148,7 +148,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
     socket.on('markAsSeen', async (dataObject, sendAck) => {
         try {
             if (!sendAck) return socket.disconnect(true)
-            let resultObject = notificationRepo.update(dataObject.notification, {
+            notificationRepo.update(dataObject.notification, {
                 $addToSet: { seenBy: socket.socketTokenData._id }
             })
             sendAck({ success: true, code: 200 })
@@ -172,7 +172,6 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
             if (serviceRequest.result.seller._id.toString() != socket.socketTokenData._id) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
 
             let receiver = serviceRequest.result.customer._id.toString()
-            let sender = { _id: socket.socketTokenData._id, role: socket.socketTokenData.role }
 
             let notificationObject = {
                 seller: socket.socketTokenData._id,
@@ -238,7 +237,7 @@ exports.notificationSocketHandler = (socket, io, socketId, localeMessages, langu
 
             io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
 
-            if (serviceRequest.result.customer.fcmToken) notificationHelper.sendPushNotification(title, body, serviceRequest.result.customer.fcmToken)
+            if (variationObject.result.seller.fcmToken) notificationHelper.sendPushNotification(title, body, variationObject.result.seller.fcmToken)
             return sendAck(resultObject)
 
         } catch (err) {
@@ -312,13 +311,12 @@ async function handleCreationByCustomer(sender, dataObject, localeMessages) {
 
 async function handleCreationBySeller(sender, dataObject, localeMessages) {
     try {
-        let bodyText = {}, creationType = {}, redirectType = {}, redirectId, receiver
+        let bodyText = {}, creationType = {}, redirectType = {}, redirectId
 
         if (dataObject.seller) {
             creationType = { en: "Seller", ar: "بائع" }
             const existingObject = await sellerRepo.find({ _id: dataObject.seller })
             if (!existingObject.success) return existingObject
-            receiver = existingObject.result
             redirectId = dataObject.seller
             redirectType = "seller"
             bodyText.en = `${sender.name} seller has been created`
@@ -458,12 +456,11 @@ async function handleUpdateByAdmin(sender, dataObject, localeMessages, bodyMessa
 
 async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMessageAction) {
     try {
-        let bodyText = {}, receiver = {}, redirectType, redirectId;
+        let bodyText = {}, redirectType, redirectId;
 
         if (dataObject.seller) {
             const existingObject = await sellerRepo.find({ _id: dataObject.seller })
             if (!existingObject.success) return existingObject
-            receiver = existingObject.result
             redirectId = dataObject.seller
             redirectType = "seller"
             bodyText.en = `${sender.name} seller` + bodyMessageAction.en
@@ -473,7 +470,6 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
         if (dataObject.shop) {
             const existingObject = await shopRepo.get({ _id: dataObject.shop })
             if (!existingObject.success) return existingObject
-            receiver = existingObject.result.seller
             redirectId = dataObject.shop
             redirectType = "shop"
             bodyText.en = `${existingObject.result.nameEn} shop for seller ${sender.name} ` + bodyMessageAction.en
@@ -483,7 +479,6 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
         if (dataObject.product) {
             const existingObject = await productRepo.get({ _id: dataObject.product })
             if (!existingObject.success) return existingObject
-            receiver = existingObject.result.seller
             redirectId = dataObject.product
             redirectType = "product"
             bodyText.en = `${existingObject.result.nameEn} product for seller ${sender.name} ` + bodyMessageAction.en
@@ -493,7 +488,6 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
         if (dataObject.service) {
             const existingObject = await serviceRepo.get({ _id: dataObject.service })
             if (!existingObject.success) return existingObject
-            receiver = existingObject.result.seller
             redirectId = dataObject.service
             redirectType = "service"
             bodyText.en = `${existingObject.result.nameEn} service for seller ${sender.name} ` + bodyMessageAction.en
@@ -529,7 +523,7 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
 }
 
 
-async function updateTransactionStatus(sender, dataObject, localeMessages, bodyMessageAction) {
+async function updateTransactionStatus(sender, dataObject, localeMessages) {
     try {
         let bodyText = {}, orderType = {}, receivers = [], redirectType, receiversIds = [], deviceTokens = []
 

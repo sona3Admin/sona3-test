@@ -68,7 +68,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
               ${selectedContent.ignore}
             </p>
           </div>
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
           
         </div>
       </body>
@@ -163,7 +163,7 @@ exports.sendSellerVerificationConfirmation = async (receiverObject, lang) => {
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -254,7 +254,7 @@ exports.sendShopVerificationConfirmation = async (receiverObject, lang) => {
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -365,7 +365,7 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -479,7 +479,7 @@ exports.sendPurchaseConfirmationEmailToCustomer = async (purchaseDetails, lang) 
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -587,7 +587,7 @@ exports.sendServiceRequestCreationEmailToSeller = async (serviceRequest, lang) =
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -704,7 +704,7 @@ exports.sendPurchaseConfirmationEmailToSeller = async (purchaseDetails, lang) =>
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -815,7 +815,7 @@ exports.sendOrderPurchaseConfirmationEmailToCustomer = async (orderDetails, lang
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>
@@ -924,7 +924,7 @@ exports.sendOrderPurchaseConfirmationEmailToSeller = async (orderDetails, lang) 
           </div>
 
           <!-- Email Footer -->
-          ${setEmailFooter(lang)}
+          ${setEmailFooter()}
         </div>
       </body>
       </html>

@@ -1,23 +1,3 @@
-const i18n = require('i18n');
-const moment = require('moment');
-const customerRepo = require("../modules/Customer/customer.repo");
-const sellerRepo = require("../modules/Seller/seller.repo");
-const shopRepo = require("../modules/Shop/shop.repo");
-const productRepo = require("../modules/Product/product.repo");
-const serviceRepo = require("../modules/Service/service.repo");
-const orderRepo = require("../modules/Order/order.repo");
-const requestRepo = require("../modules/Request/request.repo");
-const paymentRepo = require("../modules/Payment/payment.repo");
-
-
-exports.generateReports = async () => {
-    try {
-
-    } catch (err) {
-        console.log("err.message:", err.message);
-
-    }
-}
 
 
 exports.countObjectsByArrayOfFilters = (arrayOfObjects, arrayOfFilters) => {
@@ -40,7 +20,7 @@ exports.countObjectsByArrayOfFilters = (arrayOfObjects, arrayOfFilters) => {
                 const { fieldName, fieldValue } = condition;
                 return typeof object === 'object' &&
                     object !== null &&
-                    object.hasOwnProperty(fieldName) &&
+                    Object.prototype.hasOwnProperty.call(object, fieldName) &&
                     object[fieldName] === fieldValue;
             });
 

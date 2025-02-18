@@ -1,6 +1,5 @@
 const app = require("express").Router();
 const requestController = require("../../controllers/admin/request.controller")
-const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
 app.put("/update", requestController.updateRequest);

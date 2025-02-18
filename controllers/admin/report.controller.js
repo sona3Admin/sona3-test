@@ -7,9 +7,7 @@ const productRepo = require("../../modules/Product/product.repo");
 const serviceRepo = require("../../modules/Service/service.repo");
 const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
-const paymentRepo = require("../../modules/Payment/payment.repo");
 const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper");
-const { date } = require('joi');
 const UAE_MAIN_CITIES = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
 
 
@@ -574,7 +572,7 @@ exports.listSellersWithServicesRequestSummary = async (req, res) => {
 
         orderFilterObject.sellers = sellersIds;
 
-        const allServiceRequests = await requestRepo.listBySellers({ ...orderFilterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, 0);
+        let allServiceRequests = await requestRepo.listBySellers({ ...orderFilterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, 0);
         if (!allServiceRequests.success) allServiceRequests = { success: true, code: 200, result: [] };
 
         let sellersResult = await Promise.all(sellers.result.map(async (seller) => {
@@ -713,31 +711,6 @@ function groupShopsByDateRange(filterObject, queryObject, filterCategories, cate
 }
 
 
-function groupProductsByType(queryObject, filterCategories, categoryMap, allDocuments, countingResults) {
-    const countingFilters = [
-        { label: "foodProducts", conditions: [{ fieldName: "isFood", fieldValue: true }, { fieldName: "type", fieldValue: "product" }] },
-        { label: "nonFoodProducts", conditions: [{ fieldName: "isFood", fieldValue: false }, { fieldName: "type", fieldValue: "product" }] },
-    ];
-    const typeCountingResult = countObjectsByArrayOfFilters(allDocuments.result, countingFilters)
-    let allFoodProducts = { result: [] }
-    let allNonFoodProducts = { result: [] }
-    let allServiceShops = { result: [] }
-    allFoodProducts.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == true);
-    allFoodProducts = groupByCategories(queryObject, filterCategories, categoryMap, allFoodProducts)
-
-    allNonFoodProducts.result = allDocuments.result.filter(shop => shop.type == "product" && shop.isFood == false);
-    allNonFoodProducts = groupByCategories(queryObject, filterCategories, categoryMap, allNonFoodProducts)
-
-    countingResults.type = {}
-    countingResults.type = {
-        foodProducts: { ...allFoodProducts, total: typeCountingResult.result.foodProducts },
-        nonFoodProducts: { ...allNonFoodProducts, total: typeCountingResult.result.nonFoodProducts },
-        total: typeCountingResult.result.foodProducts + typeCountingResult.result.nonFoodProducts
-    };
-    return countingResults
-}
-
-
 function getAggregationPeriodAndCount(daysDiff) {
     let aggregationPeriod, periodCount;
     if (daysDiff <= 7) {
@@ -791,8 +764,8 @@ function groupByCities(allDocuments, filterCategories, categoryMap) {
 
     for (const city of UAE_MAIN_CITIES) {
         const cityDocuments = allDocuments.result.filter((doc) => {
-            customerCity = doc.address?.city?.name || doc.address?.city?.CityName
-            return customerCity && customerCity?.toLowerCase() === city.toLowerCase()
+            const customerCity = doc.address?.city?.name || doc.address?.city?.CityName;
+            return customerCity && customerCity?.toLowerCase() === city.toLowerCase();
         });
         const cityStats = {};
         for (const category of filterCategories) {

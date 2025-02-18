@@ -170,7 +170,7 @@ function handleFilterByArrayOfIds(filterObject) {
     const modifiedFilterObject = { ...filterObject }; // Create a copy for modification
 
     for (const keyName in modifiedFilterObject) {
-        if (modifiedFilterObject.hasOwnProperty(keyName)) {
+        if (Object.prototype.hasOwnProperty.call(modifiedFilterObject, keyName)) {
             if (typeof modifiedFilterObject[keyName] === 'string') {
                 const arrayValue = JSON.parse(modifiedFilterObject[keyName]);
                 if (Array.isArray(arrayValue)) modifiedFilterObject[keyName] = { $in: arrayValue };

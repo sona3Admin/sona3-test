@@ -479,7 +479,7 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
         req.query.status = req.query.status || "purchased";
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
-        const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
+        let allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.success) allServiceRequests = { success: true, code: 200, result: [] };
 
         const accumulations = {
@@ -563,7 +563,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0;
         req.query.status = req.query.status || "purchased";
         const serviceRequestSelectionObject = { status: 1, serviceTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 };
-        const allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
+        let allServiceRequests = await requestRepo.list({ ...filterObject, status: "purchased" }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.success) allServiceRequests = { success: true, code: 200, result: [] };
         // const numberOfDeliveredRequests = allServiceRequests.result.length;
 
@@ -904,7 +904,7 @@ exports.financesServicesRequest = async (req, res) => {
 
         const serviceRequestSelectionObject = { status: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 , serviceTotal: 1};
 
-        const allServiceRequests = await requestRepo.list({ ...filterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);        
+        let allServiceRequests = await requestRepo.list({ ...filterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);        
         if (!allServiceRequests.success) allServiceRequests = { success: true, code: 200, result: [] };
 
         const sellerObject = await sellerRepo.get({ _id: req.tokenData._id }, {

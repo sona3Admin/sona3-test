@@ -4,7 +4,7 @@ const { permissions } = require("./permissions.helper")
 
 exports.validatePermissions = (listOfPermissions) => {
     try {
-        for (key in listOfPermissions) {
+        for (let key in listOfPermissions) {
             if (permissions.get(key)) {
                 let allFound = true;
                 let permissionErrors = []
@@ -63,7 +63,7 @@ exports.isAuthorized = (req, res, next) => {
             const endPoint = req.originalUrl.split("?").shift().slice(7);
             let isFound = false
             if (allowedEndPoints.includes(endPoint) && req.tokenData._id == requesterId) return next()
-            for (key in adminPermissions) {
+            for (let key in adminPermissions) {
                 if (adminPermissions[key].includes(endPoint)) { isFound = true; return next(); }
             }
 

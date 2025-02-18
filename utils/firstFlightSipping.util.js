@@ -638,7 +638,6 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
         const response = await axios.post(`${firstFlightBaseUrl}/Tracking`, orderData, {
             headers: { 'Content-Type': 'application/json' }
         });
-        let latestStatus = response.data.AirwayBillTrackList[0]
         // this.updateOrderShipmentStatus(trackingId, latestStatus)
         return {
             success: true,
@@ -713,9 +712,12 @@ exports.updateOrderShipmentStatus = async (trackingId, latestStatus) => {
 
     } catch (err) {
         console.log(`err.message controller`, err.message);
-        return res.status(500).json({
+        return {
+            success: false,
+            error: err.message,
+            code: 500,
             status: false
-        });
+        }
     }
 }
 

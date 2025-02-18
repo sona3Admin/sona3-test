@@ -3,10 +3,6 @@ const sellerRepo = require("../../modules/Seller/seller.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
 const emailHelper = require("../../helpers/email.helper")
-const orderRepo = require("../../modules/Order/order.repo");
-const requestRepo = require("../../modules/Request/request.repo");
-const shopRepo = require("../../modules/Shop/shop.repo");
-
 
 exports.createSeller = async (req, res) => {
     try {
