@@ -13,7 +13,6 @@ const connectToDatabase = require("./database").connectToDatabase;
 const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs;
 const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
-const { fetchApplePublicKeys } = require("../utils/appleAuth.util")
 
 i18n.configure({
   locales: ['en', 'ar'],
@@ -78,7 +77,6 @@ process.on('uncaughtException', (error) => {
 app.use(routes);
 connectToDatabase();
 executeBatchJobs();
-fetchApplePublicKeys();
 
 
 module.exports = app;
