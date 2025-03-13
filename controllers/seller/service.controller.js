@@ -26,6 +26,7 @@ exports.listServices = async (req, res) => {
         const filterObject = req.query;
         filterObject["isDeleted"] = false
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
+        filterObject["seller"] = req.tokenData._id
         const operationResultObject = await serviceRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 
