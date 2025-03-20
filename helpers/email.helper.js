@@ -107,6 +107,11 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
       };
     } else {
       console.error("Failed to send verification email");
+      return {
+        success: false,
+        code: 500,
+        error: "Failed to send verification email",
+      };
     }
   } catch (err) {
     console.error("Error in sendEmailVerificationCode:", err.message);
