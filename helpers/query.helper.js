@@ -75,12 +75,15 @@ function handleRangeParams(filterObject, finalFilterObject) {
         finalFilterObject[`${dateField}`] = {};
 
         if (filterObject.dateFrom) {
-            finalFilterObject[`${dateField}`].$gte = new Date(filterObject.dateFrom);
+            let startDate = new Date(filterObject.dateFrom);
+            startDate.setHours(0, 0, 0, 0);
+            finalFilterObject[`${dateField}`].$gte = startDate;
             delete filterObject["dateFrom"];
         }
-
         if (filterObject.dateTo) {
-            finalFilterObject[`${dateField}`].$lte = new Date(filterObject.dateTo);
+            let endDate = new Date(filterObject.dateTo);
+            endDate.setHours(23, 59, 59, 999);
+            finalFilterObject[`${dateField}`].$lte = endDate;
             delete filterObject["dateTo"];
         }
         delete finalFilterObject["dateField"]
