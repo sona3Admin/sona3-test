@@ -46,6 +46,7 @@ exports.countCustomers = async (req, res) => {
 exports.countSellers = async (req, res) => {
     try {
         const { query: filterObject, body: { filters: queryObject } } = req;
+        filterObject.isDeleted = false;
         const pageNumber = req.query.page || 1;
         const limitNumber = req.query.limit || 0;
 
