@@ -74,6 +74,11 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
                 })
             })
 
+            console.log("notificationResult", notificationResult);
+            console.log("resultObject", resultObject);
+            
+            
+
             if (resultObject.result.deviceTokens.length > 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
 
