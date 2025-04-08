@@ -69,14 +69,18 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
 
             notificationResult.receivers.forEach((receiver) => {
+                console.log(`Attempting to emit to ${receiver.toString()}`);
+
+                // Get count of clients in this room
+                const roomSockets = io.sockets.adapter.rooms.get(receiver.toString());
+                console.log(`Current clients in ${receiver.toString()}: ${roomSockets ? roomSockets.size : 0}`);
+
                 io.to(receiver.toString()).emit("newNotification", {
                     success: true, code: 201, result: resultObject.result
-                })
-            })
+                });
 
-            console.log("notificationResult", notificationResult);
-            console.log("resultObject", resultObject);
-            
+                console.log(`Notification emitted to ${receiver.toString()}`);
+            });
             
 
             if (resultObject.result.deviceTokens.length > 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)

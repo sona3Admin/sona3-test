@@ -15,7 +15,11 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
             const adminsRoomId = ADMIN_ROOM_ID
+            
             socket.join(adminsRoomId.toString())
+            console.log(`Admin ${socket.socketTokenData._id} joined room ${adminsRoomId}`);
+            const roomSockets = io.sockets.adapter.rooms.get(adminsRoomId.toString());
+            console.log(`Current members in admin room: ${roomSockets ? roomSockets.size : 0}`);
             return sendAck({ success: true, code: 200 })
         } catch (err) {
             console.log("err.message", err.message)
