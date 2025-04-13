@@ -804,13 +804,13 @@ exports.sendOrderPurchaseConfirmationEmailToCustomer = async (orderDetails, lang
 
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
           <!-- Email Header -->
           ${setEmailLogo()}
           
           <!-- Email Body -->
-          <div class="email-body">
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
             <h1>${selectedContent.subject}</h1>
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
