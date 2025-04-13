@@ -6,6 +6,7 @@ const requestRepo = require("../modules/Request/request.repo")
 const { setSettings, listSettings } = require("../helpers/settings.helper")
 const { processPDFContent } = require("../helpers/convertToFile.helper")
 const s3StorageHelper = require("./s3FileStorage.util")
+const { v4: uuid } = require('uuid');
 
 const ifastBaseUrl = process.env.IFAST_API_URL;
 const ifastUsername = process.env.IFAST_USER_NAME;
@@ -367,8 +368,12 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
             return generatedPDF;
         }
 
-        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result);
-
+        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(`pdf-${uuid()}`, [
+            {
+                buffer: Buffer.from(generatedPDF.result),
+                mimetype: 'application/pdf'
+            }
+        ]);    
         if (!uploadedFile.success) {
             console.log("S3 upload failed:", uploadedFile.error);
             return uploadedFile;
