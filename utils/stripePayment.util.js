@@ -116,7 +116,8 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
             orderCost: orderCostObject,
             orderDetails,
             orderType,
-            timestamp
+            timestamp,
+            lang,
         }
 
         console.log("paymentObject", paymentObject)

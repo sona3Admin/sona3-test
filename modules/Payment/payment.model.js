@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 const paymentSchema = mongoose.Schema({
+    lang: { type: String, enum: ["en", "ar"] },
     session: { type: String },
     customer: { type: mongoose.Types.ObjectId, ref: "customers" },
     shippingAddress: { type: Object },
