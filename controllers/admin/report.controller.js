@@ -16,7 +16,7 @@ exports.countCustomers = async (req, res) => {
         const { query: filterObject, body: { filters: queryObject } } = req;
         const pageNumber = req.query.page || 1;
         const limitNumber = req.query.limit || 0;
-
+        filterObject.isDeleted = false;
         const allDocuments = await customerRepo.list(filterObject, { isActive: 1, isDeleted: 1, hasPurchased: 1, address: 1 }, {}, pageNumber, limitNumber);
 
         let countingResults = {};

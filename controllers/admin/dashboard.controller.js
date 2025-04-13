@@ -15,6 +15,7 @@ exports.countCustomers = async (req, res) => {
     try {
         const filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 0
+        filterObject.isDeleted = false;
         const allDocuments = await customerRepo.list(filterObject, { isActive: 1, hasPurchased: 1 }, {}, pageNumber, limitNumber);
         const countingFilters = [
             { label: "active", conditions: [{ fieldName: "isActive", fieldValue: true }] },
