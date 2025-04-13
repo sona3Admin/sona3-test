@@ -26,7 +26,8 @@ const productSchema = mongoose.Schema({
     lastUpdateDate: { type: Date },
     discountValue: { type: Number, default: 0 },
     orderCount: { type: Number, min: 0, default: 0 },
-
+    hasLowerEnvironmentalImpact: { type: Boolean, default: false },
+    isReusable: { type: Boolean, default: false },
 })
 
 

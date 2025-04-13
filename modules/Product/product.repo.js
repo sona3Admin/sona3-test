@@ -139,6 +139,15 @@ exports.count = async (filterObject, sortObject) => {
 
 exports.create = async (formObject) => {
     try {
+        if (formObject.isSustainable === true) {
+            if (!formObject.hasLowerEnvironmentalImpact || !formObject.isReusable) {
+                return {
+                    success: false,
+                    code: 500,
+                    error: i18n.__("sustainableProductError")
+                }
+            }
+        }
         formObject = this.convertToLowerCase(formObject)
         let shopObject = await shopRepo.get({ _id: formObject.shop, seller: formObject.seller })
         if (shopObject.result.seller.type !== "product") return {
@@ -187,6 +196,18 @@ exports.create = async (formObject) => {
 exports.update = async (filterObject, formObject) => {
     try {
         const existingObject = await this.find(filterObject);
+        const isSustainable = formObject.isSustainable!==undefined ? formObject.isSustainable : existingObject.result.isSustainable
+        const hasLowerEnvironmentalImpact = formObject.hasLowerEnvironmentalImpact!==undefined ? formObject.hasLowerEnvironmentalImpact : existingObject.result.hasLowerEnvironmentalImpact
+        const isReusable = formObject.isReusable!==undefined ? formObject.isReusable : existingObject.result.isReusable
+        if (isSustainable === true) {
+            if (!hasLowerEnvironmentalImpact || !isReusable) {
+                return {
+                    success: false,
+                    code: 500,
+                    error: i18n.__("sustainableProductError")
+                }
+            }
+        }
         if (!existingObject.success) return {
             success: false,
             code: 404,
