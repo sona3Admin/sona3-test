@@ -83,6 +83,14 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+            hasLowerEnvironmentalImpact: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
+            isReusable: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
             isVerified: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
@@ -202,6 +210,14 @@ module.exports = {
                 "boolean.base": "validStatus",
             }),
 
+            hasLowerEnvironmentalImpact: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+
+            isReusable: joi.boolean().optional().messages({
+                "boolean.base": "validStatus",
+            }),
+            
             isVerified: joi.boolean().optional().messages({
                 "boolean.base": "validStatus",
             }),
