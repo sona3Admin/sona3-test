@@ -15,7 +15,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
           subject: "Verify Your Sona3 Account",
           greeting: `Hi ${receiverObject?.name || receiverObject?.userName},`,
           message: "This is your verification code:",
-          footerMessage: "This code will only be valid for the next 5 minutes. If the code does not work, you can use this login verification link:",
+          footerMessage: "This code will only be valid for the next 5 minutes.",
           signature: "Best regards,",
           team: "SONA3 Team",
           ignore: "If you didn't request this code, please ignore this email.",
@@ -27,6 +27,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
           footerMessage: "If you didn’t request this password reset, please ignore this email and ensure your account is secure.",
           signature: "Best regards,",
           team: "SONA3 Team",
+          ignore: "If you didn't request this code, please ignore this email.",
         },
       },
       ar: {
@@ -34,9 +35,10 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
           subject: "تأكيد حسابك على صناع",
           greeting: `مرحبًا ${receiverObject?.name || receiverObject?.userName},`,
           message: "هذا هو رمز التحقق الخاص بك:",
-          footerMessage: "هذا الرمز سيبقى صالحًا لمدة 5 دقائق فقط. إذا لم يعمل الرمز، يمكنك استخدام رابط التحقق من التسجيل:",
+          footerMessage: "هذا الرمز سيبقى صالحًا لمدة 5 دقائق فقط.",
           signature: "مع أطيب التحيات،",
           team: "فريق صناع",
+          ignore: "إذا لم تطلب هذا الرمز، يرجى تجاهل هذا البريد.",
         },
         resetPassword: {
           subject: "إعادة تعيين كلمة المرور لحسابك على صناع",
@@ -45,35 +47,45 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
           footerMessage: "إذا لم تطلب هذه العملية، يرجى تجاهل هذا البريد وتأكد من أمان حسابك.",
           signature: "مع أطيب التحيات،",
           team: "فريق صناع",
+          ignore: "إذا لم تطلب هذا الرمز، يرجى تجاهل هذا البريد.",
         },
       },
     };
 
     const type = emailType === "resetPassword" ? "resetPassword" : "verifyEmail";
     const selectedContent = content[lang][type];
-
+    
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="max-width: 600px; margin: auto; padding: 20px;">
           ${setEmailLogo()}
           
-          <div class="email-body">
-            <p>${selectedContent.greeting}</p>
-            <p>${selectedContent.message}</p>
-            <div class="code">${otpCode}</div>
-            <p>${selectedContent.footerMessage}</p>
-            <p class="signature">${selectedContent.signature}<br />${selectedContent.team}</p>
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
+            <p style="font-size: 18px;">${selectedContent.greeting}</p>
+            <p style="font-size: 16px;">${selectedContent.message}</p>
+            
+            <div class="code" style="font-size: 28px; font-weight: bold; background: #f2f2f2; padding: 10px 20px; border-radius: 8px; width: fit-content; margin: 20px auto; color: #333;">
+              ${otpCode}
+            </div>
+            
+            <p style="font-size: 16px;">${selectedContent.footerMessage}</p>
+            <p class="signature" style="font-size: 16px;">
+              ${selectedContent.signature}<br />
+              ${selectedContent.team}
+            </p>
+            
             <p style="font-size: 14px; color: #888888; margin-top: 50px;">
               ${selectedContent.ignore}
             </p>
           </div>
+
           ${setEmailFooter()}
-          
         </div>
       </body>
       </html>
     `;
+
 
     const textContent = `
       ${selectedContent.greeting}
@@ -354,18 +366,20 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
 
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
           <!-- Email Header -->
           ${setEmailLogo()}
           
           <!-- Email Body -->
-          <div class="email-body">
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
             <h1>${selectedContent.subject}</h1>
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
             <div class="details">
-              ${selectedContent.details}
+              <ul style="list-style-position: inside; padding: 0;">
+                ${selectedContent.details}
+              </ul>
             </div>
           </div>
 
@@ -468,18 +482,20 @@ exports.sendPurchaseConfirmationEmailToCustomer = async (purchaseDetails, lang) 
 
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
           <!-- Email Header -->
           ${setEmailLogo()}
           
           <!-- Email Body -->
-          <div class="email-body">
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
             <h1>${selectedContent.subject}</h1>
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
             <div class="details">
-              ${selectedContent.details}
+              <ul style="list-style-position: inside; padding: 0;">
+                ${selectedContent.details}
+              </ul>
             </div>
           </div>
 
@@ -576,18 +592,20 @@ exports.sendServiceRequestCreationEmailToSeller = async (serviceRequest, lang) =
 
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
           <!-- Email Header -->
           ${setEmailLogo()}
           
           <!-- Email Body -->
-          <div class="email-body">
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
             <h1>${selectedContent.subject}</h1>
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
             <div class="details">
-              ${selectedContent.details}
+              <ul style="list-style-position: inside; padding: 0;">
+                ${selectedContent.details}
+              </ul>
             </div>
           </div>
 
@@ -693,18 +711,20 @@ exports.sendPurchaseConfirmationEmailToSeller = async (purchaseDetails, lang) =>
 
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
           <!-- Email Header -->
           ${setEmailLogo()}
           
           <!-- Email Body -->
-          <div class="email-body">
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
             <h1>${selectedContent.subject}</h1>
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
             <div class="details">
-              ${selectedContent.details}
+              <ul style="list-style-position: inside; padding: 0;">
+                ${selectedContent.details}
+              </ul>
             </div>
           </div>
 
@@ -913,18 +933,20 @@ exports.sendOrderPurchaseConfirmationEmailToSeller = async (orderDetails, lang) 
 
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
-      <body>
-        <div class="email-container">
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
           <!-- Email Header -->
           ${setEmailLogo()}
           
           <!-- Email Body -->
-          <div class="email-body">
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
             <h1>${selectedContent.subject}</h1>
             <p>${selectedContent.greeting}</p>
             <p>${selectedContent.message}</p>
             <div class="details">
-              ${selectedContent.details}
+              <ul style="list-style-position: inside; padding: 0;">
+                ${selectedContent.details}
+              </ul>
             </div>
           </div>
 
