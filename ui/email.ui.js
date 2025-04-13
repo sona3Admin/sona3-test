@@ -124,9 +124,9 @@ exports.setEmailFooter = () => {
         <div class="email-footer" style="justify-content: space-between;">
             <!-- <img src="${SONA3_LOGO}" alt="Sona3 Logo" /> -->
             <div>
-              <a href="#"><img src="${SONA3_FACEBOOK}" alt="Facebook" /></a>
-              <a href="#"><img src="${SONA3_TWITTER}" alt="Twitter" /></a>
-              <a href="#"><img src="${SONA3_INSTAGRAM}" alt="Instagram" /></a>
+              <a href="https://www.facebook.com/sona3app"><img src="${SONA3_FACEBOOK}" alt="Facebook" /></a>
+              <a href="https://x.com/Sona3app"><img src="${SONA3_TWITTER}" alt="Twitter" /></a>
+              <a href="https://www.instagram.com/sona3app/"><img src="${SONA3_INSTAGRAM}" alt="Instagram" /></a>
             </div>
         </div> 
     `
