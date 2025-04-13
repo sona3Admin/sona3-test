@@ -5,6 +5,8 @@ const requestRepo = require("../modules/Request/request.repo")
 const { findObjectInArray } = require("../helpers/cart.helper")
 const { convertBase64StringToPDF } = require("../helpers/convertToFile.helper")
 const s3StorageHelper = require("./s3FileStorage.util")
+const { v4: uuid } = require('uuid');
+
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
 const firstFlightUsername = process.env.FIRSTFLIGHT_USER_NAME;
@@ -748,8 +750,13 @@ exports.generateOrderLabel = async (airwayBillNumber, printType, requestUser) =>
             headers: { 'Content-Type': 'application/json' }
         });
 
-        let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);
-        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(generatedPDF.result)
+        let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);        
+        let uploadedFile = await s3StorageHelper.uploadPDFtoS3(`pdf-${uuid()}`, [
+            {
+                buffer: Buffer.from(generatedPDF.result),
+                mimetype: 'application/pdf'
+            }
+        ]);        
 
         return {
             success: true,
