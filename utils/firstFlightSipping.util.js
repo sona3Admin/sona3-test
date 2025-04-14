@@ -665,6 +665,8 @@ exports.listCities = async () => {
         const response = await axios.post(`https://customerapp.firstflightme.com/FirstFlightService.svc/CityList`, authData, {
             headers: { 'Content-Type': 'application/json' }
         });
+        console.log("response", response);
+        
         return {
             success: true,
             code: 201,
