@@ -666,6 +666,10 @@ exports.listCities = async () => {
             headers: { 'Content-Type': 'application/json' }
         });
         console.log("response", response);
+        console.log('process.env.FIRSTFLIGHT_ACCOUNT_NUMBER', process.env.FIRSTFLIGHT_ACCOUNT_NUMBER)
+        console.log('process.env.FIRSTFLIGHT_API_URL', process.env.FIRSTFLIGHT_API_URL)
+        console.log('process.env.FIRSTFLIGHT_USER_NAME', process.env.FIRSTFLIGHT_COUNTRY)
+        console.log('process.env.FIRSTFLIGHT_PASSWORD', process.env.FIRSTFLIGHT_PASSWORD)
         
         return {
             success: true,
