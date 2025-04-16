@@ -7,6 +7,7 @@
   "badRequest": ".طلب غير صحيح",
   "notFound": ".لا نتيجة مطابقة",
   "recordDeleted": ".تم الحذف بنجاح",
+  "stateUpdatedSuccessfully": "تم تحديث الحالة بنجاح.",
   "emailUsed": ".هذا البريد الالكتروني مستخدم بالفعل",
   "nameUsed": ".هذا الاسم مستخدم بالفعل",
   "variationExists": "هذه التشكيلة موجودة بالفعل",

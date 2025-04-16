@@ -7,6 +7,7 @@
   "badRequest": "Bad Request.",
   "notFound": "No Matching Result Found.",
   "recordDeleted": "Deleted Successfully.",
+  "stateUpdatedSuccessfully": "The state has been updated successfully.",
   "emailUsed": "This Email is Already Used.",
   "nameUsed": "This Name is Already Used.",
   "variationExists": "This variation already exists",

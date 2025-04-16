@@ -371,7 +371,7 @@ exports.updateBlockState = async (_id, newState) => {
         return {
             success: true,
             code: 200,
-            result: { message: i18n.__("recordDeleted") }
+            result: { message: i18n.__("stateUpdatedSuccessfully") }
         };
 
     } catch (err) {
