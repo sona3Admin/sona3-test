@@ -1,5 +1,6 @@
 const { serverSocketHandler } = require("../sockets/index.socket")
 let { verifyTokenInSocket } = require("../helpers/jwt.helper")
+const { setSocketIo } = require("../configs/socketManager")
 
 let websocketServer = (io) => {
     try {
@@ -18,6 +19,8 @@ let websocketServer = (io) => {
             // console.log("socketId", socket.id)
             serverSocketHandler(socket, io)
         })
+        setSocketIo(io);
+
 
     } catch (err) {
         return console.log(`err.message`, err.message);
