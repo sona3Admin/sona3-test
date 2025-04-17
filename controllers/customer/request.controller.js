@@ -14,6 +14,11 @@ const emailHelper = require("../../helpers/email.helper")
 
 exports.purchaseRequest = async (req, res) => {
     try {
+        if (req.body?.paymentMethod !== "visa") return res.status(400).json({
+            success: false,
+            code: 400,
+            error: i18n.__("invalidPaymentMethod")
+        });
 
         let customerOrderObject = req.body
         let requestId = req.query._id || customerOrderObject?.orderDetails?.request.toString()

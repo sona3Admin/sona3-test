@@ -175,5 +175,6 @@
   "cannotDowngradeTier": "Can't Downgrade Tier",
   "invalidOTP": "Invalid OTP!",
   "sustainableProductError": "To mark this product as sustainable, it must have a lower environmental impact and be reusable.",
-  "invalidDateRange": "Invalid date range: startDate and endDate must be within the same half of the month."
+  "invalidDateRange": "Invalid date range: startDate and endDate must be within the same half of the month.",
+  "invalidPaymentMethod": "Invalid payment method."
 }
