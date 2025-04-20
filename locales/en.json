@@ -165,7 +165,7 @@
   "isNotFoodCart": "you can't add food to this cart",
   "cartFoodOnly": "you can only add food to this cart",
   "validImageFile": "validImageFile",
-  "couponNotValid": "you should only apply this coupon on te shop providing it.",
+  "couponNotValid": "you should only apply this coupon on the shop providing it.",
   "validTier": "Please select your subscription plan.",
   "alreadySubscribedToPlan": "Already Subscribed To Plan",
   "invalidPurchaseRequest": "invalidPurchaseRequest",

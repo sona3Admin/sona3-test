@@ -6,6 +6,8 @@ const sellerRepo = require('../Seller/seller.repo');
 const productRepo = require('../Product/product.repo');
 const serviceRepo = require('../Service/service.repo');
 const couponRepo = require('../Coupon/coupon.repo');
+const productModel = require('../Product/product.model');
+const serviceModel = require('../Service/service.model');
 
 
 exports.find = async (filterObject) => {
@@ -105,6 +107,14 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
         console.log("normalizedQueryObjects", normalizedQueryObjects)
+
+        if (filterObject.hasProductsOrServices && filterObject.hasProductsOrServices === true) {
+            const shopIdsWithProducts = await productModel.distinct("shop", { isDeleted: false, isActive: true });
+            const shopIdsWithServices = await serviceModel.distinct("shop", { isDeleted: false, isActive: true });
+            const shopsWithContent = Array.from(new Set([...shopIdsWithProducts, ...shopIdsWithServices]));
+            filterObject._id = { ...(filterObject._id || {}), $in: shopsWithContent };
+        }
+
         let resultArray = await shopModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image type tier tierDuration isSubscribed subscriptionStartDate subscriptionEndDate" })
             .populate({ path: "categories", select: "nameEn nameAr image subCategories" })
