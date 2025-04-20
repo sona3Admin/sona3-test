@@ -66,7 +66,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
             <p style="font-size: 18px;">${selectedContent.greeting}</p>
             <p style="font-size: 16px;">${selectedContent.message}</p>
             
-            <table align="center" style="margin: 20px auto;">
+            <table align="center" style="margin: 20px auto; direction: ltr; text-align: left;">
               <tr>
                 ${otpCode.split('').map(digit => `
                   <td style="
