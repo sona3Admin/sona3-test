@@ -167,6 +167,11 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
+        if (formObject.phone) {
+            const uniqueObjectResult = await this.isPhoneUnique(formObject, existingObject)
+            if (!uniqueObjectResult.success) return uniqueObjectResult
+        }
+
         const resultObject = await customerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password -token" })
 
         if (!resultObject) return {
@@ -330,21 +335,41 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 
 
 exports.isObjectUnique = async (formObject) => {
-    const duplicateObject = await this.find({ email: formObject.email, isDeleted: false })
+    const duplicateObject = await this.find({
+        $or: [
+            { email: formObject.email },
+            { phone: formObject.phone }
+        ],
+        isDeleted: false
+    });
 
-    if (duplicateObject.success) {
-        if (duplicateObject.result.email == formObject.email) return {
-            success: false,
-            code: 409,
-            error: i18n.__("emailUsed")
+    if (duplicateObject.success && duplicateObject.result) {
+        const matchedEmail = duplicateObject.result.email === formObject.email;
+        const matchedPhone = duplicateObject.result.phone === formObject.phone;
+
+        if (matchedEmail) {
+            return {
+                success: false,
+                code: 409,
+                error: i18n.__("emailUsed")
+            };
+        }
+
+        if (matchedPhone) {
+            return {
+                success: false,
+                code: 409,
+                error: i18n.__("phoneUsed")
+            };
         }
     }
 
     return {
         success: true,
         code: 200
-    }
+    };
 }
+
 
 
 exports.isEmailUnique = async (formObject, existingObject) => {
@@ -356,6 +381,24 @@ exports.isEmailUnique = async (formObject, existingObject) => {
                 success: false,
                 code: 409,
                 error: i18n.__("emailUsed")
+            }
+    }
+    return {
+        success: true,
+        code: 200
+    }
+
+}
+
+exports.isPhoneUnique = async (formObject, existingObject) => {
+    
+    if (formObject.phone !== existingObject.result.phone) {
+        const duplicateObject = await this.find({ phone: formObject.phone, isDeleted: false })
+        if (duplicateObject.success &&
+            duplicateObject.result._id.toString() !== existingObject.result._id.toString()) return {
+                success: false,
+                code: 409,
+                error: i18n.__("phoneUsed")
             }
     }
     return {
