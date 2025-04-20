@@ -3,6 +3,7 @@ const sellerRepo = require("../../modules/Seller/seller.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
 const { getSettings } = require("../../helpers/settings.helper")
 const emailHelper = require("../../helpers/email.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.register = async (req, res) => {
@@ -29,7 +30,7 @@ exports.register = async (req, res) => {
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -79,7 +80,7 @@ exports.login = async (req, res) => {
         return res.status(operationResultObject.code).json({ token, ...operationResultObject, isLifeTimePlanOn })
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -124,7 +125,7 @@ exports.authenticateBySocialMediaAccount = async (req, res) => {
         return res.status(operationResultObject.code).json({ token, ...operationResultObject, isLifeTimePlanOn })
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -151,7 +152,7 @@ exports.sendEmailVerificationCode = async (req, res) => {
         if (otpCode.success) sellerRepo.updateDirectly(payloadObject._id, { session: { otpCode: otpCode.result } })
         return res.status(otpCode.code).json({ success: true, code: 200, result: payloadObject._id });
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -186,7 +187,7 @@ exports.verifyEmailOTP = async (req, res) => {
         sellerRepo.updateDirectly(operationResultObject.result._id, { token, isEmailVerified: true })
         return res.status(operationResultObject.code).json({ success: true, code: 200, token });
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

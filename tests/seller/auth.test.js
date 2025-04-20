@@ -4,6 +4,7 @@ const mongoDB = require("../../configs/database")
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
 let baseUrl = '/api/v1/seller';
 let token;
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 let requestHeaders = {
     'x-app-token': 'Sona3-Team',
@@ -130,16 +131,16 @@ describe('=====>Testing Seller Auth Module Endpoints <=====', () => {
 
     // it('should return an error if seller is not active => /api/v1/seller/login', async () => {
     //     const sellerCredentials = { email: createdRecordObject.email, password: "123" }
-    //     console.log(`createdRecordObject._id`, createdRecordObject._id);
+    //     logInTestEnv(`createdRecordObject._id`, createdRecordObject._id);
     //     const update = await request(app)
     //         .put(`${baseUrl}/update?_id=${createdRecordObject._id}`)
     //         .set(requestHeaders)
     //         .send({ isActive: false });
 
-    //     console.log("update", update.body)
-    //     console.log(`token`, token);
+    //     logInTestEnv("update", update.body)
+    //     logInTestEnv(`token`, token);
     //    requestHeaders["Authorization"] = `Bearer ${token}`;
-    //    console.log(`requestHeaders`, requestHeaders.Authorization);
+    //    logInTestEnv(`requestHeaders`, requestHeaders.Authorization);
     //     const response = await request(app)
     //         .post(`${baseUrl}/login`)
     //         .set(requestHeaders)

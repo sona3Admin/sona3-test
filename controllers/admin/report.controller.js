@@ -9,6 +9,7 @@ const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
 const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper");
 const UAE_MAIN_CITIES = ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Umm Al Quwain', 'Ras Al Khaimah', 'Fujairah'];
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.countCustomers = async (req, res) => {
@@ -326,7 +327,7 @@ exports.calculateShippingInvoice = async (req, res) => {
                 firstFlightShippingInvoiceTotal += parseFloat(order.shopShippingFees);
             }
         });
-        console.log(`filterObject`, filterObject)
+        logInTestEnv(`filterObject`, filterObject)
 
         return res.status(200).json({
             success: true,
@@ -526,7 +527,7 @@ exports.listSellersWithOrderSummary = async (req, res) => {
         return res.status(sellers.code).json(sellers);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -604,7 +605,7 @@ exports.listSellersWithServicesRequestSummary = async (req, res) => {
         return res.status(sellers.code).json(sellers);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

@@ -7,6 +7,7 @@ const productRepo = require("../modules/Product/product.repo")
 const variationRepo = require("../modules/Variation/variation.repo")
 const shopRepo = require("../modules/Shop/shop.repo")
 const sellerRepo = require("../modules/Seller/seller.repo")
+const { logInTestEnv } = require("../helpers/logger.helper")
 
 const ADMIN_ROOM_ID = "Sona3AdminsRoom"
 const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
@@ -23,7 +24,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             socket.join(customersRoomId.toString())
             return sendAck({ success: true, code: 200 })
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -38,7 +39,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             socket.join(sellersRoomId.toString())
             return sendAck({ success: true, code: 200 })
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -46,7 +47,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
 
     socket.on("sendCreationNotification", async (dataObject, sendAck) => {
         try {
-            console.log("Sending notification");
+            logInTestEnv("Sending notification");
             let notificationResult = {}
 
             if (!sendAck) return socket.disconnect(true)
@@ -78,7 +79,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             return sendAck(resultObject)
 
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             if (!sendAck) return
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
@@ -87,7 +88,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
 
     socket.on("sendStatusUpdates", async (dataObject, sendAck) => {
         try {
-            console.log("Sending notification");
+            logInTestEnv("Sending notification");
 
             let notificationResult;
             let actionEnumValues = ["activate", "deactivate", "changeData", "updateStatus"]
@@ -139,7 +140,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             return sendAck(resultObject)
 
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -154,7 +155,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             sendAck({ success: true, code: 200 })
 
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     });
@@ -162,7 +163,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
 
     socket.on("sendServicePriceUpdate", async (dataObject, sendAck) => {
         try {
-            console.log("Sending notification");
+            logInTestEnv("Sending notification");
 
             if (!sendAck) return socket.disconnect(true)
             if (!dataObject.request) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
@@ -198,7 +199,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             return sendAck(resultObject)
 
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -206,7 +207,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
 
     socket.on("sendOutOfStockAlert", async (dataObject, sendAck) => {
         try {
-            console.log("Sending notification");
+            logInTestEnv("Sending notification");
 
             if (!sendAck) return socket.disconnect(true)
             if (!dataObject.variation) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
@@ -241,7 +242,7 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
             return sendAck(resultObject)
 
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -279,7 +280,7 @@ async function handleCreationByCustomer(sender, dataObject, localeMessages) {
             if (receiver.fcmToken) deviceTokens.push(receiver.fcmToken)
             receiversIds.push(receiver._id.toString())
         })
-        console.log("handleCreationByCustomer", dataObject.timestamp)
+        logInTestEnv("handleCreationByCustomer", dataObject.timestamp)
 
         let notificationObject = {
             customer: sender._id,
@@ -303,7 +304,7 @@ async function handleCreationByCustomer(sender, dataObject, localeMessages) {
         }
 
     } catch (err) {
-        console.log("err.message --", err.message);
+        logInTestEnv("err.message --", err.message);
         return { success: false, code: 500, error: localeMessages.internalServerError }
     }
 }
@@ -376,7 +377,7 @@ async function handleCreationBySeller(sender, dataObject, localeMessages) {
         }
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return { success: false, code: 500, error: localeMessages.internalServerError }
     }
 }
@@ -448,7 +449,7 @@ async function handleUpdateByAdmin(sender, dataObject, localeMessages, bodyMessa
         }
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return { success: false, code: 500, error: localeMessages.internalServerError }
     }
 }
@@ -517,7 +518,7 @@ async function handleUpdateBySeller(sender, dataObject, localeMessages, bodyMess
         }
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return { success: false, code: 500, error: localeMessages.internalServerError }
     }
 }
@@ -577,7 +578,7 @@ async function updateTransactionStatus(sender, dataObject, localeMessages) {
         return resultObject
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return { success: false, code: 500, error: localeMessages.internalServerError }
     }
 }

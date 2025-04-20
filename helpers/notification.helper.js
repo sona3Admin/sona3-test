@@ -1,4 +1,5 @@
 const firebase = require("../utils/firebaseConfig.util")
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.sendPushNotification = (notificationTitle, notificationBody, deviceTokensArray) => {
@@ -21,7 +22,7 @@ exports.sendPushNotification = (notificationTitle, notificationBody, deviceToken
 
         firebase.messaging().sendEachForMulticast(message)
             .then((response) => {
-                console.log('Successfully sent message:', response.successCount);
+                logInTestEnv('Successfully sent message:', response.successCount);
                 return {
                     success: true,
                     result: response,
@@ -29,7 +30,7 @@ exports.sendPushNotification = (notificationTitle, notificationBody, deviceToken
                 }
             })
             .catch((error) => {
-                console.log('Error sending message:', error);
+                logInTestEnv('Error sending message:', error);
                 return {
                     success: false,
                     code: 500,
@@ -38,7 +39,7 @@ exports.sendPushNotification = (notificationTitle, notificationBody, deviceToken
             });
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return {
             success: false,
             code: 500,

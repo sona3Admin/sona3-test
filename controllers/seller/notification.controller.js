@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const notificationRepo = require("../../modules/Notification/notification.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listNotifications = async (req, res) => {
@@ -18,7 +19,7 @@ exports.listNotifications = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -36,7 +37,7 @@ exports.getNotification = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

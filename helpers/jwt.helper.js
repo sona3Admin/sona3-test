@@ -1,5 +1,6 @@
 let jwt = require("jsonwebtoken")
 const i18n = require('i18n');
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.generateToken = (payloadObject, expiryTimeString) => {
@@ -8,7 +9,7 @@ exports.generateToken = (payloadObject, expiryTimeString) => {
         return jwt.sign(payloadObject, process.env.ACCESS_TOKEN_SECRET, { expiresIn })
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return err.message
     }
 
@@ -31,7 +32,7 @@ exports.verifyToken = (roleString) => {
                 if (tokenData?.tokenType && tokenData?.tokenType == "temp") {
                     const endPoint = req.originalUrl.split("?").shift().slice(7);
                     const allowedAPIs = ["/seller/identity", "/seller/verify", "/customer/verify", "/customer/otp"]
-                   
+
                     if (!allowedAPIs.includes(endPoint)) return res.status(403).json({ success: false, error: res.__("invalidToken"), code: 403 })
                 }
                 // if (tokenData.role == "admin") {
@@ -55,7 +56,7 @@ exports.verifyToken = (roleString) => {
             })
 
         } catch (err) {
-            console.log(`err.message`, err.message);
+            logInTestEnv(`err.message`, err.message);
             return res.status(500).json({ success: false, error: res.__("internalServerError"), code: 401 })
         }
     }
@@ -78,7 +79,7 @@ exports.verifyTokenInSocket = (token, roleString) => {
         return tokenData
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return { success: false, error: i18n.__("internalServerError"), code: 401 }
     }
 
@@ -87,20 +88,20 @@ exports.verifyTokenInSocket = (token, roleString) => {
 
 exports.verifyHookToken = (token) => {
     try {
-        console.log("token", token)
+        logInTestEnv("token", token)
         if (!token) return { success: false, error: i18n.__("unauthorized"), code: 401 }
 
         let tokenData = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, tokenData) => {
-            console.log("err", err)
+            logInTestEnv("err", err)
             if (err) return { success: false, error: i18n.__("invalidToken"), code: 403 }
             return { success: true, code: 200, result: tokenData };
         })
-        console.log("tokenData", tokenData)
+        logInTestEnv("tokenData", tokenData)
 
         return tokenData
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return { success: false, error: i18n.__("internalServerError"), code: 401 }
     }
 

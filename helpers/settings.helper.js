@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
+const { logInTestEnv } = require("./logger.helper");
 
 AWS.config.update({
     accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
@@ -31,12 +32,12 @@ exports.getSettings = async (key) => {
 exports.setSettings = async (newSettings) => {
     try {
         const currentSettings = await this.getSettings();
-        // console.log("currentSettings", currentSettings)
+        // logInTestEnv("currentSettings", currentSettings)
         for (const key in newSettings) {
             if (Object.prototype.hasOwnProperty.call(currentSettings, key)) {
-              currentSettings[key] = newSettings[key];
+                currentSettings[key] = newSettings[key];
             }
-          }
+        }
 
         const params = {
             Bucket: BUCKET_NAME,
@@ -53,7 +54,7 @@ exports.setSettings = async (newSettings) => {
             success: true
         };
     } catch (err) {
-        console.log('Error setting settings in S3:', err);
+        logInTestEnv('Error setting settings in S3:', err);
         return {
             code: 500,
             error: err.message,
@@ -72,7 +73,7 @@ exports.listSettings = async () => {
             success: true
         };
     } catch (err) {
-        console.log('Error reading settings from S3:', err);
+        logInTestEnv('Error reading settings from S3:', err);
         return {
             code: 500,
             error: err.message,

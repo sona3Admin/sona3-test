@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const ifastHelper = require("../utils/ifastShipping.util")
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 exports.getIfastToken = async (req, res) => {
@@ -8,7 +9,7 @@ exports.getIfastToken = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -25,7 +26,7 @@ exports.createNewBulkOrder = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -42,7 +43,7 @@ exports.createNewReverseOrder = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -59,7 +60,7 @@ exports.getOrderShipmentLastStatus = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -76,7 +77,7 @@ exports.cancelOrderShipment = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -93,7 +94,7 @@ exports.listCities = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -110,7 +111,7 @@ exports.printLabel = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

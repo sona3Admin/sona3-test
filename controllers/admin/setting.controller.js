@@ -1,6 +1,7 @@
 const settingsRepo = require("../../helpers/settings.helper")
 const tiersRepo = require("../../helpers/tiers.helper")
 const i18n = require('i18n');
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listSettings = async (req, res) => {
@@ -9,7 +10,7 @@ exports.listSettings = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -26,7 +27,7 @@ exports.updateSetting = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -42,7 +43,7 @@ exports.listTiers = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

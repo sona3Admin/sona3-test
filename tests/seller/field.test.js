@@ -9,6 +9,7 @@ let requestHeaders = {
     'accept-language': 'en',
     "Authorization": `Bearer ${token}`
 };
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 let createdRecordObject;
 let createdSellerObject;
@@ -72,7 +73,7 @@ describe('=====>Testing Field Module Endpoints <=====', () => {
             .set(requestHeaders)
             .send(fieldData);
 
-        console.log(`response.body`, response.body);
+        logInTestEnv(`response.body`, response.body);
         expect(response.status).toBe(201);
         createdRecordObject = response.body.result
 

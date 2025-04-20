@@ -1,6 +1,7 @@
 const excel = require('exceljs');
 const s3StorageHelper = require("../utils/s3FileStorage.util")
 const batchRepo = require("../modules/Batch/batch.repo");
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.exportExcelSheetWithProducts = async (arrayOfProducts) => {
@@ -44,7 +45,7 @@ exports.exportExcelSheetWithProducts = async (arrayOfProducts) => {
                 })
 
                 const fileContent = await workbook.xlsx.writeBuffer();
-                console.log('Excel file generated successfully.');
+                logInTestEnv('Excel file generated successfully.');
                 let file = await s3StorageHelper.uploadExceltoS3(fileContent, `${shopObject.nameEn}-products-${Date.now()}`);
                 batchRepo.create({ filesToDelete: [file.result.key] })
                 resolve({
@@ -53,7 +54,7 @@ exports.exportExcelSheetWithProducts = async (arrayOfProducts) => {
                     result: file.result
                 });
             } catch (err) {
-                console.log(`err.message`, err.message);
+                logInTestEnv(`err.message`, err.message);
                 reject({
                     success: false,
                     code: 500,

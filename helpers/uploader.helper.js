@@ -1,5 +1,6 @@
 let multer = require('multer');
 const i18n = require('i18n');
+const { logInTestEnv } = require("./logger.helper");
 
 exports.uploadImagesToMemory = () => {
     try {
@@ -32,6 +33,6 @@ exports.uploadImagesToMemory = () => {
         });
         return upload;
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
     }
 }

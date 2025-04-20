@@ -9,6 +9,7 @@ let requestHeaders = {
     'accept-language': 'en',
     "Authorization": `Bearer ${token}`
 };
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 let createdRecordObject;
 let createdTagObject;
@@ -68,8 +69,8 @@ describe('=====>Testing Tag Module Endpoints <=====', () => {
             .post(`${baseUrl}/tags/create`)
             .set(requestHeaders)
             .send(tagData);
-        console.log(`response`, response.body);
-        console.log(`requestHeaders`, requestHeaders.Authorization);
+        logInTestEnv(`response`, response.body);
+        logInTestEnv(`requestHeaders`, requestHeaders.Authorization);
         expect(response.status).toBe(201);
         createdRecordObject = response.body.result
 

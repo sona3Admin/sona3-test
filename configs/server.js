@@ -2,6 +2,7 @@ const app = require("./app");
 const http = require('http');
 const socketIO = require('socket.io');
 const socketHandler = require("./socket")
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 const server = http.createServer(app);
@@ -16,7 +17,7 @@ socketHandler(io)
 
 
 server.listen(process.env.PORT || 4000, process.env.LOCAL_HOST || "0.0.0.0", () => {
-    console.log(`Server is up and running on port ${process.env.PORT}!`)
+    logInTestEnv(`Server is up and running on port ${process.env.PORT}!`)
 })
 
 

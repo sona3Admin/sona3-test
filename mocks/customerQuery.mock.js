@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 
 const serviceModel = require("../modules/Service/service.model");
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 
@@ -8,11 +9,11 @@ exports.executeQuery = async (req, res) => {
     try {
         let allServices = await serviceModel.find({ isDeleted: false });
         for (const service of allServices) {
-            if(service?.orderCount == undefined){
-                console.log(`service has no order count`, service)
+            if (service?.orderCount == undefined) {
+                logInTestEnv(`service has no order count`, service)
                 await serviceModel.updateOne({ _id: service._id }, { orderCount: 0 })
             }
-            console.log(`service`, service?.orderCount, service?._id)
+            logInTestEnv(`service`, service?.orderCount, service?._id)
         }
 
         return res.status(200).json({

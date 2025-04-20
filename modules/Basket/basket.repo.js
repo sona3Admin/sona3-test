@@ -6,6 +6,7 @@ const i18n = require('i18n');
 const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromSubCartsArray, decreaseItemQuantity,
     addNewSubCart, updateExistingSubCart, calculateCartTotal } = require("../../helpers/cart.helper")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.find = async (filterObject) => {
@@ -24,7 +25,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -65,7 +66,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -110,7 +111,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -133,7 +134,7 @@ exports.count = async (filterObject, sortObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -146,7 +147,7 @@ exports.count = async (filterObject, sortObject) => {
 
 exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
     try {
-        console.log("itemId", itemId);
+        logInTestEnv("itemId", itemId);
         let variationResultObject = await variationRepo.get({ _id: itemId });
         if (!variationResultObject?.success) return { success: false, code: 404, error: i18n.__("notFound") }
         if (!variationResultObject.result.product.isFood) return { success: false, code: 404, error: i18n.__("cartFoodOnly") }
@@ -156,7 +157,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         variationResultObject.result.product = variationResultObject.result.product._id
 
         let itemObject = variationResultObject.result;
-        console.log("itemObject", itemObject._id);
+        logInTestEnv("itemObject", itemObject._id);
 
         let currentStock = parseInt(itemObject.stock)
         if (!isStockAvailable(currentStock, quantityToAdd)) return { success: false, code: 409, error: i18n.__("outOfStock") }
@@ -187,7 +188,7 @@ exports.addItemToList = async (customerId, itemId, quantityToAdd) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -202,7 +203,7 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         let cartResultObject = await this.get({ customer: customerId });
         if (!cartResultObject.success) return cartResultObject;
         let cartObject = cartResultObject.result;
-        console.log(cartObject);
+        logInTestEnv(cartObject);
         let isShopInSubCarts = isIdInArray(cartObject.subCarts, "shop", shopId)
         if (!isShopInSubCarts || !isShopInSubCarts.success) return { success: false, code: 404, error: i18n.__("notFound") };
         let shopCartIndex = parseInt(isShopInSubCarts.result)
@@ -238,7 +239,7 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -264,7 +265,7 @@ exports.updateWithFilter = async (filterObject, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -291,7 +292,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -333,7 +334,7 @@ exports.updateManyCarts = async (shopId, itemId) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -360,7 +361,7 @@ exports.remove = async (_id) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -395,7 +396,7 @@ exports.reset = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -423,7 +424,7 @@ exports.flush = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -448,15 +449,15 @@ exports.useCashback = async (customerId, shopId, cashbackToUse) => {
         let shopCartIndex = parseInt(isShopInSubCarts.result)
         let shopCartObject = cartResultObject.result.subCarts[shopCartIndex]
 
-        if(!cartResultObject.result.usedCashback) cartResultObject.result.usedCashback = 0
+        if (!cartResultObject.result.usedCashback) cartResultObject.result.usedCashback = 0
         shopCartObject.usedCashback += parseFloat(cashbackToUse)
         shopCartObject.shopTotal -= parseFloat(cashbackToUse)
         cartResultObject.result.cartTotal -= parseFloat(cashbackToUse)
         cartResultObject.result.usedCashback += parseFloat(cashbackToUse)
 
-        if(shopCartObject.shopTotal < 0) shopCartObject.shopTotal = 0 
-        if(cartResultObject.result.cartTotal < 0) cartResultObject.result.cartTotal = 0 
-        
+        if (shopCartObject.shopTotal < 0) shopCartObject.shopTotal = 0
+        if (cartResultObject.result.cartTotal < 0) cartResultObject.result.cartTotal = 0
+
         let updatedCartResult = await this.updateDirectly(cartResultObject.result._id, {
             subCarts: cartResultObject.result.subCarts,
             cartTotal: cartResultObject.result.cartTotal,
@@ -467,7 +468,7 @@ exports.useCashback = async (customerId, shopId, cashbackToUse) => {
         return updatedCartResult
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -492,7 +493,7 @@ exports.redeemCashback = async (customerId, cashbackToRedeem) => {
         return updatedCartResult
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

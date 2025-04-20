@@ -1,3 +1,4 @@
+const { logInTestEnv } = require("./logger.helper");
 
 exports.generateDummyDataFromSchema = (schema) => {
     try {
@@ -45,7 +46,7 @@ exports.generateDummyDataFromSchema = (schema) => {
 
         return data;
     } catch (err) {
-        console.log("err.message", err.message)
+        logInTestEnv("err.message", err.message)
         return err.message
     }
 }

@@ -4,6 +4,7 @@ const sellerRepo = require("../../modules/Seller/seller.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
 const emailHelper = require("../../helpers/email.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createShop = async (req, res) => {
@@ -12,7 +13,7 @@ exports.createShop = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -30,7 +31,7 @@ exports.getShop = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -48,7 +49,7 @@ exports.listShops = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -65,7 +66,7 @@ exports.countShops = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -86,7 +87,7 @@ exports.updateShop = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -103,7 +104,7 @@ exports.updateShopBlockSate = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -118,7 +119,7 @@ exports.removeShop = async (req, res) => {
         const operationResultObject = await shopRepo.remove({ _id: req.query._id });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -147,7 +148,7 @@ exports.uploadImage = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         res.status(500).json({
             success: false,
             code: 500,
@@ -166,7 +167,7 @@ exports.deleteImage = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -203,7 +204,7 @@ exports.uploadCovers = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -270,7 +271,7 @@ exports.uploadBanners = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

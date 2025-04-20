@@ -8,11 +8,11 @@ const { handleOrderCreation } = require("../../../helpers/order.helper")
 const firstFlightShipperHelper = require("../../../utils/firstFlightSipping.util")
 const stripeHelper = require("../../../utils/stripePayment.util");
 const { sendOrderPurchaseConfirmationEmailToCustomer, sendOrderPurchaseConfirmationEmailToSeller } = require('../../../helpers/email.helper');
-
+const { logInTestEnv } = require("../../../helpers/logger.helper");
 
 exports.createOrder = async (req, res) => {
     try {
-        console.log("req.body.paymentMethod", req.body.paymentMethod)
+        logInTestEnv("req.body.paymentMethod", req.body.paymentMethod)
         if (req.body?.paymentMethod == "visa") return await this.createOrderPaymentLink(req, res)
 
         let customerOrderObject = req.body
@@ -28,7 +28,7 @@ exports.createOrder = async (req, res) => {
         let shippingData = await firstFlightShipperHelper.createNewBulkOrder(customerOrderObject, false)
         if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, operationResultObject.result, customerOrderObject.shippingCost)
-        console.log("Saved Shipment Data")
+        logInTestEnv("Saved Shipment Data")
         if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
 
         cartRepo.flush({ customer: req.body.customer })
@@ -43,7 +43,7 @@ exports.createOrder = async (req, res) => {
 
     }
     catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -68,7 +68,7 @@ exports.createOrderPaymentLink = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

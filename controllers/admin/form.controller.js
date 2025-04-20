@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const formRepo = require("../../modules/Form/form.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createForm = async (req, res) => {
@@ -8,7 +9,7 @@ exports.createForm = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -27,7 +28,7 @@ exports.listForms = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -44,7 +45,7 @@ exports.getForm = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -60,7 +61,7 @@ exports.updateForm = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -75,7 +76,7 @@ exports.removeForm = async (req, res) => {
         const operationResultObject = await formRepo.remove(req.query._id);
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

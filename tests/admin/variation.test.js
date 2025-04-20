@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
+
 let baseUrl = '/api/v1/admin';
 let token
 let requestHeaders = {
@@ -195,7 +197,7 @@ describe('=====>Testing Variation Module Endpoints <=====', () => {
             .set(requestHeaders)
             .send({ isActive: true });
 
-        console.log(`response.body`, response.body);
+        logInTestEnv(`response.body`, response.body);
         expect(response.status).toBe(200);
     });
 

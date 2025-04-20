@@ -1,5 +1,6 @@
 const { sendEmail } = require("../utils/emailSender.util");
 const { setEmailHeader, setEmailLogo, setEmailFooter, setSellerPlaceholder, setShopPlaceholder } = require("../ui/email.ui");
+const { logInTestEnv } = require("./logger.helper");
 
 
 
@@ -54,7 +55,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
 
     const type = emailType === "resetPassword" ? "resetPassword" : "verifyEmail";
     const selectedContent = content[lang][type];
-    
+
     const htmlContent = `
       ${setEmailHeader(lang, selectedContent.subject)}
       <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
@@ -130,7 +131,7 @@ exports.sendEmailVerificationCode = async (receiverObject, lang, emailType) => {
     );
 
     if (emailResult.success) {
-      console.log("Email Sent Successfully...");
+      logInTestEnv("Email Sent Successfully...");
       return {
         success: true,
         code: 200,
@@ -225,7 +226,7 @@ exports.sendSellerVerificationConfirmation = async (receiverObject, lang) => {
     );
 
     if (emailResult.success) {
-      console.log("Verification confirmation email sent successfully...");
+      logInTestEnv("Verification confirmation email sent successfully...");
       return {
         success: true,
         code: 200,
@@ -249,7 +250,7 @@ exports.sendShopVerificationConfirmation = async (receiverObject, lang) => {
   try {
     lang = !lang || lang === "en" ? "en" : "ar";
     const shopImage = receiverObject?.image?.Location || setShopPlaceholder();
-    console.log("shopImage", shopImage)
+    logInTestEnv("shopImage", shopImage)
     const content = {
       en: {
         subject: "Your Sona3 Shop is Now Verified",
@@ -318,7 +319,7 @@ exports.sendShopVerificationConfirmation = async (receiverObject, lang) => {
     );
 
     if (emailResult.success) {
-      console.log("Verification confirmation email sent successfully...");
+      logInTestEnv("Verification confirmation email sent successfully...");
       return {
         success: true,
         code: 200,
@@ -426,7 +427,7 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
       ${selectedContent.bestRegards}
       ${selectedContent.team}
     `;
-    console.log("serviceRequest.customer.email", serviceRequest.customer.email)
+    logInTestEnv("serviceRequest.customer.email", serviceRequest.customer.email)
     const emailResult = await sendEmail(
       serviceRequest.customer.email,
       selectedContent.subject,
@@ -653,7 +654,7 @@ exports.sendServiceRequestCreationEmailToSeller = async (serviceRequest, lang) =
       ${selectedContent.team}
     `;
 
-    console.log("serviceRequest.seller.email", serviceRequest.seller.email);
+    logInTestEnv("serviceRequest.seller.email", serviceRequest.seller.email);
     const emailResult = await sendEmail(
       serviceRequest.seller.email,
       selectedContent.subject,

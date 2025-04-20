@@ -13,6 +13,7 @@ const connectToDatabase = require("./database").connectToDatabase;
 const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs;
 const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 i18n.configure({
   locales: ['en', 'ar'],
@@ -56,14 +57,14 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  console.log("error from handler", err.message)
+  logInTestEnv("error from handler", err.message)
   res.status(err.status || 500).json({ success: false, code: 500, error: "Internal Server Error!" });
 });
 
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at promise ' + promise + ' reason ', reason);
-  console.log('Server is still running...\n');
+  logInTestEnv('Server is still running...\n');
 });
 
 

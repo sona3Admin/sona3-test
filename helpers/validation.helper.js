@@ -1,4 +1,6 @@
 const i18n = require('i18n');
+const { logInTestEnv } = require("./logger.helper");
+
 
 module.exports = (schema) => {
     return (req, res, next) => {
@@ -14,7 +16,7 @@ module.exports = (schema) => {
             return next();
         }
         catch (err) {
-            console.log(`err.message`, err);
+            logInTestEnv(`err.message`, err);
             return res.status(400).json({ success: false, error: req.__("badRequest"), code: 400 });
         }
 

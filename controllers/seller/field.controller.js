@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const fieldRepo = require("../../modules/Field/field.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createField = async (req, res) => {
@@ -8,7 +9,7 @@ exports.createField = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -27,7 +28,7 @@ exports.listFields = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -44,7 +45,7 @@ exports.getField = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

@@ -5,7 +5,7 @@ const sellerRepo = require("../modules/Seller/seller.repo");
 const shopRepo = require("../modules/Shop/shop.repo");
 const serviceRepo = require("../modules/Service/service.repo");
 const productRepo = require("../modules/Product/product.repo");
-
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 let rule = new scheduler.RecurrenceRule();
 rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6]; // every day
@@ -34,16 +34,16 @@ exports.executeBatchJobs = async () => {
   return new Promise((resolve, reject) => {
     scheduler.scheduleJob(rule, async () => {
       try {
-        console.log("==> Started Batch Jobs at ", dateFormat());
+        logInTestEnv("==> Started Batch Jobs at ", dateFormat());
         await this.deleteAllFiles();
         await batchRepo.removeMany({});
         await this.checkExpiredSubscriptionsOfSellers();
         await this.generateDailyReports();
         await this.checkForTrustedShops()
-        console.log("==> Finished Executing Batch Jobs...")
+        logInTestEnv("==> Finished Executing Batch Jobs...")
         resolve();
       } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         reject(err);
       }
     });
@@ -53,23 +53,23 @@ exports.executeBatchJobs = async () => {
 
 exports.deleteAllFiles = async () => {
   try {
-    console.log("==> Deleting Files...");
+    logInTestEnv("==> Deleting Files...");
     const operationResultObject = await batchRepo.list({ operationName: "deleteFiles" }, {}, {}, 1, 0);
     const filesBatchesArray = operationResultObject.result;
 
     for (const batchFilesArray of filesBatchesArray) {
       await s3StorageHelper.deleteFilesFromS3(batchFilesArray.filesToDelete);
     }
-    console.log("==> Deleted All Files...");
+    logInTestEnv("==> Deleted All Files...");
   } catch (err) {
-    console.log("==> Deleting Files...", err.message);
+    logInTestEnv("==> Deleting Files...", err.message);
   }
 };
 
 
 exports.checkExpiredSubscriptionsOfSellers = async () => {
   try {
-    console.log("==> Checking for expired subscriptions...");
+    logInTestEnv("==> Checking for expired subscriptions...");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -81,7 +81,7 @@ exports.checkExpiredSubscriptionsOfSellers = async () => {
     });
 
     for (const seller of expiredSellers.result) {
-      console.log(`==> Processing expired subscription for seller: ${seller._id}`);
+      logInTestEnv(`==> Processing expired subscription for seller: ${seller._id}`);
 
       await sellerRepo.updateDirectly(seller._id.toString(), { isSubscribed: false });
       await shopRepo.updateMany({ seller: seller._id.toString() }, { isActive: false });
@@ -89,10 +89,10 @@ exports.checkExpiredSubscriptionsOfSellers = async () => {
       if (seller.type === "product") await productRepo.updateMany({ seller: seller._id.toString() }, { isActive: false });
       else if (seller.type === "service") await serviceRepo.updateMany({ seller: seller._id.toString() }, { isActive: false });
 
-      console.log(`==> Subscription expired for seller: ${seller._id}`);
+      logInTestEnv(`==> Subscription expired for seller: ${seller._id}`);
     }
 
-    console.log("==> Finished processing expired subscriptions...");
+    logInTestEnv("==> Finished processing expired subscriptions...");
   } catch (err) {
     console.error("==> Error processing expired subscriptions:", err.message);
   }
@@ -102,10 +102,10 @@ exports.checkExpiredSubscriptionsOfSellers = async () => {
 
 exports.checkForTrustedShops = async () => {
   try {
-    console.log("==> Checking for trusted shops...");
+    logInTestEnv("==> Checking for trusted shops...");
     await shopRepo.updateMany({ rating: { $gte: 4, $lte: 5 }, orderCount: { $gte: 100 } }, { isTrusted: true })
     await shopRepo.updateMany({ rating: { $lte: 4 } }, { isTrusted: false })
-    console.log("==> Finished checking trusted shops...");
+    logInTestEnv("==> Finished checking trusted shops...");
 
   } catch (err) {
     console.error("==> Error Generating Daily Reports:", err.message);

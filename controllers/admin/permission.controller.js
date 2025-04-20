@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const { permissions } = require("../../helpers/permissions.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listPermissions = (req, res) => {
@@ -10,7 +11,7 @@ exports.listPermissions = (req, res) => {
         }
         return res.status(200).json({ success: true, code: 200, result: convertedPermissions });
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

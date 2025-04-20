@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const notificationRepo = require("../../modules/Notification/notification.repo");
 const notificationHelper = require("../../helpers/notification.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 exports.createNotification = async (req, res) => {
     try {
@@ -9,7 +10,7 @@ exports.createNotification = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -25,13 +26,13 @@ exports.listNotifications = async (req, res) => {
         let filterObject = req.query;
         const pageNumber = req.query.page || 1, limitNumber = req.query.limit || 10
         if (filterObject.seenBy == "false") filterObject.seenBy = { $nin: [req.tokenData._id] }
-        
+
         const operationResultObject = await notificationRepo.list(filterObject, { receivers: 0 }, { timestamp: -1 }, pageNumber, limitNumber);
         operationResultObject.result = notificationRepo.isSeenByUser(operationResultObject.result, req.tokenData._id)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -49,7 +50,7 @@ exports.getNotification = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -66,7 +67,7 @@ exports.updateNotification = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -81,7 +82,7 @@ exports.removeNotification = async (req, res) => {
         const operationResultObject = await notificationRepo.remove(req.query._id);
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

@@ -9,6 +9,7 @@ const orderRepo = require("../../modules/Order/order.repo");
 const requestRepo = require("../../modules/Request/request.repo");
 const paymentRepo = require("../../modules/Payment/payment.repo");
 const { countObjectsByArrayOfFilters } = require("../../helpers/report.helper");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.countCustomers = async (req, res) => {
@@ -28,7 +29,7 @@ exports.countCustomers = async (req, res) => {
         return res.status(countingResult.code).json(countingResult);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -55,7 +56,7 @@ exports.countSellers = async (req, res) => {
         return res.status(countingResult.code).json(countingResult);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -104,7 +105,7 @@ exports.countShops = async (req, res) => {
         return res.status(countingResult.code).json(countingResult);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -140,7 +141,7 @@ exports.countItems = async (req, res) => {
         return res.status(countingResult.code).json(countingResult);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -266,7 +267,7 @@ exports.calculateRevenue = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -325,11 +326,11 @@ exports.countOrders = async (req, res) => {
 
         if (!startDate || !endDate) {
             // const sortedOrders = [...allOrderDocuments.result, ...allServiceRequests.result];
-            console.log("allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate", allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate)
+            logInTestEnv("allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate", allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate)
             startDate = moment(allOrderDocuments.result[allOrderDocuments.result.length - 1].issueDate).utc().startOf('day');
             endDate = moment(allOrderDocuments.result[0].issueDate).utc().endOf('day');
-            console.log("startDate", startDate)
-            console.log("endDate", endDate)
+            logInTestEnv("startDate", startDate)
+            logInTestEnv("endDate", endDate)
         }
 
         const daysDiff = endDate.diff(startDate, 'days');
@@ -395,7 +396,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
         const orderSelectionObject = {
             orderType: 1, paymentMethod: 1, cartTotal: 1, cartOriginalTotal: 1,
             shippingFeesTotal: 1, taxesTotal: 1, orderTotal: 1, issueDate: 1, _id: 1
-        };        
+        };
         let allOrderDocuments = await orderRepo.aggregate(filterObject, orderSelectionObject);
         if (!allOrderDocuments.success) allOrderDocuments = { success: true, code: 200, result: [] };
 
@@ -550,7 +551,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -767,7 +768,7 @@ exports.getOrdersStatsByMonth = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -851,7 +852,7 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -973,7 +974,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

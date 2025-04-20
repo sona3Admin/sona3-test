@@ -7,6 +7,7 @@ const { prepareQueryObjects } = require("../../helpers/query.helper")
 const shopRepo = require('../Shop/shop.repo');
 const productRepo = require('../Product/product.repo');
 const serviceRepo = require('../Service/service.repo');
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.find = async (filterObject) => {
@@ -25,7 +26,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -54,7 +55,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -91,7 +92,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -145,7 +146,7 @@ exports.listAndPopulateShop = async (filterObject, selectionObject, sortObject, 
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -169,7 +170,7 @@ exports.count = async (filterObject, sortObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -201,7 +202,7 @@ exports.create = async (formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -254,7 +255,7 @@ exports.update = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -281,7 +282,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -303,8 +304,8 @@ exports.updateManyById = async (arrayOfIds, formObject) => {
             code: 200
         };
     } catch (err) {
-        console.log(`Error stack trace:`, err.stack); // Provide detailed error
-        console.log(`err.message`, err.message); // Detailed error message
+        logInTestEnv(`Error stack trace:`, err.stack); // Provide detailed error
+        logInTestEnv(`err.message`, err.message); // Detailed error message
         return {
             success: false,
             code: 500,
@@ -339,7 +340,7 @@ exports.remove = async (_id) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -375,7 +376,7 @@ exports.updateBlockState = async (_id, newState) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -417,7 +418,7 @@ exports.comparePassword = async (emailOrUsernameString, passwordString) => {
 
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -455,7 +456,7 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

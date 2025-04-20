@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const productRepo = require("../../modules/Product/product.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listProducts = async (req, res) => {
@@ -23,7 +24,7 @@ exports.listProducts = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -50,7 +51,7 @@ exports.getProduct = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

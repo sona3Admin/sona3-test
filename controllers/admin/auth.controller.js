@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const adminRepo = require("../../modules/Admin/admin.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.login = async (req, res) => {
@@ -26,7 +27,7 @@ exports.login = async (req, res) => {
         return res.status(operationResultObject.code).json({ token, ...operationResultObject })
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

@@ -1,5 +1,6 @@
 const orderRepo = require("../modules/Order/order.repo")
 const { findObjectInArray } = require("../helpers/cart.helper")
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 exports.updateOrderShipmentStatus = async (req, res) => {
@@ -28,7 +29,7 @@ exports.updateOrderShipmentStatus = async (req, res) => {
         let subOrders
         orderObject.result.subOrders[subOrderObject.index].shippingStatus = req.body.Status
         orderObject.result.subOrders[subOrderObject.index].status = handleStatus(req.body.Status, "order") || subOrderObject.result.status
-        console.log("order status", orderObject.result.subOrders[subOrderObject.index].status)
+        logInTestEnv("order status", orderObject.result.subOrders[subOrderObject.index].status)
         orderRepo.updateDirectly(orderObject.result._id.toString(), { subOrders })
         return res.status(200).json({
             status: true,
@@ -39,7 +40,7 @@ exports.updateOrderShipmentStatus = async (req, res) => {
         })
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             status: false
         });

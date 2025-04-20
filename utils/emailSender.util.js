@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -13,7 +14,7 @@ const transporter = nodemailer.createTransport({
 exports.sendEmail = async (receivers, subject, text, html, lang, attachments) => {
   try {
     const recipientList = Array.isArray(receivers) ? receivers.join(', ') : receivers;
-    console.log("recipientList", recipientList);
+    logInTestEnv("recipientList", recipientList);
     const info = await transporter.sendMail({
       from: {
         address: 'support@sona3.ae',
@@ -26,10 +27,10 @@ exports.sendEmail = async (receivers, subject, text, html, lang, attachments) =>
       attachments: attachments
     });
 
-    console.log('Email sent: %s', info.messageId);
+    logInTestEnv('Email sent: %s', info.messageId);
     return { success: true, code: 201 };
   } catch (error) {
-    console.log('Error sending email:', error);
+    logInTestEnv('Error sending email:', error);
     return { error: error.message, success: false, code: 500 };
   }
 };

@@ -5,6 +5,7 @@ const shopRepo = require("../Shop/shop.repo")
 const variationRepo = require("../Variation/variation.repo")
 const { getTiers } = require("../../helpers/tiers.helper")
 const mongoose = require("mongoose")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 exports.find = async (filterObject) => {
     try {
@@ -22,7 +23,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -59,7 +60,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -103,7 +104,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -126,7 +127,7 @@ exports.count = async (filterObject, sortObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -182,7 +183,7 @@ exports.create = async (formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -196,9 +197,9 @@ exports.create = async (formObject) => {
 exports.update = async (filterObject, formObject) => {
     try {
         const existingObject = await this.find(filterObject);
-        const isSustainable = formObject.isSustainable!==undefined ? formObject.isSustainable : existingObject.result.isSustainable
-        const hasLowerEnvironmentalImpact = formObject.hasLowerEnvironmentalImpact!==undefined ? formObject.hasLowerEnvironmentalImpact : existingObject.result.hasLowerEnvironmentalImpact
-        const isReusable = formObject.isReusable!==undefined ? formObject.isReusable : existingObject.result.isReusable
+        const isSustainable = formObject.isSustainable !== undefined ? formObject.isSustainable : existingObject.result.isSustainable
+        const hasLowerEnvironmentalImpact = formObject.hasLowerEnvironmentalImpact !== undefined ? formObject.hasLowerEnvironmentalImpact : existingObject.result.hasLowerEnvironmentalImpact
+        const isReusable = formObject.isReusable !== undefined ? formObject.isReusable : existingObject.result.isReusable
         if (isSustainable === true) {
             if (!hasLowerEnvironmentalImpact || !isReusable) {
                 return {
@@ -236,7 +237,7 @@ exports.update = async (filterObject, formObject) => {
             result: resultObject
         };
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -262,7 +263,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -283,7 +284,7 @@ exports.updateMany = async (filterObject, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -304,7 +305,7 @@ exports.updateManyById = async (arrayOfIds, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -329,7 +330,7 @@ exports.updateBlockState = async (filterObject, newState) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -354,7 +355,7 @@ exports.removeMany = async (filterObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -389,7 +390,7 @@ exports.remove = async (filterObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

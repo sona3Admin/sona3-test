@@ -7,6 +7,7 @@ const sellerRepo = require('../../modules/Seller/seller.repo');
 const { groupByCategories } = require('../admin/report.controller');
 const moment = require('moment');
 const { getTiers } = require("../../helpers/tiers.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.countProducts = async (req, res) => {
@@ -245,7 +246,7 @@ exports.getOrdersStatsByDay = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -463,7 +464,7 @@ exports.getOrdersStatsByMonth = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -547,7 +548,7 @@ exports.getServiceRequestsStatsByDay = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -669,7 +670,7 @@ exports.getServiceRequestStatsByMonth = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -834,7 +835,7 @@ exports.financesOrders = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -902,9 +903,9 @@ exports.financesServicesRequest = async (req, res) => {
         filterObject.dateTo = endDate.toISOString();
         filterObject.dateField = "issueDate";
 
-        const serviceRequestSelectionObject = { status: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1 , serviceTotal: 1};
+        const serviceRequestSelectionObject = { status: 1, orderTotal: 1, issueDate: 1, seller: 1, shop: 1, serviceTotal: 1 };
 
-        let allServiceRequests = await requestRepo.list({ ...filterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);        
+        let allServiceRequests = await requestRepo.list({ ...filterObject, status: orderStatus }, serviceRequestSelectionObject, { issueDate: -1 }, pageNumber, limitNumber);
         if (!allServiceRequests.success) allServiceRequests = { success: true, code: 200, result: [] };
 
         const sellerObject = await sellerRepo.get({ _id: req.tokenData._id }, {
@@ -968,7 +969,7 @@ exports.financesServicesRequest = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const serviceRepo = require("../../modules/Service/service.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createService = async (req, res) => {
@@ -10,7 +11,7 @@ exports.createService = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -31,7 +32,7 @@ exports.listServices = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -49,7 +50,7 @@ exports.getService = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -66,7 +67,7 @@ exports.updateService = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -81,7 +82,7 @@ exports.removeService = async (req, res) => {
         const operationResultObject = await serviceRepo.remove({ _id: req.query._id, seller: req.query.seller });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -93,7 +94,7 @@ exports.removeService = async (req, res) => {
 
 exports.uploadImages = async (req, res) => {
     try {
-        console.log(`req.files`, req.files);
+        logInTestEnv(`req.files`, req.files);
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotReceived") });
         const existingObject = await serviceRepo.find({ _id: req.query._id, seller: req.query.seller })
         let imagesArray = (existingObject.success && existingObject.result.images) ? (existingObject.result.images) : 0
@@ -105,7 +106,7 @@ exports.uploadImages = async (req, res) => {
         });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("services", req.files)
-        console.log(`operationResultArray`, operationResultArray);
+        logInTestEnv(`operationResultArray`, operationResultArray);
         if (!operationResultArray.success) return res.status(500).json({
             success: false,
             code: 500,
@@ -119,7 +120,7 @@ exports.uploadImages = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

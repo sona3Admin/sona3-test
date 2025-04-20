@@ -1,6 +1,7 @@
 let allowedMethods = ["GET", "PUT", "PATCH", "POST", "DELETE"];
 const i18n = require('i18n')
 const path = require('path');
+const { logInTestEnv } = require("./logger.helper");
 
 const cors = async (req, res, next) => {
     try {
@@ -25,11 +26,11 @@ const cors = async (req, res, next) => {
 
         if (req.url.includes("api")) return next()
         // if (req.url.includes("api") && req.headers["x-app-token"] === "Sona3-Team") return next()
-        console.log("No allowed")
+        logInTestEnv("No allowed")
         return res.status(500).json({ success: false, error: res.__('internalServerError'), code: 500 });
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({ success: false, error: res.__('internalServerError'), code: 500 });
     }
 

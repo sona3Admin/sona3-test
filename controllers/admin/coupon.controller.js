@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const couponRepo = require("../../modules/Coupon/coupon.repo");
 const uniqueCode = require("short-unique-id");
 const couponCode = new uniqueCode()
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createCoupon = async (req, res) => {
@@ -11,7 +12,7 @@ exports.createCoupon = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -30,7 +31,7 @@ exports.listCoupons = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -47,7 +48,7 @@ exports.getCoupon = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -63,7 +64,7 @@ exports.updateCoupon = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -78,7 +79,7 @@ exports.removeCoupon = async (req, res) => {
         const operationResultObject = await couponRepo.remove(req.query._id);
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

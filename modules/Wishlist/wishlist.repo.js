@@ -2,6 +2,7 @@ let wishlistModel = require("./wishlist.model");
 let variationRepo = require("../Variation/variation.repo")
 const i18n = require('i18n');
 const mongoose = require("mongoose");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.find = async (filterObject) => {
@@ -20,7 +21,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -58,7 +59,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -101,7 +102,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -135,7 +136,7 @@ exports.addItemToList = async (customerId, itemId) => {
         }
     }
     catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -162,7 +163,7 @@ exports.removeItemFromList = async (customerId, itemId) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -190,7 +191,7 @@ exports.isItemInWishlist = async (arrayOfItemIds, itemId) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -224,7 +225,7 @@ exports.update = async (_id, formObject) => {
             result: resultObject
         };
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -250,7 +251,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -276,7 +277,7 @@ exports.updateMany = async (filterObject, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -305,7 +306,7 @@ exports.remove = async (_id) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

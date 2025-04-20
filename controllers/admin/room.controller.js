@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const roomRepo = require("../../modules/Room/room.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listRooms = async (req, res) => {
@@ -11,7 +12,7 @@ exports.listRooms = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -28,7 +29,7 @@ exports.getRoom = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -44,7 +45,7 @@ exports.updateRoom = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -59,7 +60,7 @@ exports.removeRoom = async (req, res) => {
         const operationResultObject = await roomRepo.remove(req.query._id);
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -74,7 +75,7 @@ exports.uploadFile = async (req, res) => {
         if (!req.files || req.files.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("fileNotRecieved") });
 
         const existingObject = await roomRepo.find({ _id: req.query._id })
-        if(!existingObject.success) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        if (!existingObject.success) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
 
         let operationResultArray = await s3StorageHelper.uploadFilesToS3("rooms", req.files)
         if (!operationResultArray.success) return res.status(500).json({
@@ -86,7 +87,7 @@ exports.uploadFile = async (req, res) => {
         return res.status(operationResultArray.code).json(operationResultArray);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         res.status(500).json({
             success: false,
             code: 500,

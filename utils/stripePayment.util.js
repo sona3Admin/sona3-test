@@ -1,5 +1,6 @@
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 const paymentRepo = require("../modules/Payment/payment.repo")
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 const URLS = {
@@ -120,11 +121,11 @@ exports.initiateOrderPayment = async (orderCostObject, customerDetails, orderDet
             lang,
         }
 
-        console.log("paymentObject", paymentObject)
+        logInTestEnv("paymentObject", paymentObject)
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {
-        console.log("err", err.message)
+        logInTestEnv("err", err.message)
         return { success: false, code: 500, error: err.message }
     }
 }
@@ -135,11 +136,11 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
         const cents = 100
         let paymentObject = {};
         if (!initialFees) initialFees = 0
-        console.log("subscriptionFees in stripe", subscriptionFees)
-        console.log("initialFees in stripe", initialFees)
+        logInTestEnv("subscriptionFees in stripe", subscriptionFees)
+        logInTestEnv("initialFees in stripe", initialFees)
         const reqLang = lang || "en"
         const urls = getUrls('seller', agent, reqLang)
-        console.log("urls", urls)
+        logInTestEnv("urls", urls)
 
         const successUrl = urls.success
         const cancelUrl = urls.cancel
@@ -163,7 +164,7 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             cancel_url: cancelUrl
         }
 
-        console.log("Session Object ready")
+        logInTestEnv("Session Object ready")
         if (initialFees > 0) {
             sessionObject.line_items.push({
                 price_data: {
@@ -175,11 +176,11 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
                 },
                 quantity: 1,
             })
-            console.log("initialFees ready")
+            logInTestEnv("initialFees ready")
         }
 
         const session = await stripe.checkout.sessions.create(sessionObject)
-        console.log("Session Created")
+        logInTestEnv("Session Created")
         if (!session.id) return { success: false, code: 500, error: "Failed to create session" }
 
         paymentObject = {
@@ -194,11 +195,11 @@ exports.initiateSubscriptionPayment = async (sellerId, tierName, tierDuration, s
             payedInitialFees
         }
         // if (initialFees > 0) paymentObject["payedInitialFees"] = true
-        console.log("paymentObject", paymentObject)
+        logInTestEnv("paymentObject", paymentObject)
         paymentRepo.create(paymentObject)
         return { success: true, code: 201, result: session.url }
     } catch (err) {
-        console.log("err", err.message)
+        logInTestEnv("err", err.message)
         return { success: false, code: 500, error: err.message }
     }
 }
@@ -228,7 +229,7 @@ exports.refundToCustomer = async (amount, paymentIntentId, sessionId) => {
 
         return { success: true, code: 201, result: refund }
     } catch (err) {
-        console.log("err", err.message)
+        logInTestEnv("err", err.message)
         return { success: false, code: 500, error: err.message }
     }
 }

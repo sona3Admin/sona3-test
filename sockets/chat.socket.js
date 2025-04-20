@@ -5,6 +5,7 @@ const { sendMessageValidation } = require("../validations/room.validation")
 const { socketValidator } = require("../helpers/socketValidation.helper")
 const ADMIN_ROOM_ID = "Sona3AdminsRoom"
 
+const { logInTestEnv } = require("../helpers/logger.helper")
 
 
 exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => {
@@ -21,11 +22,11 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             if (dataObject.seller) dataObject.withSeller = true
             if (!roomObject.success) roomObject = await roomRepo.create({ ...dataObject, lastMessage: {} })
             socket.join(roomObject.result._id.toString());
-            console.log(socketId, " joined room: ", roomObject.result._id.toString());
+            logInTestEnv(socketId, " joined room: ", roomObject.result._id.toString());
             return sendAck(roomObject)
 
         } catch (err) {
-            console.log(`err.message`, err.message);
+            logInTestEnv(`err.message`, err.message);
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -54,14 +55,14 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
                 lastDate: dataObject.message.timestamp
             })
             socket.join(dataObject.roomId);
-            console.log(socketId, " joined room: ", dataObject.roomId);
+            logInTestEnv(socketId, " joined room: ", dataObject.roomId);
             io.to(dataObject.roomId).emit("newMessage", { success: true, code: 201, result: dataObject.message, roomId: dataObject.roomId })
             sendMessageNotification(io, existingObject.result, dataObject.message)
 
             return sendAck(resultObject)
 
         } catch (err) {
-            console.log(`err.message`, err.message);
+            logInTestEnv(`err.message`, err.message);
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
 
@@ -76,7 +77,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
             sendAck({ success: true, code: 200 })
 
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     });
@@ -86,7 +87,7 @@ exports.chatSocketHandler = (socket, io, socketId, localeMessages, language) => 
 
 async function sendMessageNotification(io, roomObject, messageObject) {
     try {
-        console.log("Sending notification");
+        logInTestEnv("Sending notification");
         let sender = {}, receiver = {}, notificationObject = {}, textFile = {}, receiverRole
 
         let adminsRoomId = { _id: ADMIN_ROOM_ID }
@@ -149,13 +150,13 @@ async function sendMessageNotification(io, roomObject, messageObject) {
             ar: resultObject.result.bodyAr
         }
         receiver = receiverRole != "admin" ? receiver : adminsRoomId
-        console.log("receiver", receiver._id.toString())
+        logInTestEnv("receiver", receiver._id.toString())
         resultObject.result["sender"] = sender
         io.to(receiver._id.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
         if (resultObject.result.deviceTokens.length > 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
     }
 }
 
@@ -172,7 +173,7 @@ async function isAuthorized(socket, dataObject, localeMessages) {
             return { success: true, code: 200 }
         }
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return { success: false, code: 500, error: localeMessages.unauthorized }
     }
 }
@@ -196,7 +197,7 @@ async function isAuthorizedToSendMessage(roomObject, socket, dataObject, localeM
             return { success: true, code: 200 }
         }
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return { success: false, code: 500, error: localeMessages.unauthorized }
     }
 }

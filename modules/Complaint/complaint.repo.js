@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const complaintModel = require("./complaint.model")
-const { prepareQueryObjects } =require("../../helpers/query.helper")
+const { prepareQueryObjects } = require("../../helpers/query.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.find = async (filterObject) => {
@@ -19,7 +20,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -48,7 +49,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -85,7 +86,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -98,7 +99,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 
 exports.create = async (formObject) => {
     try {
-        
+
         const resultObject = new complaintModel(formObject);
         await resultObject.save();
 
@@ -115,7 +116,7 @@ exports.create = async (formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -135,7 +136,7 @@ exports.update = async (_id, formObject) => {
             error: i18n.__("notFound")
         };
 
-    
+
         const resultObject = await complaintModel.findByIdAndUpdate({ _id }, formObject, { new: true });
 
         if (!resultObject) return {
@@ -151,7 +152,7 @@ exports.update = async (_id, formObject) => {
             result: resultObject
         };
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -178,7 +179,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -206,7 +207,7 @@ exports.remove = async (_id) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

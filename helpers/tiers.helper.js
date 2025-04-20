@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 let tiersFile = path.join(__dirname, '../tiers.json');
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.getTiers = (key) => {
@@ -26,7 +27,7 @@ exports.listTiers = async () => {
         };
 
     } catch (err) {
-        console.log('Error reading tiers file:', err);
+        logInTestEnv('Error reading tiers file:', err);
         return {
             code: 500,
             error: err.message,

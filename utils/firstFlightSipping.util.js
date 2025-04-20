@@ -6,6 +6,7 @@ const { findObjectInArray } = require("../helpers/cart.helper")
 const { convertBase64StringToPDF } = require("../helpers/convertToFile.helper")
 const s3StorageHelper = require("./s3FileStorage.util")
 const { v4: uuid } = require('uuid');
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 const firstFlightBaseUrl = process.env.FIRSTFLIGHT_API_URL;
@@ -25,17 +26,17 @@ const authData = {
 
 exports.calculateOrderShippingCost = async (orderDetailsObject) => {
     try {
-        console.log('calculateOrderShippingCost...');
+        logInTestEnv('calculateOrderShippingCost...');
         let originCity = orderDetailsObject.CityCode || "DXB";
         let shippingCost = { total: 0 };
-        // console.log("orderDetailsObject.CityCode", orderDetailsObject.CityCode)
-        // console.log("originCity", originCity)
+        // logInTestEnv("orderDetailsObject.CityCode", orderDetailsObject.CityCode)
+        // logInTestEnv("originCity", originCity)
         // Create an array of promises
         let subOrderPromises = orderDetailsObject.subCarts.map(async (subOrder) => {
             let destinationCity = subOrder?.address?.city.CityCode || "DXB";
-            // console.log("subOrder?.address", subOrder?.address)
-            // console.log("subOrder?.address?.CityCode", subOrder?.address?.city.CityCode)
-            // console.log("destinationCity", destinationCity)
+            // logInTestEnv("subOrder?.address", subOrder?.address)
+            // logInTestEnv("subOrder?.address?.CityCode", subOrder?.address?.city.CityCode)
+            // logInTestEnv("destinationCity", destinationCity)
 
             let subOrderCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity);
             return { shop: subOrder.shop._id.toString(), cost: subOrderCost.result };
@@ -43,14 +44,14 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
 
         // Wait for all promises to resolve
         let subOrderCosts = await Promise.all(subOrderPromises);
-        // console.log("subOrderCosts", subOrderCosts)
+        // logInTestEnv("subOrderCosts", subOrderCosts)
 
         // Calculate the total and individual shipping costs
         subOrderCosts.forEach(subOrderCost => {
             shippingCost[subOrderCost.shop] = subOrderCost.cost;
             shippingCost.total += subOrderCost.cost;
         });
-        // console.log("shippingCost", shippingCost)
+        // logInTestEnv("shippingCost", shippingCost)
         return {
             success: true,
             code: 201,
@@ -58,7 +59,7 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
         };
 
     } catch (err) {
-        console.log('err.message', err.message);
+        logInTestEnv('err.message', err.message);
         return {
             success: false,
             error: err.message,
@@ -71,14 +72,14 @@ exports.calculateOrderShippingCost = async (orderDetailsObject) => {
 exports.calculateSubOrderShippingCost = async (subOrder, originCity, destinationCity) => {
     try {
         let totalVolume = 0;
-        console.log("calculating sub order cost")
+        logInTestEnv("calculating sub order cost")
         subOrder.items.forEach(item => {
             let itemVolume = (item.variation?.width * item.variation?.height * item.variation?.length) || 125;
             let totalItemVolume = itemVolume * item.quantity;
             totalVolume += totalItemVolume;
         });
 
-        // console.log("sub order volume", totalVolume)
+        // logInTestEnv("sub order volume", totalVolume)
         let itemLength = parseInt(Math.cbrt(totalVolume));
 
         let rateParameterObject = {
@@ -90,12 +91,12 @@ exports.calculateSubOrderShippingCost = async (subOrder, originCity, destination
             Dimension: `${itemLength}X${itemLength}X${itemLength}`
         };
 
-        // console.log("rateParameterObject", firstFlightBaseUrl)
+        // logInTestEnv("rateParameterObject", firstFlightBaseUrl)
         const response = await axios.post(`${firstFlightBaseUrl}/RateFinder`, rateParameterObject, {
             headers: { 'Content-Type': 'application/json' }
         });
 
-        console.log("calculateSubOrderShippingCost", response.data.NetAmount);
+        logInTestEnv("calculateSubOrderShippingCost", response.data.NetAmount);
         let subOrderShippingCost = response.data.NetAmount;
 
         return {
@@ -104,7 +105,7 @@ exports.calculateSubOrderShippingCost = async (subOrder, originCity, destination
             result: subOrderShippingCost
         };
     } catch (err) {
-        console.log('err.message', err.message);
+        logInTestEnv('err.message', err.message);
         return {
             success: false,
             error: err.message,
@@ -116,7 +117,7 @@ exports.calculateSubOrderShippingCost = async (subOrder, originCity, destination
 
 exports.calculateServiceShippingCost = async (orderDetailsObject) => {
     try {
-        console.log('calculateServiceShippingCost...');
+        logInTestEnv('calculateServiceShippingCost...');
         let originCity = orderDetailsObject.cityCode || "DXB";
         let shippingCost = { total: 0 };
         let destinationCity = orderDetailsObject?.shop?.address?.cityCode || "DXB";
@@ -133,7 +134,7 @@ exports.calculateServiceShippingCost = async (orderDetailsObject) => {
             Dimension: `${itemLength}X${itemLength}X${itemLength}`
         };
 
-        // console.log("rateParameterObject", firstFlightBaseUrl)
+        // logInTestEnv("rateParameterObject", firstFlightBaseUrl)
         const response = await axios.post(`${firstFlightBaseUrl}/RateFinder`, rateParameterObject, {
             headers: { 'Content-Type': 'application/json' }
         });
@@ -147,7 +148,7 @@ exports.calculateServiceShippingCost = async (orderDetailsObject) => {
         };
 
     } catch (err) {
-        console.log('err.message', err.message);
+        logInTestEnv('err.message', err.message);
         return {
             success: false,
             error: err.message,
@@ -159,7 +160,7 @@ exports.calculateServiceShippingCost = async (orderDetailsObject) => {
 
 exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
     try {
-        console.log('Creating New Order...');
+        logInTestEnv('Creating New Order...');
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
         let airwayBillNumbers = []
@@ -167,11 +168,11 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         for (const subOrder of orderDetailsObject.subOrders) {
 
             let airwayBillInfo = await this.handleOrderData(orderDetailsObject, subOrder, isCod, isReverse);
-            console.log("airwayBillInfo", airwayBillInfo)
+            logInTestEnv("airwayBillInfo", airwayBillInfo)
             let response = await axios.post(`${firstFlightBaseUrl}/CreateAirwayBill`, airwayBillInfo.orderData, {
                 headers: { 'Content-Type': 'application/json' }
             });
-            console.log("response.data", response.data)
+            logInTestEnv("response.data", response.data)
 
             response.data.CODAmount = airwayBillInfo.orderData.AirwayBillData.CODAmount
             airwayBillNumbers.push(response.data.AirwayBillNumber);
@@ -180,7 +181,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
             pickupRequestNumbers.push(pickupNumber.result)
         }
 
-        console.log('Order created successfully', airwayBillNumbers);
+        logInTestEnv('Order created successfully', airwayBillNumbers);
         return {
             success: true,
             code: 201,
@@ -188,7 +189,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         };
 
     } catch (err) {
-        console.log('err.message', err.message);
+        logInTestEnv('err.message', err.message);
         return {
             success: false,
             error: err.message,
@@ -200,7 +201,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
 
 exports.createNewPickupRequest = async (orderDetailsObject) => {
     try {
-        console.log("Creating New Pickup Request")
+        logInTestEnv("Creating New Pickup Request")
         let pickupRequestData = {
             ...authData,
             BookingData: {
@@ -237,7 +238,7 @@ exports.createNewPickupRequest = async (orderDetailsObject) => {
         };
 
     } catch (err) {
-        console.log('err.message', err.message);
+        logInTestEnv('err.message', err.message);
         return {
             success: false,
             error: err.message,
@@ -318,7 +319,7 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
         return { orderData, customerData, shopData };
 
     } catch (err) {
-        console.log('Error processing order data:', err.message);
+        logInTestEnv('Error processing order data:', err.message);
         return {
             success: false,
             error: err.message,
@@ -330,14 +331,14 @@ exports.handleOrderData = async (orderDetailsObject, subOrder, isCod, isReverse)
 
 exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => {
     try {
-        // console.log("orderDetailsObject.shippingAddress", orderDetailsObject.shippingAddress)
-        console.log("Creating Resverse Order")
+        // logInTestEnv("orderDetailsObject.shippingAddress", orderDetailsObject.shippingAddress)
+        logInTestEnv("Creating Resverse Order")
         let originCity = subOrder?.address?.city.CityCode || "DXB";
         let destinationCity = orderDetailsObject.shippingAddress.address.city.CityCode || "DXB"
         let shopId = subOrder.shop?._id?.toString() || subOrder.shop
-        console.log("shopId", shopId)
+        logInTestEnv("shopId", shopId)
         let shippingCost = await this.calculateSubOrderShippingCost(subOrder, originCity, destinationCity)
-        console.log("shippingCost", shippingCost)
+        logInTestEnv("shippingCost", shippingCost)
 
         let customerData = {
             SendersCompany: orderDetailsObject.name,
@@ -362,13 +363,13 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
             ReceiversPhone: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454",
             ReceiversMobile: subOrder.phone.length == 9 ? `971${subOrder.phone}` : "971554535454"
         }
-        console.log("971${subOrder.phone}", `971${subOrder.phone}`)
+        logInTestEnv("971${subOrder.phone}", `971${subOrder.phone}`)
 
         let productNames = ``
         productNames = subOrder.items.forEach((item) => {
             productNames += `${item?.product?.nameEn || "Product - "} `
         })
-        console.log("productNames", productNames)
+        logInTestEnv("productNames", productNames)
         let numberOfPieces = subOrder.items.reduce((accumulator, currentItem) => {
             return accumulator + currentItem.quantity;
         }, 0)
@@ -401,7 +402,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
         return { orderData, customerData, shopData };
 
     } catch (err) {
-        console.log('Error processing order data:', err.message);
+        logInTestEnv('Error processing order data:', err.message);
         return {
             success: false,
             error: err.message,
@@ -413,7 +414,7 @@ exports.handleReverseOrderData = async (orderDetailsObject, subOrder, isCod) => 
 
 exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
     try {
-        console.log('Creating New Service Order...');
+        logInTestEnv('Creating New Service Order...');
         if (isReverse == true) return await this.handleReverseServiceData(orderDetailsObject)
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
@@ -421,9 +422,9 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
         let originCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
         let destinationCity = orderDetailsObject?.shop?.address?.cityCode || "DXB"
         let shopId = orderDetailsObject?.shop?._id?.toString()
-        console.log("shopId", shopId)
+        logInTestEnv("shopId", shopId)
         let shippingCost = orderDetailsObject.shippingFeesTotal
-        console.log("shippingCost", shippingCost)
+        logInTestEnv("shippingCost", shippingCost)
 
         let customerData = {
             ReceiversCompany: orderDetailsObject.name,
@@ -450,10 +451,10 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
         }
 
         let productName = orderDetailsObject.service.nameEn
-        console.log("productName", productName)
+        logInTestEnv("productName", productName)
         let numberOfPieces = 1
         let weight = orderDetailsObject.service.weight || "5"
-        console.log("weight", weight)
+        logInTestEnv("weight", weight)
 
 
         let orderData = {
@@ -483,7 +484,7 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
         });
 
         response.data.CODAmount = orderData.AirwayBillData.CODAmount
-        console.log('Order created successfully:', response.data);
+        logInTestEnv('Order created successfully:', response.data);
         return {
             success: true,
             code: 201,
@@ -491,7 +492,7 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
         };
 
     } catch (err) {
-        console.log('Error processing order data:', err.message);
+        logInTestEnv('Error processing order data:', err.message);
         return {
             success: false,
             error: err.message,
@@ -503,16 +504,16 @@ exports.createServiceOrder = async (orderDetailsObject, isReverse) => {
 
 exports.handleReverseServiceData = async (orderDetailsObject) => {
     try {
-        console.log('Creating New Reverse Service Order...');
+        logInTestEnv('Creating New Reverse Service Order...');
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
 
         let originCity = orderDetailsObject?.shop?.address?.cityCode || "DXB"
         let destinationCity = orderDetailsObject.shippingAddress.address.cityCode || "DXB";
         let shopId = orderDetailsObject?.shop?._id?.toString()
-        console.log("shopId", shopId)
+        logInTestEnv("shopId", shopId)
         let shippingCost = orderDetailsObject.shippingFeesTotal
-        console.log("shippingCost", shippingCost)
+        logInTestEnv("shippingCost", shippingCost)
 
         let customerData = {
             SendersCompany: orderDetailsObject.name,
@@ -539,10 +540,10 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
         }
 
         let productName = orderDetailsObject.service.nameEn
-        console.log("productName", productName)
+        logInTestEnv("productName", productName)
         let numberOfPieces = 1
         let weight = orderDetailsObject.service.weight || "5"
-        console.log("weight", weight)
+        logInTestEnv("weight", weight)
 
 
         let orderData = {
@@ -572,7 +573,7 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
         });
         response.data.CODAmount = orderData.AirwayBillData.CODAmount
 
-        console.log('Reverse Order created successfully:', response.data);
+        logInTestEnv('Reverse Order created successfully:', response.data);
         return {
             success: true,
             code: 201,
@@ -580,7 +581,7 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
         };
 
     } catch (err) {
-        console.log('Error processing order data:', err.message);
+        logInTestEnv('Error processing order data:', err.message);
         return {
             success: false,
             error: err.message,
@@ -592,14 +593,14 @@ exports.handleReverseServiceData = async (orderDetailsObject) => {
 
 exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCost) => {
     try {
-        console.log("Saving Shipment data", arrayOfTrackingObjects)
+        logInTestEnv("Saving Shipment data", arrayOfTrackingObjects)
         let resultObject
         let shippingFeesTotal = 0
-        console.log("shippingCost", shippingCost)
-        
+        logInTestEnv("shippingCost", shippingCost)
+
         if (shippingCost?.total != undefined) shippingFeesTotal = parseFloat(shippingCost?.total)
         else shippingFeesTotal = parseFloat(shippingCost)
-       
+
         if (arrayOfTrackingObjects.length != orderData.subOrders.length) return { success: false, error: i18n.__("internalServerError"), code: 500 };
 
         let subOrdersArray = orderData.subOrders
@@ -622,7 +623,7 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
         return resultObject
 
     } catch (err) {
-        console.log('Error Saving shipment data', err.message);
+        logInTestEnv('Error Saving shipment data', err.message);
         return {
             success: false,
             error: err.message,
@@ -634,9 +635,9 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData, shippingCos
 
 exports.getOrderShipmentLastStatus = async (trackingId) => {
     try {
-        console.log("tracking data", trackingId)
+        logInTestEnv("tracking data", trackingId)
         let orderData = { TrackingAWB: trackingId, ...authData }
-        console.log("Getting order last status!")
+        logInTestEnv("Getting order last status!")
         const response = await axios.post(`${firstFlightBaseUrl}/Tracking`, orderData, {
             headers: { 'Content-Type': 'application/json' }
         });
@@ -649,7 +650,7 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
         };
 
     } catch (err) {
-        console.log('Error getting status', err.message);
+        logInTestEnv('Error getting status', err.message);
         return {
             success: false,
             error: err.message,
@@ -665,7 +666,7 @@ exports.listCities = async () => {
         const response = await axios.post(`https://customerapp.firstflightme.com/FirstFlightService.svc/CityList`, authData, {
             headers: { 'Content-Type': 'application/json' }
         });
-        
+
         return {
             success: true,
             code: 201,
@@ -673,7 +674,7 @@ exports.listCities = async () => {
         };
 
     } catch (err) {
-        console.log('Error getting status', err.message);
+        logInTestEnv('Error getting status', err.message);
         return {
             success: false,
             error: err.message,
@@ -691,7 +692,7 @@ exports.updateOrderShipmentStatus = async (trackingId, latestStatus) => {
         if (!orderObject.success) {
             let requestObject = await requestRepo.find({ shippingId: trackingId })
             status = handleStatus(status, "request") || requestObject.result.status
-            console.log("request status", status)
+            logInTestEnv("request status", status)
 
             requestRepo.updateDirectly(requestObject.result._id.toString(), { shippingStatus: status, status })
             return {
@@ -706,7 +707,7 @@ exports.updateOrderShipmentStatus = async (trackingId, latestStatus) => {
         let subOrders
         orderObject.result.subOrders[subOrderObject.index].shippingStatus = status
         orderObject.result.subOrders[subOrderObject.index].status = handleStatus(status, "order") || subOrderObject.result.status
-        console.log("order status", orderObject.result.subOrders[subOrderObject.index].status)
+        logInTestEnv("order status", orderObject.result.subOrders[subOrderObject.index].status)
         orderRepo.updateDirectly(orderObject.result._id.toString(), { subOrders })
         return {
             success: true,
@@ -714,7 +715,7 @@ exports.updateOrderShipmentStatus = async (trackingId, latestStatus) => {
         }
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return {
             success: false,
             error: err.message,
@@ -751,13 +752,13 @@ exports.generateOrderLabel = async (airwayBillNumber, printType, requestUser) =>
             headers: { 'Content-Type': 'application/json' }
         });
 
-        let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);        
+        let generatedPDF = await convertBase64StringToPDF(response.data.ReportDoc);
         let uploadedFile = await s3StorageHelper.uploadPDFtoS3(`pdf-${uuid()}`, [
             {
                 buffer: Buffer.from(generatedPDF.result),
                 mimetype: 'application/pdf'
             }
-        ]);        
+        ]);
 
         return {
             success: true,
@@ -766,7 +767,7 @@ exports.generateOrderLabel = async (airwayBillNumber, printType, requestUser) =>
         }
 
     } catch (err) {
-        console.log('Error ', err.message);
+        logInTestEnv('Error ', err.message);
         return {
             success: false,
             error: err.message,

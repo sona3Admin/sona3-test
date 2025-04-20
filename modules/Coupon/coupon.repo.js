@@ -4,6 +4,7 @@ const { prepareQueryObjects } = require("../../helpers/query.helper")
 const cartRepo = require("../Cart/cart.repo")
 const basketRepo = require("../Basket/basket.repo")
 const { isIdInArray, findObjectInArray } = require("../../helpers/cart.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 exports.find = async (filterObject) => {
     try {
@@ -21,7 +22,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -54,7 +55,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -94,7 +95,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -127,7 +128,7 @@ exports.create = async (formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -162,7 +163,7 @@ exports.update = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -189,7 +190,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -209,7 +210,7 @@ exports.removeMany = async (filterObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -243,7 +244,7 @@ exports.remove = async (_id) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -299,7 +300,7 @@ exports.applyOnCart = async (cartId, couponId, shopId) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -337,7 +338,7 @@ exports.cancelFromCart = async (cartId, shopId) => {
         })
 
         this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
-        // console.log("updatedCartResult", updatedCartResult)
+        // logInTestEnv("updatedCartResult", updatedCartResult)
         return {
             success: true,
             result: updatedCartResult.result,
@@ -345,7 +346,7 @@ exports.cancelFromCart = async (cartId, shopId) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -400,7 +401,7 @@ exports.applyOnBasket = async (cartId, couponId, shopId) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -438,7 +439,7 @@ exports.cancelFromBasket = async (cartId, shopId) => {
         })
 
         this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
-        // console.log("updatedCartResult", updatedCartResult)
+        // logInTestEnv("updatedCartResult", updatedCartResult)
         return {
             success: true,
             result: updatedCartResult.result,
@@ -446,7 +447,7 @@ exports.cancelFromBasket = async (cartId, shopId) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -473,7 +474,7 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
     }
 
     if (operationType == "cancel") {
-        console.log("Cancel Coupon")
+        logInTestEnv("Cancel Coupon")
 
         if (couponObject.result.discountType == "value") {
 
@@ -498,7 +499,7 @@ exports.calculateNewTotal = (couponObject, cartObject, subCartObject, operationT
 
 exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees, initialFees) => {
     try {
-        console.log("applying coupon on subscription fees...")
+        logInTestEnv("applying coupon on subscription fees...")
         let couponObject = await this.find({ code: couponId })
         if (!couponObject.success || couponObject.result.userType !== "seller") return {
             success: false,
@@ -513,7 +514,7 @@ exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees, i
         // if (didCustomerUseCoupon.success) return { success: false, code: 409, error: i18n.__("usedCoupon") }
 
         let newFees = this.calculateNewSubscriptionFees(couponObject, subscriptionFees, initialFees)
-        console.log("newFees", newFees)
+        logInTestEnv("newFees", newFees)
 
         this.updateDirectly(couponObject.result._id.toString(), { $inc: { quantity: -1 }, $addToSet: { usedBy: { seller: sellerId } } })
         return {
@@ -523,7 +524,7 @@ exports.applyOnSubscriptionFees = async (couponId, sellerId, subscriptionFees, i
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

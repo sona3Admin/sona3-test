@@ -1,15 +1,16 @@
 const i18n = require('i18n');
 const reviewRepo = require("../../modules/Review/review.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createReview = async (req, res) => {
     try {
         const operationResultObject = await reviewRepo.create(req.body);
-        console.log(`operationResultObject`, operationResultObject);
+        logInTestEnv(`operationResultObject`, operationResultObject);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -28,7 +29,7 @@ exports.listReviews = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -45,7 +46,7 @@ exports.getReview = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -61,7 +62,7 @@ exports.updateReview = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -76,7 +77,7 @@ exports.removeReview = async (req, res) => {
         const operationResultObject = await reviewRepo.remove(req.query._id);
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

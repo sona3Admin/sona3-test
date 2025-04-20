@@ -3,6 +3,7 @@ const socketLocales = {};
 const { chatSocketHandler } = require("./chat.socket")
 const { notificationSocketHandler } = require("./notification.socket")
 const { adminSocketHandler } = require("./admin.socket")
+const { logInTestEnv } = require("../helpers/logger.helper")
 
 
 exports.serverSocketHandler = (socket, io) => {
@@ -24,7 +25,7 @@ exports.serverSocketHandler = (socket, io) => {
         chatSocketHandler(socket, io, socketId, localeMessages, locale);
         notificationSocketHandler(socket, io, localeMessages);
     } catch (err) {
-        return console.log(`err.message`, err.message);
+        return logInTestEnv(`err.message`, err.message);
     }
 
 }

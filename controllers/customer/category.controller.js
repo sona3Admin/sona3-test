@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const categoryRepo = require("../../modules/Category/category.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listCategories = async (req, res) => {
@@ -11,7 +12,7 @@ exports.listCategories = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -29,7 +30,7 @@ exports.getCategory = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

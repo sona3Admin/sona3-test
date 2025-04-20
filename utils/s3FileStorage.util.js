@@ -4,6 +4,7 @@ const s3 = new AWS.S3();
 process.env.AWS_ACCESS_KEY_ID = process.env.BUCKETEER_AWS_ACCESS_KEY_ID;
 process.env.AWS_SECRET_ACCESS_KEY = process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY;
 process.env.AWS_REGION = process.env.BUCKETEER_AWS_REGION;
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 exports.uploadFilesToS3 = async (folderName, files) => {
@@ -27,7 +28,7 @@ exports.uploadFilesToS3 = async (folderName, files) => {
 
     const params = files.map((file) => {
       const extension = file.mimetype.split('/').pop().replace('svg+xml', 'svg');
-      console.log("extension", extension)
+      logInTestEnv("extension", extension)
       return {
         Bucket: process.env.BUCKETEER_BUCKET_NAME,
         Key: `public/${folderName}/${uuid()}-${file.originalname}`,
@@ -39,7 +40,7 @@ exports.uploadFilesToS3 = async (folderName, files) => {
     const uploadResults = await Promise.all(params.map((param) => s3.upload(param).promise()));
     return { success: true, result: uploadResults, code: 201 };
   } catch (err) {
-    console.log(`err.message`, err.message);
+    logInTestEnv(`err.message`, err.message);
     return {
       success: false,
       code: 500,
@@ -65,10 +66,10 @@ exports.deleteFilesFromS3 = (arrayOfFiles) => {
     // Call the deleteObjects method to delete the images
     s3.deleteObjects(params, (err, data) => {
       if (err) {
-        console.log(err, err.stack);
+        logInTestEnv(err, err.stack);
         reject(err);
       } else {
-        // console.log("deleted the following",data.Deleted);
+        // logInTestEnv("deleted the following",data.Deleted);
         resolve(data.Deleted);
       }
     });

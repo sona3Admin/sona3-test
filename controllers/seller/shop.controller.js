@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const shopRepo = require("../../modules/Shop/shop.repo");
 const s3StorageHelper = require("../../utils/s3FileStorage.util")
 const batchRepo = require("../../modules/Batch/batch.repo");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.createShop = async (req, res) => {
@@ -10,7 +11,7 @@ exports.createShop = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -29,7 +30,7 @@ exports.getShop = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -48,7 +49,7 @@ exports.listShops = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -65,7 +66,7 @@ exports.updateShop = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -80,7 +81,7 @@ exports.removeShop = async (req, res) => {
         const operationResultObject = await shopRepo.remove({ _id: req.query._id, seller: req.query.seller });
         return res.status(operationResultObject.code).json(operationResultObject);
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -109,7 +110,7 @@ exports.uploadImage = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         res.status(500).json({
             success: false,
             code: 500,
@@ -128,7 +129,7 @@ exports.deleteImage = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -165,7 +166,7 @@ exports.uploadCovers = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -225,7 +226,7 @@ exports.uploadBanners = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -279,7 +280,7 @@ exports.uploadShopLicense = async (req, res) => {
         let operationResultArray
         if (req.query.fileType === "pdf") operationResultArray = await s3StorageHelper.uploadPDFtoS3("identity", req.files)
         if (req.query.fileType === "img") operationResultArray = await s3StorageHelper.uploadFilesToS3("identity", req.files)
-            
+
         if (!operationResultArray.success) return res.status(500).json({
             success: false,
             code: 500,
@@ -293,7 +294,7 @@ exports.uploadShopLicense = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

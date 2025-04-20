@@ -9,6 +9,7 @@ const firstFlightShipperHelper = require("../../utils/firstFlightSipping.util")
 const { handleRequestPurchase, handleReturnService } = require("../../helpers/serviceRequest.helper")
 const stripeHelper = require("../../utils/stripePayment.util")
 const emailHelper = require("../../helpers/email.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 
@@ -43,7 +44,7 @@ exports.purchaseRequest = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -74,7 +75,7 @@ exports.createOrderPaymentLink = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -103,7 +104,7 @@ exports.returnRequest = async (req, res) => {
         else if (!requestObject.service.isFood) {
             let shippingData = await firstFlightShipperHelper.createServiceOrder(requestObject, true)
             if (!shippingData.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
-            console.log("shippingData.result", shippingData.result)
+            logInTestEnv("shippingData.result", shippingData.result)
             operationResultObject = await firstFlightShipperHelper.saveShipmentData(shippingData.result, requestObject, shippingData.result.CODAmount)
             if (!operationResultObject.success) return res.status(500).json({ success: false, code: 500, error: i18n.__("internalServerError") });
         }
@@ -112,7 +113,7 @@ exports.returnRequest = async (req, res) => {
 
     }
     catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -133,7 +134,7 @@ exports.cancelRequest = async (req, res) => {
 
     }
     catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -153,7 +154,7 @@ exports.createRequest = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -171,7 +172,7 @@ exports.listRequests = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -189,7 +190,7 @@ exports.listPendingAndAcceptedRequests = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -207,7 +208,7 @@ exports.listCanceledAndRejectedRequests = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -224,7 +225,7 @@ exports.getRequest = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -240,7 +241,7 @@ exports.updateRequest = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -253,13 +254,13 @@ exports.updateRequest = async (req, res) => {
 exports.calculateRequestShippingCost = async (req, res) => {
     try {
         let requestObject = await requestRepo.get({ _id: req.query._id }, {});
-        console.log("cityCode", req.body.cityCode)
+        logInTestEnv("cityCode", req.body.cityCode)
         requestObject.result.cityCode = req.body.cityCode
         const operationResultObject = await firstFlightShipperHelper.calculateServiceShippingCost(requestObject.result)
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -277,7 +278,7 @@ exports.getOrderShipmentLastStatus = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message controller`, err.message);
+        logInTestEnv(`err.message controller`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

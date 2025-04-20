@@ -1,6 +1,7 @@
 const { getSettings, listSettings } = require("./settings.helper")
 const customerRepo = require("../modules/Customer/customer.repo")
 const { findObjectInArray, generateSubCartId } = require("./cart.helper")
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.setShopItems = (shopItemsArray, productsArray, variationsArray, categoriesArray) => {
@@ -23,7 +24,7 @@ exports.setShopItems = (shopItemsArray, productsArray, variationsArray, categori
 
         return { items: itemsArray, products: productsArray, variations: variationsArray, categories: categoriesArray }
     } catch (err) {
-        console.log("err.message setShopItems", err.message);
+        logInTestEnv("err.message setShopItems", err.message);
     }
 }
 
@@ -64,7 +65,7 @@ exports.setSubOrders = (subCartsArray) => {
 
         return { subOrders: subOrdersArray, sellers: sellersArray, shops: shopsArray, products: productsArray, variations: variationsArray, categories: categoriesArray };
     } catch (err) {
-        console.log("err.message setSubOrders", err.message);
+        logInTestEnv("err.message setSubOrders", err.message);
     }
 };
 
@@ -131,7 +132,7 @@ exports.handleOrderCreation = async (customerCartObject, customerOrderObject, is
         return customerOrderObject
 
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
         return {
             success: false,
             code: 500,
@@ -163,38 +164,38 @@ exports.calculateCashback = async (customerCartObject) => {
     try {
         const settings = await listSettings();
         const cashbackPercentage = settings.result.cashbackPercentage
-        console.log("cashbackPercentage", cashbackPercentage)
+        logInTestEnv("cashbackPercentage", cashbackPercentage)
 
         const cashbackThreshold = settings.result.cashbackThreshold
-        console.log("cashbackThreshold", cashbackThreshold)
+        logInTestEnv("cashbackThreshold", cashbackThreshold)
 
         const orderTotal = parseInt(customerCartObject?.cartOriginalTotal);
-        console.log("orderTotal", orderTotal)
+        logInTestEnv("orderTotal", orderTotal)
 
         const hasPurchasedBefore = customerCartObject?.customer?.hasPurchased || false;
-        console.log("hasPurchasedBefore", hasPurchasedBefore)
+        logInTestEnv("hasPurchasedBefore", hasPurchasedBefore)
 
         const isCustomerBirthday = this.isDateEqualToToday(customerCartObject?.customer?.birthDate);
-        console.log("isCustomerBirthday", isCustomerBirthday)
+        logInTestEnv("isCustomerBirthday", isCustomerBirthday)
 
         let customerPoints = parseInt(customerCartObject?.customer?.loyaltyPoints) || 0;
-        console.log("customerPoints", customerPoints)
+        logInTestEnv("customerPoints", customerPoints)
 
         let customerCashback = parseInt(customerCartObject?.customer?.cashback) || 0;
-        console.log("customerCashback", customerCashback)
+        logInTestEnv("customerCashback", customerCashback)
 
         let updateForm = { hasPurchased: hasPurchasedBefore, cashback: customerCashback, loyaltyPoints: customerPoints };
         let newPoints = customerPoints + orderTotal;
-        console.log("newPoints to be added", newPoints)
+        logInTestEnv("newPoints to be added", newPoints)
 
         if (!hasPurchasedBefore) {
             // First-time purchaser: Apply welcome cashback
             const welcomePercentage = 0.01;
             const welcomeCashback = Math.floor(orderTotal * welcomePercentage);
-            console.log("welcomeCashback", welcomeCashback)
+            logInTestEnv("welcomeCashback", welcomeCashback)
 
             customerCashback += welcomeCashback;
-            console.log("welcome customerCashback", customerCashback)
+            logInTestEnv("welcome customerCashback", customerCashback)
 
             updateForm.hasPurchased = true;
         }
@@ -203,10 +204,10 @@ exports.calculateCashback = async (customerCartObject) => {
             // Birthday cashback for eligible customers
             const birthdayPercentage = 0.02;
             const birthdayCashback = Math.floor(orderTotal * birthdayPercentage);
-            console.log("birthdayCashback", birthdayCashback)
+            logInTestEnv("birthdayCashback", birthdayCashback)
 
             customerCashback += birthdayCashback;
-            console.log("birthday customerCashback", customerCashback)
+            logInTestEnv("birthday customerCashback", customerCashback)
 
         }
 
@@ -214,21 +215,21 @@ exports.calculateCashback = async (customerCartObject) => {
         // Calculate cashback and update points
         while (newPoints >= parseInt(cashbackThreshold)) {
 
-            console.log("customerCashback before", customerCashback)
+            logInTestEnv("customerCashback before", customerCashback)
             customerCashback += (Math.floor(parseInt(cashbackThreshold) * parseFloat(cashbackPercentage)) / parseInt(cashbackThreshold));
-            console.log("customerCashback after", customerCashback)
+            logInTestEnv("customerCashback after", customerCashback)
 
-            console.log("newPoints before", newPoints)
+            logInTestEnv("newPoints before", newPoints)
             newPoints -= parseInt(cashbackThreshold);
-            console.log("newPoints after", newPoints)
+            logInTestEnv("newPoints after", newPoints)
 
         }
 
         updateForm.cashback = customerCashback;
-        console.log("updateForm.cashback", updateForm.cashback)
+        logInTestEnv("updateForm.cashback", updateForm.cashback)
 
         updateForm.loyaltyPoints = newPoints;
-        console.log("updateForm.loyaltyPoints", updateForm.loyaltyPoints)
+        logInTestEnv("updateForm.loyaltyPoints", updateForm.loyaltyPoints)
 
 
         await customerRepo.updateDirectly(customerCartObject?.customer?._id.toString(), updateForm);
@@ -277,7 +278,7 @@ exports.getShopOrder = (orderObject, shopId) => {
 
 
 exports.listSellerOrders = (arrayOfOrders, sellerId) => {
-    console.log("seller", sellerId);
+    logInTestEnv("seller", sellerId);
     arrayOfOrders = arrayOfOrders.map((orderObject) => {
         const subOrders = [...orderObject.subOrders]; // Shallow copy
         const filteredSubOrders = subOrders.filter((subOrder) => {

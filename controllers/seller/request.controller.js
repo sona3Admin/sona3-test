@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const requestRepo = require("../../modules/Request/request.repo");
 const notificationRepo = require("../../modules/Notification/notification.repo");
 const { getSocketIo } = require("../../configs/socketManager");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.listRequests = async (req, res) => {
@@ -12,7 +13,7 @@ exports.listRequests = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -29,7 +30,7 @@ exports.getRequest = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,
@@ -42,7 +43,7 @@ exports.getRequest = async (req, res) => {
 exports.updateRequest = async (req, res) => {
     try {
         const operationResultObject = await requestRepo.update(req.query._id, req.body);
-        
+
         if (operationResultObject.success) {
             const requestObject = await requestRepo.get({ _id: req.query._id }, {});
             const io = getSocketIo();
@@ -59,15 +60,15 @@ exports.updateRequest = async (req, res) => {
                 deviceTokens: [requestObject.result.customer.fcmToken],
             }
 
-            
+
             let notificationResultObject = await notificationRepo.create(notificationObject)
-            
+
             io.to(requestObject.result.customer._id.toString()).emit("newNotification", { success: true, code: 201, result: notificationResultObject.result })
         }
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(500).json({
             success: false,
             code: 500,

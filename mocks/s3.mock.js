@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const s3StorageHelper = require('../utils/s3FileStorage.util');
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 
 exports.uploadImage = async (req, res) => {
@@ -16,7 +17,7 @@ exports.uploadImage = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         res.status(500).json({
             success: false,
             code: 500,
@@ -40,7 +41,7 @@ exports.deleteImages = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         res.status(500).json({
             success: false,
             code: 500,
@@ -62,7 +63,7 @@ exports.listAssets = async (req, res) => {
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         res.status(500).json({
             success: false,
             code: 500,

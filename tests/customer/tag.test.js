@@ -2,6 +2,7 @@ const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 let baseUrl = '/api/v1/customer';
 let token
@@ -66,7 +67,7 @@ describe('=====>Testing tag Module Endpoints <=====', () => {
             .set(requestHeaders);
 
         expect(response.status).toBe(200);
-        console.log(`response.body`, response.body);
+        logInTestEnv(`response.body`, response.body);
         tagId = response.body.result[0]._id
     });
 

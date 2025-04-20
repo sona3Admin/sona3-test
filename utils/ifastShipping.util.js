@@ -7,6 +7,7 @@ const { setSettings, listSettings } = require("../helpers/settings.helper")
 const { processPDFContent } = require("../helpers/convertToFile.helper")
 const s3StorageHelper = require("./s3FileStorage.util")
 const { v4: uuid } = require('uuid');
+const { logInTestEnv } = require("../helpers/logger.helper");
 
 const ifastBaseUrl = process.env.IFAST_API_URL;
 const ifastUsername = process.env.IFAST_USER_NAME;
@@ -30,10 +31,10 @@ exports.getAuthToken = async () => {
         let tokenExpiry = settings.result.tokenExpiry || null;
 
         if (!ifastToken || !tokenExpiry || Date.now() >= tokenExpiry) {
-            console.log("Ifast Token Expired or Not Found!")
+            logInTestEnv("Ifast Token Expired or Not Found!")
             let result = await this.acquireTokenFromIfast(authData);
             ifastToken = result.token
-        } else console.log("Ifast Token is Found and Valid!")
+        } else logInTestEnv("Ifast Token is Found and Valid!")
 
         return {
             success: true,
@@ -62,7 +63,7 @@ exports.acquireTokenFromIfast = async (authDataObject) => {
         let tokenExpiry = Date.now() + response.data.expires_in * 1000;
         await setSettings({ ifastToken, tokenExpiry })
 
-        console.log('New Token Acquired from Ifast');
+        logInTestEnv('New Token Acquired from Ifast');
         return {
             success: true,
             code: 200,
@@ -88,7 +89,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         if (orderDetailsObject.service) orderData = this.handleServiceData(orderDetailsObject, isReverse)
         else orderData = this.handleOrderData(orderDetailsObject, isReverse)
         const { token } = await this.getAuthToken();
-        console.log('Creating New Order...');
+        logInTestEnv('Creating New Order...');
 
         const response = await axios.post(`${ifastBaseUrl}/api/order/placeorderbulkwithpickup`, orderData, {
             headers: {
@@ -97,7 +98,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
             }
         });
 
-        console.log('Order created successfully:', response.data);
+        logInTestEnv('Order created successfully:', response.data);
         return {
             success: true,
             code: 201,
@@ -106,7 +107,7 @@ exports.createNewBulkOrder = async (orderDetailsObject, isReverse) => {
         };
 
     } catch (err) {
-        console.log('err.message', err.message)
+        logInTestEnv('err.message', err.message)
         return {
             success: false,
             error: err.message,
@@ -160,7 +161,7 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
         return orderData;
 
     } catch (err) {
-        console.log('Error processing order data:', err.message);
+        logInTestEnv('Error processing order data:', err.message);
         return {
             success: false,
             error: err.message,
@@ -172,7 +173,7 @@ exports.handleOrderData = (orderDetailsObject, isReverse) => {
 
 exports.handleServiceData = (orderDetailsObject, isReverse) => {
     try {
-        console.log("handleServiceData")
+        logInTestEnv("handleServiceData")
         let isCod = true
         if (orderDetailsObject.paymentMethod == "visa") isCod = false
 
@@ -211,7 +212,7 @@ exports.handleServiceData = (orderDetailsObject, isReverse) => {
         return orderData;
 
     } catch (err) {
-        console.log('Error processing order data:', err.message);
+        logInTestEnv('Error processing order data:', err.message);
         return {
             success: false,
             error: err.message,
@@ -223,7 +224,7 @@ exports.handleServiceData = (orderDetailsObject, isReverse) => {
 
 exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
     try {
-        console.log("Saving Shipment data")
+        logInTestEnv("Saving Shipment data")
         let resultObject
         if (orderData.service) {
 
@@ -247,7 +248,7 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
         return resultObject
 
     } catch (err) {
-        console.log('Error Saving shipment data', err.message);
+        logInTestEnv('Error Saving shipment data', err.message);
         return {
             success: false,
             error: err.message,
@@ -260,9 +261,9 @@ exports.saveShipmentData = async (arrayOfTrackingObjects, orderData) => {
 exports.getOrderShipmentLastStatus = async (trackingId) => {
     try {
         const { token } = await this.getAuthToken();
-        console.log("tracking data", trackingId)
+        logInTestEnv("tracking data", trackingId)
         let orderData = { trackingNos: trackingId }
-        console.log("Getting order last status!")
+        logInTestEnv("Getting order last status!")
         const response = await axios.post(`${ifastBaseUrl}/api/order/ShipmentLastStatus`, orderData, {
             headers: {
                 'Content-Type': 'application/json',
@@ -277,7 +278,7 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
         };
 
     } catch (err) {
-        console.log('Error getting status', err.message);
+        logInTestEnv('Error getting status', err.message);
         return {
             success: false,
             error: err.message,
@@ -290,8 +291,8 @@ exports.getOrderShipmentLastStatus = async (trackingId) => {
 exports.cancelOrderShipment = async (trackingId) => {
     try {
         const { token } = await this.getAuthToken();
-        console.log("tracking id", trackingId)
-        console.log("Canceling Shipment!")
+        logInTestEnv("tracking id", trackingId)
+        logInTestEnv("Canceling Shipment!")
         const response = await axios.get(`${ifastBaseUrl}/api/order/DeleteShipment?trackingno=${trackingId}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -305,7 +306,7 @@ exports.cancelOrderShipment = async (trackingId) => {
         };
 
     } catch (err) {
-        console.log('Error getting status', err.message);
+        logInTestEnv('Error getting status', err.message);
         return {
             success: false,
             error: err.message,
@@ -318,7 +319,7 @@ exports.cancelOrderShipment = async (trackingId) => {
 exports.listCities = async (countryID) => {
     try {
         const { token } = await this.getAuthToken();
-        console.log("countryID", countryID)
+        logInTestEnv("countryID", countryID)
         const response = await axios.get(`${ifastBaseUrl}/api/CommonAPI/Cities?countryID=${countryID}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -332,7 +333,7 @@ exports.listCities = async (countryID) => {
         };
 
     } catch (err) {
-        console.log('Error getting status', err.message);
+        logInTestEnv('Error getting status', err.message);
         return {
             success: false,
             error: err.message,
@@ -345,7 +346,7 @@ exports.listCities = async (countryID) => {
 exports.generateOrderLabel = async (airwayBillNumber) => {
     try {
         const { token } = await this.getAuthToken();
-        console.log('Generating Label...');
+        logInTestEnv('Generating Label...');
 
         const response = await axios.get(`${ifastBaseUrl}/api/order/GetAirWayBill?TrackingNos=${airwayBillNumber}`, {
             headers: {
@@ -355,8 +356,8 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
             responseType: 'arraybuffer'  // This is important for binary data
         });
 
-        console.log("Response received. Data type:", typeof response.data);
-        console.log("Response data length:", response.data.length);
+        logInTestEnv("Response received. Data type:", typeof response.data);
+        logInTestEnv("Response data length:", response.data.length);
 
         // Convert arraybuffer to string
         const pdfContent = Buffer.from(response.data).toString('binary');
@@ -364,7 +365,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
         let generatedPDF = await processPDFContent(pdfContent);
 
         if (!generatedPDF.success) {
-            console.log("PDF processing failed:", generatedPDF.error);
+            logInTestEnv("PDF processing failed:", generatedPDF.error);
             return generatedPDF;
         }
 
@@ -373,9 +374,9 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
                 buffer: Buffer.from(generatedPDF.result),
                 mimetype: 'application/pdf'
             }
-        ]);    
+        ]);
         if (!uploadedFile.success) {
-            console.log("S3 upload failed:", uploadedFile.error);
+            logInTestEnv("S3 upload failed:", uploadedFile.error);
             return uploadedFile;
         }
 
@@ -386,7 +387,7 @@ exports.generateOrderLabel = async (airwayBillNumber) => {
         }
 
     } catch (err) {
-        console.log('Error in generateOrderLabel:', err.message);
+        logInTestEnv('Error in generateOrderLabel:', err.message);
         return {
             success: false,
             error: err.message,

@@ -5,18 +5,19 @@ const productRepo = require("../Product/product.repo")
 const wishlistRepo = require("../Wishlist/wishlist.repo")
 const basketRepo = require("../Basket/basket.repo")
 const cartRepo = require("../Cart/cart.repo")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.find = async (filterObject) => {
     try {
-        console.log("filterObject", filterObject)
+        logInTestEnv("filterObject", filterObject)
         const resultObject = await variationModel.findOne(filterObject).lean();
         if (!resultObject) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         }
-        console.log("resultObject", resultObject)
+        logInTestEnv("resultObject", resultObject)
         return {
             success: true,
             code: 200,
@@ -24,7 +25,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -57,7 +58,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -73,7 +74,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
-        console.log("filterObject", filterObject)
+        logInTestEnv("filterObject", filterObject)
         const resultArray = await variationModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image isVerified isActive" })
@@ -98,7 +99,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -113,7 +114,7 @@ exports.listAndSortByPrice = async (filterObject, selectionObject, sortObject, p
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
-        console.log("filterObject", filterObject)
+        logInTestEnv("filterObject", filterObject)
         const resultArray = await variationModel.find(filterObject).lean()
             .populate({ path: "product", select: "nameEn nameAr" })
             .sort(sortObject)
@@ -136,7 +137,7 @@ exports.listAndSortByPrice = async (filterObject, selectionObject, sortObject, p
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -168,7 +169,7 @@ exports.create = async (formObject) => {
             let discountValue = resultObject.minPackage.originalPrice - resultObject.minPackage.price
             productFormObject.discountValue = discountValue
         }
-        console.log("productFormObject", productFormObject)
+        logInTestEnv("productFormObject", productFormObject)
         productRepo.updateDirectly(resultObject.product, productFormObject)
         return {
             success: true,
@@ -177,7 +178,7 @@ exports.create = async (formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -228,7 +229,7 @@ exports.update = async (filterObject, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -259,7 +260,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -292,7 +293,7 @@ exports.updateBlockState = async (filterObject, newState) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -321,7 +322,7 @@ exports.removeMany = async (filterObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -367,7 +368,7 @@ exports.remove = async (filterObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

@@ -2,6 +2,7 @@ const i18n = require('i18n');
 const reviewModel = require("./review.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { defineReviewedItem, getPurchasedOrder, updateReviewedItemRating } = require("../../helpers/review.helper")
+const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
 exports.find = async (filterObject) => {
@@ -20,7 +21,7 @@ exports.find = async (filterObject) => {
         }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -53,7 +54,7 @@ exports.get = async (filterObject, selectionObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -94,7 +95,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -108,14 +109,14 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
 exports.create = async (formObject) => {
     try {
         let itemToReview = defineReviewedItem(formObject);
-        console.log(`itemToReview`, itemToReview);
+        logInTestEnv(`itemToReview`, itemToReview);
         let existingReviewObject = await this.get({ customer: formObject.customer, ...itemToReview })
-        console.log(`existingReviewObject`, existingReviewObject);
+        logInTestEnv(`existingReviewObject`, existingReviewObject);
 
         if (existingReviewObject.success) return { success: false, code: 409, error: i18n.__("reviewExists") }
 
         let existingOrderObject = await getPurchasedOrder(formObject, itemToReview)
-        console.log(`existingOrderObject`, existingOrderObject);
+        logInTestEnv(`existingOrderObject`, existingOrderObject);
 
         if (!existingOrderObject.success) return { success: false, code: 409, error: i18n.__("notPurchased") }
 
@@ -138,7 +139,7 @@ exports.create = async (formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -175,7 +176,7 @@ exports.update = async (_id, formObject) => {
             result: resultObject
         };
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -201,7 +202,7 @@ exports.updateDirectly = async (_id, formObject) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -233,7 +234,7 @@ exports.remove = async (_id) => {
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,

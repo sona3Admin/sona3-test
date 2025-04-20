@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../../configs/app');
 const mongoDB = require("../../configs/database");
+const { logInTestEnv } = require("../../helpers/logger.helper");
 const { generateDummyDataFromSchema } = require("../../helpers/randomData.helper")
 let baseUrl = '/api/v1/admin';
 let token
@@ -115,7 +116,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
 
     it('should give access to personal profile | endpoint => /api/v1/admin/get', async () => {
         const adminCredentials = { email: createdRecordObject.email, password: '123' };
-        
+
         let response = await request(app)
             .post(`${baseUrl}/login`)
             .set(requestHeaders)
@@ -260,7 +261,7 @@ describe('=====>Testing Admin Module Endpoints <=====', () => {
             .delete(`${baseUrl}/remove?_id=${createdRecordObject._id}`)
             .set(requestHeaders);
 
-            console.log(response.body);
+        logInTestEnv(response.body);
         expect(response.status).toBe(404);
     });
 

@@ -5,6 +5,7 @@ const { socketValidator } = require("../helpers/socketValidation.helper")
 const ADMIN_ROOM_ID = "Sona3AdminsRoom"
 const CUSTOMER_ROOM_ID = "Sona3CustomersRoom"
 const SELLER_ROOM_ID = "Sona3SellersRoom"
+const { logInTestEnv } = require("../helpers/logger.helper")
 
 
 exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) => {
@@ -18,7 +19,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             socket.join(adminsRoomId.toString())
             return sendAck({ success: true, code: 200 })
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -29,7 +30,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (!sendAck) return socket.disconnect(true)
             if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
-            console.log("Sending notification");
+            logInTestEnv("Sending notification");
             let validationResult = socketValidator(createNotificationValidation, dataObject, language)
             if (!validationResult.success) return sendAck(validationResult)
 
@@ -48,7 +49,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (resultObject.result.deviceTokens.length != 0) notificationHelper.sendPushNotification(title, body, resultObject.result.deviceTokens)
             return sendAck(resultObject)
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })
@@ -59,7 +60,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
             if (!sendAck) return socket.disconnect(true)
             if (socket.socketTokenData.role != "admin" && socket.socketTokenData.role != "superAdmin")
                 return sendAck({ success: false, code: 500, error: localeMessages.unauthorized })
-            console.log("Sending notification");
+            logInTestEnv("Sending notification");
             let validationResult = socketValidator(createNotificationValidation, dataObject, language)
             if (!validationResult.success) return sendAck(validationResult)
 
@@ -87,7 +88,7 @@ exports.adminSocketHandler = (socket, io, socketId, localeMessages, language) =>
 
             return sendAck(resultObject)
         } catch (err) {
-            console.log("err.message", err.message)
+            logInTestEnv("err.message", err.message)
             return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
         }
     })

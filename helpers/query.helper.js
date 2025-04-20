@@ -1,3 +1,4 @@
+const { logInTestEnv } = require("./logger.helper");
 
 exports.prepareQueryObjects = async (filterObject, sortObject) => {
     try {
@@ -10,15 +11,15 @@ exports.prepareQueryObjects = async (filterObject, sortObject) => {
 
         finalFilterObject = { ...filterObject, ...finalFilterObject, ...locationFinalFilter };
         finalSortObject = { ...sortObject, ...finalSortObject, ...locationFinalSort };
-        // console.log("finalSortObject", finalSortObject);
-        // console.log("finalFilterObject", finalFilterObject);
+        // logInTestEnv("finalSortObject", finalSortObject);
+        // logInTestEnv("finalFilterObject", finalFilterObject);
         return {
             filterObject: finalFilterObject,
             sortObject: finalSortObject,
         };
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {};
     }
 };

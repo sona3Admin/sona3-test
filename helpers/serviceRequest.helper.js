@@ -1,5 +1,6 @@
 const { getSettings } = require("./settings.helper")
 const { generateSubCartId } = require("./cart.helper")
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.calculateValueAddedTax = async (serviceTotal) => {
@@ -34,7 +35,7 @@ exports.handleRequestPurchase = async (customerRequestObject, customerOrderObjec
         }
         return customerRequestObject
     } catch (err) {
-        console.log("err.message", err.message);
+        logInTestEnv("err.message", err.message);
     }
 }
 

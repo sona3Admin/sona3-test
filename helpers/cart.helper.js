@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const i18n = require('i18n');
 const { ObjectId } = require('mongodb');
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.generateSubCartId = () => {
@@ -17,11 +18,11 @@ exports.isIdInArray = (arrayOfObjects, targetField, targetId) => {
         targetId = mongoose.Types.ObjectId(targetId);
         const itemIndex = arrayOfObjects.findIndex(object => object[`${targetField}`].equals(targetId))
         if (itemIndex !== -1) return { success: true, result: itemIndex, code: 200 }
-        console.log(`item not found in`, targetField, "array");
+        logInTestEnv(`item not found in`, targetField, "array");
         return { success: false, error: i18n.__("notFound"), code: 404 }
 
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return { success: false, code: 500, error: i18n.__("internalServerError") }
     }
 }
@@ -39,10 +40,10 @@ exports.findObjectInArray = (arrayOfObjects, targetField, targetId) => {
             };
 
         }
-        console.log(`item not found in`, targetField, "array");
+        logInTestEnv(`item not found in`, targetField, "array");
         return { success: false, error: i18n.__("notFound"), code: 404 };
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return { success: false, code: 500, error: i18n.__("internalServerError") };
     }
 }
@@ -55,9 +56,9 @@ exports.increaseItemQuantity = (cartItemsArray, itemIndex, quantityToAdd, itemOb
     let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage, itemObject.defaultPackage);
     cartItemsArray[itemIndex].quantity = newQuantity;
     cartItemsArray[itemIndex].itemTotal = itemTotal;
-    console.log("itemIndex", itemIndex);
-    console.log(`increaseItemQuantity`);
-    console.log("itemId", itemObject._id);
+    logInTestEnv("itemIndex", itemIndex);
+    logInTestEnv(`increaseItemQuantity`);
+    logInTestEnv("itemId", itemObject._id);
     return cartItemsArray
 }
 
@@ -69,14 +70,14 @@ exports.addShopToSubCartsArray = (subCartsArray, shopId) => {
         shopTotal: 0,
         shopOriginalTotal: 0
     });
-    console.log(`addShopToSubCartsArray`);
+    logInTestEnv(`addShopToSubCartsArray`);
     return subCartsArray
 }
 
 
 exports.addItemToItemsArray = (cartItemsArray, quantityToAdd, itemObject) => {
     let newQuantity = quantityToAdd;
-    console.log(`newQuantity`, newQuantity);
+    logInTestEnv(`newQuantity`, newQuantity);
     let itemTotal = this.calculateItemTotal(itemObject.packages, newQuantity, itemObject.minPackage, itemObject.defaultPackage);
     cartItemsArray.push({
         shop: itemObject.shop,
@@ -85,7 +86,7 @@ exports.addItemToItemsArray = (cartItemsArray, quantityToAdd, itemObject) => {
         quantity: newQuantity,
         itemTotal: itemTotal
     });
-    console.log("addItemToItemsArray");
+    logInTestEnv("addItemToItemsArray");
 
     return cartItemsArray
 }
@@ -93,7 +94,7 @@ exports.addItemToItemsArray = (cartItemsArray, quantityToAdd, itemObject) => {
 
 exports.removeItemFromItemsArray = (shopCartObject, itemIndex) => {
     shopCartObject.items.splice(itemIndex, 1);
-    console.log("removeItemFromItemsArray");
+    logInTestEnv("removeItemFromItemsArray");
     this.calculateShopTotal(shopCartObject)
     return shopCartObject.items;
 }
@@ -101,15 +102,15 @@ exports.removeItemFromItemsArray = (shopCartObject, itemIndex) => {
 
 exports.removeShopFromSubCartsArray = (shopCarts, subCartIndex) => {
     shopCarts.splice(subCartIndex, 1);
-    console.log("removeShopFromSubCartsArray");
+    logInTestEnv("removeShopFromSubCartsArray");
     return shopCarts;
 }
 
 
 exports.decreaseItemQuantity = (shopCartObject, shopCartItems, itemIndex, quantityToRemove, variation) => {
     try {
-        console.log("decrease item quantity");
-        console.log("variation.defaultPackage------", variation)
+        logInTestEnv("decrease item quantity");
+        logInTestEnv("variation.defaultPackage------", variation)
         itemIndex = parseInt(itemIndex); quantityToRemove = parseInt(quantityToRemove)
         let newQuantity = parseInt(shopCartItems[itemIndex].quantity) - quantityToRemove;
         let itemTotal = this.calculateItemTotal(variation.packages, newQuantity, variation.minPackage, variation.defaultPackage);
@@ -118,8 +119,8 @@ exports.decreaseItemQuantity = (shopCartObject, shopCartItems, itemIndex, quanti
         shopCartObject.items = shopCartItems
         this.calculateShopTotal(shopCartObject)
         return shopCartObject.items;
-    } catch(err){
-        console.log("err in decreaseItemQuantity", err.message)
+    } catch (err) {
+        logInTestEnv("err in decreaseItemQuantity", err.message)
     }
 }
 
@@ -128,8 +129,8 @@ exports.addNewSubCart = (cartObject, itemObject, quantityToAdd) => {
     cartObject.subCarts = this.addShopToSubCartsArray(cartObject.subCarts, itemObject.shop)
     let shopCartIndex = parseInt(cartObject.subCarts.length) - 1
     let shopCartObject = cartObject.subCarts[shopCartIndex]
-    console.log("addNewSubCart");
-    console.log(`quantityToAdd`, quantityToAdd);
+    logInTestEnv("addNewSubCart");
+    logInTestEnv(`quantityToAdd`, quantityToAdd);
     shopCartObject._id = this.generateSubCartId()
     shopCartObject.items = this.addItemToItemsArray(shopCartObject.items, parseInt(quantityToAdd), itemObject);
     this.calculateShopTotal(shopCartObject)
@@ -137,13 +138,13 @@ exports.addNewSubCart = (cartObject, itemObject, quantityToAdd) => {
 
 
 exports.updateExistingSubCart = (cartObject, subCartIndex, itemObject, itemId, quantityToAdd) => {
-    console.log(`updating existing sub cart`);
+    logInTestEnv(`updating existing sub cart`);
     let shopCartIndex = parseInt(subCartIndex)
     let shopCartObject = cartObject.subCarts[shopCartIndex]
     let isItemInShopCart = this.isIdInArray(shopCartObject.items, "variation", itemId);
-    console.log(`isItemInShopCart`, isItemInShopCart.success);
-    console.log("itemId", itemId);
-    console.log(`itemIndex`, isItemInShopCart.result);
+    logInTestEnv(`isItemInShopCart`, isItemInShopCart.success);
+    logInTestEnv("itemId", itemId);
+    logInTestEnv(`itemIndex`, isItemInShopCart.result);
     let itemIndex = isItemInShopCart.result
     if (isItemInShopCart.success) shopCartObject.items = this.increaseItemQuantity(shopCartObject.items, itemIndex, parseInt(quantityToAdd), itemObject);
 
@@ -157,11 +158,11 @@ exports.calculateItemTotal = (packagesArray, quantityToPurchase, minPackageObjec
 
     let remainingQuantity = quantityToPurchase;
     let itemTotal = 0;
-    console.log(`calculating item total`);
-    console.log("defaultPackage", defaultPackage)
+    logInTestEnv(`calculating item total`);
+    logInTestEnv("defaultPackage", defaultPackage)
 
     packagesArray.push(defaultPackage)
-    console.log("packagesArray", packagesArray)
+    logInTestEnv("packagesArray", packagesArray)
     let smallestPackage = findPackageWithSmallestQuantity(packagesArray) || minPackageObject
     while (remainingQuantity >= smallestPackage.quantity) {
         const selectedPackage = selectPackage(packagesArray, remainingQuantity) || minPackageObject;
@@ -173,7 +174,7 @@ exports.calculateItemTotal = (packagesArray, quantityToPurchase, minPackageObjec
     }
 
     if (remainingQuantity > 0) itemTotal += (remainingQuantity * minPackageObject.price);
-    console.log("calculated item total");
+    logInTestEnv("calculated item total");
     return itemTotal;
 }
 
@@ -184,7 +185,7 @@ exports.calculateShopTotal = (shopCartObject) => {
     shopCartObject.shopOriginalTotal = shopTotal;
     if (shopCartObject?.usedCashback) shopCartObject.shopTotal -= shopCartObject?.usedCashback
     if (shopCartObject.shopTotal < 0) shopCartObject.shopTotal = 0
-    console.log("calculated shop total");
+    logInTestEnv("calculated shop total");
 
     return shopCartObject
 }
@@ -198,13 +199,13 @@ exports.calculateCartTotal = (cartObject) => {
     if (cartObject?.coupon) cartObject = this.applyCoupon(cartObject)
     if (cartObject.cartTotal < 0) cartObject.cartTotal = 0
 
-    console.log("calculated cart total");
+    logInTestEnv("calculated cart total");
     return cartObject
 }
 
 
 exports.applyCoupon = (cartObject) => {
-    console.log("Cart has coupon!")
+    logInTestEnv("Cart has coupon!")
     let isShopInSubCarts = this.isIdInArray(cartObject.subCarts, "shop", cartObject?.couponShop.toString())
     let subCartObject = cartObject.subCarts[isShopInSubCarts.result]
     if (!isShopInSubCarts || !isShopInSubCarts.success) {
@@ -231,7 +232,7 @@ exports.applyCoupon = (cartObject) => {
 
 function selectPackage(arrayOfObjects, givenNumber) {
     let selectedPackage = null;
-    console.log(`givenNumber`, givenNumber);
+    logInTestEnv(`givenNumber`, givenNumber);
     for (const packageObject of arrayOfObjects) {
         if (packageObject.quantity <= givenNumber && (!selectedPackage || packageObject.quantity > selectedPackage.quantity)) {
             selectedPackage = packageObject;
@@ -246,10 +247,10 @@ function findPackageWithSmallestQuantity(arrayOfObjects) {
     if (arrayOfObjects.length === 0) return null; // Return null for an empty array
 
     let smallestQuantityPackage = arrayOfObjects[0];
-    console.log(`finding package`);
+    logInTestEnv(`finding package`);
     for (let i = 1; i < arrayOfObjects.length; i++) {
-        console.log(`arrayOfObjects[i].quantity`, arrayOfObjects[i]?.quantity);
-        console.log(`smallestQuantityPackage.quantity`, smallestQuantityPackage?.quantity);
+        logInTestEnv(`arrayOfObjects[i].quantity`, arrayOfObjects[i]?.quantity);
+        logInTestEnv(`smallestQuantityPackage.quantity`, smallestQuantityPackage?.quantity);
         if (arrayOfObjects[i].quantity < smallestQuantityPackage.quantity)
             smallestQuantityPackage = arrayOfObjects[i];
 

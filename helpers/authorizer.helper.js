@@ -1,5 +1,6 @@
 const i18n = require('i18n');
 const { permissions } = require("./permissions.helper")
+const { logInTestEnv } = require("./logger.helper");
 
 
 exports.validatePermissions = (listOfPermissions) => {
@@ -28,7 +29,7 @@ exports.validatePermissions = (listOfPermissions) => {
                 }
             }
             else {
-                console.log(key, "is not a valid permission")
+                logInTestEnv(key, "is not a valid permission")
                 return {
                     success: false,
                     code: 409,
@@ -41,7 +42,7 @@ exports.validatePermissions = (listOfPermissions) => {
             code: 200
         }
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return {
             success: false,
             code: 500,
@@ -71,7 +72,7 @@ exports.isAuthorized = (req, res, next) => {
 
         } else return res.status(403).json({ success: false, error: i18n.__("unauthorized"), code: 403 })
     } catch (err) {
-        console.log(`err.message`, err.message);
+        logInTestEnv(`err.message`, err.message);
         return res.status(403).json({ success: false, error: i18n.__("unauthorized"), code: 403 })
 
     }
@@ -83,7 +84,7 @@ exports.checkIdentity = (idKey) => {
     return (req, res, next) => {
         let keyToCheck = idKey || "_id";
         let requesterId = req.query[keyToCheck] || req.body[keyToCheck];
-        // console.log("tokenData", req.tokenData)
+        // logInTestEnv("tokenData", req.tokenData)
 
         if (!req.tokenData || !req.tokenData._id || requesterId !== req.tokenData._id) return res.status(403).json({ success: false, error: i18n.__("unauthorized"), code: 403 });
         return next();
