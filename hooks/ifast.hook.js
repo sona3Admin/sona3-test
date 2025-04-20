@@ -1,21 +1,14 @@
 const orderRepo = require("../modules/Order/order.repo")
-const requestRepo = require("../modules/Request/request.repo")
 const { findObjectInArray } = require("../helpers/cart.helper")
 
 
 exports.updateOrderShipmentStatus = async (req, res) => {
     try {
-        let status
-        
+
         let orderObject = await orderRepo.find({ shipments: req.body.track_id })
         if (!orderObject.success) {
-            let requestObject = await requestRepo.find({ shippingId: req.body.track_id })
-            status = handleStatus(req.body.Status, "request") || requestObject.result.status
-            console.log("request status", status)
-
-            requestRepo.updateDirectly(requestObject.result._id.toString(), { shippingStatus: req.body.Status, status })
-            return res.status(200).json({
-                status: true,
+            return res.status(404).json({
+                status: false,
                 data: {
                     order_id: req.body.track_id,
                     status: req.body.Status
@@ -24,7 +17,13 @@ exports.updateOrderShipmentStatus = async (req, res) => {
         }
 
         let subOrderObject = findObjectInArray(orderObject.result.subOrders, "shippingId", req.body.track_id)
-        if (!subOrderObject.success) return res.status(404).json({ success: false, code: 404 })
+        if (!subOrderObject.success) return res.status(404).json({
+            status: false,
+            data: {
+                order_id: req.body.track_id,
+                status: req.body.Status
+            }
+        })
 
         let subOrders
         orderObject.result.subOrders[subOrderObject.index].shippingStatus = req.body.Status
