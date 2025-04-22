@@ -371,6 +371,7 @@ exports.applyOnBasket = async (cartId, couponId, shopId) => {
         };
         let couponValidationResult = this.validateCoupon(couponObject.result)
         if (!couponValidationResult.success) return couponValidationResult;
+        if (couponObject?.result?.shop && couponObject?.result?.shop.toString() !== shopId) return { success: false, code: 409, error: i18n.__("couponNotValid") }
 
         let couponShopId = shopId || couponObject?.result?.shop?.toString()
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
