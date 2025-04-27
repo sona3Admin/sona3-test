@@ -461,9 +461,8 @@ exports.sendNewOfferEmailToCustomer = async (purchaseDetails, lang) => {
         <li><strong>Shop Name:</strong> ${purchaseDetails.shop.nameEn}</li>
         <li><strong>Service:</strong> ${purchaseDetails.service.nameEn}</li>
         <li><strong>Service Description:</strong> ${purchaseDetails.service.descriptionEn}</li>
-        <li><strong>Base Price:</strong> AED${purchaseDetails.service.basePrice}</li>
-        <li><strong>Discounted Price:</strong> AED${purchaseDetails.serviceTotal}</li>
-        <li><strong>Discount:</strong> ${purchaseDetails.taxesRate}% off</li>
+        <li><strong>Original Price:</strong> AED${purchaseDetails.service.basePrice}</li>
+        <li><strong>Price After Offer:</strong> AED${purchaseDetails.serviceTotal}</li>
         <li><strong>Special Notes:</strong> ${purchaseDetails.requestNotes || "N/A"}</li>
       </ul>
     `,
@@ -480,9 +479,8 @@ exports.sendNewOfferEmailToCustomer = async (purchaseDetails, lang) => {
         <li><strong>اسم المتجر:</strong> ${purchaseDetails.shop.nameAr}</li>
         <li><strong>الخدمة:</strong> ${purchaseDetails.service.nameAr}</li>
         <li><strong>وصف الخدمة:</strong> ${purchaseDetails.service.descriptionAr}</li>
-        <li><strong>السعر الأساسي:</strong> درهم إماراتي${purchaseDetails.service.basePrice}</li>
-        <li><strong>السعر بعد الخصم:</strong> درهم إماراتي${purchaseDetails.serviceTotal}</li>
-        <li><strong>نسبة الخصم:</strong> ${purchaseDetails.taxesRate}% خصم</li>
+        <li><strong>السعر الأصلي:</strong> درهم إماراتي${purchaseDetails.service.basePrice}</li>
+        <li><strong>السعر بعد العرض:</strong> درهم إماراتي${purchaseDetails.serviceTotal}</li>
         <li><strong>ملاحظات خاصة:</strong> ${purchaseDetails.requestNotes || "لا يوجد"}</li>
       </ul>
     `,
@@ -490,6 +488,7 @@ exports.sendNewOfferEmailToCustomer = async (purchaseDetails, lang) => {
         team: "فريق صناع",
       },
     };
+
 
     const selectedContent = content[lang];
 
