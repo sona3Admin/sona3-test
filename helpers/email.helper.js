@@ -445,6 +445,118 @@ exports.sendServiceRequestCreationEmailToCustomer = async (serviceRequest, lang)
   }
 };
 
+exports.sendNewOfferEmailToCustomer = async (purchaseDetails, lang) => {
+  try {
+    lang = !lang || lang === "en" ? "en" : "ar";
+    purchaseDetails["paymentEn"] = purchaseDetails.paymentMethod == "cashOnDelivery" ? "Cash On Delivery" : "Visa"
+    purchaseDetails["paymentAr"] = purchaseDetails.paymentMethod == "cashOnDelivery" ? "الدفع عند التوصيل" : "فيزا"
+    const content = {
+      en: {
+        subject: "Exciting New Offer!",
+        greeting: `Hello ${purchaseDetails.customer.name},`,
+        message: `We are thrilled to announce a new offer from "${purchaseDetails.shop.nameEn}" just for you! Here are the details:`,
+        details: `
+      <ul>
+        <li><strong>Offer ID:</strong> ${purchaseDetails._id}</li>
+        <li><strong>Shop Name:</strong> ${purchaseDetails.shop.nameEn}</li>
+        <li><strong>Service:</strong> ${purchaseDetails.service.nameEn}</li>
+        <li><strong>Service Description:</strong> ${purchaseDetails.service.descriptionEn}</li>
+        <li><strong>Base Price:</strong> AED${purchaseDetails.service.basePrice}</li>
+        <li><strong>Discounted Price:</strong> AED${purchaseDetails.serviceTotal}</li>
+        <li><strong>Discount:</strong> ${purchaseDetails.taxesRate}% off</li>
+        <li><strong>Special Notes:</strong> ${purchaseDetails.requestNotes || "N/A"}</li>
+      </ul>
+    `,
+        bestRegards: "Best regards,",
+        team: "SONA3 Team",
+      },
+      ar: {
+        subject: "عرض جديد ومميز!",
+        greeting: `مرحبًا ${purchaseDetails.customer.name}،`,
+        message: `يسعدنا أن نعلن عن عرض جديد من "${purchaseDetails.shop.nameAr}" خصيصًا لك! فيما يلي التفاصيل:`,
+        details: `
+      <ul>
+        <li><strong>رقم العرض:</strong> ${purchaseDetails._id}</li>
+        <li><strong>اسم المتجر:</strong> ${purchaseDetails.shop.nameAr}</li>
+        <li><strong>الخدمة:</strong> ${purchaseDetails.service.nameAr}</li>
+        <li><strong>وصف الخدمة:</strong> ${purchaseDetails.service.descriptionAr}</li>
+        <li><strong>السعر الأساسي:</strong> درهم إماراتي${purchaseDetails.service.basePrice}</li>
+        <li><strong>السعر بعد الخصم:</strong> درهم إماراتي${purchaseDetails.serviceTotal}</li>
+        <li><strong>نسبة الخصم:</strong> ${purchaseDetails.taxesRate}% خصم</li>
+        <li><strong>ملاحظات خاصة:</strong> ${purchaseDetails.requestNotes || "لا يوجد"}</li>
+      </ul>
+    `,
+        bestRegards: "مع أطيب التحيات،",
+        team: "فريق صناع",
+      },
+    };
+
+    const selectedContent = content[lang];
+
+    const htmlContent = `
+      ${setEmailHeader(lang, selectedContent.subject)}
+      <body dir="${lang === 'ar' ? 'rtl' : 'ltr'}" style="text-align: ${lang === 'ar' ? 'right' : 'left'}; font-family: Arial, sans-serif;">
+        <div class="email-container" style="margin: 0 auto; padding: 20px; max-width: 600px;">
+          <!-- Email Header -->
+          ${setEmailLogo()}
+          
+          <!-- Email Body -->
+          <div class="email-body" style="direction: ${lang === 'ar' ? 'rtl' : 'ltr'}; text-align: ${lang === 'ar' ? 'right' : 'left'};">
+            <h1>${selectedContent.subject}</h1>
+            <p>${selectedContent.greeting}</p>
+            <p>${selectedContent.message}</p>
+            <div class="details">
+              <ul style="list-style-position: inside; padding: 0;">
+                ${selectedContent.details}
+              </ul>
+            </div>
+          </div>
+
+          <!-- Email Footer -->
+          ${setEmailFooter()}
+        </div>
+      </body>
+      </html>
+    `;
+
+    const textContent = `
+      ${selectedContent.greeting}
+
+      ${selectedContent.message}
+
+      Order Details:
+      - Order ID: ${purchaseDetails._id}
+      - Shop Name: ${purchaseDetails.shop.nameEn}
+      - Order Status: ${purchaseDetails.status}
+      - Service: ${purchaseDetails.service.nameEn}
+      - Service Description: ${purchaseDetails.service.descriptionEn}
+      - Service Base Price: AED${purchaseDetails.service.basePrice}
+      - Order Total: AED${purchaseDetails.orderTotal}
+      - Taxes: ${purchaseDetails.taxesRate}% (AED${purchaseDetails.taxesTotal})
+      - Payment Method: ${purchaseDetails.paymentMethod}
+      - Notes: ${purchaseDetails.requestNotes || "N/A"}
+
+      ${selectedContent.bestRegards}
+      ${selectedContent.team}
+    `;
+
+    const emailResult = await sendEmail(
+      purchaseDetails.customer.email,
+      selectedContent.subject,
+      textContent,
+      htmlContent,
+      lang
+    );
+
+    return emailResult.success
+      ? { success: true, code: 200, message: "Purchase confirmation email sent successfully" }
+      : { success: false, code: 500, error: "Failed to send purchase confirmation email" };
+  } catch (err) {
+    console.error("Error in sendPurchaseConfirmationEmailToCustomer:", err.message);
+    return { success: false, code: 500, error: "Failed to send purchase confirmation email" };
+  }
+};
+
 
 exports.sendPurchaseConfirmationEmailToCustomer = async (purchaseDetails, lang) => {
   try {
