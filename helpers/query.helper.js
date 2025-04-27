@@ -63,7 +63,7 @@ function handleSearchParams(filterObject) {
     finalFilterObject = handleSearchProperty('email', filterObject, finalFilterObject);
     finalFilterObject = handleSearchProperty('phone', filterObject, finalFilterObject);
     finalFilterObject = handleSearchProperty('descriptionEn', filterObject, finalFilterObject);
-    finalFilterObject = handleSearchProperty('descriptionAr', filterObject, finalFilterObject);
+    finalFilterObject = handleSearchProperty('descriptionAr', filterObject, finalFilterObject);    
 
     return finalFilterObject;
 }
@@ -140,10 +140,10 @@ function handleSortParams(filterObject) {
 
 function handleSearchProperty(property, filterObject, finalFilterObject) {
     if (filterObject?.[property]) {
-        if (!finalFilterObject.$or) {
-            finalFilterObject.$or = [];
+        if (!finalFilterObject.$and) {
+            finalFilterObject.$and = [];
         }
-        finalFilterObject.$or.push({ [property]: { $regex: filterObject[property], $options: 'i' } });
+        finalFilterObject.$and.push({ [property]: { $regex: filterObject[property], $options: 'i' } });
         delete filterObject[property];
     }
 
