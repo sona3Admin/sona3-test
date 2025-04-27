@@ -62,11 +62,9 @@ exports.updateRequest = async (req, res) => {
             }
 
 
-            let notificationResultObject = await notificationRepo.create(notificationObject)
-            let operationResultObjectu = await requestRepo.get({ _id: requestObject.result._id }, {});
-            
+            let notificationResultObject = await notificationRepo.create(notificationObject)            
             io.to(requestObject.result.customer._id.toString()).emit("newNotification", { success: true, code: 201, result: notificationResultObject.result })
-            emailHelper.sendPurchaseConfirmationEmailToCustomer(operationResultObjectu.result, req.lang)
+            emailHelper.sendPurchaseConfirmationEmailToCustomer(requestObject.result, req.lang)
             
         }
         return res.status(operationResultObject.code).json(operationResultObject);
