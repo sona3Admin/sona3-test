@@ -3,6 +3,7 @@ const requestRepo = require("../../modules/Request/request.repo");
 const notificationRepo = require("../../modules/Notification/notification.repo");
 const { getSocketIo } = require("../../configs/socketManager");
 const { logInTestEnv } = require("../../helpers/logger.helper");
+const emailHelper = require("../../helpers/email.helper");
 
 
 exports.listRequests = async (req, res) => {
@@ -62,8 +63,11 @@ exports.updateRequest = async (req, res) => {
 
 
             let notificationResultObject = await notificationRepo.create(notificationObject)
-
+            let operationResultObjectu = await requestRepo.get({ _id: requestObject.result._id }, {});
+            
             io.to(requestObject.result.customer._id.toString()).emit("newNotification", { success: true, code: 201, result: notificationResultObject.result })
+            emailHelper.sendPurchaseConfirmationEmailToCustomer(operationResultObjectu.result, req.lang)
+            
         }
         return res.status(operationResultObject.code).json(operationResultObject);
 
