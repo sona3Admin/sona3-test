@@ -55,12 +55,11 @@ exports.updateRequest = async (req, res) => {
                 bodyEn: `${requestObject.result.seller.userName} updated the service request ${requestObject.result.service.nameEn} from the following shop: ${requestObject.result.shop.nameEn}`,
                 bodyAr: `قام ${requestObject.result.seller.userName} بتحديث طلب الخدمة ${requestObject.result.service.nameAr} من المتجر التالي: ${requestObject.result.shop.nameAr} `,
                 redirectId: requestObject.result._id,
-                redirectType: "order",
-                type: 'order',
+                redirectType: "serviceRequest",
+                type: 'serviceRequest',
                 receivers: [requestObject.result.customer._id],
                 deviceTokens: [requestObject.result.customer.fcmToken],
             }
-
 
             let notificationResultObject = await notificationRepo.create(notificationObject)            
             io.to(requestObject.result.customer._id.toString()).emit("newNotification", { success: true, code: 201, result: notificationResultObject.result })
