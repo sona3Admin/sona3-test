@@ -3,6 +3,7 @@ const roleModel = require("./role.model")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
 
+const { enhancePermissions } = require("../../helpers/enhancePermissions.helper")
 
 exports.find = async (filterObject) => {
     try {
@@ -101,8 +102,8 @@ exports.create = async (formObject) => {
 
         formObject = this.convertToLowerCase(formObject)
         const uniqueObjectResult = await this.isObjectUninque(formObject);
-        if (!uniqueObjectResult.success) return uniqueObjectResult
-
+        if (!uniqueObjectResult.success) return uniqueObjectResult   
+        formObject.permissions = await enhancePermissions(formObject.permissions)
         const resultObject = new roleModel(formObject);
         await resultObject.save();
 

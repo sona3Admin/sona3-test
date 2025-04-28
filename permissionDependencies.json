@@ -1,0 +1,1249 @@
+{
+  "/admin/complaints/list": {
+    "complaints": ["/admin/complaints/list", "/admin/complaints/get"]
+  },
+  "/admin/complaints/get": {
+    "complaints": ["/admin/complaints/list", "/admin/complaints/get"]
+  },
+  "/admin/complaints/update": {
+    "complaints": [
+      "/admin/complaints/list",
+      "/admin/complaints/get",
+      "/admin/complaints/update",
+      "/admin/complaints/remove"
+    ]
+  },
+  "/admin/complaints/remove": {
+    "complaints": [
+      "/admin/complaints/list",
+      "/admin/complaints/get",
+      "/admin/complaints/update",
+      "/admin/complaints/remove"
+    ]
+  },
+  "/admin/settings/list": {
+    "settings": ["/admin/settings/list"]
+  },
+  "/admin/settings/update": {
+    "settings": [
+      "/admin/settings/update",
+      "/admin/settings/list",
+      "/admin/settings/tiers"
+    ]
+  },
+  "/admin/settings/tiers": {
+    "settings": [
+      "/admin/settings/update",
+      "/admin/settings/list",
+      "/admin/settings/tiers"
+    ]
+  },
+  "/admin/coupons/list": {
+    "coupons": ["/admin/coupons/list", "/admin/coupons/get"]
+  },
+  "/admin/coupons/create": {
+    "coupons": [
+      "/admin/coupons/create",
+      "/admin/coupons/update",
+      "/admin/coupons/get",
+      "/admin/coupons/list",
+      "/admin/coupons/remove"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/coupons/update": {
+    "coupons": [
+      "/admin/coupons/create",
+      "/admin/coupons/update",
+      "/admin/coupons/get",
+      "/admin/coupons/list",
+      "/admin/coupons/remove"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/coupons/get": {
+    "coupons": ["/admin/coupons/get", "/admin/coupons/list"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/coupons/remove": {
+    "coupons": [
+      "/admin/coupons/create",
+      "/admin/coupons/update",
+      "/admin/coupons/get",
+      "/admin/coupons/list",
+      "/admin/coupons/remove"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admins/list": {
+    "admins": ["/admin/list", "/admin/get"]
+  },
+  "/admin/create": {
+    "admins": [
+      "/admin/create",
+      "/admin/list",
+      "/admin/get",
+      "/admin/update",
+      "/admin/remove",
+      "/admin/image",
+      "/admin/password",
+      "/admin/role"
+    ],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/get": {
+    "admins": ["/admin/list", "/admin/get"],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/update": {
+    "admins": [
+      "/admin/create",
+      "/admin/list",
+      "/admin/get",
+      "/admin/update",
+      "/admin/remove",
+      "/admin/image",
+      "/admin/password",
+      "/admin/role"
+    ],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/remove": {
+    "admins": [
+      "/admin/create",
+      "/admin/list",
+      "/admin/get",
+      "/admin/update",
+      "/admin/remove",
+      "/admin/image",
+      "/admin/password",
+      "/admin/role"
+    ],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/image": {
+    "admins": [
+      "/admin/create",
+      "/admin/list",
+      "/admin/get",
+      "/admin/update",
+      "/admin/remove",
+      "/admin/image",
+      "/admin/password",
+      "/admin/role"
+    ],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/password": {
+    "admins": [
+      "/admin/create",
+      "/admin/list",
+      "/admin/get",
+      "/admin/update",
+      "/admin/remove",
+      "/admin/image",
+      "/admin/password",
+      "/admin/role"
+    ],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/role": {
+    "admins": [
+      "/admin/create",
+      "/admin/list",
+      "/admin/get",
+      "/admin/update",
+      "/admin/remove",
+      "/admin/image",
+      "/admin/password",
+      "/admin/role"
+    ],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
+  },
+  "/admin/fields/list": {
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/fields/create": {
+    "fields": [
+      "/admin/fields/create",
+      "/admin/fields/update",
+      "/admin/fields/remove",
+      "/admin/fields/list",
+      "/admin/fields/get"
+    ]
+  },
+  "/admin/fields/update": {
+    "fields": [
+      "/admin/fields/create",
+      "/admin/fields/update",
+      "/admin/fields/remove",
+      "/admin/fields/list",
+      "/admin/fields/get"
+    ]
+  },
+  "/admin/fields/remove": {
+    "fields": [
+      "/admin/fields/create",
+      "/admin/fields/update",
+      "/admin/fields/remove",
+      "/admin/fields/list",
+      "/admin/fields/get"
+    ]
+  },
+  "/admin/fields/get": {
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/forms/list": {
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/forms/create": {
+    "forms": [
+      "/admin/forms/create",
+      "/admin/forms/update",
+      "/admin/forms/remove",
+      "/admin/forms/list",
+      "/admin/forms/get"
+    ],
+    "fields": ["/admin/fields/list", "/admin/fields/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/forms/update": {
+    "forms": [
+      "/admin/forms/create",
+      "/admin/forms/update",
+      "/admin/forms/remove",
+      "/admin/forms/list",
+      "/admin/forms/get"
+    ],
+    "fields": ["/admin/fields/list", "/admin/fields/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/forms/remove": {
+    "forms": [
+      "/admin/forms/create",
+      "/admin/forms/update",
+      "/admin/forms/remove",
+      "/admin/forms/list",
+      "/admin/forms/get"
+    ],
+    "fields": ["/admin/fields/list", "/admin/fields/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/forms/get": {
+    "forms": ["/admin/forms/list", "/admin/forms/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/categories/list": {
+    "categories": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/categories/create": {
+    "categories": [
+      "/admin/categories/create",
+      "/admin/categories/update",
+      "/admin/categories/remove",
+      "/admin/categories/list",
+      "/admin/categories/get",
+      "/admin/categories/image"
+    ]
+  },
+  "/admin/categories/update": {
+    "categories": [
+      "/admin/categories/create",
+      "/admin/categories/update",
+      "/admin/categories/remove",
+      "/admin/categories/list",
+      "/admin/categories/get",
+      "/admin/categories/image"
+    ]
+  },
+  "/admin/categories/remove": {
+    "categories": [
+      "/admin/categories/create",
+      "/admin/categories/update",
+      "/admin/categories/remove",
+      "/admin/categories/list",
+      "/admin/categories/get",
+      "/admin/categories/image"
+    ]
+  },
+  "/admin/categories/get": {
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/categories/image": {
+    "categories": [
+      "/admin/categories/create",
+      "/admin/categories/update",
+      "/admin/categories/remove",
+      "/admin/categories/list",
+      "/admin/categories/get",
+      "/admin/categories/image"
+    ]
+  },
+  "/admin/variations/list": {
+    "variations": [
+      "/admin/variations/list",
+      "/admin/variations/listByPrice",
+      "/admin/variations/get"
+    ]
+  },
+  "/admin/variations/listByPrice": {
+    "variations": [
+      "/admin/variations/list",
+      "/admin/variations/listByPrice",
+      "/admin/variations/get"
+    ]
+  },
+  "/admin/variations/create": {
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/variations/update": {
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/variations/remove": {
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/variations/get": {
+    "variations": [
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/listByPrice"
+    ],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/variations/image": {
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/list": {
+    "products": ["/admin/products/list", "/admin/products/get"]
+  },
+  "/admin/products/create": {
+    "products": [
+      "/admin/products/create",
+      "/admin/products/update",
+      "/admin/products/updateIsActive",
+      "/admin/products/remove",
+      "/admin/products/list",
+      "/admin/products/count",
+      "/admin/products/get",
+      "/admin/products/export"
+    ],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/update": {
+    "products": [
+      "/admin/products/create",
+      "/admin/products/update",
+      "/admin/products/updateIsActive",
+      "/admin/products/remove",
+      "/admin/products/list",
+      "/admin/products/count",
+      "/admin/products/get",
+      "/admin/products/export"
+    ],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/updateIsActive": {
+    "products": [
+      "/admin/products/create",
+      "/admin/products/update",
+      "/admin/products/updateIsActive",
+      "/admin/products/remove",
+      "/admin/products/list",
+      "/admin/products/count",
+      "/admin/products/get",
+      "/admin/products/export"
+    ],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/remove": {
+    "products": [
+      "/admin/products/create",
+      "/admin/products/update",
+      "/admin/products/updateIsActive",
+      "/admin/products/remove",
+      "/admin/products/list",
+      "/admin/products/count",
+      "/admin/products/get",
+      "/admin/products/export"
+    ],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/count": {
+    "products": [
+      "/admin/products/create",
+      "/admin/products/update",
+      "/admin/products/updateIsActive",
+      "/admin/products/remove",
+      "/admin/products/list",
+      "/admin/products/count",
+      "/admin/products/get",
+      "/admin/products/export"
+    ],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/get": {
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/products/export": {
+    "products": [
+      "/admin/products/create",
+      "/admin/products/update",
+      "/admin/products/updateIsActive",
+      "/admin/products/remove",
+      "/admin/products/list",
+      "/admin/products/count",
+      "/admin/products/get",
+      "/admin/products/export"
+    ],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
+  },
+  "/admin/services/list": {
+    "services": ["/admin/services/list", "/admin/services/get"]
+  },
+  "/admin/services/create": {
+    "services": [
+      "/admin/services/create",
+      "/admin/services/update",
+      "/admin/services/updateIsActive",
+      "/admin/services/remove",
+      "/admin/services/list",
+      "/admin/services/count",
+      "/admin/services/get",
+      "/admin/services/image"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/services/update": {
+    "services": [
+      "/admin/services/create",
+      "/admin/services/update",
+      "/admin/services/updateIsActive",
+      "/admin/services/remove",
+      "/admin/services/list",
+      "/admin/services/count",
+      "/admin/services/get",
+      "/admin/services/image"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/services/updateIsActive": {
+    "services": [
+      "/admin/services/create",
+      "/admin/services/update",
+      "/admin/services/updateIsActive",
+      "/admin/services/remove",
+      "/admin/services/list",
+      "/admin/services/count",
+      "/admin/services/get",
+      "/admin/services/image"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/services/remove": {
+    "services": [
+      "/admin/services/create",
+      "/admin/services/update",
+      "/admin/services/updateIsActive",
+      "/admin/services/remove",
+      "/admin/services/list",
+      "/admin/services/count",
+      "/admin/services/get",
+      "/admin/services/image"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/services/count": {
+    "services": [
+      "/admin/services/create",
+      "/admin/services/update",
+      "/admin/services/updateIsActive",
+      "/admin/services/remove",
+      "/admin/services/list",
+      "/admin/services/count",
+      "/admin/services/get",
+      "/admin/services/image"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/services/get": {
+    "services": ["/admin/services/list", "/admin/services/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/services/image": {
+    "services": [
+      "/admin/services/create",
+      "/admin/services/update",
+      "/admin/services/updateIsActive",
+      "/admin/services/remove",
+      "/admin/services/list",
+      "/admin/services/count",
+      "/admin/services/get",
+      "/admin/services/image"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "tags": ["/admin/tags/list", "/admin/tags/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"],
+    "fields": ["/admin/fields/list", "/admin/fields/get"]
+  },
+  "/admin/requests/list": {
+    "requests": ["/admin/requests/get", "/admin/requests/list"]
+  },
+  "/admin/requests/get": {
+    "requests": ["/admin/requests/get", "/admin/requests/list"]
+  },
+  "/admin/requests/update": {
+    "requests": [
+      "/admin/requests/get",
+      "/admin/requests/list",
+      "/admin/requests/update"
+    ]
+  },
+  "/admin/customers/list": {
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/customers/get": {
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/customers/update": {
+    "customers": [
+      "/admin/customers/list",
+      "/admin/customers/get",
+      "/admin/customers/update",
+      "/admin/customers/updateIsActive",
+      "/admin/customers/remove",
+      "/admin/customers/image",
+      "/admin/customers/password"
+    ]
+  },
+  "/admin/customers/updateIsActive": {
+    "customers": [
+      "/admin/customers/list",
+      "/admin/customers/get",
+      "/admin/customers/update",
+      "/admin/customers/updateIsActive",
+      "/admin/customers/remove",
+      "/admin/customers/image",
+      "/admin/customers/password"
+    ]
+  },
+  "/admin/customers/remove": {
+    "customers": [
+      "/admin/customers/list",
+      "/admin/customers/get",
+      "/admin/customers/update",
+      "/admin/customers/updateIsActive",
+      "/admin/customers/remove",
+      "/admin/customers/image",
+      "/admin/customers/password"
+    ]
+  },
+  "/admin/customers/image": {
+    "customers": [
+      "/admin/customers/list",
+      "/admin/customers/get",
+      "/admin/customers/update",
+      "/admin/customers/updateIsActive",
+      "/admin/customers/remove",
+      "/admin/customers/image",
+      "/admin/customers/password"
+    ]
+  },
+  "/admin/customers/password": {
+    "customers": [
+      "/admin/customers/list",
+      "/admin/customers/get",
+      "/admin/customers/update",
+      "/admin/customers/updateIsActive",
+      "/admin/customers/remove",
+      "/admin/customers/image",
+      "/admin/customers/password"
+    ]
+  },
+  "/admin/sellers/list": {
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/sellers/get": {
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/sellers/create": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/sellers/update": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/sellers/updateIsActive": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/sellers/remove": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/sellers/image": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/sellers/password": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/sellers/identity": {
+    "sellers": [
+      "/admin/sellers/list",
+      "/admin/sellers/get",
+      "/admin/sellers/create",
+      "/admin/sellers/update",
+      "/admin/sellers/updateIsActive",
+      "/admin/sellers/remove",
+      "/admin/sellers/image",
+      "/admin/sellers/password",
+      "/admin/sellers/identity"
+    ]
+  },
+  "/admin/shops/list": {
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/shops/create": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/count": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/get": {
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/update": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/updateIsActive": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/remove": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/image": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/shops/cover": {
+    "shops": [
+      "/admin/shops/create",
+      "/admin/shops/list",
+      "/admin/shops/count",
+      "/admin/shops/get",
+      "/admin/shops/update",
+      "/admin/shops/updateIsActive",
+      "/admin/shops/remove",
+      "/admin/shops/image",
+      "/admin/shops/cover"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
+  },
+  "/admin/roles/list": {
+    "roles": ["/admin/roles/list", "/admin/roles/get"],
+    "permissions": ["/admin/permissions/list"]
+  },
+  "/admin/roles/create": {
+    "roles": [
+      "/admin/roles/create",
+      "/admin/roles/list",
+      "/admin/roles/get",
+      "/admin/roles/update",
+      "/admin/roles/remove"
+    ],
+    "permissions": ["/admin/permissions/list"]
+  },
+  "/admin/roles/get": {
+    "roles": ["/admin/roles/list", "/admin/roles/get"],
+    "permissions": ["/admin/permissions/list"]
+  },
+  "/admin/roles/update": {
+    "roles": [
+      "/admin/roles/create",
+      "/admin/roles/list",
+      "/admin/roles/get",
+      "/admin/roles/update",
+      "/admin/roles/remove"
+    ],
+    "permissions": ["/admin/permissions/list"]
+  },
+  "/admin/roles/remove": {
+    "roles": [
+      "/admin/roles/create",
+      "/admin/roles/list",
+      "/admin/roles/get",
+      "/admin/roles/update",
+      "/admin/roles/remove"
+    ],
+    "permissions": ["/admin/permissions/list"]
+  },
+  "/admin/banners/list": {
+    "banners": ["/admin/banners/list", "/admin/banners/get"]
+  },
+  "/admin/banners/create": {
+    "banners": [
+      "/admin/banners/create",
+      "/admin/banners/update",
+      "/admin/banners/remove",
+      "/admin/banners/list",
+      "/admin/banners/get",
+      "/admin/banners/image"
+    ]
+  },
+  "/admin/banners/update": {
+    "banners": [
+      "/admin/banners/create",
+      "/admin/banners/update",
+      "/admin/banners/remove",
+      "/admin/banners/list",
+      "/admin/banners/get",
+      "/admin/banners/image"
+    ]
+  },
+  "/admin/banners/remove": {
+    "banners": [
+      "/admin/banners/create",
+      "/admin/banners/update",
+      "/admin/banners/remove",
+      "/admin/banners/list",
+      "/admin/banners/get",
+      "/admin/banners/image"
+    ]
+  },
+  "/admin/banners/get": {
+    "banners": ["/admin/banners/list", "/admin/banners/get"]
+  },
+  "/admin/banners/image": {
+    "banners": [
+      "/admin/banners/create",
+      "/admin/banners/update",
+      "/admin/banners/remove",
+      "/admin/banners/list",
+      "/admin/banners/get",
+      "/admin/banners/image"
+    ]
+  },
+  "/admin/tags/list": {
+    "tags": ["/admin/tags/list", "/admin/tags/get"]
+  },
+  "/admin/tags/create": {
+    "tags": [
+      "/admin/tags/create",
+      "/admin/tags/update",
+      "/admin/tags/remove",
+      "/admin/tags/list",
+      "/admin/tags/get"
+    ]
+  },
+  "/admin/tags/update": {
+    "tags": [
+      "/admin/tags/create",
+      "/admin/tags/update",
+      "/admin/tags/remove",
+      "/admin/tags/list",
+      "/admin/tags/get"
+    ]
+  },
+  "/admin/tags/remove": {
+    "tags": [
+      "/admin/tags/create",
+      "/admin/tags/update",
+      "/admin/tags/remove",
+      "/admin/tags/list",
+      "/admin/tags/get"
+    ]
+  },
+  "/admin/tags/get": {
+    "tags": ["/admin/tags/list", "/admin/tags/get"]
+  },
+  "/admin/carts/list": {
+    "carts": ["/admin/carts/get", "/admin/carts/list"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/carts/get": {
+    "carts": ["/admin/carts/get", "/admin/carts/list"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/carts/update": {
+    "carts": [
+      "/admin/carts/get",
+      "/admin/carts/list",
+      "/admin/carts/update",
+      "/admin/carts/remove"
+    ],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/carts/remove": {
+    "carts": [
+      "/admin/carts/get",
+      "/admin/carts/list",
+      "/admin/carts/update",
+      "/admin/carts/remove"
+    ],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/baskets/list": {
+    "baskets": ["/admin/baskets/get", "/admin/baskets/list"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/baskets/get": {
+    "baskets": ["/admin/baskets/get", "/admin/baskets/list"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/baskets/update": {
+    "baskets": [
+      "/admin/baskets/get",
+      "/admin/baskets/list",
+      "/admin/baskets/update",
+      "/admin/baskets/remove"
+    ],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/baskets/remove": {
+    "baskets": [
+      "/admin/baskets/get",
+      "/admin/baskets/list",
+      "/admin/baskets/update",
+      "/admin/baskets/remove"
+    ],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/wishlists/list": {
+    "wishlists": ["/admin/wishlists/get", "/admin/wishlists/list"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/wishlists/get": {
+    "wishlists": ["/admin/wishlists/get", "/admin/wishlists/list"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/wishlists/update": {
+    "wishlists": [
+      "/admin/wishlists/get",
+      "/admin/wishlists/list",
+      "/admin/wishlists/update",
+      "/admin/wishlists/remove"
+    ],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/wishlists/remove": {
+    "wishlists": [
+      "/admin/wishlists/get",
+      "/admin/wishlists/list",
+      "/admin/wishlists/update",
+      "/admin/wishlists/remove"
+    ],
+    "variations": ["/admin/variations/list", "/admin/variations/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/orders/list": {
+    "orders": ["/admin/orders/get", "/admin/orders/list"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/orders/get": {
+    "orders": ["/admin/orders/get", "/admin/orders/list"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/orders/update": {
+    "orders": [
+      "/admin/orders/get",
+      "/admin/orders/list",
+      "/admin/orders/update",
+      "/admin/orders/status"
+    ],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/orders/status": {
+    "orders": [
+      "/admin/orders/get",
+      "/admin/orders/list",
+      "/admin/orders/update",
+      "/admin/orders/status"
+    ],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"]
+  },
+  "/admin/reviews/list": {
+    "reviews": ["/admin/reviews/get", "/admin/reviews/list"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "services": ["/admin/services/list", "/admin/services/get"]
+  },
+  "/admin/reviews/get": {
+    "reviews": ["/admin/reviews/get", "/admin/reviews/list"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "services": ["/admin/services/list", "/admin/services/get"]
+  },
+  "/admin/reviews/remove": {
+    "reviews": [
+      "/admin/reviews/get",
+      "/admin/reviews/list",
+      "/admin/reviews/remove"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"],
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "services": ["/admin/services/list", "/admin/services/get"]
+  },
+  "/admin/rooms/list": {
+    "rooms": [
+      "/admin/rooms/update",
+      "/admin/rooms/get",
+      "/admin/rooms/list",
+      "/admin/rooms/remove",
+      "/admin/rooms/file"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/rooms/update": {
+    "rooms": [
+      "/admin/rooms/update",
+      "/admin/rooms/get",
+      "/admin/rooms/list",
+      "/admin/rooms/remove",
+      "/admin/rooms/file"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/rooms/get": {
+    "rooms": [
+      "/admin/rooms/update",
+      "/admin/rooms/get",
+      "/admin/rooms/list",
+      "/admin/rooms/remove",
+      "/admin/rooms/file"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/rooms/remove": {
+    "rooms": [
+      "/admin/rooms/update",
+      "/admin/rooms/get",
+      "/admin/rooms/list",
+      "/admin/rooms/remove",
+      "/admin/rooms/file"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/rooms/file": {
+    "rooms": [
+      "/admin/rooms/update",
+      "/admin/rooms/get",
+      "/admin/rooms/list",
+      "/admin/rooms/remove",
+      "/admin/rooms/file"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/notifications/list": {
+    "notifications": ["/admin/notifications/get", "/admin/notifications/list"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/notifications/create": {
+    "notifications": [
+      "/admin/notifications/create",
+      "/admin/notifications/update",
+      "/admin/notifications/get",
+      "/admin/notifications/list",
+      "/admin/notifications/remove"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/notifications/update": {
+    "notifications": [
+      "/admin/notifications/create",
+      "/admin/notifications/update",
+      "/admin/notifications/get",
+      "/admin/notifications/list",
+      "/admin/notifications/remove"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/notifications/get": {
+    "notifications": ["/admin/notifications/get", "/admin/notifications/list"],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/notifications/remove": {
+    "notifications": [
+      "/admin/notifications/create",
+      "/admin/notifications/update",
+      "/admin/notifications/get",
+      "/admin/notifications/list",
+      "/admin/notifications/remove"
+    ],
+    "customers": ["/admin/customers/list", "/admin/customers/get"],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  }
+}
