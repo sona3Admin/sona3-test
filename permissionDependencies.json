@@ -1,86 +1,7 @@
 {
-  "/admin/complaints/list": {
-    "complaints": ["/admin/complaints/list", "/admin/complaints/get"]
-  },
-  "/admin/complaints/get": {
-    "complaints": ["/admin/complaints/list", "/admin/complaints/get"]
-  },
-  "/admin/complaints/update": {
-    "complaints": [
-      "/admin/complaints/list",
-      "/admin/complaints/get",
-      "/admin/complaints/update",
-      "/admin/complaints/remove"
-    ]
-  },
-  "/admin/complaints/remove": {
-    "complaints": [
-      "/admin/complaints/list",
-      "/admin/complaints/get",
-      "/admin/complaints/update",
-      "/admin/complaints/remove"
-    ]
-  },
-  "/admin/settings/list": {
-    "settings": ["/admin/settings/list"]
-  },
-  "/admin/settings/update": {
-    "settings": [
-      "/admin/settings/update",
-      "/admin/settings/list",
-      "/admin/settings/tiers"
-    ]
-  },
-  "/admin/settings/tiers": {
-    "settings": [
-      "/admin/settings/update",
-      "/admin/settings/list",
-      "/admin/settings/tiers"
-    ]
-  },
-  "/admin/coupons/list": {
-    "coupons": ["/admin/coupons/list", "/admin/coupons/get"]
-  },
-  "/admin/coupons/create": {
-    "coupons": [
-      "/admin/coupons/create",
-      "/admin/coupons/update",
-      "/admin/coupons/get",
-      "/admin/coupons/list",
-      "/admin/coupons/remove"
-    ],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"]
-  },
-  "/admin/coupons/update": {
-    "coupons": [
-      "/admin/coupons/create",
-      "/admin/coupons/update",
-      "/admin/coupons/get",
-      "/admin/coupons/list",
-      "/admin/coupons/remove"
-    ],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"]
-  },
-  "/admin/coupons/get": {
-    "coupons": ["/admin/coupons/get", "/admin/coupons/list"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"]
-  },
-  "/admin/coupons/remove": {
-    "coupons": [
-      "/admin/coupons/create",
-      "/admin/coupons/update",
-      "/admin/coupons/get",
-      "/admin/coupons/list",
-      "/admin/coupons/remove"
-    ],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"]
-  },
-  "/admins/list": {
-    "admins": ["/admin/list", "/admin/get"]
+  "/admin/list": {
+    "admins": ["/admin/list", "/admin/get"],
+    "roles": ["/admin/roles/list", "/admin/roles/get"]
   },
   "/admin/create": {
     "admins": [
@@ -234,12 +155,10 @@
     "categories": ["/admin/categories/list", "/admin/categories/get"]
   },
   "/admin/forms/get": {
-    "forms": ["/admin/forms/list", "/admin/forms/get"],
-    "fields": ["/admin/fields/list", "/admin/fields/get"],
-    "categories": ["/admin/categories/list", "/admin/categories/get"]
+    "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/categories/list": {
-    "categories": ["/admin/forms/list", "/admin/forms/get"]
+    "categories": ["/admin/categories/list", "/admin/categories/get"]
   },
   "/admin/categories/create": {
     "categories": [
@@ -348,11 +267,7 @@
       "/admin/variations/list",
       "/admin/variations/get",
       "/admin/variations/listByPrice"
-    ],
-    "shops": ["/admin/shops/list", "/admin/shops/get"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "products": ["/admin/products/list", "/admin/products/get"],
-    "forms": ["/admin/forms/list", "/admin/forms/get"]
+    ]
   },
   "/admin/variations/image": {
     "variations": [
@@ -370,7 +285,8 @@
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/products/list": {
-    "products": ["/admin/products/list", "/admin/products/get"]
+    "products": ["/admin/products/list", "/admin/products/get"],
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/products/create": {
     "products": [
@@ -464,12 +380,7 @@
   },
   "/admin/products/get": {
     "products": ["/admin/products/list", "/admin/products/get"],
-    "tags": ["/admin/tags/list", "/admin/tags/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
-    "forms": ["/admin/forms/list", "/admin/forms/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/products/export": {
     "products": [
@@ -578,12 +489,7 @@
     "fields": ["/admin/fields/list", "/admin/fields/get"]
   },
   "/admin/services/get": {
-    "services": ["/admin/services/list", "/admin/services/get"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"],
-    "tags": ["/admin/tags/list", "/admin/tags/get"],
-    "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "fields": ["/admin/fields/list", "/admin/fields/get"]
+    "services": ["/admin/services/list", "/admin/services/get"]
   },
   "/admin/services/image": {
     "services": [
@@ -807,9 +713,7 @@
     "categories": ["/admin/categories/list", "/admin/categories/get"]
   },
   "/admin/shops/get": {
-    "shops": ["/admin/shops/list", "/admin/shops/get"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
-    "categories": ["/admin/categories/list", "/admin/categories/get"]
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
   },
   "/admin/shops/update": {
     "shops": [
@@ -1006,12 +910,12 @@
   "/admin/carts/list": {
     "carts": ["/admin/carts/get", "/admin/carts/list"],
     "products": ["/admin/products/list", "/admin/products/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/carts/get": {
     "carts": ["/admin/carts/get", "/admin/carts/list"],
     "products": ["/admin/products/list", "/admin/products/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/carts/update": {
     "carts": [
@@ -1036,12 +940,12 @@
   "/admin/baskets/list": {
     "baskets": ["/admin/baskets/get", "/admin/baskets/list"],
     "products": ["/admin/products/list", "/admin/products/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/baskets/get": {
     "baskets": ["/admin/baskets/get", "/admin/baskets/list"],
     "products": ["/admin/products/list", "/admin/products/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/baskets/update": {
     "baskets": [
@@ -1065,13 +969,11 @@
   },
   "/admin/wishlists/list": {
     "wishlists": ["/admin/wishlists/get", "/admin/wishlists/list"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/wishlists/get": {
     "wishlists": ["/admin/wishlists/get", "/admin/wishlists/list"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "variations": ["/admin/variations/list", "/admin/variations/get"]
   },
   "/admin/wishlists/update": {
     "wishlists": [
@@ -1095,13 +997,11 @@
   },
   "/admin/orders/list": {
     "orders": ["/admin/orders/get", "/admin/orders/list"],
-    "products": ["/admin/products/list", "/admin/products/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "products": ["/admin/products/list", "/admin/products/get"]
   },
   "/admin/orders/get": {
     "orders": ["/admin/orders/get", "/admin/orders/list"],
-    "products": ["/admin/products/list", "/admin/products/get"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"]
+    "products": ["/admin/products/list", "/admin/products/get"]
   },
   "/admin/orders/update": {
     "orders": [
@@ -1124,18 +1024,10 @@
     "customers": ["/admin/customers/list", "/admin/customers/get"]
   },
   "/admin/reviews/list": {
-    "reviews": ["/admin/reviews/get", "/admin/reviews/list"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"],
-    "products": ["/admin/products/list", "/admin/products/get"],
-    "services": ["/admin/services/list", "/admin/services/get"]
+    "reviews": ["/admin/reviews/get", "/admin/reviews/list"]
   },
   "/admin/reviews/get": {
-    "reviews": ["/admin/reviews/get", "/admin/reviews/list"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"],
-    "shops": ["/admin/shops/list", "/admin/shops/get"],
-    "products": ["/admin/products/list", "/admin/products/get"],
-    "services": ["/admin/services/list", "/admin/services/get"]
+    "reviews": ["/admin/reviews/get", "/admin/reviews/list"]
   },
   "/admin/reviews/remove": {
     "reviews": [
@@ -1204,9 +1096,7 @@
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
   },
   "/admin/notifications/list": {
-    "notifications": ["/admin/notifications/get", "/admin/notifications/list"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+    "notifications": ["/admin/notifications/get", "/admin/notifications/list"]
   },
   "/admin/notifications/create": {
     "notifications": [
@@ -1231,9 +1121,7 @@
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
   },
   "/admin/notifications/get": {
-    "notifications": ["/admin/notifications/get", "/admin/notifications/list"],
-    "customers": ["/admin/customers/list", "/admin/customers/get"],
-    "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+    "notifications": ["/admin/notifications/get", "/admin/notifications/list"]
   },
   "/admin/notifications/remove": {
     "notifications": [
@@ -1245,5 +1133,83 @@
     ],
     "customers": ["/admin/customers/list", "/admin/customers/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"]
+  },
+  "/admin/coupons/list": {
+    "coupons": ["/admin/coupons/list", "/admin/coupons/get"]
+  },
+  "/admin/coupons/create": {
+    "coupons": [
+      "/admin/coupons/create",
+      "/admin/coupons/update",
+      "/admin/coupons/get",
+      "/admin/coupons/list",
+      "/admin/coupons/remove"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/coupons/update": {
+    "coupons": [
+      "/admin/coupons/create",
+      "/admin/coupons/update",
+      "/admin/coupons/get",
+      "/admin/coupons/list",
+      "/admin/coupons/remove"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/coupons/get": {
+    "coupons": ["/admin/coupons/get", "/admin/coupons/list"]
+  },
+  "/admin/coupons/remove": {
+    "coupons": [
+      "/admin/coupons/create",
+      "/admin/coupons/update",
+      "/admin/coupons/get",
+      "/admin/coupons/list",
+      "/admin/coupons/remove"
+    ],
+    "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
+    "shops": ["/admin/shops/list", "/admin/shops/get"]
+  },
+  "/admin/settings/list": {
+    "settings": ["/admin/settings/list"]
+  },
+  "/admin/settings/update": {
+    "settings": [
+      "/admin/settings/update",
+      "/admin/settings/list",
+      "/admin/settings/tiers"
+    ]
+  },
+  "/admin/settings/tiers": {
+    "settings": [
+      "/admin/settings/update",
+      "/admin/settings/list",
+      "/admin/settings/tiers"
+    ]
+  },
+  "/admin/complaints/list": {
+    "complaints": ["/admin/complaints/list", "/admin/complaints/get"]
+  },
+  "/admin/complaints/get": {
+    "complaints": ["/admin/complaints/list", "/admin/complaints/get"]
+  },
+  "/admin/complaints/update": {
+    "complaints": [
+      "/admin/complaints/list",
+      "/admin/complaints/get",
+      "/admin/complaints/update",
+      "/admin/complaints/remove"
+    ]
+  },
+  "/admin/complaints/remove": {
+    "complaints": [
+      "/admin/complaints/list",
+      "/admin/complaints/get",
+      "/admin/complaints/update",
+      "/admin/complaints/remove"
+    ]
   }
 }
