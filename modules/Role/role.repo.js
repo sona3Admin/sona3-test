@@ -146,6 +146,10 @@ exports.update = async (_id, formObject) => {
             if (!uniqueObjectResult.success) return uniqueObjectResult
         }
 
+        if (formObject.permissions) {
+            formObject.permissions = await enhancePermissions(formObject.permissions)
+        }
+
         const resultObject = await roleModel.findByIdAndUpdate({ _id }, formObject, { new: true })
 
         if (!resultObject) return {
