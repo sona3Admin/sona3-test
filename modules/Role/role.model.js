@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const roleSchema = mongoose.Schema({
     name: { type: String },
-    permissions: { type: Object }
+    permissions: { type: Object },
+    createdAt: { type: Date, default: Date.now() },
 })
 
 

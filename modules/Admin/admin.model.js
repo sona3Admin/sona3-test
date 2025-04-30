@@ -15,7 +15,8 @@ const adminSchema = mongoose.Schema({
     },
     token: { type: String },
     session: { type: Object },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    createdAt: { type: Date, default: Date.now() },
 })
 
 adminSchema.pre("save", async function (next) {
