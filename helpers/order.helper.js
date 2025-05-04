@@ -99,7 +99,7 @@ exports.addOrderShippingFees = (shopObject, customerOrderObject) => {
     shopObject.shopShippingFees = ifastShippingCost
     shopObject.subOrderTotal = parseFloat(shopObject.shopShippingFees) + parseFloat(shopObject.shopTotal)
     customerOrderObject.shippingFeesTotal += parseFloat(shopObject.shopShippingFees)
-    customerOrderObject.orderTotal += parseFloat(customerOrderObject.shippingFeesTotal)
+    customerOrderObject.orderTotal += parseFloat(shopObject.shopShippingFees)
 }
 
 
