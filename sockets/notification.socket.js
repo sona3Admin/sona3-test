@@ -205,6 +205,50 @@ exports.notificationSocketHandler = (socket, io, localeMessages) => {
     })
 
 
+
+    socket.on("sendCancelRequestByCustomer", async (dataObject, sendAck) => {
+        try {
+            logInTestEnv("Sending notification");
+
+            if (!sendAck) return socket.disconnect(true)
+            if (!dataObject.request) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+
+            let serviceRequest = await requestRepo.get({ _id: dataObject.request })
+            if (!serviceRequest.success) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+            if (serviceRequest.result.customer._id.toString() != socket.socketTokenData._id) return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+
+            let receiver = serviceRequest.result.seller._id.toString()
+
+            let notificationObject = {
+                customer: socket.socketTokenData._id,
+                titleEn: "Service request cancelled",
+                titleAr: "طلب الخدمة ملغى",
+                bodyEn: `${serviceRequest.result.customer.name} has cancelled your service request on ${serviceRequest.result.service.nameEn}`,
+                bodyAr: `قام ${serviceRequest.result.customer.name} بإلغاء طلب الخدمة الخاص بك على ${serviceRequest.result.service.nameAr}`,
+                redirectId: dataObject.request,
+                redirectType: "serviceRequest",
+                type: "serviceRequestCancel",
+                receivers: [receiver],
+                deviceTokens: [serviceRequest.result.seller.fcmToken],
+                timestamp: dataObject.timestamp
+            }
+
+            let resultObject = await notificationRepo.create(notificationObject)
+
+            let title = { en: resultObject.result.titleEn, ar: resultObject.result.titleAr }
+            let body = { en: resultObject.result.bodyEn, ar: resultObject.result.bodyAr }
+
+            io.to(receiver.toString()).emit("newNotification", { success: true, code: 201, result: resultObject.result })
+
+            if (serviceRequest.result.seller.fcmToken) notificationHelper.sendPushNotification(title, body, serviceRequest.result.customer.fcmToken)
+            return sendAck(resultObject)
+
+        } catch (err) {
+            logInTestEnv("err.message", err.message)
+            return sendAck({ success: false, code: 500, error: localeMessages.internalServerError })
+        }
+    })
+
     socket.on("sendOutOfStockAlert", async (dataObject, sendAck) => {
         try {
             logInTestEnv("Sending notification");
