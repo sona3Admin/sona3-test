@@ -46,7 +46,7 @@ exports.get = async (filterObject, selectionObject) => {
                 populate: [
                     { path: "shop", select: "nameEn nameAr phone image seller location address" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
-                    { path: "items.product", select: "nameEn nameAr categories" },
+                    { path: "items.product", select: "nameEn nameAr categories isActive" },
                     { path: "items.variation", select: "stock packages minPackage defaultPackage descriptionEn descriptionAr images fields  width height length weight" }
                 ]
             })
@@ -87,7 +87,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
                 populate: [
                     { path: "shop", select: "nameEn nameAr image" },
                     { path: "coupon", select: "nameEn nameAr code discountType value percentage shop" },
-                    { path: "items.product", select: "nameEn nameAr" },
+                    { path: "items.product", select: "nameEn nameAr isActive" },
                     { path: "items.variation", select: "stock packages minPackage defaultPackage descriptionEn descriptionAr images fields" }
                 ]
             })
