@@ -139,14 +139,34 @@ function handleSortParams(filterObject) {
 
 
 function handleSearchProperty(property, filterObject, finalFilterObject) {
-    if (filterObject?.[property]) {
-        if (!finalFilterObject.$and) {
-            finalFilterObject.$and = [];
-        }
-        finalFilterObject.$and.push({ [property]: { $regex: filterObject[property], $options: 'i' } });
-        delete filterObject[property];
-    }
+    const orGroups = [
+        ['nameEn', 'nameAr'],
+        ['descriptionEn', 'descriptionAr'],
+    ];
 
+    const matchedOrGroup = orGroups.find(group => group.includes(property));
+
+    if (filterObject?.[property]) {
+        const condition = { [property]: { $regex: filterObject[property], $options: 'i' } };
+        delete filterObject[property];
+
+        if (matchedOrGroup) {
+            if (!finalFilterObject.$and) finalFilterObject.$and = [];
+
+            let existingOr = finalFilterObject.$and.find(clause => clause.$or && Array.isArray(clause.$or));
+
+            if (!existingOr || !matchedOrGroup.some(prop => existingOr.$or.some(cond => prop in cond))) {
+                finalFilterObject.$and.push({ $or: [condition] });
+            } else {
+                existingOr.$or.push(condition);
+            }
+        } else {
+            if (!finalFilterObject.$and) {
+                finalFilterObject.$and = [];
+            }
+            finalFilterObject.$and.push(condition);
+        }
+    }
     return finalFilterObject;
 }
 
