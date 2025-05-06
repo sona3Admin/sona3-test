@@ -13,6 +13,7 @@ exports.listCategories = async (req, res) => {
             pageNumber = null;
             limitNumber = null;
         }
+        delete filterObject["all"]
         const operationResultObject = await categoryRepo.list(filterObject, {}, {}, pageNumber, limitNumber);
         return res.status(operationResultObject.code).json(operationResultObject);
 
