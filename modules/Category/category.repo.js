@@ -69,18 +69,14 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
-        
-        let query = categoryModel.find(filterObject).lean()
+        const resultArray = await categoryModel.find(filterObject).lean()
             .populate({ path: "subCategories", select: "nameEn nameAr image descriptionEn descriptionAr isActive" })
             .populate({ path: "parentCategory", select: "nameEn nameAr image descriptionEn descriptionAr isActive" })
+            // .populate({ path: "requestedBy", select: "userName image" })
             .sort(sortObject)
-            .select(selectionObject);
-
-        if (pageNumber !== null && limitNumber !== null) {
-            query = query.limit(limitNumber).skip((pageNumber - 1) * limitNumber);
-        }
-
-        const resultArray = await query;
+            .select(selectionObject)
+            .limit(limitNumber)
+            .skip((pageNumber - 1) * limitNumber);
 
         if (!resultArray) return {
             success: false,
