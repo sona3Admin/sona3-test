@@ -106,7 +106,7 @@ function handleRangeParams(filterObject, finalFilterObject) {
             delete filterObject["priceTo"];
         }
 
-        finalFilterObject['minPackage.price'] = priceFilter;
+        finalFilterObject['defaultPackage.price'] = priceFilter;
     }
     return finalFilterObject
 
@@ -178,7 +178,7 @@ function handleSortProperty(property, filterObject, finalSortObject, sortOrder) 
 
         if (property == "sortByDate") finalSortObject[`${filterObject[property]}`] = filterObject["sortOrder"];
         if (property == "sortByAlpha") finalSortObject[`${filterObject[property]}`] = 1;
-        if (property == "price") finalSortObject["minPackage.price"] = filterObject["sortOrder"];
+        if (property == "price") finalSortObject["defaultPackage.price"] = filterObject["sortOrder"];
 
         delete finalSortObject["sortByAlpha"];
         delete finalSortObject["sortByDate"];
