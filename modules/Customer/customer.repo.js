@@ -125,6 +125,7 @@ exports.create = async (formObject) => {
     try {
         formObject = this.convertToLowerCase(formObject)
         const uniqueObjectResult = await this.isObjectUnique(formObject);
+        logInTestEnv(`uniqueObjectResult`, uniqueObjectResult);
         if (!uniqueObjectResult.success) return uniqueObjectResult
         const resultObject = new customerModel(formObject);
         await resultObject.save();
@@ -336,13 +337,12 @@ exports.resetPassword = async (emailString, newPasswordString) => {
 
 
 exports.isObjectUnique = async (formObject) => {
+    let filterArray = [{ email: formObject.email }]
+    if (formObject.phone) filterArray.push({ phone: formObject.phone })
     const duplicateObject = await this.find({
-        $or: [
-            { email: formObject.email },
-            { phone: formObject.phone }
-        ],
+        $or: filterArray,
         isDeleted: false
-    });
+    });    
 
     if (duplicateObject.success && duplicateObject.result) {
         const matchedEmail = duplicateObject.result.email === formObject.email;
