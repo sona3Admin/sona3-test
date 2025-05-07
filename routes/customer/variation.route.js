@@ -4,6 +4,7 @@ const variationController = require("../../controllers/customer/variation.contro
 
 app.get("/list", variationController.listVariations);
 app.get("/get", variationController.getVariation);
+app.get("/priceRange", variationController.getVariationPriceRange);
 
 
 module.exports = app
