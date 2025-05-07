@@ -199,7 +199,7 @@ exports.uploadIdentityImages = async (req, res) => {
         imagesArray.map((image) => {
             operationResultArray.result.push(image)
         });
-        let operationResultObject = await sellerRepo.updateDirectly(req.query._id, { identity: operationResultArray.result, isVerified: false });
+        let operationResultObject = await sellerRepo.updateDirectly(req.query._id, { identity: operationResultArray.result, isVerified: true});
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
