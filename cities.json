@@ -1,0 +1,2259 @@
+[
+  {
+    "nameEn": "ABU DHABI",
+    "nameAr": "أبوظبي",
+    "iFastValue": {
+      "city_ID": 1,
+      "code": "AUH",
+      "name": "Abu Dhabi",
+      "name_Arabic": "أبو ظبي",
+      "country_ID": 1,
+      "extend_Id": 1
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "AUH",
+        "CityName": "Abu Dhabi City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Abu Dhabi Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Al Dhafra Air Base Ae",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Al Markaz Industrial Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Al Maryah Island",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Al Raha",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Al Raha Beach Area",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Bada Zayed",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Baniyas",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Baraka",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Wathaba",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Yas Island East",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Beda Zayed",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Icad-1",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Icad-11",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Icad-111",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Gate City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Inside Meena Port",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Khalifa City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Khalifa City A",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Khalifa City B",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Khalifa Park Area",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Mina Zayed",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Mafraq",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Mirfa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Mohammed Bin Zayed City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Mussafah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Mussafah Shabiya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Reem Island",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Ruwais",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Saadiyath Island",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Shahama",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Shakbout City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Shamkha",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Shawamekh",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Soowah Island",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Sweihan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Tarif",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      },
+      {
+        "CityCode": "AUH",
+        "CityName": "Umm Al Nar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "ABU DHABI"
+      }
+    ]
+  },
+  {
+    "nameEn": "DUBAI",
+    "nameAr": "دبي",
+    "iFastValue": {
+      "city_ID": 4,
+      "code": "DXB",
+      "name": "Dubai",
+      "name_Arabic": "دبي",
+      "country_ID": 1,
+      "extend_Id": 4
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "DXB",
+        "CityName": "Abu Hail",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Aweer",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Barari",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Barsha",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Barsha South",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Diyafa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Furjan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Garhoud",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Ghusais",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Ghusais Industrial Area",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Jaddaf",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Khawaneej",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Khubasi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Layan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Nahda - 1",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Nahda - 2",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Nakheel",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Quoz",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Ras",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Rigga",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Sofouh Gardens",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Thammam",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Twar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Waha",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Warqa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Al Warsan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Arabian Ranches",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Ayal Nasir",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Barsha Heights",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Bur Dubai",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Business Bay",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "City Of Arabia",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Coload Drop Off Deira",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Damac Hills",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Deira",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Discovery Gardens",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Downtown Dubai",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Downtown Jebel Ali",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Academic City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Airport Freezone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Airport T2",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Design District",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Health Care City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Hills",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Humanitarian City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Industrial City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai International Fin. Center",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Internet City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Investment Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Knowledge Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Knowledge Village",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Land",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Logistic City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Marina",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Maritime City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Media City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Motor City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Outsource Zone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Production City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Silicon Oasis",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai South",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Sports City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Studio City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai Water Front",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Dubai World Central",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Emirates Hills",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Emirates Lakes",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Falcon City Of Wonders",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Festival City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Frij Al Murar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Gardens",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Golf City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Green Community",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Hamriya Port",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Hatta",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Hor Al Anz A",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Hamriya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "International City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "International Media Prod. Zone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jafliya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Jebel Ali",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jebel Ali Free Zone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jebel Ali Free Zone - South",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jebel Ali Free Zone -North",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jebel Ali Hills Meraas",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jebel Ali Industrial Area",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeira",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Beach Residence",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Golf Estates",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Heights",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Island",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Lake Towers",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Village",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Village Circle",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Jumeirah Village Triangle",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Karama",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Mamzar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Mankool",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Meadows",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Meena Bazar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Meydan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Mirdif",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Mizher",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Mudun",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Muraqqabat",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Murshid Bazar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Muteena",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Nad Al Hamar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Nad Al Sheba Meydan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Oud Muteena",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Palm Island",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Port Saeed",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Q Point Al Mazaya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Ras Al Khor",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Rashidiya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Remraam",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Rigga Al Buteen",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Satwa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Sonapur",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Springs",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+
+      {
+        "CityCode": "DXB",
+        "CityName": "Techno Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Technology Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "The Greens",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "The Lakes",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "The Meadows",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "The Springs",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "The Views",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "The Villa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      },
+      {
+        "CityCode": "DXB",
+        "CityName": "Umm Ramool",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "DUBAI"
+      }
+    ]
+  },
+  {
+    "nameEn": "AJMAN",
+    "nameAr": "عجمان",
+    "iFastValue": {
+      "city_ID": 2,
+      "code": "QAJ",
+      "name": "Ajman",
+      "name_Arabic": "عجمان",
+      "country_ID": 1,
+      "extend_Id": 2
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "AJM",
+        "CityName": "Ajman City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AJMAN"
+      },
+      {
+        "CityCode": "AJM",
+        "CityName": "Ajman Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AJMAN"
+      }
+    ]
+  },
+  {
+    "nameEn": "Al Ain",
+    "nameAr": "العين",
+    "iFastValue": {
+      "city_ID": 3,
+      "code": "AAN",
+      "name": "Al Ain",
+      "name_Arabic": "العين",
+      "country_ID": 1,
+      "extend_Id": 9
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "ALN",
+        "CityName": "Aflaj",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Ain Airport",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Ain City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Ain Dairy Farm",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Ain Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Andalus Compound",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Basra",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Hili",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Jahli",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Jimi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Khabisi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Khrair",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Kuwaitat",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Manaseer",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Masoudi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Misbah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Mnaizfah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Mnaizlah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Murabba",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Mutawaa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Muwaiji",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Owainah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Qattara",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Rumailah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Ruwaikah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Sanaiya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Sarooj",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Sharej",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Tawam",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Falaj Hazzaa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Hili Al Khaleef",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Hili Oasis",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Hili Sanaiya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Main Street",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Main Street Al Ain",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Mreifia",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "New Al Kuwaitat",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "New Al Sarooj",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Neyadat",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Oud Al Touba",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Shabiya Khalifa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Town Centre",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Al Towayya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+      {
+        "CityCode": "ALN",
+        "CityName": "Asharej",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Bawadi Mall",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Civic Centre",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      },
+
+      {
+        "CityCode": "ALN",
+        "CityName": "Dairy Farm",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "AL AIN"
+      }
+    ]
+  },
+  {
+    "nameEn": "Fujairah",
+    "nameAr": "الفجيرة",
+    "iFastValue": {
+      "city_ID": 5,
+      "code": "FJR",
+      "name": "Fujairah",
+      "name_Arabic": "الفجيرة",
+      "country_ID": 1,
+      "extend_Id": 5
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "FUJ",
+        "CityName": "Al Dhaid",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "FUJAIRAH"
+      },
+      {
+        "CityCode": "FUJ",
+        "CityName": "Fujairah Airport",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "FUJAIRAH"
+      },
+      {
+        "CityCode": "FUJ",
+        "CityName": "Fujairah City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "FUJAIRAH"
+      },
+      {
+        "CityCode": "FUJ",
+        "CityName": "Fujairah Free Zone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "FUJAIRAH"
+      },
+      {
+        "CityCode": "FUJ",
+        "CityName": "Fujairah Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "FUJAIRAH"
+      },
+      {
+        "CityCode": "FUJ",
+        "CityName": "Fujairah Port",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "FUJAIRAH"
+      }
+    ]
+  },
+  {
+    "nameEn": "Ras Al Khaimah",
+    "nameAr": "رأس الخيمة",
+    "iFastValue": {
+      "city_ID": 6,
+      "code": "RKT",
+      "name": "Ras Al Khaimah",
+      "name_Arabic": "رأس الخيمة",
+      "country_ID": 1,
+      "extend_Id": 6
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "RAK",
+        "CityName": "Rak Corniche",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "RAS AL KHAIMAH"
+      },
+      {
+        "CityCode": "RAK",
+        "CityName": "Ras Al Khaimah Airport",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "RAS AL KHAIMAH"
+      },
+      {
+        "CityCode": "RAK",
+        "CityName": "Ras Al Khaimah City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "RAS AL KHAIMAH"
+      },
+      {
+        "CityCode": "RAK",
+        "CityName": "Ras Al Khaimah Maritime City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "RAS AL KHAIMAH"
+      },
+      {
+        "CityCode": "RAK",
+        "CityName": "Ras Al Khaimah Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "RAS AL KHAIMAH"
+      }
+    ]
+  },
+  {
+    "nameEn": "Sharjah",
+    "nameAr": "الشارقة",
+    "iFastValue": {
+      "city_ID": 7,
+      "code": "SHJ",
+      "name": "Sharjah",
+      "name_Arabic": "الشارقة",
+      "country_ID": 1,
+      "extend_Id": 7
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Aahad",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Abraq",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Aqaa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Attain",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Barashi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Burairat",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Dar Al Baida",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Dhait",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Dhait North",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Dhait South",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Digdaga",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Ghail Industrial Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Haditha",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Hail Indistrial Area",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Hawiyah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Hazzan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Hudaibah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Humrah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Khor",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Khan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Kharran",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Khuzam",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Madar",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Maiden",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Mairid",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Mamourah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Nahda",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Nakeel",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Quawasim Corniche",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Raas",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Rahmaniya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Ramlah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Rams Road",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Raudah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Riqqah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Sajja",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Salamah",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Uraibi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Al Zahra",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Bidya",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Dahan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Dibba",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Dibba Al Hosn",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Faseel",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Hamriya Free Zone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Industrial Area",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Industrial Park",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Jazeerah Al Hamra",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Kalba",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Khor Fakkan",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Khor Kheir",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Khor Khwair",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Madam",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Masafi",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Murba",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Nakheel",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Qidfa",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Qusaidat",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+
+      {
+        "CityCode": "SHJ",
+        "CityName": "Sharjah City",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Sharjah Free Zone",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Sharjah International Airport",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      },
+      {
+        "CityCode": "SHJ",
+        "CityName": "Sharjah Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "SHARJAH"
+      }
+    ]
+  },
+  {
+    "nameEn": "Umm Al Quwain",
+    "nameAr": "أم القيوين",
+    "iFastValue": {
+      "city_ID": 8,
+      "code": "QIW",
+      "name": "Umm Al Quwain",
+      "name_Arabic": null,
+      "country_ID": 1,
+      "extend_Id": 3
+    },
+    "firstFlightValues": [
+      {
+        "CityCode": "UAQ",
+        "CityName": "Umm Al Quwain Others",
+        "CountryCode": "AE",
+        "CountryName": "UNITED ARAB EMIRATES",
+        "State": "UMM AL QUWAIN"
+      }
+    ]
+  },
+  {
+    "nameEn": "Out OF Service Area",
+    "nameAr": "خارج منطقة الخدمة",
+    "iFastValue": {
+      "city_ID": 251,
+      "code": "OSA",
+      "name": "Out OF Service Area",
+      "name_Arabic": null,
+      "country_ID": 1,
+      "extend_Id": 531193103
+    },
+    "firstFlightValues": []
+  },
+  {
+    "nameEn": "Western Abu Dhabi",
+    "nameAr": "أبوظبي الغربية",
+    "iFastValue": {
+      "city_ID": 252,
+      "code": "WAUH",
+      "name": "Western Abu Dhabi",
+      "name_Arabic": null,
+      "country_ID": 1,
+      "extend_Id": null
+    },
+    "firstFlightValues": []
+  },
+  {
+    "nameEn": "Western Al Ain",
+    "nameAr": "العين الغربية",
+    "iFastValue": {
+      "city_ID": 253,
+      "code": "WALN",
+      "name": "Western Al Ain",
+      "name_Arabic": null,
+      "country_ID": 1,
+      "extend_Id": null
+    },
+    "firstFlightValues": []
+  },
+  {
+    "nameEn": "Khor Fakkan",
+    "nameAr": "خورفكان",
+    "iFastValue": {
+      "city_ID": 262,
+      "code": "KHO",
+      "name": "Khor Fakkan",
+      "name_Arabic": null,
+      "country_ID": 1,
+      "extend_Id": null
+    },
+    "firstFlightValues": []
+  }
+]
