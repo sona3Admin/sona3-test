@@ -16,7 +16,7 @@ exports.updateOrderShipmentStatus = async (req, res) => {
                 }
             })
         }
-
+        
         let subOrderObject = findObjectInArray(orderObject.result.subOrders, "shippingId", req.body.track_id)
         if (!subOrderObject.success) return res.status(404).json({
             status: false,
@@ -26,11 +26,11 @@ exports.updateOrderShipmentStatus = async (req, res) => {
             }
         })
 
-        let subOrders
         orderObject.result.subOrders[subOrderObject.index].shippingStatus = req.body.Status
         orderObject.result.subOrders[subOrderObject.index].status = handleStatus(req.body.Status, "order") || subOrderObject.result.status
         logInTestEnv("order status", orderObject.result.subOrders[subOrderObject.index].status)
-        orderRepo.updateDirectly(orderObject.result._id.toString(), { subOrders })
+
+        orderRepo.updateDirectly(orderObject.result._id.toString(), { subOrders: orderObject.result.subOrders })
         return res.status(200).json({
             status: true,
             data: {
