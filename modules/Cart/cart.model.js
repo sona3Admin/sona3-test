@@ -23,9 +23,26 @@ const cartSchema = mongoose.Schema({
     coupon: { type: mongoose.Types.ObjectId, ref: "coupons" },
     couponShop: { type: mongoose.Types.ObjectId, ref: "shops" },
     usedCashback: { type: Number, default: 0, min: 0 },
+    updatedDate: { type: Date, default: Date.now() },
 })
 
 cartSchema.index({ customer: 1 });
+
+cartSchema.pre("save", function (next) {
+    this.updatedDate = Date.now();
+    next();
+});
+
+cartSchema.pre("findOneAndUpdate", function (next) {
+    this.set({ updatedDate: Date.now() });
+    next();
+});
+
+cartSchema.pre("updateOne", function (next) {
+    this.set({ updatedDate: Date.now() });
+    next();
+});
+
 
 const cartModel = mongoose.model("carts", cartSchema)
 

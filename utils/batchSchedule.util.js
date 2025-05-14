@@ -5,6 +5,10 @@ const sellerRepo = require("../modules/Seller/seller.repo");
 const shopRepo = require("../modules/Shop/shop.repo");
 const serviceRepo = require("../modules/Service/service.repo");
 const productRepo = require("../modules/Product/product.repo");
+const cityRepo = require("../modules/City/city.repo");
+const alertRepo = require("../modules/Alert/alert.repo");
+const ifastHelper = require("../utils/ifastShipping.util");
+const firstFlightHelper = require("../utils/firstFlightSipping.util")
 const { logInTestEnv } = require("../helpers/logger.helper");
 
 let rule = new scheduler.RecurrenceRule();
@@ -39,7 +43,8 @@ exports.executeBatchJobs = async () => {
         await batchRepo.removeMany({});
         await this.checkExpiredSubscriptionsOfSellers();
         await this.generateDailyReports();
-        await this.checkForTrustedShops()
+        await this.checkForTrustedShops();
+        await this.checkCitiesCheange();
         logInTestEnv("==> Finished Executing Batch Jobs...")
         resolve();
       } catch (err) {
@@ -110,5 +115,89 @@ exports.checkForTrustedShops = async () => {
   } catch (err) {
     console.error("==> Error Generating Daily Reports:", err.message);
 
+  }
+}
+
+exports.checkCitiesCheange = async () => {
+  try {
+    logInTestEnv("==> Checking for cities change...");
+    const iFastCities = await ifastHelper.listCities(1);
+    const firstFlightCities = await firstFlightHelper.listCities();
+
+    const currentCities = await cityRepo.list({}, {}, {}, 1, 0);
+    const iFastValues = currentCities.result
+      .filter(city => city.iFastValue)
+      .map(city => city.iFastValue);
+
+    const firstFlightValues = currentCities.result
+      .filter(city => city.firstFlightValues && city.firstFlightValues.length > 0)
+      .flatMap(city => city.firstFlightValues);
+
+
+    if (iFastCities.success) {
+
+      const existingCityIDs = iFastValues.map(value => Number(value.city_ID));
+      const currentCityIDs = iFastCities.result.map(city => Number(city.city_ID));
+      const newCities = iFastCities.result.filter(city => {
+        const cityID = Number(city.city_ID);
+        return cityID && !existingCityIDs.includes(cityID);
+      });
+      if (newCities.length > 0) {
+        await alertRepo.createMany(newCities.map(city => ({
+          destinationEn: `New city available in iFast: ${city.name || "Unknown City"}`,
+          destinationAr: `مدينة جديدة متاحة في iFast: ${city.name_Arabic || city.name || "Unknown City"}`,
+          type: "new",
+          source: "iFast"
+        })));
+      }
+      const removedCities = iFastValues.filter(value => {
+        const cityID = Number(value.city_ID);
+        return cityID && !currentCityIDs.includes(cityID);
+      });
+      if (removedCities.length > 0) {
+        await alertRepo.createMany(removedCities.map(city => ({
+          destinationEn: `City removed from iFast: ${city.name || "Unknown City"}`,
+          destinationAr: `تمت إزالة المدينة من iFast: ${city.name_Arabic || city.name || "Unknown City"}`,
+          type: "removed",
+          source: "iFast"
+        })));
+      }
+    }
+
+    if (firstFlightCities.success) {
+      const existingCityNames = firstFlightValues.map(value => value.CityName);
+      const currentCityNames = firstFlightCities.result.map(city => city.CityName);
+
+      const newCities = firstFlightCities.result.filter(city => {
+        const cityID = Number(city.CityName);
+        return cityID && !existingCityNames.includes(cityID);
+      });
+      if (newCities.length > 0) {
+        await alertRepo.createMany(newCities.map(city => ({
+          destinationEn: `New city available in First Flight: ${city.CityName || "Unknown City"}`,
+          destinationAr: `مدينة جديدة متاحة في First Flight: ${city.CityName || "Unknown City"}`,
+          type: "new",
+          source: "firstFlight"
+        })));
+      }
+
+      const removedCities = firstFlightValues.filter(value => {
+        const cityID = Number(value.CityName);
+        return cityID && !currentCityNames.includes(cityID);
+      });
+      if (removedCities.length > 0) {
+        await alertRepo.createMany(removedCities.map(city => ({
+          destinationEn: `City removed from First Flight: ${city.CityName || "Unknown City"}`,
+          destinationAr: `تمت إزالة المدينة من First Flight: ${city.CityName || "Unknown City"}`,
+          type: "removed",
+          source: "firstFlight"
+        })));
+      }
+    }
+
+
+    logInTestEnv("==> Finished checking cities change...");
+  } catch (err) {
+    logInTestEnv("==> Error checking cities change:", err.message);
   }
 }

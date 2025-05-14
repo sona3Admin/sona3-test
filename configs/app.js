@@ -14,6 +14,7 @@ const executeBatchJobs = require("../utils/batchSchedule.util").executeBatchJobs
 const handleCorsPolicy = require("../helpers/cors.helper");
 const routes = require("../routes/index.route");
 const { logInTestEnv } = require("../helpers/logger.helper");
+const { citiesSeeder } = require("../seeders/cities.seed");
 
 i18n.configure({
   locales: ['en', 'ar'],
@@ -78,6 +79,7 @@ process.on('uncaughtException', (error) => {
 app.use(routes);
 connectToDatabase();
 executeBatchJobs();
+citiesSeeder();
 
 
 module.exports = app;

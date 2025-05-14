@@ -171,6 +171,17 @@ let complaintEndPoints = [
     "/admin/complaints/remove"
 ]
 
+let cityEndPoints = [
+    "/admin/cities/create", "/admin/cities/remove",
+    "/admin/cities/list", "/admin/cities/get", 
+    "/admin/cities/addFirstFlightCity", "/admin/cities/removeFirstFlightCity",
+    "/admin/cities/addIfastCity", "/admin/cities/removeIfastCity"
+]
+
+let alertEndPoints = [
+    "/admin/alerts/list", "/admin/alerts/remove"
+]
+
 
 adminEndPoints = new Set(adminEndPoints);
 roleEndPoints = new Set(roleEndPoints);
@@ -199,6 +210,8 @@ settingEndPoints = new Set(settingEndPoints);
 dashboardEndPoints = new Set(dashboardEndPoints);
 reportEndPoints = new Set(reportEndPoints);
 complaintEndPoints = new Set(complaintEndPoints);
+cityEndPoints = new Set(cityEndPoints);
+alertEndPoints = new Set(alertEndPoints);
 
 let permissions = new Map();
 
@@ -229,5 +242,7 @@ permissions.set("settings", settingEndPoints)
 permissions.set("dashboards", dashboardEndPoints)
 permissions.set("reports", reportEndPoints)
 permissions.set("complaints", complaintEndPoints)
+permissions.set("cities", cityEndPoints)
+permissions.set("alerts", alertEndPoints)
 
 module.exports = { permissions }

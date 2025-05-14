@@ -34,6 +34,8 @@ const settingRoutes = require("./setting.route");
 const dashboardRoutes = require("./dashboard.route");
 const reportRoutes = require("./report.route");
 const complaintRoutes = require("./complaint.route");
+const cityRoutes = require("./city.route");
+const alertRoutes = require("./alert.route");
 
 
 app.use(authRoutes)
@@ -65,5 +67,7 @@ app.use("/settings", checkToken(allowedUsers), isAuthorized, settingRoutes);
 app.use("/dashboards", checkToken(allowedUsers), isAuthorized, dashboardRoutes);
 app.use("/reports", checkToken(allowedUsers), isAuthorized, reportRoutes);
 app.use("/complaints", checkToken(allowedUsers), isAuthorized, complaintRoutes);
+app.use("/cities", checkToken(allowedUsers), isAuthorized, cityRoutes);
+app.use("/alerts", checkToken(allowedUsers), isAuthorized, alertRoutes);
 
 module.exports = app

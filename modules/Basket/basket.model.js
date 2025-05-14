@@ -23,11 +23,26 @@ const basketSchema = mongoose.Schema({
     coupon: { type: mongoose.Types.ObjectId, ref: "coupons" },
     couponShop: { type: mongoose.Types.ObjectId, ref: "shops" },
     usedCashback: { type: Number, default: 0, min: 0 },
+    updatedDate: { type: Date, default: Date.now() },
 })
 
 basketSchema.index({ customer: 1 });
 
-const basketModel = mongoose.model("baskets", basketSchema)
+basketSchema.pre("save", function (next) {
+    this.updatedDate = Date.now();
+    next();
+});
 
+basketSchema.pre("findOneAndUpdate", function (next) {
+    this.set({ updatedDate: Date.now() });
+    next();
+});
+
+basketSchema.pre("updateOne", function (next) {
+    this.set({ updatedDate: Date.now() });
+    next();
+});
+
+const basketModel = mongoose.model("baskets", basketSchema)
 
 module.exports = basketModel;
