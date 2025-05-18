@@ -73,9 +73,17 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let defaultVariationMatch = {}
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+        if (filterObject?.['defaultPackage.price']) {
+            defaultVariationMatch = {
+                "defaultPackage.price": filterObject?.['defaultPackage.price']
+            },
+                delete filterObject['defaultPackage.price']
+            filterObject.defaultVariation = { $exists: true, $ne: null };
+        }
         const resultArray = await productModel.find(filterObject).lean()
             .populate({ path: "seller", select: "userName image" })
             .populate({ path: "shop", select: "nameEn nameAr image isFood isVerified isActive" })
@@ -83,7 +91,7 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
             .populate({ path: "categories", select: "nameEn nameAr image isSubCategory" })
             .populate({ path: "tags", select: "nameEn nameAr" })
             .populate({ path: "variations" })
-            .populate({ path: "defaultVariation" })
+            .populate({ path: "defaultVariation", match: defaultVariationMatch })
             .sort(sortObject)
             .select(selectionObject)
             .limit(limitNumber)
