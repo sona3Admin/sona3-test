@@ -79,6 +79,9 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+        let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
+        filterObject = normalizedQueryObjects.filterObject
+        sortObject = normalizedQueryObjects.sortObject
         const resultArray = await cartModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "coupon", select: "nameEn nameAr code discountType value percentage shop" })
