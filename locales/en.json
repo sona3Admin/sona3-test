@@ -197,5 +197,6 @@
   "requiredState": "State is required.",
   "validFirstFlightValues": "First flight values must be a valid array of objects.",
   "\"firstFlightValues[0]._id\" is not allowed": "\"firstFlightValues[0]._id\" is not allowed",
-  "notActiveProduct": "There is a product that is no longer available"
+  "notActiveProduct": "There is a product that is no longer available",
+  "invalidEmailOrPassword": "Invalid email or password. Please try again."
 }

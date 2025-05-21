@@ -399,15 +399,15 @@ exports.comparePassword = async (emailOrUsernameString, passwordString) => {
 
         if (!existingObject.success || !existingObject.result.password) return {
             success: false,
-            code: 404,
-            error: i18n.__("notFound")
+            code: 409,
+            error: i18n.__("invalidEmailOrPassword")
         }
 
         let matchingPasswords = await bcrypt.compare(passwordString, existingObject.result.password)
         if (!matchingPasswords) return {
             success: false,
             code: 409,
-            error: i18n.__("incorrectPassword")
+            error: i18n.__("invalidEmailOrPassword")
         };
 
         return {
