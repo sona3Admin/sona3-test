@@ -20,6 +20,19 @@ exports.createOrder = async (req, res) => {
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
         const customerDetailsObject = customerCartObject.result.customer
 
+        const hasInactiveProductOrVariation = customerCartObject.result.subCarts.some(subCart => {
+            return subCart.items.some(item => {
+                const productIsActive = item.product?.isActive;
+                const variationIsActive = item.variation?.isActive;
+
+                return productIsActive === false || variationIsActive === false;
+            });
+        });
+
+        if (hasInactiveProductOrVariation) {
+            return res.status(400).json({ success: false, code: 400, error: i18n.__("notActiveProduct") });
+        }        
+
         customerOrderObject = await handleOrderCreation(customerCartObject.result, customerOrderObject, false, true)
         customerOrderObject["orderType"] = "cart";
         let operationResultObject = await orderRepo.create(customerOrderObject);

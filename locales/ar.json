@@ -190,5 +190,6 @@
   "requiredCountryName": "اسم الدولة مطلوب.",
   "validState": "يجب أن يكون اسم الولاية نصاً صحيحاً.",
   "requiredState": "الولاية مطلوبة.",
-  "validFirstFlightValues": "يجب أن تكون قيم الرحلة الأولى مصفوفة صحيحة من الكائنات."
+  "validFirstFlightValues": "يجب أن تكون قيم الرحلة الأولى مصفوفة صحيحة من الكائنات.",
+  "notActiveProduct": "يوجد منتج لم يعد متاحًا."
 }
