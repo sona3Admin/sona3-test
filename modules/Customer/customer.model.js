@@ -13,7 +13,8 @@ const customerSchema = mongoose.Schema({
     //     coordinates: { type: Array, default: [0, 0] }
     // },
     // address: { type: Object },
-    addresses: [{ 
+    addresses: [{
+        name: { type: String },
         city: { type: String },
         country: { type: String },
         street: { type: String},

@@ -155,6 +155,7 @@ exports.create = async (formObject) => {
 
 exports.addAddress = async (_id, formObject) => {
     try {
+        formObject.name = formObject.name.trim().toLowerCase()
         const existingObject = await this.find({ _id })
         if (!existingObject.success) return {
             success: false,
@@ -166,6 +167,16 @@ exports.addAddress = async (_id, formObject) => {
                 success: false,
                 code: 400,
                 error: i18n.__("maxAddressesReached"),
+            };
+        }
+        const isNameTaken = existingObject.result.addresses.some(addr =>
+            addr.name?.trim().toLowerCase() === formObject.name?.trim().toLowerCase()
+        );
+        if (isNameTaken) {
+            return {
+                success: false,
+                code: 409,
+                error: i18n.__("nameUsed"),
             };
         }
         if (formObject.isDefault) {
@@ -199,6 +210,20 @@ exports.updateAddress = async (_id, addressId, formObject) => {
             success: false,
             code: 404,
             error: i18n.__("notFound")
+        }
+
+        if (formObject.name) {
+            formObject.name = formObject.name.trim().toLowerCase()
+            const isNameTaken = existingObject.result.addresses.some(addr =>
+                addr._id.toString() !== addressId && addr.name?.trim().toLowerCase() === formObject.name?.trim().toLowerCase()
+            );
+            if (isNameTaken) {
+                return {
+                    success: false,
+                    code: 409,
+                    error: i18n.__("nameUsed"),
+                };
+            }
         }
 
         if (formObject.isDefault) {

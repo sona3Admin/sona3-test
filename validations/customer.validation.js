@@ -48,6 +48,10 @@ module.exports = {
 
             addresses: joi.array().max(5).items(
                 joi.object({
+                    name: joi.string().required().messages({
+                        "string.base": "validName",
+                        "any.required": "requiredName"
+                    }),
                     city: joi.string().required().messages({
                         "string.base": "validCity",
                         "any.required": "requiredCity"
@@ -220,6 +224,10 @@ module.exports = {
 
     addAddressValidation: {
         body: joi.object().required().keys({
+            name: joi.string().required().messages({
+                "string.base": "validName",
+                "any.required": "requiredName"
+            }),
             city: joi.string().required().messages({
                 "string.base": "validCity",
                 "any.required": "requiredCity"
@@ -253,6 +261,9 @@ module.exports = {
 
     updateAddressValidation: {
         body: joi.object().required().keys({
+            name: joi.string().optional().messages({
+                "string.base": "validName",
+            }),
             city: joi.string().optional().messages({
                 "string.base": "validCity",
             }),
