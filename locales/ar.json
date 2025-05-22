@@ -192,5 +192,15 @@
   "requiredState": "الولاية مطلوبة.",
   "validFirstFlightValues": "يجب أن تكون قيم الرحلة الأولى مصفوفة صحيحة من الكائنات.",
   "notActiveProduct": "يوجد منتج لم يعد متاحًا.",
-  "invalidEmailOrPassword": "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+  "invalidEmailOrPassword": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "validCity": "يجب أن تكون المدينة نصاً صحيحاً.",
+  "requiredCity": "المدينة مطلوبة.",
+  "validCountry": "يجب أن تكون الدولة نصاً صحيحاً.",
+  "requiredCountry": "الدولة مطلوبة.",
+  "validStreet": "يجب أن تكون الشارع نصاً صحيحاً.",
+  "requiredStreet": "الشارع مطلوب.",
+  "validIsDefault": "يجب أن تكون الحالة الافتراضية صحيحة.",
+  "validAddresses": "يجب أن تكون العناوين مصفوفة صحيحة من الكائنات.",
+  "maxAddressesReached": "لقد وصلت إلى الحد الأقصى لعدد العناوين المسموح بها.",
+  "maxFiveAddresses": "يمكنك إضافة خمسة عناوين فقط."
 }

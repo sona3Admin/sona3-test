@@ -36,6 +36,49 @@ exports.updateCustomer = async (req, res) => {
     }
 }
 
+exports.addCustomerAddress = async (req, res) => {
+    try {
+        const operationResultObject = await customerRepo.addAddress(req.query._id, req.body);
+        return res.status(operationResultObject.code).json(operationResultObject);
+
+    } catch (err) {
+        logInTestEnv(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+exports.updateCustomerAddress = async (req, res) => {
+    try {
+        const operationResultObject = await customerRepo.updateAddress(req.query._id, req.query.addressId, req.body);
+        return res.status(operationResultObject.code).json(operationResultObject);
+    } catch (err) {
+        logInTestEnv(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
+exports.removeCustomerAddress = async (req, res) => {
+    try {
+        const operationResultObject = await customerRepo.removeAddress(req.query._id, req.query.addressId);
+        return res.status(operationResultObject.code).json(operationResultObject);
+    } catch (err) {
+        logInTestEnv(`err.message`, err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+}
+
 
 exports.removeCustomer = async (req, res) => {
     try {

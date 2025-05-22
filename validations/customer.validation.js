@@ -28,24 +28,60 @@ module.exports = {
                 "object.base": "validImage",
             }),
 
-            location: joi.object().keys({
-                type: joi.string().required().messages({
-                    "string.base": "validType",
-                    "any.required": "requiredType"
-                }),
-                coordinates: joi.array().required().messages({
-                    "number.base": "validLatLocation",
-                    "any.required": "requiredLatLocation"
+            // location: joi.object().keys({
+            //     type: joi.string().required().messages({
+            //         "string.base": "validType",
+            //         "any.required": "requiredType"
+            //     }),
+            //     coordinates: joi.array().required().messages({
+            //         "number.base": "validLatLocation",
+            //         "any.required": "requiredLatLocation"
+            //     })
+
+            // }).optional().messages({
+            //     "object.base": "validLocation",
+            // }),
+
+            // address: joi.object().optional().messages({
+            //     "object.base": "validAddress",
+            // }),
+
+            addresses: joi.array().max(5).items(
+                joi.object({
+                    city: joi.string().required().messages({
+                        "string.base": "validCity",
+                        "any.required": "requiredCity"
+                    }),
+                    country: joi.string().required().messages({
+                        "string.base": "validCountry",
+                        "any.required": "requiredCountry"
+                    }),
+                    street: joi.string().required().messages({
+                        "string.base": "validStreet",
+                        "any.required": "requiredStreet"
+                    }),
+                    location: joi.object({
+                        type: joi.string().valid("Point").default("Point").messages({
+                            "string.base": "validType",
+                            "any.required": "requiredType"
+                        }),
+                        coordinates: joi.array().required().messages({
+                            "number.base": "validLatLocation",
+                            "any.required": "requiredLatLocation"
+                        })
+                    }).required().messages({
+                        "object.base": "validLocation",
+                        "any.required": "validLocation"
+                    }),
+                    isDefault: joi.boolean().default(false).messages({
+                        "boolean.base": "validIsDefault"
+                    })
                 })
-
-            }).optional().messages({
-                "object.base": "validLocation",
+            ).optional().messages({
+                "array.base": "validAddresses",
+                "array.max": "maxFiveAddresses"
             }),
-
-            address: joi.object().optional().messages({
-                "object.base": "validAddress",
-            }),
-
+            
             isPhoneVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
@@ -93,7 +129,6 @@ module.exports = {
         })
     },
 
-
     updateCustomerValidation: {
         body: joi.object().optional().keys({
             name: joi.string().optional().empty().messages({
@@ -119,23 +154,23 @@ module.exports = {
                 "object.base": "validImage",
             }),
 
-            location: joi.object().keys({
-                type: joi.string().required().messages({
-                    "string.base": "validType",
-                    "any.required": "requiredType"
-                }),
-                coordinates: joi.array().required().messages({
-                    "number.base": "validLatLocation",
-                    "any.required": "requiredLatLocation"
-                })
+            // location: joi.object().keys({
+            //     type: joi.string().required().messages({
+            //         "string.base": "validType",
+            //         "any.required": "requiredType"
+            //     }),
+            //     coordinates: joi.array().required().messages({
+            //         "number.base": "validLatLocation",
+            //         "any.required": "requiredLatLocation"
+            //     })
 
-            }).optional().messages({
-                "object.base": "validLocation",
-            }),
+            // }).optional().messages({
+            //     "object.base": "validLocation",
+            // }),
 
-            address: joi.object().optional().messages({
-                "object.base": "validAddress",
-            }),
+            // address: joi.object().optional().messages({
+            //     "object.base": "validAddress",
+            // }),
 
             isPhoneVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
@@ -183,6 +218,67 @@ module.exports = {
         }),
     },
 
+    addAddressValidation: {
+        body: joi.object().required().keys({
+            city: joi.string().required().messages({
+                "string.base": "validCity",
+                "any.required": "requiredCity"
+            }),
+            country: joi.string().required().messages({
+                "string.base": "validCountry",
+                "any.required": "requiredCountry"
+            }),
+            street: joi.string().required().messages({
+                "string.base": "validStreet",
+                "any.required": "requiredStreet"
+            }),
+            location: joi.object({
+                type: joi.string().valid("Point").default("Point").messages({
+                    "string.base": "validType",
+                    "any.required": "requiredType"
+                }),
+                coordinates: joi.array().required().messages({
+                    "number.base": "validLatLocation",
+                    "any.required": "requiredLatLocation"
+                })
+            }).required().messages({
+                "object.base": "validLocation",
+                "any.required": "validLocation"
+            }),
+            isDefault: joi.boolean().default(false).messages({
+                "boolean.base": "validIsDefault"
+            })
+        })
+    },
+
+    updateAddressValidation: {
+        body: joi.object().required().keys({
+            city: joi.string().optional().messages({
+                "string.base": "validCity",
+            }),
+            country: joi.string().optional().messages({
+                "string.base": "validCountry",
+            }),
+            street: joi.string().optional().messages({
+                "string.base": "validStreet",
+            }),
+            location: joi.object({
+                type: joi.string().valid("Point").default("Point").messages({
+                    "string.base": "validType",
+                    "any.required": "requiredType"
+                }),
+                coordinates: joi.array().required().messages({
+                    "number.base": "validLatLocation",
+                    "any.required": "requiredLatLocation"
+                })
+            }).optional().messages({
+                "object.base": "validLocation",
+            }),
+            isDefault: joi.boolean().default(false).messages({
+                "boolean.base": "validIsDefault"
+            })
+        })
+    },
 
     loginValidation: {
         body: joi.object().required().keys({

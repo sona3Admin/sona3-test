@@ -153,6 +153,122 @@ exports.create = async (formObject) => {
 
 }
 
+exports.addAddress = async (_id, formObject) => {
+    try {
+        const existingObject = await this.find({ _id })
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+        if (existingObject.result.addresses.length >= 5) {
+            return {
+                success: false,
+                code: 400,
+                error: i18n.__("maxAddressesReached"),
+            };
+        }
+        if (formObject.isDefault) {
+            await customerModel.updateMany({ _id }, { $set: { "addresses.$[].isDefault": false } })
+        }
+        const resultObject = await customerModel.findByIdAndUpdate({ _id }, { $addToSet: { addresses: formObject } }, { new: true, select: "-password -token" })
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+    } catch (err) {
+        logInTestEnv(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+exports.updateAddress = async (_id, addressId, formObject) => {
+    try {
+        const existingObject = await this.find({ _id })
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+
+        if (formObject.isDefault) {
+            await customerModel.updateMany({ _id }, { $set: { "addresses.$[].isDefault": false } })
+        }
+
+        const resultObject = await customerModel.findOneAndUpdate({ _id, "addresses._id": addressId }, { $set: { "addresses.$": formObject } }, { new: true, select: "-password -token" })
+        if (!resultObject) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+        return {
+            success: true,
+            code: 200,
+            result: resultObject
+        };
+    } catch (err) {
+        logInTestEnv(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
+
+exports.removeAddress = async (_id, addressId) => {
+    try {
+        const existingObject = await this.find({ _id })
+        if (!existingObject.success) return {
+            success: false,
+            code: 404,
+            error: i18n.__("notFound")
+        }
+        const addresses = existingObject.result.addresses;
+        const isDeletedAddressDefault = addresses.some(addr => addr._id.toString() === addressId && addr.isDefault);
+        const updatedCustomer = await customerModel.findOneAndUpdate({ _id }, { $pull: { addresses: { _id: addressId } } }, { new: true, select: "-password -token" })
+        if (!updatedCustomer) return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        }
+
+
+        if (isDeletedAddressDefault && updatedCustomer.addresses.length > 0) {
+            const lastAddressId = updatedCustomer.addresses[updatedCustomer.addresses.length - 1]._id;
+
+            await customerModel.updateOne(
+                { _id, "addresses._id": lastAddressId },
+                { $set: { "addresses.$.isDefault": true } }
+            );
+        }
+
+        const finalResult = await customerModel.findById(_id).select("-password -token");
+
+        return {
+            success: true,
+            code: 200,
+            result: finalResult
+        };
+    } catch (err) {
+        logInTestEnv(`err.message`, err.message);
+        return {
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        };
+    }
+}
 
 exports.update = async (_id, formObject) => {
     try {
@@ -342,7 +458,7 @@ exports.isObjectUnique = async (formObject) => {
     const duplicateObject = await this.find({
         $or: filterArray,
         isDeleted: false
-    });    
+    });
 
     if (duplicateObject.success && duplicateObject.result) {
         const matchedEmail = duplicateObject.result.email === formObject.email;

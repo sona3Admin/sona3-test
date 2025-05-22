@@ -8,6 +8,9 @@ const { checkIdentity } = require("../../helpers/authorizer.helper")
 
 
 app.put("/update", checkIdentity("_id"), validator(updateCustomerValidation), customerController.updateCustomer);
+app.post("/address", checkIdentity("_id"), customerController.addCustomerAddress);
+app.put("/address", checkIdentity("_id"), customerController.updateCustomerAddress);
+app.delete("/address", checkIdentity("_id"), customerController.removeCustomerAddress);
 app.put("/password", checkIdentity("_id"), validator(resetPasswordValidation), customerController.resetPassword);
 app.delete("/remove", checkIdentity("_id"), customerController.removeCustomer);
 

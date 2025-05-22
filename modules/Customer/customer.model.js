@@ -8,11 +8,21 @@ const customerSchema = mongoose.Schema({
     password: { type: String },
     phone: { type: String },
     image: { type: Object },
-    location: {
-        type: { type: String, default: "Point" },
-        coordinates: { type: Array, default: [0, 0] }
-    },
-    address: { type: Object },
+    // location: {
+    //     type: { type: String, default: "Point" },
+    //     coordinates: { type: Array, default: [0, 0] }
+    // },
+    // address: { type: Object },
+    addresses: [{ 
+        city: { type: String },
+        country: { type: String },
+        street: { type: String},
+        location: {
+            type: { type: String, default: "Point" },
+            coordinates: { type: Array, default: [0, 0] }
+        },
+        isDefault: { type: Boolean, default: false },
+    }],
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
