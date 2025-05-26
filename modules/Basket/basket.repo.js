@@ -7,6 +7,7 @@ const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromS
     addNewSubCart, updateExistingSubCart, calculateCartTotal } = require("../../helpers/cart.helper")
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
+const couponRepo = require("../Coupon/coupon.repo")
 
 
 exports.find = async (filterObject) => {
@@ -223,7 +224,12 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
             delete cartObject.variations;
             cartObject.$pull = { variations: itemId }
         }
-        if (shopCartObject.items.length <= 0) cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
+        if (shopCartObject.items.length <= 0) {
+            if (shopCartObject.coupon) {
+                couponRepo.updateDirectly((shopCartObject.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: cartObject.customer._id } } })
+            }
+            cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
+        }
         if (parseInt(quantityToRemove) < parseInt(itemObject.quantity))
             shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, parseInt(itemIndex), parseInt(quantityToRemove), itemObject.variation);
 
@@ -389,6 +395,9 @@ exports.reset = async (filterObject) => {
                 productRepo.updateDirectly(item.product, { $inc: { stock: parseInt(item.quantity) } });
             })
         });
+        if (resultObject.result.coupon) {
+            couponRepo.updateDirectly((resultObject.result.coupon).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: resultObject.result.customer } } })
+        }
         let formObject = { variations: [], subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1, couponShop: 1 } }
         resultObject = await basketModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
 
