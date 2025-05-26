@@ -430,9 +430,6 @@ exports.flush = async (filterObject) => {
         }
 
         let formObject = { variations: [], subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1, couponShop: 1 } }
-        if (resultObject.result.coupon) {
-            couponRepo.updateDirectly((resultObject.result.coupon).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: resultObject.result.customer } } })
-        }
         resultObject = await basketModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
         return {
             success: true,

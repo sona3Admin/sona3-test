@@ -53,7 +53,7 @@ exports.removeItemFromBasket = async (req, res) => {
 
 exports.flushBasket = async (req, res) => {
     try {
-        const operationResultObject = await basketRepo.flush(req.query);
+        const operationResultObject = await basketRepo.reset(req.query);
         return res.status(operationResultObject.code).json(operationResultObject);
 
     } catch (err) {
