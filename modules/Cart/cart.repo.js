@@ -227,6 +227,8 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         if (shopCartObject.items.length <= 0) {
             if (shopCartObject.coupon){
                 couponRepo.updateDirectly((shopCartObject.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: cartObject.customer._id } } })
+                cartObject.coupon = null;
+                cartObject.couponShop = null;
             }
             cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
             
