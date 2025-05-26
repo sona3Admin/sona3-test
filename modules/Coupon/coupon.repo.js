@@ -5,6 +5,7 @@ const cartRepo = require("../Cart/cart.repo")
 const basketRepo = require("../Basket/basket.repo")
 const { isIdInArray, findObjectInArray } = require("../../helpers/cart.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
+const cartHelper = require("../../helpers/cart.helper")
 
 exports.find = async (filterObject) => {
     try {
@@ -319,27 +320,28 @@ exports.cancelFromCart = async (cartId, shopId) => {
         let customerId = (cartObject.result.customer._id).toString()
         let couponShopId = shopId || cartObject?.result?.coupon?.shop?.toString()
 
-
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
-        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
+        // let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
         let couponObject = {};
         couponObject.result = { ...cartObject?.result?.coupon }
+        cartObject.result.subCarts[isShopInCart?.result].coupon = null
+        cartObject.result.subCarts[isShopInCart?.result] = await cartHelper.calculateShopTotal(cartObject.result.subCarts[isShopInCart?.result])
+        cartObject.result.coupon = null
+        cartObject.result.couponShop = null
+        cartObject.result = await cartHelper.calculateCartTotal(cartObject.result)
+        // let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "cancel")
 
-        let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "cancel")
-
-        let newShopTotal = parseFloat(calculatedTotals.newShopTotal)
-
-        let newCartTotal = parseFloat(calculatedTotals.newCartTotal)
+        let newShopTotal = parseFloat(cartObject.result.subCarts[isShopInCart?.result].shopTotal)
+        let newCartTotal = parseFloat(cartObject.result.cartTotal)
 
         let updatedCartResult = await cartRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
             $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
             $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1, couponShop: 1 }
         })
 
-        this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
-        // logInTestEnv("updatedCartResult", updatedCartResult)
+        this.updateDirectly((couponObject.result._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
         return {
             success: true,
             result: updatedCartResult.result,
@@ -424,23 +426,26 @@ exports.cancelFromBasket = async (cartId, shopId) => {
 
         let isShopInCart = isIdInArray(cartObject.result.subCarts, "shop", couponShopId)
         if (!isShopInCart.success) return { success: false, code: 409, error: i18n.__("notFound") }
-        let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
+        // let subCartObject = cartObject.result.subCarts[isShopInCart?.result]
 
         let couponObject = {};
         couponObject.result = { ...cartObject?.result?.coupon }
+        cartObject.result.subCarts[isShopInCart?.result].coupon = null
+        cartObject.result.subCarts[isShopInCart?.result] = await cartHelper.calculateShopTotal(cartObject.result.subCarts[isShopInCart?.result])
+        cartObject.result.coupon = null
+        cartObject.result.couponShop = null
+        cartObject.result = await cartHelper.calculateCartTotal(cartObject.result)
+        // let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "cancel")
 
-        let calculatedTotals = this.calculateNewTotal(couponObject, cartObject, subCartObject, "cancel")
-
-        let newShopTotal = parseFloat(calculatedTotals.newShopTotal)
-
-        let newCartTotal = parseFloat(calculatedTotals.newCartTotal)
+        let newShopTotal = parseFloat(cartObject.result.subCarts[isShopInCart?.result].shopTotal)
+        let newCartTotal = parseFloat(cartObject.result.cartTotal)
 
         let updatedCartResult = await basketRepo.updateWithFilter({ _id: cartId, 'subCarts.shop': couponShopId }, {
             $set: { [`subCarts.${isShopInCart.result}.shopTotal`]: newShopTotal, cartTotal: newCartTotal },
             $unset: { [`subCarts.${isShopInCart.result}.coupon`]: 1, coupon: 1, couponShop: 1 }
         })
 
-        this.updateDirectly((cartObject.result.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
+        this.updateDirectly((couponObject.result._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: customerId } } })
         // logInTestEnv("updatedCartResult", updatedCartResult)
         return {
             success: true,
