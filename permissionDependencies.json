@@ -299,11 +299,19 @@
       "/admin/products/get",
       "/admin/products/export"
     ],
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
     "tags": ["/admin/tags/list", "/admin/tags/get"],
     "shops": ["/admin/shops/list", "/admin/shops/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
     "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/products/update": {
@@ -317,11 +325,19 @@
       "/admin/products/get",
       "/admin/products/export"
     ],
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
     "tags": ["/admin/tags/list", "/admin/tags/get"],
     "shops": ["/admin/shops/list", "/admin/shops/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
     "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/products/updateIsActive": {
@@ -335,11 +351,19 @@
       "/admin/products/get",
       "/admin/products/export"
     ],
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
     "tags": ["/admin/tags/list", "/admin/tags/get"],
     "shops": ["/admin/shops/list", "/admin/shops/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
     "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/products/remove": {
@@ -353,11 +377,19 @@
       "/admin/products/get",
       "/admin/products/export"
     ],
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
     "tags": ["/admin/tags/list", "/admin/tags/get"],
     "shops": ["/admin/shops/list", "/admin/shops/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
     "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/products/count": {
@@ -371,11 +403,19 @@
       "/admin/products/get",
       "/admin/products/export"
     ],
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
     "tags": ["/admin/tags/list", "/admin/tags/get"],
     "shops": ["/admin/shops/list", "/admin/shops/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
     "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/products/get": {
@@ -393,11 +433,19 @@
       "/admin/products/get",
       "/admin/products/export"
     ],
+    "variations": [
+      "/admin/variations/create",
+      "/admin/variations/update",
+      "/admin/variations/remove",
+      "/admin/variations/list",
+      "/admin/variations/get",
+      "/admin/variations/image",
+      "/admin/variations/listByPrice"
+    ],
     "tags": ["/admin/tags/list", "/admin/tags/get"],
     "shops": ["/admin/shops/list", "/admin/shops/get"],
     "sellers": ["/admin/sellers/list", "/admin/sellers/get"],
     "categories": ["/admin/categories/list", "/admin/categories/get"],
-    "variations": ["/admin/variations/list", "/admin/variations/get"],
     "forms": ["/admin/forms/list", "/admin/forms/get"]
   },
   "/admin/services/list": {
