@@ -227,6 +227,8 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
         if (shopCartObject.items.length <= 0) {
             if (shopCartObject.coupon) {
                 couponRepo.updateDirectly((shopCartObject.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: cartObject.customer._id } } })
+                cartObject.coupon = null;
+                cartObject.couponShop = null;
             }
             cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
         }
@@ -426,9 +428,12 @@ exports.flush = async (filterObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
-        let formObject = { variations: [], subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1, couponShop: 1 } }
-        resultObject = await basketModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
 
+        let formObject = { variations: [], subCarts: [], cartTotal: 0, cartOriginalTotal: 0, usedCashback: 0, $unset: { coupon: 1, couponShop: 1 } }
+        if (resultObject.result.coupon) {
+            couponRepo.updateDirectly((resultObject.result.coupon).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: resultObject.result.customer } } })
+        }
+        resultObject = await basketModel.findByIdAndUpdate({ _id: resultObject.result._id }, formObject, { new: true })
         return {
             success: true,
             code: 200,
