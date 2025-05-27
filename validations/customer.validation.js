@@ -176,6 +176,46 @@ module.exports = {
             //     "object.base": "validAddress",
             // }),
 
+            addresses: joi.array().max(5).items(
+                joi.object({
+                    name: joi.string().required().messages({
+                        "string.base": "validName",
+                        "any.required": "requiredName"
+                    }),
+                    city: joi.string().required().messages({
+                        "string.base": "validCity",
+                        "any.required": "requiredCity"
+                    }),
+                    country: joi.string().required().messages({
+                        "string.base": "validCountry",
+                        "any.required": "requiredCountry"
+                    }),
+                    street: joi.string().required().messages({
+                        "string.base": "validStreet",
+                        "any.required": "requiredStreet"
+                    }),
+                    location: joi.object({
+                        type: joi.string().valid("Point").default("Point").messages({
+                            "string.base": "validType",
+                            "any.required": "requiredType"
+                        }),
+                        coordinates: joi.array().required().messages({
+                            "number.base": "validLatLocation",
+                            "any.required": "requiredLatLocation"
+                        })
+                    }).required().messages({
+                        "object.base": "validLocation",
+                        "any.required": "validLocation"
+                    }),
+                    isDefault: joi.boolean().default(false).messages({
+                        "boolean.base": "validIsDefault"
+                    })
+                })
+            ).optional().messages({
+                "array.base": "validAddresses",
+                "array.max": "maxFiveAddresses"
+            }),
+
             isPhoneVerified: joi.boolean().optional().messages({
                 "boolean.base": "validIsVerified",
             }),
