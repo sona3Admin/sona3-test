@@ -79,7 +79,15 @@ module.exports = {
                     }),
                     isDefault: joi.boolean().default(false).messages({
                         "boolean.base": "validIsDefault"
-                    })
+                    }),
+                    remarks: joi.string().optional().messages({
+                        "string.base": "validRemarks",
+                    }),
+                    state: joi.string().required().messages({
+                        "string.base": "validState",
+                        "any.required": "requiredState"
+                    }),
+                    
                 })
             ).optional().messages({
                 "array.base": "validAddresses",
@@ -209,7 +217,14 @@ module.exports = {
                     }),
                     isDefault: joi.boolean().default(false).messages({
                         "boolean.base": "validIsDefault"
-                    })
+                    }),
+                    remarks: joi.string().optional().messages({
+                        "string.base": "validRemarks",
+                    }),
+                    state: joi.string().required().messages({
+                        "string.base": "validState",
+                        "any.required": "requiredState"
+                    }),
                 })
             ).optional().messages({
                 "array.base": "validAddresses",
@@ -295,7 +310,14 @@ module.exports = {
             }),
             isDefault: joi.boolean().default(false).messages({
                 "boolean.base": "validIsDefault"
-            })
+            }),
+            remarks: joi.string().optional().messages({
+                "string.base": "validRemarks",
+            }),
+            state: joi.string().required().messages({
+                "string.base": "validState",
+                "any.required": "requiredState"
+            }),
         })
     },
 
@@ -327,7 +349,13 @@ module.exports = {
             }),
             isDefault: joi.boolean().default(false).messages({
                 "boolean.base": "validIsDefault"
-            })
+            }),
+            remarks: joi.string().optional().messages({
+                "string.base": "validRemarks",
+            }),
+            state: joi.string().optional().messages({
+                "string.base": "validState",
+            }),
         })
     },
 

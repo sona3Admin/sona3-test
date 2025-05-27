@@ -15,7 +15,7 @@ const customerSchema = mongoose.Schema({
     // address: { type: Object },
     addresses: [{
         name: { type: String },
-        city: { type: String },
+        state: { type: String },
         country: { type: String },
         street: { type: String},
         location: {
@@ -23,6 +23,8 @@ const customerSchema = mongoose.Schema({
             coordinates: { type: Array, default: [0, 0] }
         },
         isDefault: { type: Boolean, default: false },
+        city: { type: String },
+        remarks: { type: String , required: false }
     }],
     isEmailVerified: { type: Boolean, default: false },
     isPhoneVerified: { type: Boolean, default: false },

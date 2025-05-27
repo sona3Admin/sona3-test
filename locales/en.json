@@ -209,5 +209,6 @@
 	"validAddresses": "Addresses must be a valid array of objects.",
 	"maxAddressesReached": "You have reached the maximum number of addresses allowed.",
 	"maxFiveAddresses": "You can only have a maximum of 5 addresses.",
-	"\"addresses[0].isDefult\" is not allowed": "\"addresses[0].isDefult\" is not allowed"
+	"\"addresses[0].isDefult\" is not allowed": "\"addresses[0].isDefult\" is not allowed",
+	"validRemarks": "Remarks must be a valid string."
 }
