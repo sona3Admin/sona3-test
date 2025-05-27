@@ -83,9 +83,9 @@ module.exports = {
                     remarks: joi.string().optional().messages({
                         "string.base": "validRemarks",
                     }),
-                    state: joi.string().required().messages({
-                        "string.base": "validState",
-                        "any.required": "requiredState"
+                    emirate: joi.string().required().messages({
+                        "string.base": "validEmirate",
+                        "any.required": "requiredEmirate"
                     }),
                     
                 })
@@ -221,9 +221,9 @@ module.exports = {
                     remarks: joi.string().optional().messages({
                         "string.base": "validRemarks",
                     }),
-                    state: joi.string().required().messages({
-                        "string.base": "validState",
-                        "any.required": "requiredState"
+                    emirate: joi.string().required().messages({
+                        "string.base": "validEmirate",
+                        "any.required": "requiredEmirate"
                     }),
                 })
             ).optional().messages({
@@ -314,9 +314,9 @@ module.exports = {
             remarks: joi.string().optional().messages({
                 "string.base": "validRemarks",
             }),
-            state: joi.string().required().messages({
-                "string.base": "validState",
-                "any.required": "requiredState"
+            emirate: joi.string().required().messages({
+                "string.base": "validEmirate",
+                "any.required": "requiredEmirate"
             }),
         })
     },
@@ -353,8 +353,8 @@ module.exports = {
             remarks: joi.string().optional().messages({
                 "string.base": "validRemarks",
             }),
-            state: joi.string().optional().messages({
-                "string.base": "validState",
+            emirate: joi.string().optional().messages({
+                "string.base": "validEmirate",
             }),
         })
     },

@@ -15,7 +15,7 @@ const customerSchema = mongoose.Schema({
     // address: { type: Object },
     addresses: [{
         name: { type: String },
-        state: { type: String },
+        emirate: { type: String },
         country: { type: String },
         street: { type: String},
         location: {

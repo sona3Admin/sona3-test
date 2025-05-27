@@ -210,5 +210,7 @@
 	"maxAddressesReached": "You have reached the maximum number of addresses allowed.",
 	"maxFiveAddresses": "You can only have a maximum of 5 addresses.",
 	"\"addresses[0].isDefult\" is not allowed": "\"addresses[0].isDefult\" is not allowed",
-	"validRemarks": "Remarks must be a valid string."
+	"validRemarks": "Remarks must be a valid string.",
+	"validEmirate": "Emirate must be a valid string.",
+	"requiredEmirate": "Emirate is required."
 }
