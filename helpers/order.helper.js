@@ -70,23 +70,23 @@ exports.setSubOrders = (subCartsArray) => {
 };
 
 
-exports.calculateValueAddedTax = (itemsArray, vatRateNumber) => {
+exports.calculateValueAddedTax = (shopObject, vatRateNumber) => {
     const vatValue = parseFloat(vatRateNumber / 100)
     if (typeof vatRateNumber !== 'number' || vatRateNumber < 0 || typeof vatValue !== 'number') return 'Invalid input. Please provide a valid array of items and a non-negative VAT rate.'
 
     let taxesTotal = parseFloat(0);
-
-    itemsArray.forEach(itemObject => {
-        const vatAmount = vatValue * parseFloat(itemObject.itemTotal);
-        taxesTotal += vatAmount;
-    });
+    taxesTotal = vatValue * parseFloat(shopObject.shopTotal);
+    // itemsArray.forEach(itemObject => {
+    //     const vatAmount = vatValue * parseFloat(itemObject.itemTotal);
+    //     taxesTotal += vatAmount;
+    // });
 
     return taxesTotal;
 }
 
 
 exports.addOrderTaxes = (shopObject, customerOrderObject, isFood) => {
-    shopObject.shopTaxes = this.calculateValueAddedTax(shopObject.items, customerOrderObject.taxesRate)
+    shopObject.shopTaxes = this.calculateValueAddedTax(shopObject, customerOrderObject.taxesRate)
     shopObject.subOrderTotal = parseFloat(shopObject.shopTaxes) + parseFloat(shopObject.shopTotal)
     customerOrderObject.taxesTotal += parseFloat(shopObject.shopTaxes)
     customerOrderObject.orderTotal += parseFloat(shopObject.shopTaxes)
