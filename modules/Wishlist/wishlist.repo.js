@@ -3,6 +3,7 @@ let variationRepo = require("../Variation/variation.repo")
 const i18n = require('i18n');
 const mongoose = require("mongoose");
 const { logInTestEnv } = require("../../helpers/logger.helper");
+let customerModel = require("../Customer/customer.model");
 
 
 exports.find = async (filterObject) => {
@@ -72,7 +73,10 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
-
+        const activeCustomerIds = await customerModel.find({ isDeleted: false }).distinct('_id');
+        if (!filterObject.customer) {
+            filterObject.customer = { $in: activeCustomerIds }
+        }
         const resultArray = await wishlistModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({

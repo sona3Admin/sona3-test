@@ -8,6 +8,7 @@ const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromS
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
 const couponRepo = require("../Coupon/coupon.repo")
+const customerModel = require("../Customer/customer.model");
 
 
 exports.find = async (filterObject) => {
@@ -83,6 +84,10 @@ exports.list = async (filterObject, selectionObject, sortObject, pageNumber, lim
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+        const activeCustomerIds = await customerModel.find({ isDeleted: false }).distinct('_id');
+        if (!filterObject.customer) {
+            filterObject.customer = { $in: activeCustomerIds }
+        }
         const resultArray = await basketModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "coupon", select: "nameEn nameAr code discountType value percentage shop" })

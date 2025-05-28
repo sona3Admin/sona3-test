@@ -8,6 +8,7 @@ const { isStockAvailable, isIdInArray, removeItemFromItemsArray, removeShopFromS
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
 const couponRepo = require("../Coupon/coupon.repo")
+const customerModel = require("../Customer/customer.model");
 
 
 exports.find = async (filterObject) => {
@@ -80,9 +81,14 @@ exports.get = async (filterObject, selectionObject) => {
 
 exports.list = async (filterObject, selectionObject, sortObject, pageNumber, limitNumber) => {
     try {
+
         let normalizedQueryObjects = await prepareQueryObjects(filterObject, sortObject)
         filterObject = normalizedQueryObjects.filterObject
         sortObject = normalizedQueryObjects.sortObject
+        const activeCustomerIds = await customerModel.find({ isDeleted: false }).distinct('_id');
+        if (!filterObject.customer) {
+            filterObject.customer = { $in: activeCustomerIds }
+        }
         const resultArray = await cartModel.find(filterObject).lean()
             .populate({ path: "customer", select: "name image" })
             .populate({ path: "coupon", select: "nameEn nameAr code discountType value percentage shop" })
@@ -225,13 +231,13 @@ exports.removeItemFromList = async (customerId, shopId, itemId, quantityToRemove
             cartObject.$pull = { variations: itemId }
         }
         if (shopCartObject.items.length <= 0) {
-            if (shopCartObject.coupon){
+            if (shopCartObject.coupon) {
                 couponRepo.updateDirectly((shopCartObject.coupon._id).toString(), { $inc: { quantity: 1 }, $pull: { usedBy: { customer: cartObject.customer._id } } })
                 cartObject.coupon = null;
                 cartObject.couponShop = null;
             }
             cartObject.subCarts = removeShopFromSubCartsArray(cartObject.subCarts, shopCartIndex);
-            
+
         }
         if (parseInt(quantityToRemove) < parseInt(itemObject.quantity))
             shopCartObject.items = decreaseItemQuantity(shopCartObject, shopCartObject.items, parseInt(itemIndex), parseInt(quantityToRemove), itemObject.variation);
