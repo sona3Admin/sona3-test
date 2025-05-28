@@ -4,6 +4,7 @@ const customerModel = require("./customer.model")
 const saltrounds = 5;
 const { prepareQueryObjects } = require("../../helpers/query.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
+const cityRepo = require("../City/city.repo")
 
 
 exports.find = async (filterObject) => {
@@ -35,13 +36,26 @@ exports.find = async (filterObject) => {
 
 exports.get = async (filterObject, selectionObject) => {
     try {
-        const resultObject = await customerModel.findOne(filterObject).lean().select(selectionObject)
+        const resultObject = await customerModel.findOne(filterObject)
+            .populate({ path: "addresses.emirate", select: "nameEn nameAr firstFlightValues" })
+            .lean().select(selectionObject)
 
         if (!resultObject) return {
             success: false,
             code: 404,
             error: i18n.__("notFound")
         }
+
+        resultObject.addresses = resultObject.addresses.map(address => {
+            if (address.emirate?.firstFlightValues?.length > 0) {
+                const matchedCity = address.emirate.firstFlightValues.find(val => val._id.toString() === address.city.toString());
+                if (matchedCity) {
+                    address.city = matchedCity;
+                }
+            }
+            delete address.emirate.firstFlightValues;
+            return address;
+        });
 
         return {
             success: true,
@@ -127,6 +141,21 @@ exports.create = async (formObject) => {
         const uniqueObjectResult = await this.isObjectUnique(formObject);
         logInTestEnv(`uniqueObjectResult`, uniqueObjectResult);
         if (!uniqueObjectResult.success) return uniqueObjectResult
+
+
+        if (formObject.addresses) {
+            for (let address of formObject.addresses) {
+                address.name = address.name.trim().toLowerCase();
+                let city = await cityRepo.find({ _id: address.emirate });
+                if (!city.success) {
+                    return {
+                        success: false,
+                        code: 404,
+                        error: i18n.__("notFound")
+                    };
+                }
+            }
+        }
         const resultObject = new customerModel(formObject);
         await resultObject.save();
 
@@ -179,6 +208,15 @@ exports.addAddress = async (_id, formObject) => {
                 error: i18n.__("nameUsed"),
             };
         }
+        let city = await cityRepo.find({ _id: formObject.emirate });
+        if (!city.success) {
+            return {
+                success: false,
+                code: 404,
+                error: i18n.__("notFound")
+            };
+        }
+
         if (formObject.isDefault) {
             await customerModel.updateMany({ _id }, { $set: { "addresses.$[].isDefault": false } })
         }
@@ -226,6 +264,16 @@ exports.updateAddress = async (_id, addressId, formObject) => {
             }
         }
 
+        if (formObject.emirate) {
+            let city = await cityRepo.find({ _id: formObject.emirate });
+            if (!city.success) {
+                return {
+                    success: false,
+                    code: 404,
+                    error: i18n.__("notFound")
+                };
+            }
+        }
         if (formObject.isDefault) {
             await customerModel.updateMany({ _id }, { $set: { "addresses.$[].isDefault": false } })
         }
@@ -313,6 +361,20 @@ exports.update = async (_id, formObject) => {
         if (formObject.phone) {
             const uniqueObjectResult = await this.isPhoneUnique(formObject, existingObject)
             if (!uniqueObjectResult.success) return uniqueObjectResult
+        }
+
+        if (formObject.addresses) {
+            for (let address of formObject.addresses) {
+                address.name = address.name.trim().toLowerCase();
+                let city = await cityRepo.find({ _id: address.emirate });
+                if (!city.success) {
+                    return {
+                        success: false,
+                        code: 404,
+                        error: i18n.__("notFound")
+                    };
+                }
+            }
         }
 
         const resultObject = await customerModel.findByIdAndUpdate({ _id }, formObject, { new: true, select: "-password -token" })
