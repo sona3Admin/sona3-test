@@ -95,10 +95,10 @@ exports.calculateOrderTotal = async (req, res) => {
         return res.status(200).json({
             success: true, code: 200,
             result: {
-                cartTotal: operationResultObject.cartTotal,
-                taxesTotal: operationResultObject.taxesTotal,
-                shippingFeesTotal: operationResultObject.shippingFeesTotal,
-                orderTotal: operationResultObject.orderTotal
+                cartTotal: operationResultObject.cartTotal || 0,
+                taxesTotal: operationResultObject.taxesTotal || 0,
+                shippingFeesTotal: operationResultObject.shippingFeesTotal || 0,
+                orderTotal: operationResultObject.orderTotal || 0,
             }
         });
 
