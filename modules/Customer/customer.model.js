@@ -30,7 +30,7 @@ const customerSchema = mongoose.Schema({
     isPhoneVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    joinDate: { type: Date },
+    joinDate: { type: Date, default: Date.now },
     verifyDate: { type: Date },
     loyaltyPoints: { type: Number, default: 0, min: 0 },
     cashback: { type: Number, default: 0, min: 0 },
