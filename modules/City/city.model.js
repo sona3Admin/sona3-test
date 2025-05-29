@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const citySchema = mongoose.Schema({
     nameEn: { type: String, required: true },
     nameAr: { type: String, required: true },
-    iFastValue: { 
+    location: {
+        type: { type: String, default: "Point" },
+        coordinates: { type: Array, default: [0, 0] }
+    },
+    iFastValue: {
         city_ID: { type: Number, required: true },
         code: { type: String, required: true },
         name: { type: String, required: true },

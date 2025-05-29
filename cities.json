@@ -2,6 +2,10 @@
   {
     "nameEn": "ABU DHABI",
     "nameAr": "أبوظبي",
+    "location": {
+      "type": "Point",
+      "coordinates": [54.3773, 24.4539]
+    },
     "iFastValue": {
       "city_ID": 1,
       "code": "AUH",
@@ -289,6 +293,10 @@
   {
     "nameEn": "DUBAI",
     "nameAr": "دبي",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.2708, 25.2048]
+    },
     "iFastValue": {
       "city_ID": 4,
       "code": "DXB",
@@ -1224,6 +1232,10 @@
   {
     "nameEn": "AJMAN",
     "nameAr": "عجمان",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.5136, 25.4052]
+    },
     "iFastValue": {
       "city_ID": 2,
       "code": "QAJ",
@@ -1252,6 +1264,10 @@
   {
     "nameEn": "Al Ain",
     "nameAr": "العين",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.8023, 24.1302]
+    },
     "iFastValue": {
       "city_ID": 3,
       "code": "AAN",
@@ -1606,6 +1622,10 @@
   {
     "nameEn": "Fujairah",
     "nameAr": "الفجيرة",
+    "location": {
+      "type": "Point",
+      "coordinates": [56.3265, 25.1288]
+    },
     "iFastValue": {
       "city_ID": 5,
       "code": "FJR",
@@ -1662,6 +1682,10 @@
   {
     "nameEn": "Ras Al Khaimah",
     "nameAr": "رأس الخيمة",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.9762, 25.8007]
+    },
     "iFastValue": {
       "city_ID": 6,
       "code": "RKT",
@@ -1711,6 +1735,10 @@
   {
     "nameEn": "Sharjah",
     "nameAr": "الشارقة",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.4209, 25.3463]
+    },
     "iFastValue": {
       "city_ID": 7,
       "code": "SHJ",
@@ -2186,6 +2214,10 @@
   {
     "nameEn": "Umm Al Quwain",
     "nameAr": "أم القيوين",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.5552, 25.5647]
+    },
     "iFastValue": {
       "city_ID": 8,
       "code": "QIW",
@@ -2207,6 +2239,10 @@
   {
     "nameEn": "Out OF Service Area",
     "nameAr": "خارج منطقة الخدمة",
+    "location": {
+      "type": "Point",
+      "coordinates": [0, 0]
+    },
     "iFastValue": {
       "city_ID": 251,
       "code": "OSA",
@@ -2220,6 +2256,10 @@
   {
     "nameEn": "Western Abu Dhabi",
     "nameAr": "أبوظبي الغربية",
+    "location": {
+      "type": "Point",
+      "coordinates": [53.7055, 23.6599]
+    },
     "iFastValue": {
       "city_ID": 252,
       "code": "WAUH",
@@ -2233,6 +2273,10 @@
   {
     "nameEn": "Western Al Ain",
     "nameAr": "العين الغربية",
+    "location": {
+      "type": "Point",
+      "coordinates": [55.2726, 24.0686]
+    },
     "iFastValue": {
       "city_ID": 253,
       "code": "WALN",
@@ -2246,6 +2290,10 @@
   {
     "nameEn": "Khor Fakkan",
     "nameAr": "خورفكان",
+    "location": {
+      "type": "Point",
+      "coordinates": [56.3576, 25.3313]
+    },
     "iFastValue": {
       "city_ID": 262,
       "code": "KHO",
