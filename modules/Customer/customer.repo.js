@@ -146,14 +146,37 @@ exports.create = async (formObject) => {
         if (formObject.addresses) {
             for (let address of formObject.addresses) {
                 address.name = address.name.trim().toLowerCase();
-                let city = await cityRepo.find({ _id: address.emirate });
-                if (!city.success) {
+                let emirate = await cityRepo.find({ _id: address.emirate });
+                if (!emirate.success) {
                     return {
                         success: false,
                         code: 404,
                         error: i18n.__("notFound")
                     };
                 }
+
+                let firstFlightValues = emirate.result?.firstFlightValues || [];
+
+                if (!address.city && firstFlightValues.length > 0) {
+                    return {
+                        success: false,
+                        code: 400,
+                        error: i18n.__("requiredCity")
+                    };
+
+                }
+                if (address.city) {
+                    const matchedCity = firstFlightValues.find(val => val._id.toString() === address.city.toString());
+                    if (!matchedCity) {
+                        return {
+                            success: false,
+                            code: 400,
+                            error: i18n.__("invalidCity")
+                        };
+                    }
+                }
+
+                
             }
         }
         const resultObject = new customerModel(formObject);
@@ -208,13 +231,34 @@ exports.addAddress = async (_id, formObject) => {
                 error: i18n.__("nameUsed"),
             };
         }
-        let city = await cityRepo.find({ _id: formObject.emirate });
-        if (!city.success) {
+        let emirate = await cityRepo.find({ _id: formObject.emirate });
+        if (!emirate.success) {
             return {
                 success: false,
                 code: 404,
                 error: i18n.__("notFound")
             };
+        }
+
+        let firstFlightValues = emirate.result?.firstFlightValues || [];
+
+        if (!formObject.city && firstFlightValues.length > 0) {
+            return {
+                success: false,
+                code: 400,
+                error: i18n.__("requiredCity")
+            };
+
+        }
+        if (formObject.city) {
+            const matchedCity = firstFlightValues.find(val => val._id.toString() === formObject.city.toString());
+            if (!matchedCity) {
+                return {
+                    success: false,
+                    code: 400,
+                    error: i18n.__("invalidCity")
+                };
+            }
         }
 
         if (formObject.isDefault) {
@@ -265,15 +309,37 @@ exports.updateAddress = async (_id, addressId, formObject) => {
         }
 
         if (formObject.emirate) {
-            let city = await cityRepo.find({ _id: formObject.emirate });
-            if (!city.success) {
+            let emirate = await cityRepo.find({ _id: formObject.emirate });
+            if (!emirate.success) {
                 return {
                     success: false,
                     code: 404,
                     error: i18n.__("notFound")
                 };
             }
+
+            let firstFlightValues = emirate.result?.firstFlightValues || [];
+
+            if (!formObject.city && firstFlightValues.length > 0) {
+                return {
+                    success: false,
+                    code: 400,
+                    error: i18n.__("requiredCity")
+                };
+
+            }
+            if (formObject.city) {
+                const matchedCity = firstFlightValues.find(val => val._id.toString() === formObject.city.toString());
+                if (!matchedCity) {
+                    return {
+                        success: false,
+                        code: 400,
+                        error: i18n.__("invalidCity")
+                    };
+                }
+            }
         }
+
         if (formObject.isDefault) {
             await customerModel.updateMany({ _id }, { $set: { "addresses.$[].isDefault": false } })
         }

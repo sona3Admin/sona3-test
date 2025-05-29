@@ -52,9 +52,8 @@ module.exports = {
                         "string.base": "validName",
                         "any.required": "requiredName"
                     }),
-                    city: joi.string().required().messages({
+                    city: joi.string().optional().messages({
                         "string.base": "validCity",
-                        "any.required": "requiredCity"
                     }),
                     country: joi.string().required().messages({
                         "string.base": "validCountry",
@@ -190,9 +189,8 @@ module.exports = {
                         "string.base": "validName",
                         "any.required": "requiredName"
                     }),
-                    city: joi.string().required().messages({
+                    city: joi.string().optional().messages({
                         "string.base": "validCity",
-                        "any.required": "requiredCity"
                     }),
                     country: joi.string().required().messages({
                         "string.base": "validCountry",
@@ -283,9 +281,8 @@ module.exports = {
                 "string.base": "validName",
                 "any.required": "requiredName"
             }),
-            city: joi.string().required().messages({
+            city: joi.string().optional().messages({
                 "string.base": "validCity",
-                "any.required": "requiredCity"
             }),
             country: joi.string().required().messages({
                 "string.base": "validCountry",

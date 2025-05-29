@@ -212,5 +212,6 @@
 	"\"addresses[0].isDefult\" is not allowed": "\"addresses[0].isDefult\" is not allowed",
 	"validRemarks": "Remarks must be a valid string.",
 	"validEmirate": "Emirate must be a valid string.",
-	"requiredEmirate": "Emirate is required."
+	"requiredEmirate": "Emirate is required.",
+	"invalidCity": "Invalid city."
 }

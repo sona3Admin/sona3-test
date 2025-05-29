@@ -205,5 +205,6 @@
   "maxFiveAddresses": "يمكنك إضافة خمسة عناوين فقط.",
   "validRemarks": "يجب أن تكون الملاحظات نصاً صحيحاً.",
   "validEmirate": "يجب أن تكون الإمارة نصاً صحيحاً.",
-  "requiredEmirate": "الإمارة مطلوبة."
+  "requiredEmirate": "الإمارة مطلوبة.",
+  "invalidCity": "المدينة غير صالحة."
 }
