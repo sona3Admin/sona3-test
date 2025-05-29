@@ -2237,23 +2237,6 @@
     ]
   },
   {
-    "nameEn": "Out OF Service Area",
-    "nameAr": "خارج منطقة الخدمة",
-    "location": {
-      "type": "Point",
-      "coordinates": [0, 0]
-    },
-    "iFastValue": {
-      "city_ID": 251,
-      "code": "OSA",
-      "name": "Out OF Service Area",
-      "name_Arabic": null,
-      "country_ID": 1,
-      "extend_Id": 531193103
-    },
-    "firstFlightValues": []
-  },
-  {
     "nameEn": "Western Abu Dhabi",
     "nameAr": "أبوظبي الغربية",
     "location": {
