@@ -466,24 +466,24 @@ exports.getOrdersStatsByDay = async (req, res) => {
             }
 
             acc[dateString].orderCount++;
-            acc[dateString].totalSales += order.cartTotal;
-            acc[dateString].shippingFeesTotal += order.shippingFeesTotal;
+            acc[dateString].totalSales += order.shopTotal;
+            acc[dateString].shippingFeesTotal += order.shopShippingFees;
 
             if (order.orderType === "basket") {
                 acc[dateString].ordersFromFoodProducts++;
-                acc[dateString].salesFromFoodProducts += order.cartTotal;
-                acc[dateString].shippingFeesFromFoodProducts += order.shippingFeesTotal;
-                if (order.cartTotal > accumulations.highestOrderFromFood.orderTotal) {
-                    accumulations.highestOrderFromFood.orderTotal = order.cartTotal;
+                acc[dateString].salesFromFoodProducts += order.shopTotal;
+                acc[dateString].shippingFeesFromFoodProducts += order.shopShippingFees;
+                if (order.shopTotal > accumulations.highestOrderFromFood.orderTotal) {
+                    accumulations.highestOrderFromFood.orderTotal = order.shopTotal;
                     accumulations.highestOrderFromFood.orderId = order._id;
                 }
             } else if (order.orderType === "cart") {
 
                 acc[dateString].ordersFromNonFoodProducts++;
-                acc[dateString].salesFromNonFoodProducts += order.cartTotal;
-                acc[dateString].shippingFeesFromNonFoodProducts += order.shippingFeesTotal;
-                if (order.cartTotal > accumulations.highestOrderFromNonFood.orderTotal) {
-                    accumulations.highestOrderFromNonFood.orderTotal = order.cartTotal;
+                acc[dateString].salesFromNonFoodProducts += order.shopTotal;
+                acc[dateString].shippingFeesFromNonFoodProducts += order.shopShippingFees;
+                if (order.shopTotal > accumulations.highestOrderFromNonFood.orderTotal) {
+                    accumulations.highestOrderFromNonFood.orderTotal = order.shopTotal;
                     accumulations.highestOrderFromNonFood.orderId = order._id;
                 }
             }
@@ -508,17 +508,17 @@ exports.getOrdersStatsByDay = async (req, res) => {
 
             // Accumulate overall statistics
             accumulations.orders.totalOrderCount++;
-            accumulations.sales.totalSales += parseFloat(order.cartTotal.toFixed(2));
-            accumulations.shippingFees.shippingFeesTotal += parseFloat(order.shippingFeesTotal.toFixed(2));
+            accumulations.sales.totalSales += parseFloat(order.shopTotal.toFixed(2));
+            accumulations.shippingFees.shippingFeesTotal += parseFloat(order.shopShippingFees.toFixed(2));
 
             if (order.orderType === "basket") {
                 accumulations.orders.ordersFromFoodProducts++;
-                accumulations.sales.salesFromFoodProducts += parseFloat(order.cartTotal.toFixed(2));
-                accumulations.shippingFees.shippingFeesFromFoodProducts += parseFloat(order.shippingFeesTotal.toFixed(2));
+                accumulations.sales.salesFromFoodProducts += parseFloat(order.shopTotal.toFixed(2));
+                accumulations.shippingFees.shippingFeesFromFoodProducts += parseFloat(order.shopShippingFees.toFixed(2));
             } else if (order.orderType === "cart") {
                 accumulations.orders.ordersFromNonFoodProducts++;
-                accumulations.sales.salesFromNonFoodProducts += parseFloat(order.cartTotal.toFixed(2));
-                accumulations.shippingFees.shippingFeesFromNonFoodProducts += parseFloat(order.shippingFeesTotal.toFixed(2));
+                accumulations.sales.salesFromNonFoodProducts += parseFloat(order.shopTotal.toFixed(2));
+                accumulations.shippingFees.shippingFeesFromNonFoodProducts += parseFloat(order.shopShippingFees.toFixed(2));
             }
 
             return acc;
@@ -657,24 +657,24 @@ exports.getOrdersStatsByMonth = async (req, res) => {
 
             const month = monthlyAggregations[monthKey];
             month.orderCount++;
-            month.totalSales += order.cartTotal;
-            month.shippingFeesTotal += order.shippingFeesTotal;
+            month.totalSales += order.shopTotal;
+            month.shippingFeesTotal += order.shopShippingFees;
 
             if (order.orderType === "basket") {
                 month.ordersFromFoodProducts++;
-                month.salesFromFoodProducts += order.cartTotal;
-                month.shippingFeesFromFoodProducts += order.shippingFeesTotal;
+                month.salesFromFoodProducts += order.shopTotal;
+                month.shippingFeesFromFoodProducts += order.shopShippingFees;
             } else if (order.orderType === "cart") {
                 month.ordersFromNonFoodProducts++;
-                month.salesFromNonFoodProducts += order.cartTotal;
-                month.shippingFeesFromNonFoodProducts += order.shippingFeesTotal;
+                month.salesFromNonFoodProducts += order.shopTotal;
+                month.shippingFeesFromNonFoodProducts += order.shopShippingFees;
             }
 
-            if (order.orderType === "basket" && order.cartTotal > accumulations.highestOrderFromFood.orderTotal) {
-                accumulations.highestOrderFromFood.orderTotal = order.cartTotal;
+            if (order.orderType === "basket" && order.shopTotal > accumulations.highestOrderFromFood.orderTotal) {
+                accumulations.highestOrderFromFood.orderTotal = order.shopTotal;
                 accumulations.highestOrderFromFood.orderId = order._id;
-            } else if (order.orderType === "cart" && order.cartTotal > accumulations.highestOrderFromNonFood.orderTotal) {
-                accumulations.highestOrderFromNonFood.orderTotal = order.cartTotal;
+            } else if (order.orderType === "cart" && order.shopTotal > accumulations.highestOrderFromNonFood.orderTotal) {
+                accumulations.highestOrderFromNonFood.orderTotal = order.shopTotal;
                 accumulations.highestOrderFromNonFood.orderId = order._id;
             }
             // Update sellers
@@ -684,14 +684,14 @@ exports.getOrdersStatsByMonth = async (req, res) => {
 
             if (sellerEntry) {
                 sellerEntry.orderCount++;
-                sellerEntry.totalSales += order.cartTotal;
+                sellerEntry.totalSales += order.shopTotal;
             } else {
                 month.sellersOfTheMonth.push({
                     seller: order.seller.toString(),
                     shop: order.shop.toString(),
                     orderType: order.orderType,
                     orderCount: 1,
-                    totalSales: order.cartTotal
+                    totalSales: order.shopTotal
                 });
             }
         });
