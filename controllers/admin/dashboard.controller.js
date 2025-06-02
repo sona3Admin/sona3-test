@@ -206,7 +206,7 @@ exports.calculateRevenue = async (req, res) => {
         }
 
         const commissionPercentage = 0.15;
-        const commissions = parseInt(orderTotal * commissionPercentage) || 0;
+        const commissions = parseFloat(orderTotal * commissionPercentage) || 0;
 
         if (filterObject.dateField) filterObject.dateField = "timestamp";
 
