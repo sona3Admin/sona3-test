@@ -761,7 +761,7 @@ exports.financesOrders = async (req, res) => {
         } else allOrderDocuments = { success: true, code: 200, result: [] };
 
         const commissionPercentage = 0.15;
-        const commissions = parseInt(orderTotal * commissionPercentage) || 0;
+        const commissions = parseFloat(orderTotal * commissionPercentage) || 0;
         const netSales = orderTotal - commissions;
 
         const sellerObject = await sellerRepo.get({ _id: req.tokenData._id }, {
@@ -791,8 +791,8 @@ exports.financesOrders = async (req, res) => {
             acc[dateString].orderCount++;
             acc[dateString].orderTotal += order.shopTotal;
 
-            acc[dateString].commissions += parseInt(order.shopTotal * commissionPercentage);
-            acc[dateString].netSales += order.shopTotal - parseInt(order.shopTotal * commissionPercentage);
+            acc[dateString].commissions += parseFloat(order.shopTotal * commissionPercentage);
+            acc[dateString].netSales += order.shopTotal - parseFloat(order.shopTotal * commissionPercentage);
 
             return acc;
         }, {});
