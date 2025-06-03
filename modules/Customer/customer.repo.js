@@ -293,6 +293,15 @@ exports.updateAddress = async (_id, addressId, formObject) => {
             code: 404,
             error: i18n.__("notFound")
         }
+        if (!existingObject.result.addresses.some(addr => addr._id.toString() === addressId)) {
+            return {
+                success: false,
+                code: 404,
+                error: i18n.__("notFound")
+            };
+        }
+
+        let addressToUpdate = existingObject.result.addresses.find(addr => addr._id.toString() === addressId);
 
         if (formObject.name) {
             formObject.name = formObject.name.trim().toLowerCase()
@@ -344,12 +353,15 @@ exports.updateAddress = async (_id, addressId, formObject) => {
             await customerModel.updateMany({ _id }, { $set: { "addresses.$[].isDefault": false } })
         }
 
-        const resultObject = await customerModel.findOneAndUpdate({ _id, "addresses._id": addressId }, { $set: { "addresses.$": formObject } }, { new: true, select: "-password -token" })
+        addressToUpdate = { ...addressToUpdate, ...formObject };
+
+        const resultObject = await customerModel.findOneAndUpdate({ _id, "addresses._id": addressId }, { $set: { "addresses.$": addressToUpdate } }, { new: true, select: "-password -token" })
         if (!resultObject) return {
             success: false,
             code: 500,
             error: i18n.__("internalServerError")
         }
+
         return {
             success: true,
             code: 200,
@@ -375,6 +387,13 @@ exports.removeAddress = async (_id, addressId) => {
         }
         const addresses = existingObject.result.addresses;
         const isDeletedAddressDefault = addresses.some(addr => addr._id.toString() === addressId && addr.isDefault);
+        if (!addresses.some(addr => addr._id.toString() === addressId)) {
+            return {
+                success: false,
+                code: 404,
+                error: i18n.__("notFound")
+            };
+        }
         const updatedCustomer = await customerModel.findOneAndUpdate({ _id }, { $pull: { addresses: { _id: addressId } } }, { new: true, select: "-password -token" })
         if (!updatedCustomer) return {
             success: false,
