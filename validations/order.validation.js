@@ -17,9 +17,10 @@ module.exports = {
                     "string.base": "validPaymentMethod",
                 }),
 
-            shippingAddress: joi.object().required().messages({
+            shippingAddress: joi.string().required().empty().messages({
                 "any.required": "requiredShippingAddress",
-                "object.base": "validShippingAddress",
+                "string.base": "validShippingAddress",
+                "string.empty": "emtyShippingAddress",
             }),
 
             shippingCost: joi.object().optional().messages({

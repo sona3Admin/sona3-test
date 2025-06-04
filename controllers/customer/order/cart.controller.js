@@ -9,6 +9,7 @@ const firstFlightShipperHelper = require("../../../utils/firstFlightSipping.util
 const stripeHelper = require("../../../utils/stripePayment.util");
 const { sendOrderPurchaseConfirmationEmailToCustomer, sendOrderPurchaseConfirmationEmailToSeller } = require('../../../helpers/email.helper');
 const { logInTestEnv } = require("../../../helpers/logger.helper");
+const customerRepo = require("../../../modules/Customer/customer.repo");
 
 exports.createOrder = async (req, res) => {
     try {
@@ -18,6 +19,36 @@ exports.createOrder = async (req, res) => {
         let customerOrderObject = req.body
         let customerCartObject = await cartRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
+        const customer = await customerRepo.get({ _id: req.body.customer }, {});
+        if (!customer.success) return res.status(customer.code).json(customer);
+        const customerAddresses = customer.result.addresses || [];
+        if (req.body.shippingAddress) {
+            const shippingAddress = customerAddresses.find(address => address._id.toString() === req.body.shippingAddress.toString());
+            if (!shippingAddress) {
+                return res.status(400).json({ success: false, code: 400, error: i18n.__("notFound") });
+            }
+            if (!shippingAddress.location || !shippingAddress.country || !shippingAddress.city || !shippingAddress.street) {
+                return res.status(400).json({ success: false, code: 400, error: i18n.__("notFound") });
+            }
+            
+            req.body.shippingAddress = {
+                location: shippingAddress.location,
+                address: {
+                    country: shippingAddress.country,
+                    city: {
+                        CityCode: shippingAddress.city.CityCode,
+                        CityName: shippingAddress.city.CityName,
+                        CountryCode: shippingAddress.city.CountryCode,
+                        CountryName: shippingAddress.city.CountryName,
+                        State: shippingAddress.city.State,
+                    },
+                    street: shippingAddress.street,
+                    remarks: shippingAddress.remarks? shippingAddress.remarks : ""
+                }
+            }
+            customerOrderObject.shippingAddress = req.body.shippingAddress;
+        }
+
         const customerDetailsObject = customerCartObject.result.customer
 
         const hasInactiveProductOrVariation = customerCartObject.result.subCarts.some(subCart => {

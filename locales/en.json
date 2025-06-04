@@ -213,5 +213,7 @@
 	"validEmirate": "Emirate must be a valid string.",
 	"requiredEmirate": "Emirate is required.",
 	"invalidCity": "Invalid city.",
-	"emptyCity": "City cannot be empty."
+	"emptyCity": "City cannot be empty.",
+	"requiredShippingAddress": "Shipping address is required.",
+	"emtyShippingAddress": "Shipping address cannot be empty."
 }

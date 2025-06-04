@@ -37,7 +37,7 @@ exports.find = async (filterObject) => {
 exports.get = async (filterObject, selectionObject) => {
     try {
         const resultObject = await customerModel.findOne(filterObject)
-            .populate({ path: "addresses.emirate", select: "nameEn nameAr firstFlightValues" })
+            .populate({ path: "addresses.emirate", select: "nameEn nameAr firstFlightValues iFastValue" })
             .lean().select(selectionObject)
 
         if (!resultObject) return {

@@ -9,6 +9,7 @@ const ifastShipperHelper = require("../../../utils/ifastShipping.util")
 const stripeHelper = require("../../../utils/stripePayment.util")
 const { sendOrderPurchaseConfirmationEmailToCustomer, sendOrderPurchaseConfirmationEmailToSeller } = require('../../../helpers/email.helper');
 const { logInTestEnv } = require("../../../helpers/logger.helper");
+const customerRepo = require("../../../modules/Customer/customer.repo");
 
 
 exports.createOrder = async (req, res) => {
@@ -20,6 +21,37 @@ exports.createOrder = async (req, res) => {
         let customerCartObject = await basketRepo.get({ customer: req.body.customer })
         if (customerCartObject.result.subCarts.length < 1) return res.status(404).json({ success: false, code: 404, error: i18n.__("notFound") });
         const customerDetailsObject = customerCartObject.result.customer
+        const customer = await customerRepo.get({ _id: req.body.customer }, {});
+        if (!customer.success) return res.status(customer.code).json(customer);
+        const customerAddresses = customer.result.addresses || [];
+        if (req.body.shippingAddress) {
+            const shippingAddress = customerAddresses.find(address => address._id.toString() === req.body.shippingAddress.toString());
+            if (!shippingAddress) {
+                return res.status(400).json({ success: false, code: 400, error: i18n.__("notFound") });
+            }
+            if (!shippingAddress.location || !shippingAddress.country || !shippingAddress.emirate || !shippingAddress.emirate?.iFastValue || !shippingAddress.street) {
+                return res.status(400).json({ success: false, code: 400, error: i18n.__("notFound") });
+            }
+
+            req.body.shippingAddress = {
+                location: shippingAddress.location,
+                address: {
+                    country: shippingAddress.country,
+                    city: {
+                        city_ID: shippingAddress.emirate?.iFastValue.city_ID,
+                        code: shippingAddress.emirate?.iFastValue.code,
+                        name: shippingAddress.emirate?.iFastValue.name,
+                        name_Arabic: shippingAddress.emirate?.iFastValue.name_Arabic,
+                        country_ID: shippingAddress.emirate?.iFastValue.country_ID,
+                        extend_Id: shippingAddress.emirate?.iFastValue.extend_Id
+                    },
+                    street: shippingAddress.street,
+                    remarks: shippingAddress.remarks ? shippingAddress.remarks : ""
+                }
+            }
+            customerOrderObject.shippingAddress = req.body.shippingAddress;
+        }
+
         const hasInactiveProductOrVariation = customerCartObject.result.subCarts.some(subCart => {
             return subCart.items.some(item => {
                 const productIsActive = item.product?.isActive;

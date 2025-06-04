@@ -207,5 +207,7 @@
   "validEmirate": "يجب أن تكون الإمارة نصاً صحيحاً.",
   "requiredEmirate": "الإمارة مطلوبة.",
   "invalidCity": "المدينة غير صالحة.",
-  "emptyCity": "لا يمكن أن تكون المدينة فارغة"
+  "emptyCity": "لا يمكن أن تكون المدينة فارغة",
+  "requiredShippingAddress": "عنوان الشحن مطلوب.",
+  "emtyShippingAddress": "لا يمكن أن يكون عنوان الشحن فارغًا"
 }
