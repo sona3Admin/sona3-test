@@ -52,8 +52,9 @@ module.exports = {
                         "string.base": "validName",
                         "any.required": "requiredName"
                     }),
-                    city: joi.string().optional().messages({
+                    city: joi.string().optional().empty().messages({
                         "string.base": "validCity",
+                        "string.empty": "emptyCity"
                     }),
                     country: joi.string().required().messages({
                         "string.base": "validCountry",
@@ -189,8 +190,9 @@ module.exports = {
                         "string.base": "validName",
                         "any.required": "requiredName"
                     }),
-                    city: joi.string().optional().messages({
+                    city: joi.string().optional().empty().messages({
                         "string.base": "validCity",
+                        "string.empty": "emptyCity"
                     }),
                     country: joi.string().required().messages({
                         "string.base": "validCountry",
@@ -281,8 +283,9 @@ module.exports = {
                 "string.base": "validName",
                 "any.required": "requiredName"
             }),
-            city: joi.string().optional().messages({
+            city: joi.string().optional().empty().messages({
                 "string.base": "validCity",
+                "string.empty": "emptyCity"
             }),
             country: joi.string().required().messages({
                 "string.base": "validCountry",
@@ -323,8 +326,9 @@ module.exports = {
             name: joi.string().optional().messages({
                 "string.base": "validName",
             }),
-            city: joi.string().optional().messages({
+            city: joi.string().optional().empty().messages({
                 "string.base": "validCity",
+                "string.empty": "emptyCity"
             }),
             country: joi.string().optional().messages({
                 "string.base": "validCountry",
