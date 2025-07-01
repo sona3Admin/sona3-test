@@ -209,5 +209,15 @@
   "invalidCity": "المدينة غير صالحة.",
   "emptyCity": "لا يمكن أن تكون المدينة فارغة",
   "requiredShippingAddress": "عنوان الشحن مطلوب.",
-  "emtyShippingAddress": "لا يمكن أن يكون عنوان الشحن فارغًا"
+  "emtyShippingAddress": "لا يمكن أن يكون عنوان الشحن فارغًا",
+  "moduleNameUsed": "اسم الوحدة هذا مستخدم بالفعل.",
+  "requiredAdmin": "المشرف مطلوب.",
+  "emptyAdmin": "لا يمكن أن يكون المشرف فارغًا.",
+  "validModule": "يجب أن يكون اسم الوحدة نصاً صحيحاً.",
+  "emptyModule": "لا يمكن أن يكون اسم الوحدة فارغًا.",
+  "requiredModule": "اسم الوحدة مطلوب.",
+  "validVisibleColumnsArray": "يجب أن تكون الأعمدة المرئية مصفوفة صحيحة من السلاسل النصية.",
+  "visibleColumnsMustBeStrings": "يجب أن تكون الأعمدة المرئية سلاسل نصية.",
+  "atLeastOneVisibleColumn": "يجب أن يكون هناك عمود مرئي واحد على الأقل.",
+  "requiredVisibleColumns": "الأعمدة المرئية مطلوبة."
 }

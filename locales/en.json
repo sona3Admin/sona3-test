@@ -215,5 +215,15 @@
 	"invalidCity": "Invalid city.",
 	"emptyCity": "City cannot be empty.",
 	"requiredShippingAddress": "Shipping address is required.",
-	"emtyShippingAddress": "Shipping address cannot be empty."
+	"emtyShippingAddress": "Shipping address cannot be empty.",
+	"moduleNameUsed": "This module name is already used.",
+	"requiredAdmin": "Admin is required.",
+	"emptyAdmin": "Admin cannot be empty.",
+	"validModule": "Module must be a valid string.",
+	"emptyModule": "Module cannot be empty.",
+	"requiredModule": "Module is required.",
+	"validVisibleColumnsArray": "Visible columns must be a valid array of strings.",
+	"visibleColumnsMustBeStrings": "Visible columns must be an array of strings.",
+	"atLeastOneVisibleColumn": "At least one visible column is required.",
+	"requiredVisibleColumns": "Visible columns are required."
 }

@@ -57,7 +57,7 @@ exports.isAuthorized = (req, res, next) => {
     try {
         if (req.tokenData) {
             let requesterId = req.query._id || req.body._id
-            let allowedEndPoints = ["/admin/get", "/admin/password", "/admin/image"]
+            let allowedEndPoints = ["/admin/get", "/admin/password", "/admin/image", "/tablePreferences/get", "/tablePreferences/create", "/tablePreferences/remove"];
 
             if (req.tokenData?.role == "superAdmin") return next()
             const adminPermissions = req.tokenData.permission || {}

@@ -63,7 +63,7 @@ function handleSearchParams(filterObject) {
     finalFilterObject = handleSearchProperty('email', filterObject, finalFilterObject);
     finalFilterObject = handleSearchProperty('phone', filterObject, finalFilterObject);
     finalFilterObject = handleSearchProperty('descriptionEn', filterObject, finalFilterObject);
-    finalFilterObject = handleSearchProperty('descriptionAr', filterObject, finalFilterObject);    
+    finalFilterObject = handleSearchProperty('descriptionAr', filterObject, finalFilterObject);
 
     return finalFilterObject;
 }
