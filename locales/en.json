@@ -225,5 +225,6 @@
 	"validVisibleColumnsArray": "Visible columns must be a valid array of strings.",
 	"visibleColumnsMustBeStrings": "Visible columns must be an array of strings.",
 	"atLeastOneVisibleColumn": "At least one visible column is required.",
-	"requiredVisibleColumns": "Visible columns are required."
+	"requiredVisibleColumns": "Visible columns are required.",
+	"loginBlocked": "Login blocked due to multiple failed attempts. Please try again later."
 }

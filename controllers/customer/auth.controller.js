@@ -4,6 +4,7 @@ const jwtHelper = require("../../helpers/jwt.helper")
 const { getSettings } = require("../../helpers/settings.helper")
 const emailHelper = require("../../helpers/email.helper")
 const { logInTestEnv } = require("../../helpers/logger.helper");
+const loginAttemptRepo = require("../../modules/LoginAttempt/loginAttempt.repo");
 
 
 exports.register = async (req, res) => {
@@ -87,7 +88,17 @@ exports.login = async (req, res) => {
     try {
         const { email, password, fcmToken } = req.body;
         const operationResultObject = await customerRepo.comparePassword(email, password);
-
+        if (!operationResultObject.success) {
+            const loginAttemptResult = await loginAttemptRepo.checkAndTrackloginAttempt(req.ip);
+            if (!loginAttemptResult.success) {
+                return res.status(loginAttemptResult.code).json(loginAttemptResult);
+            }
+        } else {
+            const loginAttemptResult = await loginAttemptRepo.checkOnlyLoginBlockStatus(req.ip);
+            if (!loginAttemptResult.success) {
+                return res.status(loginAttemptResult.code).json(loginAttemptResult);
+            }
+        }
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
 
         let payloadObject = {

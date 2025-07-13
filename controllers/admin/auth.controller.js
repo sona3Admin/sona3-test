@@ -1,6 +1,7 @@
 const i18n = require('i18n');
 const adminRepo = require("../../modules/Admin/admin.repo");
 const jwtHelper = require("../../helpers/jwt.helper")
+const loginAttemptRepo = require("../../modules/LoginAttempt/loginAttempt.repo");
 const { logInTestEnv } = require("../../helpers/logger.helper");
 
 
@@ -8,6 +9,18 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const operationResultObject = await adminRepo.comparePassword(email, password);
+        if (!operationResultObject.success) {
+            const loginAttemptResult = await loginAttemptRepo.checkAndTrackloginAttempt(req.ip);
+            if (!loginAttemptResult.success) {
+                return res.status(loginAttemptResult.code).json(loginAttemptResult);
+            }
+        } else {
+            const loginAttemptResult = await loginAttemptRepo.checkOnlyLoginBlockStatus(req.ip);
+            if (!loginAttemptResult.success) {
+                return res.status(loginAttemptResult.code).json(loginAttemptResult);
+            }
+        }
+
 
         if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
         // if (!operationResultObject.result.isActive)

@@ -219,5 +219,6 @@
   "validVisibleColumnsArray": "يجب أن تكون الأعمدة المرئية مصفوفة صحيحة من السلاسل النصية.",
   "visibleColumnsMustBeStrings": "يجب أن تكون الأعمدة المرئية سلاسل نصية.",
   "atLeastOneVisibleColumn": "يجب أن يكون هناك عمود مرئي واحد على الأقل.",
-  "requiredVisibleColumns": "الأعمدة المرئية مطلوبة."
+  "requiredVisibleColumns": "الأعمدة المرئية مطلوبة.",
+  "loginBlocked": "تم حظر تسجيل الدخول بسبب محاولات فاشلة متعددة. يرجى المحاولة مرة أخرى لاحقًا."
 }
