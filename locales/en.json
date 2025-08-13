@@ -226,5 +226,10 @@
 	"visibleColumnsMustBeStrings": "Visible columns must be an array of strings.",
 	"atLeastOneVisibleColumn": "At least one visible column is required.",
 	"requiredVisibleColumns": "Visible columns are required.",
-	"loginBlocked": "Login blocked due to multiple failed attempts. Please try again later."
+	"loginBlocked": "Login blocked due to multiple failed attempts. Please try again later.",
+	"sameEmailNotAllowed": "You cannot use the same email as your current one.",
+	"emailAlreadyExists": "This email is already registered.",
+	"otpSentToNewEmail": "OTP has been sent to the new email address.",
+	"noPendingEmailUpdate": "There is no pending email update.",
+	"emailUpdatedSuccessfully": "Email updated successfully."
 }

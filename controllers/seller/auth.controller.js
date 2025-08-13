@@ -208,3 +208,141 @@ exports.verifyEmailOTP = async (req, res) => {
         });
     }
 }
+
+exports.requestEmailUpdate = async (req, res) => {
+    try {
+        const sellerId = req.query._id;
+        const { newEmail } = req.body;
+
+        const sellerObj = await sellerRepo.find({ _id: sellerId });
+        if (!sellerObj.success) return res.status(sellerObj.code).json(sellerObj);
+
+        if (sellerObj.result.email?.toLowerCase() === newEmail.toLowerCase()) {
+            return res.status(409).json({
+                success: false,
+                code: 409,
+                error: i18n.__("sameEmailNotAllowed"),
+            });
+        }
+
+        const existsCheck = await sellerRepo.find({ email: newEmail });
+        if (existsCheck.success && existsCheck.result && existsCheck.result._id?.toString() !== sellerId?.toString()) {
+            return res.status(409).json({
+                success: false,
+                code: 409,
+                error: i18n.__("emailAlreadyExists"),
+            });
+        }
+
+        let payloadObject = {
+            _id: sellerObj.result._id,
+            userName: sellerObj.result.userName,
+            email: newEmail,
+            phone: sellerObj.result.phone,
+            role: "seller",
+        };
+
+        const otpResp = await emailHelper.sendEmailVerificationCode(payloadObject, req.lang, newEmail);
+        if (!otpResp.success) {
+            return res.status(500).json({
+                success: false,
+                code: 500,
+                error: i18n.__("failedToSendOTP"),
+            });
+        }
+
+        const emailUpdateSession = {
+            newEmail,
+            otpCode: otpResp.result,
+            requestedAt: Date.now(),
+            expiresAt: Date.now() + 10 * 60 * 1000
+        };
+
+        await sellerRepo.updateDirectly(sellerObj.result._id, {
+            session: {
+                ...(sellerObj.result.session || {}),
+                emailUpdate: emailUpdateSession
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            message: i18n.__("otpSentToNewEmail"),
+        });
+
+    } catch (err) {
+        logInTestEnv("requestEmailUpdate.error", err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};
+
+exports.verifyEmailUpdateOTP = async (req, res) => {
+    try {
+        const sellerId = req.query._id;
+        const providedCode = (req.body.otpCode || "").toString();
+
+        const sellerObj = await sellerRepo.find({ _id: sellerId });
+        if (!sellerObj.success) return res.status(sellerObj.code).json(sellerObj);
+
+        const sess = sellerObj.result.session || {};
+        const emailUpdate = sess.emailUpdate;
+
+        if (!emailUpdate || !emailUpdate.otpCode || !emailUpdate.newEmail) {
+            return res.status(400).json({
+                success: false,
+                code: 400,
+                error: i18n.__("noPendingEmailUpdate")
+            });
+        }
+
+        if (emailUpdate.otpCode.toString() !== providedCode) {
+            return res.status(409).json({
+                success: false,
+                code: 409,
+                error: i18n.__("invalidOTP")
+            });
+        }
+
+        const updatedEmail = emailUpdate.newEmail;
+
+        let payloadObject = {
+            _id: sellerObj.result._id,
+            userName: sellerObj.result.userName || sellerObj.result.name,
+            email: updatedEmail,
+            phone: sellerObj.result.phone,
+            role: "seller"
+        };
+        
+        const token = jwtHelper.generateToken(payloadObject, "1d");
+
+        await sellerRepo.updateDirectly(sellerObj.result._id, {
+            email: updatedEmail,
+            isEmailVerified: true,
+            token,
+            session: {
+                ...sess,
+                emailUpdate: null
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            code: 200,
+            token,
+            message: i18n.__("emailUpdatedSuccessfully")
+        });
+
+    } catch (err) {
+        logInTestEnv("verifyEmailUpdateOTP.error", err.message);
+        return res.status(500).json({
+            success: false,
+            code: 500,
+            error: i18n.__("internalServerError")
+        });
+    }
+};

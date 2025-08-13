@@ -367,4 +367,25 @@ module.exports = {
             }),
         }),
     },
+
+    verifyEmailUpdateValidation: {
+        body: joi.object().required().keys({
+            otpCode: joi.string().required().messages({
+                "string.base": "validOtpCode",
+                "any.required": "requiredOtpCode",
+            }),
+        }),
+    },
+
+    requestEmailUpdateValidation: {
+        body: joi.object().required().keys({
+            newEmail: joi.string()
+                .email({ minDomainSegments: 2 })
+                .empty().required().messages({
+                    "string.email": "validEmail",
+                    "any.required": "requiredEmail",
+                    "string.empty": "emptyEmail"
+                }),
+        }),
+    },
 };
