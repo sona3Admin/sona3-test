@@ -7,12 +7,12 @@ const URLS = {
     test: {
         seller: {
             web: {
-                success: "https://sonna3-seller.vercel.app/payment_succeed",
-                cancel: "https://sonna3-seller.vercel.app/payment_failed"
+                success: "https://seller-web-test.vercel.app/payment_succeed",
+                cancel: "https://seller-web-test.vercel.app/payment_failed"
             },
             mobile: {
-                success: "https://sonna3-seller.vercel.app/mobile_payment_succeed",
-                cancel: "https://sonna3-seller.vercel.app/mobile_payment_failed"
+                success: "https://seller-web-test.vercel.app/mobile_payment_succeed",
+                cancel: "https://seller-web-test.vercel.app/mobile_payment_failed"
             }
         },
         customer: {
