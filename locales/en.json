@@ -231,5 +231,6 @@
 	"emailAlreadyExists": "This email is already registered.",
 	"otpSentToNewEmail": "OTP has been sent to the new email address.",
 	"noPendingEmailUpdate": "There is no pending email update.",
-	"emailUpdatedSuccessfully": "Email updated successfully."
+	"emailUpdatedSuccessfully": "Email updated successfully.",
+	"emailUpdateInfo": "If an account with that email exists, we’ll send you an email shortly."
 }

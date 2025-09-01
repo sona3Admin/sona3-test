@@ -166,7 +166,11 @@ exports.loginAsGuest = async (req, res) => {
 exports.sendEmailVerificationCode = async (req, res) => {
     try {
         const operationResultObject = await customerRepo.find({ email: req.body.email, isDeleted: false })
-        if (!operationResultObject.success) return res.status(operationResultObject.code).json(operationResultObject)
+        if (!operationResultObject.success) return res.status(operationResultObject.code).json({
+            success: false,
+            code: operationResultObject.code,
+            error: i18n.__("emailUpdateInfo")
+        })
         let payloadObject = {
             _id: operationResultObject.result._id,
             name: operationResultObject.result.name,
